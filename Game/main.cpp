@@ -6,10 +6,26 @@
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
 
-#include <iostream>
+//C library includes
+#include <stdlib.h>
+#include <time.h>
+
+//Game includes
+#include "Tile.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    //Set up
+    srand((int)time(NULL));
+    
+    //Set to true when the game should end
+    bool gameOver = false;
+    
+    Tile* gameBoard[10][10];
+    
+    //Game loop
+    while(!gameOver) {
+        
+    }
+    
     return 0;
 }

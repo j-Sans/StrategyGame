@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3C61D1B0BBA00AA01A1 /* main.cpp */; };
 		23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */; };
+		23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3D31D1B139100AA01A1 /* Tile.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		23D6E3C61D1B0BBA00AA01A1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Creature.cpp; sourceTree = "<group>"; };
 		23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Creature.hpp; sourceTree = "<group>"; };
+		23D6E3D31D1B139100AA01A1 /* Tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
+		23D6E3D41D1B139100AA01A1 /* Tile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Tile.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,8 +63,10 @@
 		23D6E3C51D1B0BBA00AA01A1 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */,
 				23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */,
+				23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */,
+				23D6E3D31D1B139100AA01A1 /* Tile.cpp */,
+				23D6E3D41D1B139100AA01A1 /* Tile.hpp */,
 				23D6E3C61D1B0BBA00AA01A1 /* main.cpp */,
 			);
 			path = Game;
@@ -123,6 +128,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */,
 				23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */,
 				23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */,
 			);
