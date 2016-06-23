@@ -9,15 +9,6 @@
 #include "Tile.hpp"
 
 //Constructors
-/** Creates a tile object
- *
- * @param isObstacle A boolean representing if the tile is an impassable obstacle
- */
-Tile::Tile(bool obstacle) : isObstacle(obstacle) {
-    if (obstacle) {
-        this->isPassable = false;
-    }
-}
 
 //Destructor
 
@@ -28,9 +19,9 @@ Tile::~Tile() {
 }
 
 //Public member functions
-/** Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks.
+/** Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
  *
- * @param creature A pointer to the new creature.
+ * @param creature A pointer to the new creature. If nullptr, then the spot becomes empty.
  */
 void Tile::setCreature(Creature *creature) {
     if (this->tileCreature != nullptr)
@@ -38,9 +29,9 @@ void Tile::setCreature(Creature *creature) {
     
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
     
-    //Make the tile impassible as long as there is a creature, and passable otherwise, if it's not an obstacle
+    //Make the tile occupied as long as there is a creature there
     if (this->tileCreature != nullptr)
-        this->isPassable = false;
-    else if (!this->isObstacle)
-        this->isPassable = true;
+        this->isOccupied = false;
+    else
+        this->isOccupied = true;
 }

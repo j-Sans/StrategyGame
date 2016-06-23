@@ -268,24 +268,6 @@ int main(int argc, const char * argv[]) {
         //Use the shader
         shader.use();
         
-        //Make 3D transformation matrices
-        
-        //View matrix
-        glm::mat4 view;
-        view = camera.getViewMatrix();
-        
-        //Projection matrix
-        glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (GLfloat)windowWidth / (GLfloat)windowHeight, 0.1f, 1000.0f);
-        
-        //Model matrix
-        glm::mat4 model;
-        
-        //Send the matrices
-        glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        
-        
         //Bind the VAO and draw shapes
         glBindVertexArray(VAO);
         glDrawArrays(GL_POINTS, 0, 100);

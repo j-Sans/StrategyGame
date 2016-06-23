@@ -11,10 +11,16 @@
 
 #include "Creature.hpp"
 
+enum Terrain {
+    Open,
+    Forest,
+    Mountain,
+    //More to be added later
+};
+
 class Tile {
 public:
     //Constructors
-    Tile(const bool isObstacle);
     
     //Destructor
     ~Tile();
@@ -25,20 +31,23 @@ public:
     //Public member functions
     
     //Get methods
-    const bool passable() { return this->isPassable; }
-    const bool obstacle() { return this->isObstacle; }
-    const bool vision() { return this->blocksVision; }
-    const bool rough() { return this->isRoughTerrain; }
-    const bool mountain() { return this-> mountain; }
+    const Creature* creature() { return this->tileCreature; }
+    const Terrain terrain() { return this->tileTerrain; }
+    const bool occupied() { return this->isOccupied; }
+    
+    //I think we should impliment these later because they may be complex to program without that much reward
+    //const bool vision() { return this->blocksVision; }
+    //const bool rough() { return this->isRoughTerrain; }
     
 private:
     //Private properties
     Creature* tileCreature = nullptr;
-    bool isPassable = true;
-    const bool isObstacle;
-    const bool blocksVision;
-    const bool isRoughTerrain; //slows movement
-    const bool mountain;
+    Terrain tileTerrain = Open;
+    bool isOccupied = false;
+    
+    //const bool blocksVision;
+    //const bool isRoughTerrain; //slows movement
+    
     //Private member functions
 };
 
