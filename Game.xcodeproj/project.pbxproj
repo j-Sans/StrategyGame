@@ -41,7 +41,6 @@
 		23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSOIL.dylib; path = ../../../../usr/local/lib/libSOIL.dylib; sourceTree = "<group>"; };
 		23D6E3F91D1C460300AA01A1 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		23D6E3FA1D1C460300AA01A1 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
-		23D6E3FB1D1C462E00AA01A1 /* shader.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = shader.vert; path = Shaders/shader.vert; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +61,6 @@
 		23D6E3BA1D1B0BB900AA01A1 = {
 			isa = PBXGroup;
 			children = (
-				23D6E3FB1D1C462E00AA01A1 /* shader.vert */,
 				23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */,
 				23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */,
 				23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */,

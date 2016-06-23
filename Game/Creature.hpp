@@ -9,21 +9,21 @@
 #ifndef Creature_hpp
 #define Creature_hpp
 
-enum race {
-    human,
-    elf,
-    dwarf,
-    orc,
-    goblin,
-    undead,
-    vampires
+enum Race {
+    Human,
+    Elf,
+    Dwarf,
+    Orc,
+    Goblin,
+    Undead,
+    Vampire,
 };
 
-enum direction {
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST
+enum Direction {
+    North,
+    East,
+    South,
+    West,
 };
 
 /*
@@ -42,7 +42,7 @@ enum direction {
 class Creature {
 public:
     //Constructors
-    Creature(unsigned int maxHealth);
+    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, Direction startDirection);
     
     //Destructor
     
@@ -52,27 +52,31 @@ public:
     bool takeDamage(unsigned int damage);
     
     //Get methods
+    const Race race() { return this->creatureRace; }
     const unsigned int maxHealth() { return this->creatureMaxHealth; }
-    unsigned int maxEnergy() {return this->creatureMaxEnergy; }
-    unsigned int attack() {return this->creatureAttack; }
-    unsigned int vision() {return this->creatureVision; }
-    unsigned int range() {return this->creatureRange; }
+    const unsigned int maxEnergy() { return this->creatureMaxEnergy; }
+    const unsigned int attack() { return this->creatureAttack; }
+    const unsigned int speed() { return this->creatureSpeed; }
+    const unsigned int vision() { return this->creatureVision; }
+    const unsigned int range() { return this->creatureRange; }
 
-    unsigned int health() { return this->creatureHealth; }
-    unsigned int energy() {return this->creatureEnergy; }
-    unsigned int direction() {return this->creatureDirection; }
+    const unsigned int health() { return this->creatureHealth; }
+    const unsigned int energy() { return this->creatureEnergy; }
+    const Direction direction() { return this->creatureDirection; }
     
 private:
     //Private properties
+    const Race creatureRace;
     const unsigned int creatureMaxHealth;
-    unsigned int creatureMaxEnergy;
-    unsigned int creatureAttack;
-    unsigned int creatureVision;
-    unsigned int creatureRange;
+    const unsigned int creatureMaxEnergy;
+    const unsigned int creatureAttack;
+    const unsigned int creatureSpeed;
+    const unsigned int creatureVision;
+    const unsigned int creatureRange;
     
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
-    unsigned int creatureDirection;
+    Direction creatureDirection;
     //vector<int> promotions; //Need to import vector, but not now, implement later.
     
     
