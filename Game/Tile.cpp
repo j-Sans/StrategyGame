@@ -13,8 +13,8 @@
  *
  * @param isObstacle A boolean representing if the tile is an impassable obstacle
  */
-Tile::Tile(bool isObstacle) : obstacle(isObstacle) {
-    if (isObstacle) {
+Tile::Tile(bool obstacle) : isObstacle(obstacle) {
+    if (obstacle) {
         this->isPassable = false;
     }
 }
@@ -41,6 +41,6 @@ void Tile::setCreature(Creature *creature) {
     //Make the tile impassible as long as there is a creature, and passable otherwise, if it's not an obstacle
     if (this->tileCreature != nullptr)
         this->isPassable = false;
-    else if (!this->obstacle)
+    else if (!this->isObstacle)
         this->isPassable = true;
 }

@@ -10,6 +10,10 @@
 		23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3C61D1B0BBA00AA01A1 /* main.cpp */; };
 		23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */; };
 		23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3D31D1B139100AA01A1 /* Tile.cpp */; };
+		23D6E3D71D1B4FEC00AA01A1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */; };
+		23D6E3D91D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */; };
+		23D6E3DB1D1B500100AA01A1 /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */; };
+		23D6E3DD1D1B500C00AA01A1 /* libSOIL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +35,13 @@
 		23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Creature.hpp; sourceTree = "<group>"; };
 		23D6E3D31D1B139100AA01A1 /* Tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
 		23D6E3D41D1B139100AA01A1 /* Tile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Tile.hpp; sourceTree = "<group>"; };
+		23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.1.13.0.dylib; path = ../../../../usr/local/lib/libGLEW.1.13.0.dylib; sourceTree = "<group>"; };
+		23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../usr/local/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
+		23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSOIL.dylib; path = ../../../../usr/local/lib/libSOIL.dylib; sourceTree = "<group>"; };
+		23D6E3F91D1C460300AA01A1 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
+		23D6E3FA1D1C460300AA01A1 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
+		23D6E3FB1D1C462E00AA01A1 /* shader.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = shader.vert; path = Shaders/shader.vert; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +49,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23D6E3DD1D1B500C00AA01A1 /* libSOIL.dylib in Frameworks */,
+				23D6E3DB1D1B500100AA01A1 /* libglfw.3.2.dylib in Frameworks */,
+				23D6E3D91D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib in Frameworks */,
+				23D6E3D71D1B4FEC00AA01A1 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,8 +62,15 @@
 		23D6E3BA1D1B0BB900AA01A1 = {
 			isa = PBXGroup;
 			children = (
+				23D6E3FB1D1C462E00AA01A1 /* shader.vert */,
+				23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */,
+				23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */,
+				23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */,
+				23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */,
 				23D6E3C51D1B0BBA00AA01A1 /* Game */,
 				23D6E3C41D1B0BBA00AA01A1 /* Products */,
+				23D6E3F91D1C460300AA01A1 /* Resources */,
+				23D6E3FA1D1C460300AA01A1 /* Shaders */,
 			);
 			sourceTree = "<group>";
 		};
@@ -221,6 +243,8 @@
 		23D6E3CB1D1B0BBA00AA01A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/include/;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -228,6 +252,8 @@
 		23D6E3CC1D1B0BBA00AA01A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/include/;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

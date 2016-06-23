@@ -26,12 +26,13 @@ public:
     
     //Get methods
     const bool passable() { return this->isPassable; }
+    const bool obstacle() { return this->isObstacle; }
     
 private:
     //Private properties
     Creature* tileCreature = nullptr;
     bool isPassable = true;
-    const bool obstacle;
+    const bool isObstacle;
     
     //Private member functions
 };
