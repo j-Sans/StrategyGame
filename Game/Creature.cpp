@@ -19,9 +19,10 @@
  * @param speed An unsigned int representing the movement rate per turn of the creature.
  * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
  * @param range An unsigned int representing the distance the creature can attack.
+ * @param cost An unsigned int representing the cost of the creature in mana.
  * @param startDirection A Direction enum type representing the initial direction that the creature faces. Includes: North, East, South, and West.
  */
-Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, Direction startDirection) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureSpeed(speed), creatureVision(vision), creatureRange(range) {
+Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureSpeed(speed), creatureVision(vision), creatureRange(range), creatureCost(cost) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
     this->creatureDirection = startDirection;

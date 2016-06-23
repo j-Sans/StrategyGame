@@ -42,7 +42,7 @@ enum Direction {
 class Creature {
 public:
     //Constructors
-    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, Direction startDirection);
+    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection);
     
     //Destructor
     
@@ -59,6 +59,7 @@ public:
     const unsigned int speed() { return this->creatureSpeed; }
     const unsigned int vision() { return this->creatureVision; }
     const unsigned int range() { return this->creatureRange; }
+    const unsigned int cost() { return this->creatureCost; }
 
     const unsigned int health() { return this->creatureHealth; }
     const unsigned int energy() { return this->creatureEnergy; }
@@ -73,6 +74,7 @@ private:
     const unsigned int creatureSpeed;
     const unsigned int creatureVision;
     const unsigned int creatureRange;
+    const unsigned int creatureCost;
     
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
