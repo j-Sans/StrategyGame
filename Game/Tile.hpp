@@ -27,13 +27,18 @@ public:
     //Get methods
     const bool passable() { return this->isPassable; }
     const bool obstacle() { return this->isObstacle; }
+    const bool vision() { return this->blocksVision; }
+    const bool rough() { return this->isRoughTerrain; }
+    const bool mountain() { return this-> mountain; }
     
 private:
     //Private properties
     Creature* tileCreature = nullptr;
     bool isPassable = true;
     const bool isObstacle;
-    
+    const bool blocksVision;
+    const bool isRoughTerrain; //slows movement
+    const bool mountain;
     //Private member functions
 };
 
