@@ -67,7 +67,8 @@ GLfloat lastFrame = 0.0f;
 int main(int argc, const char * argv[]) {
     //Set up
     srand((int)time(NULL));
-    //Initialization:
+    
+//Initialization:
     //Initiate GLFW
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //Version 3.3 of OpenGL
@@ -99,7 +100,7 @@ int main(int argc, const char * argv[]) {
     //Set key callback function
     glfwSetKeyCallback(window, keyCallback);
     
-    //Drawing:
+//Drawing:
     //Create an object wthat contains the compiled shader
     Shader shader("Shaders/shader.vert", "Shaders/shader.geom", "Shaders/shader.frag");
     
@@ -108,115 +109,115 @@ int main(int argc, const char * argv[]) {
     //Later on we will just load all of the map data in from a file. Hardcoded for now
     GLfloat vertices[] = {
     //   position      Color
-        -0.9f, -0.9f,  0.0f, 0.33f, 0.0f,
+        -0.9f, -0.9f,  0.0f, 0.3f, 0.0f,
         -0.7f, -0.9f,  0.0f, 0.5f, 0.0f,
-        -0.5f, -0.9f,  0.0f, 0.33f, 0.0f,
+        -0.5f, -0.9f,  0.0f, 0.3f, 0.0f,
         -0.3f, -0.9f,  0.0f, 0.5f, 0.0f,
-        -0.1f, -0.9f,  0.0f, 0.33f, 0.0f,
+        -0.1f, -0.9f,  0.0f, 0.3f, 0.0f,
          0.1f, -0.9f,  0.0f, 0.5f, 0.0f,
-         0.3f, -0.9f,  0.0f, 0.33f, 0.0f,
+         0.3f, -0.9f,  0.0f, 0.3f, 0.0f,
          0.5f, -0.9f,  0.0f, 0.5f, 0.0f,
-         0.7f, -0.9f,  0.0f, 0.33f, 0.0f,
+         0.7f, -0.9f,  0.0f, 0.3f, 0.0f,
          0.9f, -0.9f,  0.0f, 0.5f, 0.0f,
         
         -0.9f, -0.7f,  0.0f, 0.5f, 0.0f,
-        -0.7f, -0.7f,  0.0f, 0.33f, 0.0f,
+        -0.7f, -0.7f,  0.0f, 0.3f, 0.0f,
         -0.5f, -0.7f,  0.0f, 0.5f, 0.0f,
-        -0.3f, -0.7f,  0.0f, 0.33f, 0.0f,
+        -0.3f, -0.7f,  0.0f, 0.3f, 0.0f,
         -0.1f, -0.7f,  0.0f, 0.5f, 0.0f,
-         0.1f, -0.7f,  0.0f, 0.33f, 0.0f,
+         0.1f, -0.7f,  0.0f, 0.3f, 0.0f,
          0.3f, -0.7f,  0.0f, 0.5f, 0.0f,
-         0.5f, -0.7f,  0.0f, 0.33f, 0.0f,
+         0.5f, -0.7f,  0.0f, 0.3f, 0.0f,
          0.7f, -0.7f,  0.0f, 0.5f, 0.0f,
-         0.9f, -0.7f,  0.0f, 0.33f, 0.0f,
+         0.9f, -0.7f,  0.0f, 0.3f, 0.0f,
         
-        -0.9f, -0.5f,  0.0f, 0.33f, 0.0f,
+        -0.9f, -0.5f,  0.0f, 0.3f, 0.0f,
         -0.7f, -0.5f,  0.0f, 0.5f, 0.0f,
-        -0.5f, -0.5f,  0.0f, 0.33f, 0.0f,
+        -0.5f, -0.5f,  0.0f, 0.3f, 0.0f,
         -0.3f, -0.5f,  0.0f, 0.5f, 0.0f,
-        -0.1f, -0.5f,  0.0f, 0.33f, 0.0f,
+        -0.1f, -0.5f,  0.0f, 0.3f, 0.0f,
          0.1f, -0.5f,  0.0f, 0.5f, 0.0f,
-         0.3f, -0.5f,  0.0f, 0.33f, 0.0f,
+         0.3f, -0.5f,  0.0f, 0.3f, 0.0f,
          0.5f, -0.5f,  0.0f, 0.5f, 0.0f,
-         0.7f, -0.5f,  0.0f, 0.33f, 0.0f,
+         0.7f, -0.5f,  0.0f, 0.3f, 0.0f,
          0.9f, -0.5f,  0.0f, 0.5f, 0.0f,
         
         -0.9f, -0.3f,  0.0f, 0.5f, 0.0f,
-        -0.7f, -0.3f,  0.0f, 0.33f, 0.0f,
+        -0.7f, -0.3f,  0.0f, 0.3f, 0.0f,
         -0.5f, -0.3f,  0.0f, 0.5f, 0.0f,
-        -0.3f, -0.3f,  0.0f, 0.33f, 0.0f,
+        -0.3f, -0.3f,  0.0f, 0.3f, 0.0f,
         -0.1f, -0.3f,  0.0f, 0.5f, 0.0f,
-         0.1f, -0.3f,  0.0f, 0.33f, 0.0f,
+         0.1f, -0.3f,  0.0f, 0.3f, 0.0f,
          0.3f, -0.3f,  0.0f, 0.5f, 0.0f,
-         0.5f, -0.3f,  0.0f, 0.33f, 0.0f,
+         0.5f, -0.3f,  0.0f, 0.3f, 0.0f,
          0.7f, -0.3f,  0.0f, 0.5f, 0.0f,
-         0.9f, -0.3f,  0.0f, 0.33f, 0.0f,
+         0.9f, -0.3f,  0.0f, 0.3f, 0.0f,
         
-        -0.9f, -0.1f,  0.0f, 0.33f, 0.0f,
+        -0.9f, -0.1f,  0.0f, 0.3f, 0.0f,
         -0.7f, -0.1f,  0.0f, 0.5f, 0.0f,
-        -0.5f, -0.1f,  0.0f, 0.33f, 0.0f,
+        -0.5f, -0.1f,  0.0f, 0.3f, 0.0f,
         -0.3f, -0.1f,  0.0f, 0.5f, 0.0f,
-        -0.1f, -0.1f,  0.0f, 0.33f, 0.0f,
+        -0.1f, -0.1f,  0.0f, 0.3f, 0.0f,
          0.1f, -0.1f,  0.0f, 0.5f, 0.0f,
-         0.3f, -0.1f,  0.0f, 0.33f, 0.0f,
+         0.3f, -0.1f,  0.0f, 0.3f, 0.0f,
          0.5f, -0.1f,  0.0f, 0.5f, 0.0f,
-         0.7f, -0.1f,  0.0f, 0.33f, 0.0f,
+         0.7f, -0.1f,  0.0f, 0.3f, 0.0f,
          0.9f, -0.1f,  0.0f, 0.5f, 0.0f,
         
         -0.9f,  0.1f,  0.0f, 0.5f, 0.0f,
-        -0.7f,  0.1f,  0.0f, 0.33f, 0.0f,
+        -0.7f,  0.1f,  0.0f, 0.3f, 0.0f,
         -0.5f,  0.1f,  0.0f, 0.5f, 0.0f,
-        -0.3f,  0.1f,  0.0f, 0.33f, 0.0f,
+        -0.3f,  0.1f,  0.0f, 0.3f, 0.0f,
         -0.1f,  0.1f,  0.0f, 0.5f, 0.0f,
-         0.1f,  0.1f,  0.0f, 0.33f, 0.0f,
+         0.1f,  0.1f,  0.0f, 0.3f, 0.0f,
          0.3f,  0.1f,  0.0f, 0.5f, 0.0f,
-         0.5f,  0.1f,  0.0f, 0.33f, 0.0f,
+         0.5f,  0.1f,  0.0f, 0.3f, 0.0f,
          0.7f,  0.1f,  0.0f, 0.5f, 0.0f,
-         0.9f,  0.1f,  0.0f, 0.33f, 0.0f,
+         0.9f,  0.1f,  0.0f, 0.3f, 0.0f,
         
-        -0.9f,  0.3f,  0.0f, 0.33f, 0.0f,
+        -0.9f,  0.3f,  0.0f, 0.3f, 0.0f,
         -0.7f,  0.3f,  0.0f, 0.5f, 0.0f,
-        -0.5f,  0.3f,  0.0f, 0.33f, 0.0f,
+        -0.5f,  0.3f,  0.0f, 0.3f, 0.0f,
         -0.3f,  0.3f,  0.0f, 0.5f, 0.0f,
-        -0.1f,  0.3f,  0.0f, 0.33f, 0.0f,
+        -0.1f,  0.3f,  0.0f, 0.3f, 0.0f,
          0.1f,  0.3f,  0.0f, 0.5f, 0.0f,
-         0.3f,  0.3f,  0.0f, 0.33f, 0.0f,
+         0.3f,  0.3f,  0.0f, 0.3f, 0.0f,
          0.5f,  0.3f,  0.0f, 0.5f, 0.0f,
-         0.7f,  0.3f,  0.0f, 0.33f, 0.0f,
+         0.7f,  0.3f,  0.0f, 0.3f, 0.0f,
          0.9f,  0.3f,  0.0f, 0.5f, 0.0f,
         
         -0.9f,  0.5f,  0.0f, 0.5f, 0.0f,
-        -0.7f,  0.5f,  0.0f, 0.33f, 0.0f,
+        -0.7f,  0.5f,  0.0f, 0.3f, 0.0f,
         -0.5f,  0.5f,  0.0f, 0.5f, 0.0f,
-        -0.3f,  0.5f,  0.0f, 0.33f, 0.0f,
+        -0.3f,  0.5f,  0.0f, 0.3f, 0.0f,
         -0.1f,  0.5f,  0.0f, 0.5f, 0.0f,
-         0.1f,  0.5f,  0.0f, 0.33f, 0.0f,
+         0.1f,  0.5f,  0.0f, 0.3f, 0.0f,
          0.3f,  0.5f,  0.0f, 0.5f, 0.0f,
-         0.5f,  0.5f,  0.0f, 0.33f, 0.0f,
+         0.5f,  0.5f,  0.0f, 0.3f, 0.0f,
          0.7f,  0.5f,  0.0f, 0.5f, 0.0f,
-         0.9f,  0.5f,  0.0f, 0.33f, 0.0f,
+         0.9f,  0.5f,  0.0f, 0.3f, 0.0f,
         
-        -0.9f,  0.7f,  0.0f, 0.33f, 0.0f,
+        -0.9f,  0.7f,  0.0f, 0.3f, 0.0f,
         -0.7f,  0.7f,  0.0f, 0.5f, 0.0f,
-        -0.5f,  0.7f,  0.0f, 0.33f, 0.0f,
+        -0.5f,  0.7f,  0.0f, 0.3f, 0.0f,
         -0.3f,  0.7f,  0.0f, 0.5f, 0.0f,
-        -0.1f,  0.7f,  0.0f, 0.33f, 0.0f,
+        -0.1f,  0.7f,  0.0f, 0.3f, 0.0f,
          0.1f,  0.7f,  0.0f, 0.5f, 0.0f,
-         0.3f,  0.7f,  0.0f, 0.33f, 0.0f,
+         0.3f,  0.7f,  0.0f, 0.3f, 0.0f,
          0.5f,  0.7f,  0.0f, 0.5f, 0.0f,
-         0.7f,  0.7f,  0.0f, 0.33f, 0.0f,
+         0.7f,  0.7f,  0.0f, 0.3f, 0.0f,
          0.9f,  0.7f,  0.0f, 0.5f, 0.0f,
         
         -0.9f,  0.9f,  0.0f, 0.5f, 0.0f,
-        -0.7f,  0.9f,  0.0f, 0.33f, 0.0f,
+        -0.7f,  0.9f,  0.0f, 0.3f, 0.0f,
         -0.5f,  0.9f,  0.0f, 0.5f, 0.0f,
-        -0.3f,  0.9f,  0.0f, 0.33f, 0.0f,
+        -0.3f,  0.9f,  0.0f, 0.3f, 0.0f,
         -0.1f,  0.9f,  0.0f, 0.5f, 0.0f,
-         0.1f,  0.9f,  0.0f, 0.33f, 0.0f,
+         0.1f,  0.9f,  0.0f, 0.3f, 0.0f,
          0.3f,  0.9f,  0.0f, 0.5f, 0.0f,
-         0.5f,  0.9f,  0.0f, 0.33f, 0.0f,
+         0.5f,  0.9f,  0.0f, 0.3f, 0.0f,
          0.7f,  0.9f,  0.0f, 0.5f, 0.0f,
-         0.9f,  0.9f,  0.0f, 0.33f, 0.0f,
+         0.9f,  0.9f,  0.0f, 0.3f, 0.0f,
     };
     
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
@@ -277,7 +278,7 @@ int main(int argc, const char * argv[]) {
         glfwSwapBuffers(window);
     }
     
-    //Termination:
+//Termination:
     //Deallocate all any resources when we are finished
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
@@ -286,6 +287,9 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
+/**
+ *A function to move the camera up, down, left, or right based on key presses.
+ */
 void moveCamera() {
     //Calls translation functions from the camera
     if (keys[GLFW_KEY_UP]) {
