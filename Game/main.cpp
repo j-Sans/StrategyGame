@@ -41,7 +41,7 @@
 void keyCallback (GLFWwindow *window, int key, int scancode, int action, int mode);
 
 //A function to be called that adjusts the camera position on arowkey clicks
-void moveCamera();
+void moveCamera(GLfloat deltaTime);
 
 
 
@@ -51,7 +51,7 @@ void moveCamera();
 const GLuint windowWidth = 700, windowHeight = 700;
 
 //Camera translation speed
-const GLfloat camSpeed = 0.05f;
+const GLfloat camSpeed = 1.5f;
 
 //Max camera distance from board center
 const GLfloat camMaxDisplacement = 1.0f;
@@ -253,7 +253,7 @@ int main(int argc, const char * argv[]) {
     //Uncomment for wireframe mode
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
-//Awesomeface texture:
+//Grass texture:
     int textureWidth, textureHeight;
     unsigned char *image;
     
@@ -319,7 +319,7 @@ int main(int argc, const char * argv[]) {
         glUniform1i(glGetUniformLocation(shader.program, "grassTex"), 0);
         
         //Set the camera-translation vector based on arrowkey inputs
-        moveCamera();
+        moveCamera(deltaTime);
         
         //Affect the camera position and send the view matrix to the shader
         view = glm::translate(view, cameraCenter);
@@ -348,19 +348,23 @@ int main(int argc, const char * argv[]) {
 
 /** 
  * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
+ *
+ * @param deltaTime A GLfloat that represents the difference in time since the last call. Ensures that on all systems the camera moves at the same speed.
  */
-void moveCamera() {
+void moveCamera(GLfloat deltaTime) {
+    GLfloat displacement = deltaTime * camSpeed;
+    
     if (keys[GLFW_KEY_DOWN]) {
-        cameraCenter.y += camSpeed;
+        cameraCenter.y += displacement;
     }
     if (keys[GLFW_KEY_UP]) {
-        cameraCenter.y -= camSpeed;
+        cameraCenter.y -= displacement;
     }
     if (keys[GLFW_KEY_LEFT]) {
-        cameraCenter.x += camSpeed;
+        cameraCenter.x += displacement;
     }
     if (keys[GLFW_KEY_RIGHT]) {
-        cameraCenter.x -= camSpeed;
+        cameraCenter.x -= displacement;
     }
     
     //Guaruntees that the camera won't move too far from the board center
@@ -375,12 +379,12 @@ void moveCamera() {
 }
 
 /**
- *A function GLFW can call when a key event occurs
+ * A function GLFW can call when a key event occurs
  *
- *@param window The GLFWwindow object.
- *@param key The macro that will represent the key pressed
- *@param action The macro that represents if the key is being pressed, released, etc...
- *@param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
+ * @param window The GLFWwindow object.
+ * @param key The macro that will represent the key pressed
+ * @param action The macro that represents if the key is being pressed, released, etc...
+ * @param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
  */
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
     if (key == GLFW_KEY_W && action == GLFW_PRESS && mode == GLFW_MOD_SUPER) { //Command-W: close the application
