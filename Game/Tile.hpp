@@ -15,7 +15,11 @@ enum Terrain {
     Open,
     Forest,
     Mountain,
-    //More to be added later
+    Water,
+    River Crossing,
+    Hill,
+    Rift,
+    Carrot Farm //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 };
 
 class Tile {
