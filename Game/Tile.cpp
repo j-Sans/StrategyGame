@@ -28,10 +28,4 @@ void Tile::setCreature(Creature *creature) {
         delete this->tileCreature; //Prevent memory leaks
     
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
-    
-    //Make the tile occupied as long as there is a creature there
-    if (this->tileCreature != nullptr)
-        this->isOccupied = false;
-    else
-        this->isOccupied = true;
 }

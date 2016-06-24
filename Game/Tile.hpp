@@ -33,7 +33,7 @@ public:
     //Get methods
     const Creature* creature() { return this->tileCreature; }
     const Terrain terrain() { return this->tileTerrain; }
-    const bool occupied() { return this->isOccupied; }
+    const bool occupied() { return this->tileCreature != nullptr ? true : false; }
     
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }
@@ -43,7 +43,6 @@ private:
     //Private properties
     Creature* tileCreature = nullptr;
     Terrain tileTerrain = Open;
-    bool isOccupied = false;
     
     //const bool blocksVision;
     //const bool isRoughTerrain; //slows movement
