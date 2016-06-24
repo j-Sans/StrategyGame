@@ -29,7 +29,6 @@
 
 //OpenGL additional classes includes
 #include "GLextensions/shader.hpp"
-#include "GLextensions/camera.hpp"
 
 //Local includes
 #include "Tile.hpp"
@@ -41,15 +40,12 @@
 //A function that allows GLFW to deal with certain events like key-pressing
 void keyCallback (GLFWwindow *window, int key, int scancode, int action, int mode);
 
-//A function that allows translation of the camera
-void moveCamera();
-
 
 
 //Variables:
 
 //Window size
-const GLuint windowWidth = 800, windowHeight = 600;
+const GLuint windowWidth = 700, windowHeight = 700;
 
 //True when the game should end
 bool gameOver = false;
@@ -57,10 +53,7 @@ bool gameOver = false;
 //Array of each key, whether it is pressed or not
 bool keys[1024];
 
-//Camera object
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
-//Previous times, for calculating camera motion at a steady rate on all systems
+//Previous times, for calculating motion at a steady rate on all systems
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
@@ -250,6 +243,19 @@ int main(int argc, const char * argv[]) {
     //Uncomment for wireframe mode
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
+    //Send model rotation matrix to the shader
+    shader.use();
+    
+    glm::mat4 model;
+    
+    //make the board appear to be tilted away by keeping width double the size of heights
+    model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
+    
+    //Make the board rotated 45º
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    
+    glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    
     //Game loop
     while(!glfwWindowShouldClose(window)) {
         GLfloat currentFrame = glfwGetTime();
@@ -258,9 +264,6 @@ int main(int argc, const char * argv[]) {
         
         //GLFW gets any events that have occurred
         glfwPollEvents();
-        
-        //Move camera based on any inputs
-        moveCamera();
         
         //Clears the screen after each rendering
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -285,25 +288,6 @@ int main(int argc, const char * argv[]) {
     
     glfwTerminate();
     return 0;
-}
-
-/**
- *A function to move the camera up, down, left, or right based on key presses.
- */
-void moveCamera() {
-    //Calls translation functions from the camera
-    if (keys[GLFW_KEY_UP]) {
-        camera.processKeyboard(FORWARD, deltaTime, false);
-    }
-    if (keys[GLFW_KEY_DOWN]) {
-        camera.processKeyboard(BACKWARD, deltaTime, false);
-    }
-    if (keys[GLFW_KEY_LEFT]) {
-        camera.processKeyboard(LEFT, deltaTime, false);
-    }
-    if (keys[GLFW_KEY_RIGHT]) {
-        camera.processKeyboard(RIGHT, deltaTime, false);
-    }
 }
 
 /**

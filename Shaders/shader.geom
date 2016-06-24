@@ -9,16 +9,19 @@ in VS_OUT {
 
 out vec3 fColor;
 
+uniform mat4 model;
+
 void makeSquare(vec4 position) {
     fColor = gs_in[0].color; //Make the color the one received in the first (and only) index in the interface blocks
     
-    gl_Position = position + vec4(-0.1f, -0.1f, 0.0f, 0.0f); //Bottom left
+    
+    gl_Position = model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom left
     EmitVertex();
-    gl_Position = position + vec4(-0.1f,  0.1f, 0.0f, 0.0f); //Bottom right
+    gl_Position = model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Bottom right
     EmitVertex();
-    gl_Position = position + vec4( 0.1f, -0.1f, 0.0f, 0.0f); //Top left
+    gl_Position = model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Top left
     EmitVertex();
-    gl_Position = position + vec4( 0.1f,  0.1f, 0.0f, 0.0f); //Top right
+    gl_Position = model * (position + vec4( 0.1f,  0.1f, 0.0f, 0.0f)); //Top right
     EmitVertex();
     
     EndPrimitive();
