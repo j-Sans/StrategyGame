@@ -16,10 +16,9 @@ enum Terrain {
     Forest,
     Mountain,
     Water,
-    River Crossing,
+    River,
     Hill,
-    Rift,
-    Carrot Farm //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
+    CarrotFarm //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 };
 
 class Tile {
