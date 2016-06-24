@@ -40,12 +40,21 @@
 //A function that allows GLFW to deal with certain events like key-pressing
 void keyCallback (GLFWwindow *window, int key, int scancode, int action, int mode);
 
+//A function to be called that adjusts the camera position on arowkey clicks
+void moveCamera();
+
 
 
 //Variables:
 
 //Window size
 const GLuint windowWidth = 700, windowHeight = 700;
+
+//Camera translation speed
+const GLfloat camSpeed = 0.05f;
+
+//Max camera distance from board center
+const GLfloat camMaxDisplacement = 1.0f;
 
 //True when the game should end
 bool gameOver = false;
@@ -56,6 +65,11 @@ bool keys[1024];
 //Previous times, for calculating motion at a steady rate on all systems
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
+
+//view matrix for moving the camera around
+glm::vec3 cameraCenter;
+
+
 
 int main(int argc, const char * argv[]) {
     //Set up
@@ -277,7 +291,11 @@ int main(int argc, const char * argv[]) {
     //Make the board rotated 45º
     model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     
+    //Send the model matrix to the shader
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    
+    //View matrix
+    glm::mat4 view;
     
     //Game loop
     while(!glfwWindowShouldClose(window)) {
@@ -298,7 +316,17 @@ int main(int argc, const char * argv[]) {
         //Set the texture
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, grassTex);
-        glUniform1i(glGetUniformLocation(shader.program, "texture1"), 0);
+        glUniform1i(glGetUniformLocation(shader.program, "grassTex"), 0);
+        
+        //Set the camera-translation vector based on arrowkey inputs
+        moveCamera();
+        
+        //Affect the camera position and send the view matrix to the shader
+        view = glm::translate(view, cameraCenter);
+        glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        
+        //Reset the view matrix
+        view = glm::mat4();
         
         //Bind the VAO and draw shapes
         glBindVertexArray(VAO);
@@ -318,6 +346,34 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
+/** 
+ * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
+ */
+void moveCamera() {
+    if (keys[GLFW_KEY_DOWN]) {
+        cameraCenter.y += camSpeed;
+    }
+    if (keys[GLFW_KEY_UP]) {
+        cameraCenter.y -= camSpeed;
+    }
+    if (keys[GLFW_KEY_LEFT]) {
+        cameraCenter.x += camSpeed;
+    }
+    if (keys[GLFW_KEY_RIGHT]) {
+        cameraCenter.x -= camSpeed;
+    }
+    
+    //Guaruntees that the camera won't move too far from the board center
+    if (cameraCenter.x > camMaxDisplacement)
+        cameraCenter.x = camMaxDisplacement;
+    if (cameraCenter.x < -camMaxDisplacement)
+        cameraCenter.x = -camMaxDisplacement;
+    if (cameraCenter.y > camMaxDisplacement)
+        cameraCenter.y = camMaxDisplacement;
+    if (cameraCenter.y < -camMaxDisplacement)
+        cameraCenter.y = -camMaxDisplacement;
+}
+
 /**
  *A function GLFW can call when a key event occurs
  *
@@ -326,7 +382,7 @@ int main(int argc, const char * argv[]) {
  *@param action The macro that represents if the key is being pressed, released, etc...
  *@param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
  */
-void keyCallback (GLFWwindow *window, int key, int scancode, int action, int mode) {
+void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
     if (key == GLFW_KEY_W && action == GLFW_PRESS && mode == GLFW_MOD_SUPER) { //Command-W: close the application
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
