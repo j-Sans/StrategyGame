@@ -101,116 +101,116 @@ int main(int argc, const char * argv[]) {
     //The geometry shader will turn a point into a square centered at that point
     //Later on we will just load all of the map data in from a file. Hardcoded for now
     GLfloat vertices[] = {
-    //   position      Color
-        -0.9f, -0.9f,  0.0f, 0.3f, 0.0f,
-        -0.7f, -0.9f,  0.0f, 0.5f, 0.0f,
-        -0.5f, -0.9f,  0.0f, 0.3f, 0.0f,
-        -0.3f, -0.9f,  0.0f, 0.5f, 0.0f,
-        -0.1f, -0.9f,  0.0f, 0.3f, 0.0f,
-         0.1f, -0.9f,  0.0f, 0.5f, 0.0f,
-         0.3f, -0.9f,  0.0f, 0.3f, 0.0f,
-         0.5f, -0.9f,  0.0f, 0.5f, 0.0f,
-         0.7f, -0.9f,  0.0f, 0.3f, 0.0f,
-         0.9f, -0.9f,  0.0f, 0.5f, 0.0f,
+    //   position
+        -0.9f, -0.9f,  
+        -0.7f, -0.9f,  
+        -0.5f, -0.9f,  
+        -0.3f, -0.9f,  
+        -0.1f, -0.9f,  
+         0.1f, -0.9f,  
+         0.3f, -0.9f,  
+         0.5f, -0.9f,  
+         0.7f, -0.9f,  
+         0.9f, -0.9f,  
         
-        -0.9f, -0.7f,  0.0f, 0.5f, 0.0f,
-        -0.7f, -0.7f,  0.0f, 0.3f, 0.0f,
-        -0.5f, -0.7f,  0.0f, 0.5f, 0.0f,
-        -0.3f, -0.7f,  0.0f, 0.3f, 0.0f,
-        -0.1f, -0.7f,  0.0f, 0.5f, 0.0f,
-         0.1f, -0.7f,  0.0f, 0.3f, 0.0f,
-         0.3f, -0.7f,  0.0f, 0.5f, 0.0f,
-         0.5f, -0.7f,  0.0f, 0.3f, 0.0f,
-         0.7f, -0.7f,  0.0f, 0.5f, 0.0f,
-         0.9f, -0.7f,  0.0f, 0.3f, 0.0f,
+        -0.9f, -0.7f,  
+        -0.7f, -0.7f,  
+        -0.5f, -0.7f,  
+        -0.3f, -0.7f,  
+        -0.1f, -0.7f,  
+         0.1f, -0.7f,  
+         0.3f, -0.7f,  
+         0.5f, -0.7f,  
+         0.7f, -0.7f,  
+         0.9f, -0.7f,  
         
-        -0.9f, -0.5f,  0.0f, 0.3f, 0.0f,
-        -0.7f, -0.5f,  0.0f, 0.5f, 0.0f,
-        -0.5f, -0.5f,  0.0f, 0.3f, 0.0f,
-        -0.3f, -0.5f,  0.0f, 0.5f, 0.0f,
-        -0.1f, -0.5f,  0.0f, 0.3f, 0.0f,
-         0.1f, -0.5f,  0.0f, 0.5f, 0.0f,
-         0.3f, -0.5f,  0.0f, 0.3f, 0.0f,
-         0.5f, -0.5f,  0.0f, 0.5f, 0.0f,
-         0.7f, -0.5f,  0.0f, 0.3f, 0.0f,
-         0.9f, -0.5f,  0.0f, 0.5f, 0.0f,
+        -0.9f, -0.5f,  
+        -0.7f, -0.5f,  
+        -0.5f, -0.5f,  
+        -0.3f, -0.5f,  
+        -0.1f, -0.5f,  
+         0.1f, -0.5f,  
+         0.3f, -0.5f,  
+         0.5f, -0.5f,  
+         0.7f, -0.5f,  
+         0.9f, -0.5f,  
         
-        -0.9f, -0.3f,  0.0f, 0.5f, 0.0f,
-        -0.7f, -0.3f,  0.0f, 0.3f, 0.0f,
-        -0.5f, -0.3f,  0.0f, 0.5f, 0.0f,
-        -0.3f, -0.3f,  0.0f, 0.3f, 0.0f,
-        -0.1f, -0.3f,  0.0f, 0.5f, 0.0f,
-         0.1f, -0.3f,  0.0f, 0.3f, 0.0f,
-         0.3f, -0.3f,  0.0f, 0.5f, 0.0f,
-         0.5f, -0.3f,  0.0f, 0.3f, 0.0f,
-         0.7f, -0.3f,  0.0f, 0.5f, 0.0f,
-         0.9f, -0.3f,  0.0f, 0.3f, 0.0f,
+        -0.9f, -0.3f,  
+        -0.7f, -0.3f,  
+        -0.5f, -0.3f,  
+        -0.3f, -0.3f,  
+        -0.1f, -0.3f,  
+         0.1f, -0.3f,  
+         0.3f, -0.3f,  
+         0.5f, -0.3f,  
+         0.7f, -0.3f,  
+         0.9f, -0.3f,  
         
-        -0.9f, -0.1f,  0.0f, 0.3f, 0.0f,
-        -0.7f, -0.1f,  0.0f, 0.5f, 0.0f,
-        -0.5f, -0.1f,  0.0f, 0.3f, 0.0f,
-        -0.3f, -0.1f,  0.0f, 0.5f, 0.0f,
-        -0.1f, -0.1f,  0.0f, 0.3f, 0.0f,
-         0.1f, -0.1f,  0.0f, 0.5f, 0.0f,
-         0.3f, -0.1f,  0.0f, 0.3f, 0.0f,
-         0.5f, -0.1f,  0.0f, 0.5f, 0.0f,
-         0.7f, -0.1f,  0.0f, 0.3f, 0.0f,
-         0.9f, -0.1f,  0.0f, 0.5f, 0.0f,
+        -0.9f, -0.1f,  
+        -0.7f, -0.1f,  
+        -0.5f, -0.1f,  
+        -0.3f, -0.1f,  
+        -0.1f, -0.1f,  
+         0.1f, -0.1f,  
+         0.3f, -0.1f,  
+         0.5f, -0.1f,  
+         0.7f, -0.1f,  
+         0.9f, -0.1f,  
         
-        -0.9f,  0.1f,  0.0f, 0.5f, 0.0f,
-        -0.7f,  0.1f,  0.0f, 0.3f, 0.0f,
-        -0.5f,  0.1f,  0.0f, 0.5f, 0.0f,
-        -0.3f,  0.1f,  0.0f, 0.3f, 0.0f,
-        -0.1f,  0.1f,  0.0f, 0.5f, 0.0f,
-         0.1f,  0.1f,  0.0f, 0.3f, 0.0f,
-         0.3f,  0.1f,  0.0f, 0.5f, 0.0f,
-         0.5f,  0.1f,  0.0f, 0.3f, 0.0f,
-         0.7f,  0.1f,  0.0f, 0.5f, 0.0f,
-         0.9f,  0.1f,  0.0f, 0.3f, 0.0f,
+        -0.9f,  0.1f,  
+        -0.7f,  0.1f,  
+        -0.5f,  0.1f,  
+        -0.3f,  0.1f,  
+        -0.1f,  0.1f,  
+         0.1f,  0.1f,  
+         0.3f,  0.1f,  
+         0.5f,  0.1f,  
+         0.7f,  0.1f,  
+         0.9f,  0.1f,  
         
-        -0.9f,  0.3f,  0.0f, 0.3f, 0.0f,
-        -0.7f,  0.3f,  0.0f, 0.5f, 0.0f,
-        -0.5f,  0.3f,  0.0f, 0.3f, 0.0f,
-        -0.3f,  0.3f,  0.0f, 0.5f, 0.0f,
-        -0.1f,  0.3f,  0.0f, 0.3f, 0.0f,
-         0.1f,  0.3f,  0.0f, 0.5f, 0.0f,
-         0.3f,  0.3f,  0.0f, 0.3f, 0.0f,
-         0.5f,  0.3f,  0.0f, 0.5f, 0.0f,
-         0.7f,  0.3f,  0.0f, 0.3f, 0.0f,
-         0.9f,  0.3f,  0.0f, 0.5f, 0.0f,
+        -0.9f,  0.3f,  
+        -0.7f,  0.3f,  
+        -0.5f,  0.3f,  
+        -0.3f,  0.3f,  
+        -0.1f,  0.3f,  
+         0.1f,  0.3f,  
+         0.3f,  0.3f,  
+         0.5f,  0.3f,  
+         0.7f,  0.3f,  
+         0.9f,  0.3f,  
         
-        -0.9f,  0.5f,  0.0f, 0.5f, 0.0f,
-        -0.7f,  0.5f,  0.0f, 0.3f, 0.0f,
-        -0.5f,  0.5f,  0.0f, 0.5f, 0.0f,
-        -0.3f,  0.5f,  0.0f, 0.3f, 0.0f,
-        -0.1f,  0.5f,  0.0f, 0.5f, 0.0f,
-         0.1f,  0.5f,  0.0f, 0.3f, 0.0f,
-         0.3f,  0.5f,  0.0f, 0.5f, 0.0f,
-         0.5f,  0.5f,  0.0f, 0.3f, 0.0f,
-         0.7f,  0.5f,  0.0f, 0.5f, 0.0f,
-         0.9f,  0.5f,  0.0f, 0.3f, 0.0f,
+        -0.9f,  0.5f,  
+        -0.7f,  0.5f,  
+        -0.5f,  0.5f,  
+        -0.3f,  0.5f,  
+        -0.1f,  0.5f,  
+         0.1f,  0.5f,  
+         0.3f,  0.5f,  
+         0.5f,  0.5f,  
+         0.7f,  0.5f,  
+         0.9f,  0.5f,  
         
-        -0.9f,  0.7f,  0.0f, 0.3f, 0.0f,
-        -0.7f,  0.7f,  0.0f, 0.5f, 0.0f,
-        -0.5f,  0.7f,  0.0f, 0.3f, 0.0f,
-        -0.3f,  0.7f,  0.0f, 0.5f, 0.0f,
-        -0.1f,  0.7f,  0.0f, 0.3f, 0.0f,
-         0.1f,  0.7f,  0.0f, 0.5f, 0.0f,
-         0.3f,  0.7f,  0.0f, 0.3f, 0.0f,
-         0.5f,  0.7f,  0.0f, 0.5f, 0.0f,
-         0.7f,  0.7f,  0.0f, 0.3f, 0.0f,
-         0.9f,  0.7f,  0.0f, 0.5f, 0.0f,
+        -0.9f,  0.7f,  
+        -0.7f,  0.7f,  
+        -0.5f,  0.7f,  
+        -0.3f,  0.7f,  
+        -0.1f,  0.7f,  
+         0.1f,  0.7f,  
+         0.3f,  0.7f,  
+         0.5f,  0.7f,  
+         0.7f,  0.7f,  
+         0.9f,  0.7f,  
         
-        -0.9f,  0.9f,  0.0f, 0.5f, 0.0f,
-        -0.7f,  0.9f,  0.0f, 0.3f, 0.0f,
-        -0.5f,  0.9f,  0.0f, 0.5f, 0.0f,
-        -0.3f,  0.9f,  0.0f, 0.3f, 0.0f,
-        -0.1f,  0.9f,  0.0f, 0.5f, 0.0f,
-         0.1f,  0.9f,  0.0f, 0.3f, 0.0f,
-         0.3f,  0.9f,  0.0f, 0.5f, 0.0f,
-         0.5f,  0.9f,  0.0f, 0.3f, 0.0f,
-         0.7f,  0.9f,  0.0f, 0.5f, 0.0f,
-         0.9f,  0.9f,  0.0f, 0.3f, 0.0f,
+        -0.9f,  0.9f,  
+        -0.7f,  0.9f,  
+        -0.5f,  0.9f,  
+        -0.3f,  0.9f,  
+        -0.1f,  0.9f,  
+         0.1f,  0.9f,  
+         0.3f,  0.9f,  
+         0.5f,  0.9f,  
+         0.7f,  0.9f,  
+         0.9f,  0.9f,  
     };
     
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
@@ -228,12 +228,8 @@ int main(int argc, const char * argv[]) {
     
     //Next we tell OpenGL how to interpret the array
     //Positionn
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
-    
-    //Color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
@@ -243,6 +239,33 @@ int main(int argc, const char * argv[]) {
     //Uncomment for wireframe mode
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
+//Awesomeface texture:
+    int textureWidth, textureHeight;
+    unsigned char *image;
+    
+    //Load in the image for the container texture
+    image = SOIL_load_image("Resources/grass.jpg", &textureWidth, &textureHeight, 0, SOIL_LOAD_RGB);
+    
+    //Make the awesomeface texture
+    GLuint grassTex;
+    glGenTextures(1, &grassTex);
+    glBindTexture(GL_TEXTURE_2D, grassTex);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    //Generate the image for the currently bound texture object
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    
+    //Free the memory associated with the texture and unbind it
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+//Shader matrix:
     //Send model rotation matrix to the shader
     shader.use();
     
@@ -271,6 +294,11 @@ int main(int argc, const char * argv[]) {
         
         //Use the shader
         shader.use();
+        
+        //Set the texture
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, grassTex);
+        glUniform1i(glGetUniformLocation(shader.program, "texture1"), 0);
         
         //Bind the VAO and draw shapes
         glBindVertexArray(VAO);
