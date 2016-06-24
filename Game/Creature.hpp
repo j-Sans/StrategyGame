@@ -26,19 +26,6 @@ enum Direction {
     West,
 };
 
-/*
- enum promotions {
-    //Tier 1 (also i know this isnt how u format enums but this is just a plan list thing. Choose 1 per promo.
-        Forest 1, Hill 1, Open 1.
-    //Tier 2
-        Forest 2, Hill 2, Open 2, Cover 1, Flank 1, Medic 1, Anti-Cav 1.
-    //Tier 3
-        Forest 3, Hill 3, Open 3, Cover 2, Flank 2, Medic 2, Vision 1, Fast 1.
-    //Tier 4
-        Double Attack, Heal Per Turn, Heal Per Kill, Leadership, Range, Looter, Truesight, Impervious, Toxic.
-};
- */
-
 class Creature {
 public:
     //Constructors
