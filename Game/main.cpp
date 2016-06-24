@@ -12,10 +12,6 @@
 
 //Standard library includes
 
-//Personal includes
-#include <myGL/shader.h>
-#include <myGL/camera.h>
-
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -30,6 +26,10 @@
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
+
+//OpenGL additional classes includes
+#include "GLextensions/shader.hpp"
+#include "GLextensions/camera.hpp"
 
 //Local includes
 #include "Tile.hpp"

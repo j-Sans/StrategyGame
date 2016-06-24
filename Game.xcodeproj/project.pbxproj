@@ -41,6 +41,7 @@
 		23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSOIL.dylib; path = ../../../../usr/local/lib/libSOIL.dylib; sourceTree = "<group>"; };
 		23D6E3F91D1C460300AA01A1 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		23D6E3FA1D1C460300AA01A1 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
+		23D6E40F1D1CD57600AA01A1 /* GLextensions */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GLextensions; path = Game/GLextensions; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +68,7 @@
 				23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */,
 				23D6E3C51D1B0BBA00AA01A1 /* Game */,
 				23D6E3C41D1B0BBA00AA01A1 /* Products */,
+				23D6E40F1D1CD57600AA01A1 /* GLextensions */,
 				23D6E3F91D1C460300AA01A1 /* Resources */,
 				23D6E3FA1D1C460300AA01A1 /* Shaders */,
 			);
