@@ -11,6 +11,7 @@
 #include <time.h>
 
 //Standard library includes
+#include <iostream>
 
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
@@ -28,10 +29,16 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 //OpenGL additional classes includes
-#include "GLextensions/shader.hpp"
+#include "GLextensions/Shader.hpp"
 
 //Local includes
 #include "Tile.hpp"
+
+
+
+//Preprocessor directives
+#define OPEN_TERRAIN 0.0f
+#define MOUNTAIN_TERRAIN 1.0f
 
 
 
@@ -109,122 +116,122 @@ int main(int argc, const char * argv[]) {
     
 //Drawing:
     //Create an object wthat contains the compiled shader
-    Shader shader("Shaders/shader.vert", "Shaders/shader.geom", "Shaders/shader.frag");
+    Shader shader("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag");
     
     //Make a 2D array of single points, which will each be the center of the board square
     //The geometry shader will turn a point into a square centered at that point
     //Later on we will just load all of the map data in from a file. Hardcoded for now
     GLfloat vertices[] = {
     //   position
-        -0.9f, -0.9f,  
-        -0.7f, -0.9f,  
-        -0.5f, -0.9f,  
-        -0.3f, -0.9f,  
-        -0.1f, -0.9f,  
-         0.1f, -0.9f,  
-         0.3f, -0.9f,  
-         0.5f, -0.9f,  
-         0.7f, -0.9f,  
-         0.9f, -0.9f,  
+         0.9f,  0.9f,  MOUNTAIN_TERRAIN,
+         0.9f,  0.7f,  MOUNTAIN_TERRAIN,
+         0.9f,  0.5f,  MOUNTAIN_TERRAIN,
+         0.9f,  0.3f,  OPEN_TERRAIN,
+         0.9f,  0.1f,  OPEN_TERRAIN,
+         0.9f, -0.1f,  OPEN_TERRAIN,
+         0.9f, -0.3f,  OPEN_TERRAIN,
+         0.9f, -0.5f,  OPEN_TERRAIN,
+         0.9f, -0.7f,  OPEN_TERRAIN,
+         0.9f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f, -0.7f,  
-        -0.7f, -0.7f,  
-        -0.5f, -0.7f,  
-        -0.3f, -0.7f,  
-        -0.1f, -0.7f,  
-         0.1f, -0.7f,  
-         0.3f, -0.7f,  
-         0.5f, -0.7f,  
-         0.7f, -0.7f,  
-         0.9f, -0.7f,  
+         0.7f,  0.9f,  MOUNTAIN_TERRAIN,
+         0.7f,  0.7f,  MOUNTAIN_TERRAIN,
+         0.7f,  0.5f,  OPEN_TERRAIN,
+         0.7f,  0.3f,  OPEN_TERRAIN,
+         0.7f,  0.1f,  OPEN_TERRAIN,
+         0.7f, -0.1f,  OPEN_TERRAIN,
+         0.7f, -0.3f,  OPEN_TERRAIN,
+         0.7f, -0.5f,  OPEN_TERRAIN,
+         0.7f, -0.7f,  OPEN_TERRAIN,
+         0.7f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f, -0.5f,  
-        -0.7f, -0.5f,  
-        -0.5f, -0.5f,  
-        -0.3f, -0.5f,  
-        -0.1f, -0.5f,  
-         0.1f, -0.5f,  
-         0.3f, -0.5f,  
-         0.5f, -0.5f,  
-         0.7f, -0.5f,  
-         0.9f, -0.5f,  
+         0.5f,  0.9f,  MOUNTAIN_TERRAIN,
+         0.5f,  0.7f,  OPEN_TERRAIN,
+         0.5f,  0.5f,  OPEN_TERRAIN,
+         0.5f,  0.3f,  OPEN_TERRAIN,
+         0.5f,  0.1f,  OPEN_TERRAIN,
+         0.5f, -0.1f,  OPEN_TERRAIN,
+         0.5f, -0.3f,  OPEN_TERRAIN,
+         0.5f, -0.5f,  OPEN_TERRAIN,
+         0.5f, -0.7f,  OPEN_TERRAIN,
+         0.5f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f, -0.3f,  
-        -0.7f, -0.3f,  
-        -0.5f, -0.3f,  
-        -0.3f, -0.3f,  
-        -0.1f, -0.3f,  
-         0.1f, -0.3f,  
-         0.3f, -0.3f,  
-         0.5f, -0.3f,  
-         0.7f, -0.3f,  
-         0.9f, -0.3f,  
+         0.3f,  0.9f,  MOUNTAIN_TERRAIN,
+         0.3f,  0.7f,  OPEN_TERRAIN,
+         0.3f,  0.5f,  OPEN_TERRAIN,
+         0.3f,  0.3f,  OPEN_TERRAIN,
+         0.3f,  0.1f,  OPEN_TERRAIN,
+         0.3f, -0.1f,  OPEN_TERRAIN,
+         0.3f, -0.3f,  OPEN_TERRAIN,
+         0.3f, -0.5f,  OPEN_TERRAIN,
+         0.3f, -0.7f,  OPEN_TERRAIN,
+         0.3f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f, -0.1f,  
-        -0.7f, -0.1f,  
-        -0.5f, -0.1f,  
-        -0.3f, -0.1f,  
-        -0.1f, -0.1f,  
-         0.1f, -0.1f,  
-         0.3f, -0.1f,  
-         0.5f, -0.1f,  
-         0.7f, -0.1f,  
-         0.9f, -0.1f,  
+         0.1f,  0.9f,  MOUNTAIN_TERRAIN,
+         0.1f,  0.7f,  OPEN_TERRAIN,
+         0.1f,  0.5f,  OPEN_TERRAIN,
+         0.1f,  0.3f,  OPEN_TERRAIN,
+         0.1f,  0.1f,  OPEN_TERRAIN,
+         0.1f, -0.1f,  OPEN_TERRAIN,
+         0.1f, -0.3f,  OPEN_TERRAIN,
+         0.1f, -0.5f,  OPEN_TERRAIN,
+         0.1f, -0.7f,  OPEN_TERRAIN,
+         0.1f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f,  0.1f,  
-        -0.7f,  0.1f,  
-        -0.5f,  0.1f,  
-        -0.3f,  0.1f,  
-        -0.1f,  0.1f,  
-         0.1f,  0.1f,  
-         0.3f,  0.1f,  
-         0.5f,  0.1f,  
-         0.7f,  0.1f,  
-         0.9f,  0.1f,  
+        -0.1f,  0.9f,  OPEN_TERRAIN,
+        -0.1f,  0.7f,  OPEN_TERRAIN,
+        -0.1f,  0.5f,  OPEN_TERRAIN,
+        -0.1f,  0.3f,  OPEN_TERRAIN,
+        -0.1f,  0.1f,  OPEN_TERRAIN,
+        -0.1f, -0.1f,  OPEN_TERRAIN,
+        -0.1f, -0.3f,  OPEN_TERRAIN,
+        -0.1f, -0.5f,  OPEN_TERRAIN,
+        -0.1f, -0.7f,  OPEN_TERRAIN,
+        -0.1f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f,  0.3f,  
-        -0.7f,  0.3f,  
-        -0.5f,  0.3f,  
-        -0.3f,  0.3f,  
-        -0.1f,  0.3f,  
-         0.1f,  0.3f,  
-         0.3f,  0.3f,  
-         0.5f,  0.3f,  
-         0.7f,  0.3f,  
-         0.9f,  0.3f,  
+        -0.3f,  0.9f,  OPEN_TERRAIN,
+        -0.3f,  0.7f,  OPEN_TERRAIN,
+        -0.3f,  0.5f,  OPEN_TERRAIN,
+        -0.3f,  0.3f,  OPEN_TERRAIN,
+        -0.3f,  0.1f,  OPEN_TERRAIN,
+        -0.3f, -0.1f,  OPEN_TERRAIN,
+        -0.3f, -0.3f,  OPEN_TERRAIN,
+        -0.3f, -0.5f,  OPEN_TERRAIN,
+        -0.3f, -0.7f,  OPEN_TERRAIN,
+        -0.3f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f,  0.5f,  
-        -0.7f,  0.5f,  
-        -0.5f,  0.5f,  
-        -0.3f,  0.5f,  
-        -0.1f,  0.5f,  
-         0.1f,  0.5f,  
-         0.3f,  0.5f,  
-         0.5f,  0.5f,  
-         0.7f,  0.5f,  
-         0.9f,  0.5f,  
+        -0.5f,  0.9f,  OPEN_TERRAIN,
+        -0.5f,  0.7f,  OPEN_TERRAIN,
+        -0.5f,  0.5f,  OPEN_TERRAIN,
+        -0.5f,  0.3f,  OPEN_TERRAIN,
+        -0.5f,  0.1f,  OPEN_TERRAIN,
+        -0.5f, -0.1f,  OPEN_TERRAIN,
+        -0.5f, -0.3f,  OPEN_TERRAIN,
+        -0.5f, -0.5f,  OPEN_TERRAIN,
+        -0.5f, -0.7f,  OPEN_TERRAIN,
+        -0.5f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f,  0.7f,  
-        -0.7f,  0.7f,  
-        -0.5f,  0.7f,  
-        -0.3f,  0.7f,  
-        -0.1f,  0.7f,  
-         0.1f,  0.7f,  
-         0.3f,  0.7f,  
-         0.5f,  0.7f,  
-         0.7f,  0.7f,  
-         0.9f,  0.7f,  
+        -0.7f,  0.9f,  OPEN_TERRAIN,
+        -0.7f,  0.7f,  OPEN_TERRAIN,
+        -0.7f,  0.5f,  OPEN_TERRAIN,
+        -0.7f,  0.3f,  OPEN_TERRAIN,
+        -0.7f,  0.1f,  OPEN_TERRAIN,
+        -0.7f, -0.1f,  OPEN_TERRAIN,
+        -0.7f, -0.3f,  OPEN_TERRAIN,
+        -0.7f, -0.5f,  OPEN_TERRAIN,
+        -0.7f, -0.7f,  OPEN_TERRAIN,
+        -0.7f, -0.9f,  OPEN_TERRAIN,
         
-        -0.9f,  0.9f,  
-        -0.7f,  0.9f,  
-        -0.5f,  0.9f,  
-        -0.3f,  0.9f,  
-        -0.1f,  0.9f,  
-         0.1f,  0.9f,  
-         0.3f,  0.9f,  
-         0.5f,  0.9f,  
-         0.7f,  0.9f,  
-         0.9f,  0.9f,  
+        -0.9f,  0.9f,  OPEN_TERRAIN,
+        -0.9f,  0.7f,  OPEN_TERRAIN,
+        -0.9f,  0.5f,  OPEN_TERRAIN,
+        -0.9f,  0.3f,  OPEN_TERRAIN,
+        -0.9f,  0.1f,  OPEN_TERRAIN,
+        -0.9f, -0.1f,  OPEN_TERRAIN,
+        -0.9f, -0.3f,  OPEN_TERRAIN,
+        -0.9f, -0.5f,  OPEN_TERRAIN,
+        -0.9f, -0.7f,  OPEN_TERRAIN,
+        -0.9f, -0.9f,  OPEN_TERRAIN,
     };
     
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
@@ -242,7 +249,7 @@ int main(int argc, const char * argv[]) {
     
     //Next we tell OpenGL how to interpret the array
     //Positionn
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -253,6 +260,10 @@ int main(int argc, const char * argv[]) {
     //Uncomment for wireframe mode
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
+    //Allow for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
 //Grass texture:
     int textureWidth, textureHeight;
     unsigned char *image;
@@ -260,7 +271,7 @@ int main(int argc, const char * argv[]) {
     //Load in the image for the container texture
     image = SOIL_load_image("Resources/grass.jpg", &textureWidth, &textureHeight, 0, SOIL_LOAD_RGB);
     
-    //Make the awesomeface texture
+    //Make the grass texture
     GLuint grassTex;
     glGenTextures(1, &grassTex);
     glBindTexture(GL_TEXTURE_2D, grassTex);
@@ -278,6 +289,29 @@ int main(int argc, const char * argv[]) {
     //Free the memory associated with the texture and unbind it
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0);
+    
+//Mountain texture:
+    //Load in the image for the container texture
+    image = SOIL_load_image("Resources/mountain.png", &textureWidth, &textureHeight, 0, SOIL_LOAD_RGBA);
+    
+    //Make the mountain texture
+    GLuint mountainTex;
+    glGenTextures(1, &mountainTex);
+    glBindTexture(GL_TEXTURE_2D, mountainTex);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    //Generate the image for the currently bound texture object
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    
+    //Free the memory associated with the texture and unbind it
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D, 1);
     
 //Shader matrix:
     //Send model rotation matrix to the shader
@@ -314,9 +348,15 @@ int main(int argc, const char * argv[]) {
         shader.use();
         
         //Set the texture
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, grassTex);
         glUniform1i(glGetUniformLocation(shader.program, "grassTex"), 0);
+        
+        //Set the texture
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, mountainTex);
+        glUniform1i(glGetUniformLocation(shader.program, "mountainTex"), 1);
         
         //Set the camera-translation vector based on arrowkey inputs
         moveCamera(deltaTime);
