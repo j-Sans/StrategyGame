@@ -116,7 +116,7 @@ int main(int argc, const char * argv[]) {
     
 //Drawing:
     //Create an object wthat contains the compiled shader
-    Shader shader("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag");
+    Shader shader("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag");
     
     //Make a 2D array of single points, which will each be the center of the board square
     //The geometry shader will turn a point into a square centered at that point
