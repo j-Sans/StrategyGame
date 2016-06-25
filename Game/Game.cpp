@@ -21,12 +21,12 @@ Game::Game(Shader shader, std::vector<std::vector<Tile> > board) : gameShader(sh
     //Load textures
     //Exception only thrown if there are 32 textures already present
     try {
-        this->loadTexture("Resources/grass.jpg");
+        this->loadTexture("Resources/grass.jpg", "grassTex");
     } catch (std::exception e) {
         std::cout << "Error loading grass texture: " << e.what();
     }
     try {
-        this->loadTexture("Resources/mountain.png");
+        this->loadTexture("Resources/mountain.png", "grassTex");
     } catch (std::exception e) {
         std::cout << "Error loading mountain texture: " << e.what();
     }
@@ -67,13 +67,13 @@ void Game::initWindow() {
 #endif
     
     //Make a window object
-    this->window = glfwCreateWindow(this->windowWidth, this->windowHeight, "Game", nullptr, nullptr);
-    if (this->window == nullptr) { //If the window isn't created, return an error
+    this->gameWindow = glfwCreateWindow(this->windowWidth, this->windowHeight, "Game", nullptr, nullptr);
+    if (this->gameWindow == nullptr) { //If the window isn't created, return an error
         glfwTerminate();
         std::cout << "Failed to create GLFW Window.\n";
     }
     
-    glfwMakeContextCurrent(this->window);
+    glfwMakeContextCurrent(this->gameWindow);
     
     //Initialize GLEW
     glewExperimental = GL_TRUE; //Allows the use of more modern OpenGL functionality
@@ -83,11 +83,11 @@ void Game::initWindow() {
     
     //Tell OpenGL window information
     int viewportWidth, viewportHeight;
-    glfwGetFramebufferSize(this->window, &viewportWidth, &viewportHeight);
+    glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     glViewport(0, 0, viewportWidth, viewportHeight);
     
     //Set key callback function    
-    glfwSetKeyCallback(this->window, this->keyCallback);
+    glfwSetKeyCallback(this->gameWindow, this->keyCallback);
 }
 
 /**
@@ -246,6 +246,7 @@ void Game::setBuffers() {
  * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
  *
  * @param texPath A string representing the path to the texture image.
+ * @param texName A string representing the uniform name of the texture.
  */
 void Game::loadTexture(const GLchar* texPath, const GLchar* texName) {
     if (textures.size() <= 32)
@@ -258,6 +259,7 @@ void Game::loadTexture(const GLchar* texPath, const GLchar* texName) {
  * Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
  *
  * @param texPath A string representing the path to the texture image.
+ * @param texName A string representing the uniform name of the texture.
  */
 void Game::replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName) {
     if (texIndex < textures.size())
@@ -310,33 +312,54 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
-    //Set the texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, grassTex);
-    glUniform1i(glGetUniformLocation(shader.program, "grassTex"), 0);
-    
-    //Set the texture
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, mountainTex);
-    glUniform1i(glGetUniformLocation(shader.program, "mountainTex"), 1);
-    
     //Set the camera-translation vector based on arrowkey inputs
-    moveCamera(deltaTime);
+    this->moveCamera();
     
     //Affect the camera position and send the view matrix to the shader
     view = glm::translate(view, cameraCenter);
-    glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    this->gameShader.uniformMat4("view", view);
     
     //Reset the view matrix
-    view = glm::mat4();
+    this->view = glm::mat4();
     
     //Bind the VAO and draw shapes
-    glBindVertexArray(VAO);
+    glBindVertexArray(this->VAO);
     glDrawArrays(GL_POINTS, 0, 100);
     glBindVertexArray(0);
     
     //Swap buffers so as to properly render without flickering
-    glfwSwapBuffers(window);
+    glfwSwapBuffers(this->gameWindow);
+}
+
+
+/**
+ * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
+ */
+void Game::moveCamera() {
+    GLfloat displacement = this->deltaTime * this->camSpeed;
+    
+    if (keys[GLFW_KEY_DOWN]) {
+        this->cameraCenter.y += displacement;
+    }
+    if (keys[GLFW_KEY_UP]) {
+        this->cameraCenter.y -= displacement;
+    }
+    if (keys[GLFW_KEY_LEFT]) {
+        this->cameraCenter.x += displacement;
+    }
+    if (keys[GLFW_KEY_RIGHT]) {
+        this->cameraCenter.x -= displacement;
+    }
+    
+    //Guaruntees that the camera won't move too far from the board center
+    if (this->cameraCenter.x > this->camMaxDisplacement)
+        this->cameraCenter.x = this->camMaxDisplacement;
+    if (this->cameraCenter.x < -this->camMaxDisplacement)
+        this->cameraCenter.x = -this->camMaxDisplacement;
+    if (this->cameraCenter.y > this->camMaxDisplacement)
+        this->cameraCenter.y = this->camMaxDisplacement;
+    if (this->cameraCenter.y < -this->camMaxDisplacement)
+        this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
 

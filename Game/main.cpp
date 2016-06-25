@@ -91,6 +91,8 @@ int main(int argc, const char * argv[]) {
         board.push_back(row);
     }
     
+    Game G(Shader("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag"), board);
+    /*
 //Initialization:
     //Initiate GLFW
     glfwInit();
@@ -348,9 +350,10 @@ int main(int argc, const char * argv[]) {
     
     //Send the model matrix to the shader
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "ortho"), 1, GL_FALSE, glm::value_ptr(ortho));
-    
+    */
     //Game loop
-    while(!glfwWindowShouldClose(window)) {
+    while(!glfwWindowShouldClose(G.window())) {
+        /*
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -393,12 +396,14 @@ int main(int argc, const char * argv[]) {
         
         //Swap buffers so as to properly render without flickering
         glfwSwapBuffers(window);
+         */
+        G.render();
     }
     
 //Termination:
     //Deallocate all any resources when we are finished
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+//    glDeleteVertexArrays(1, &VAO);
+//    glDeleteBuffers(1, &VBO);
     
     glfwTerminate();
     return 0;
@@ -465,6 +470,6 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
  *
  * @return The pointer to an array of vertices that can directly be sent to the VBO. For each point, the array will contain the x and y positions from -1.0 to 1.0, along with a float representing the terrain type of the tile.
  */
-GLfloat* getVertices(const std::vector<std::vector<Tile> >& board) {
-    // TO BE FINISHED
-}
+//GLfloat* getVertices(const std::vector<std::vector<Tile> >& board) {
+//    // TO BE FINISHED
+//}

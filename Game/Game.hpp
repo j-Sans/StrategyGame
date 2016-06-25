@@ -59,10 +59,18 @@ public:
     const GLuint windowWidth = 800;
     const GLuint windowHeight = 600;
     
+    //Speed of camera motion
+    const GLfloat camSpeed = 1.5f;
+    
+    //Max camera distance from board center
+    const GLfloat camMaxDisplacement = 1.0f;
+    
     //Public member functions
+    void render();
     const void setClearColor(GLfloat red, GLfloat green, GLfloat blue);
     
     //Get functions
+    GLFWwindow* window() { return this->gameWindow; }
     const GLfloat timeSinceLastFrame() { return this->deltaTime; }
     
 private:
@@ -70,7 +78,7 @@ private:
     std::vector<std::vector<Tile> > board;
     
     //OpenGL and GLFW properties
-    GLFWwindow* window;
+    GLFWwindow* gameWindow;
     Shader gameShader; //Compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     GLuint VBO; //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
@@ -82,7 +90,9 @@ private:
     //Transformations
     glm::mat4 model; //Makes model isometric
     glm::mat4 view; //Translates camera view
-    glm::mat4 projection; //Keeps scaling constant with different window sizes
+    glm::mat4 projection; //Keeps board scale constant with different window sizes
+    
+    glm::vec3 cameraCenter;
     
     //Window data
     GLfloat deltaTime = 0.0f;
@@ -98,7 +108,8 @@ private:
     void loadTexture(const GLchar* texPath, const GLchar* texName);
     void replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName);
     void presetTransformations(); //Contains matrix transformations to be done on the board. This sets model and projection matrices. Called only once
-    void render();
+    
+    void moveCamera();
 };
 
 #endif /* Game_hpp */
