@@ -12,6 +12,7 @@
 //Standard library includes
 #include <array>
 #include <vector>
+#include <exception>
 
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
@@ -76,7 +77,7 @@ private:
     std::array<GLfloat, NUMBER_OF_TILES * INDICES_PER_TILES> vertexData; //Access the contained array within using ".data()"
     
     //Textures
-    Texture textures[16];
+    std::vector<Texture> textures;
     
     //Transformations
     glm::mat4 model; //Makes model isometric
@@ -94,7 +95,8 @@ private:
     void initWindow();
     void setVertexData();
     void setBuffers();
-    void loadTexture(const GLchar* texPath, GLuint texNumber);
+    void loadTexture(const GLchar* texPath, const GLchar* texName);
+    void replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName);
     void presetTransformations(); //Contains matrix transformations to be done on the board. This sets model and projection matrices. Called only once
     void render();
 };

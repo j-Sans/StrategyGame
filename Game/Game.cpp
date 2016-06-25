@@ -19,8 +19,17 @@ Game::Game(Shader shader, std::vector<std::vector<Tile> > board) : gameShader(sh
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     //Load textures
-    this->loadTexture("Resources/grass.jpg", 0);
-    this->loadTexture("Resources/mountain.png", 1);
+    //Exception only thrown if there are 32 textures already present
+    try {
+        this->loadTexture("Resources/grass.jpg");
+    } catch (std::exception e) {
+        std::cout << "Error loading grass texture: " << e.what();
+    }
+    try {
+        this->loadTexture("Resources/mountain.png");
+    } catch (std::exception e) {
+        std::cout << "Error loading mountain texture: " << e.what();
+    }
     
     this->presetTransformations();
 }
@@ -234,17 +243,27 @@ void Game::setBuffers() {
 }
 
 /**
- * Loads a texture into the texture array as a GLuint.
+ * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
  *
- * @param texPath A string representing the path to the texture image
- * @param texNumber A GLuint representing the number the texture should be, when called by GL_TEXTURE0 or whichever number. Goes into that index in the array. Range should be 0-15. If greater, then will be treated as if it is 16.
+ * @param texPath A string representing the path to the texture image.
  */
-void Game::loadTexture(const GLchar* texPath, GLuint texNumber) {
-    if (texNumber > 15) {
-        texNumber = 15; //Stops bad access from accessing greater than element 15 in the size-16 array textures
-    }
-    
-    textures[texNumber] = Texture(texPath, texNumber);
+void Game::loadTexture(const GLchar* texPath, const GLchar* texName) {
+    if (textures.size() <= 32)
+        textures.push_back(Texture(texPath, (GLuint)textures.size(), texName));
+    else
+        throw std::range_error("32 textures already loaded.");
+}
+
+/**
+ * Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
+ *
+ * @param texPath A string representing the path to the texture image.
+ */
+void Game::replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName) {
+    if (texIndex < textures.size())
+        textures[texIndex] = Texture(texPath, texIndex, texName);
+    else
+        throw std::range_error("No texture loaded in that spot.");
 }
 
 /**
@@ -287,7 +306,9 @@ void Game::render() {
     //Use the shader
     this->gameShader.use();
     
-    
+    for (auto tex = textures.begin(); tex != textures.end(); tex++) {
+        tex->use(this->gameShader);
+    }
     
     //Set the texture
     glActiveTexture(GL_TEXTURE0);

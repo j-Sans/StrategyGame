@@ -67,7 +67,7 @@ const GLfloat camMaxDisplacement = 1.0f;
 bool gameOver = false;
 
 //Array of each key, whether it is pressed or not
-bool keys[1024];
+//bool keys[1024];
 
 //Previous times, for calculating motion at a steady rate on all systems
 GLfloat deltaTime = 0.0f;

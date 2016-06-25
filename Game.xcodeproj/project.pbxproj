@@ -30,6 +30,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		230773EE1D1F016F00EB7233 /* GLextensions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GLextensions; sourceTree = "<group>"; };
 		23CBFD531D1EC2AB00F0773D /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
 		23CBFD541D1EC2AB00F0773D /* Game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Game.hpp; sourceTree = "<group>"; };
 		23D6E3C31D1B0BBA00AA01A1 /* Game */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Game; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,7 +45,6 @@
 		23D6E3DC1D1B500C00AA01A1 /* libSOIL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSOIL.dylib; path = ../../../../usr/local/lib/libSOIL.dylib; sourceTree = "<group>"; };
 		23D6E3F91D1C460300AA01A1 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		23D6E3FA1D1C460300AA01A1 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
-		23D6E40F1D1CD57600AA01A1 /* GLextensions */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GLextensions; path = Game/GLextensions; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,7 +71,7 @@
 				23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */,
 				23D6E3C51D1B0BBA00AA01A1 /* Game */,
 				23D6E3C41D1B0BBA00AA01A1 /* Products */,
-				23D6E40F1D1CD57600AA01A1 /* GLextensions */,
+				230773EE1D1F016F00EB7233 /* GLextensions */,
 				23D6E3F91D1C460300AA01A1 /* Resources */,
 				23D6E3FA1D1C460300AA01A1 /* Shaders */,
 			);
@@ -249,7 +249,10 @@
 		23D6E3CB1D1B0BBA00AA01A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include/,
+					/Users/Jake/Desktop/Game/,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib/,
 					"$(PROJECT_DIR)/Game/GLextensions",
@@ -261,7 +264,10 @@
 		23D6E3CC1D1B0BBA00AA01A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include/,
+					/Users/Jake/Desktop/Game/,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib/,
 					"$(PROJECT_DIR)/Game/GLextensions",

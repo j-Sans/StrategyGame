@@ -9,28 +9,33 @@
 #ifndef texture_hpp
 #define texture_hpp
 
+#include <string>
+
 class Texture {
 public:
     //Constructor
-    Texture(const GLchar* imagePath, GLuint texNumber);
+    Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName);
     
     //Public member functions
-    const void use(Shader shader, const GLchar* uniformName);
+    const void use(Shader shader);
 private:
     //Private properties
     GLuint tex;
     GLuint texNum;
     GLuint id;
+    std::string name;
 };
 
-Texture::Texture(const GLchar* imagePath, GLuint texNumber) {
-    if (texNumber > 15) {
-        texNumber = 15; //Stops bad access from accessing greater than element 15 in the size-16 array textures
+Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName) {
+    if (texNumber >= 32) {
+        texNumber = 31; //Stops bad access from accessing greater than element 31 in the because OpenGL might only be able to use 32 textures.
     }
     
-    id = GL_TEXTURE0 + texNumber;
+    this->id = GL_TEXTURE0 + texNumber;
     
     this->texNum = texNumber;
+    
+    this->name = uniformName;
     
     int textureWidth, textureHeight;
     unsigned char *image;
@@ -39,8 +44,8 @@ Texture::Texture(const GLchar* imagePath, GLuint texNumber) {
     image = SOIL_load_image(imagePath, &textureWidth, &textureHeight, 0, SOIL_LOAD_RGB);
     
     //Make the texture
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
+    glGenTextures(1, &this->tex);
+    glBindTexture(GL_TEXTURE_2D, this->tex);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -57,10 +62,10 @@ Texture::Texture(const GLchar* imagePath, GLuint texNumber) {
     glBindTexture(GL_TEXTURE_2D, this->texNum);
 }
 
-void Texture::use(Shader shader, const GLchar* uniformName) {
+const void Texture::use(Shader shader) {
     glActiveTexture(this->id);
     glBindTexture(GL_TEXTURE_2D, this->tex);
-    shader.uniformTex(uniformName, this->texNum);
+    shader.uniformTex(this->name.c_str(), this->texNum);
 }
 
 #endif /* Texture_hpp */

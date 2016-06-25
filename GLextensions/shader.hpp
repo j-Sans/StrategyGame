@@ -1,14 +1,16 @@
 //
-//  shader.h
+//  Shader.hpp
 //  BaseOpenGL
 //
 //  Created by Jake Sanders on 6/6/16.
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
-//  Created following the tutorial at http://learnopengl.com/#!Getting-started/Shaders by Joey De Vries
+//  Guided by the tutorial at http://learnopengl.com/#!Getting-started/Shaders by Joey De Vries
+//  This has been altered from the original code, and is not supported nor endorsed by LearnOpenGL
+//
 
-#ifndef shader_h
-#define shader_h
+#ifndef Shader_hpp
+#define Shader_hpp
 
 #include <string>
 #include <fstream>
@@ -25,7 +27,6 @@
  * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
  * @param geometryPath A c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is optional.
  * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
- * @return The created shader object containing the compiled shader program.
  */
 class Shader {
 public:
@@ -44,10 +45,22 @@ public:
     
     //Use the program
     void use();
+    
+    //Send uniforms to the shader
+    void uniformTex(const GLchar* name, GLuint texNum) { glUniform1i(glGetUniformLocation(this->program, name), texNum); }
+    
+    void uniform1f(const GLchar* name, float f) { glUniform1f(glGetUniformLocation(this->program, name), f); }
+    void uniform2f(const GLchar* name, glm::vec2 vec) { glUniform2f(glGetUniformLocation(this->program, name), vec.x, vec.y); }
+    void uniform3f(const GLchar* name, glm::vec3 vec) { glUniform3f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z); }
+    void uniform4f(const GLchar* name, glm::vec4 vec) { glUniform4f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z, vec.w); }
+    
+    void uniformMat2(const GLchar* name, glm::mat2x2 mat) { glUniformMatrix2fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
+    void uniformMat3(const GLchar* name, glm::mat3x3 mat) { glUniformMatrix3fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
+    void uniformMat4(const GLchar* name, glm::mat4x4 mat) { glUniformMatrix4fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
 };
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
-//Get the shader code:
+    //Get the shader code:
     std::string vertexCode;
     std::string fragmentCode;
     std::ifstream vShaderFile;
@@ -81,7 +94,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     const GLchar* vShaderCode = vertexCode.c_str();
     const GLchar* fShaderCode = fragmentCode.c_str();
     
-//Compile the shaders:
+    //Compile the shaders:
     //Create the vertex shader and attach to it the code above
     GLuint vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -131,6 +144,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 }
+
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath) {
     //Get the shader code:
@@ -250,4 +264,4 @@ void Shader::use() {
     glUseProgram(this->program);
 }
 
-#endif /* shader_h */
+#endif /* Shader_hpp */
