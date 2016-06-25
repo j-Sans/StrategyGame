@@ -55,7 +55,7 @@ void moveCamera(GLfloat deltaTime);
 //Variables:
 
 //Window size
-const GLuint windowWidth = 700, windowHeight = 700;
+const GLuint windowWidth = 800, windowHeight = 600;
 
 //Camera translation speed
 const GLfloat camSpeed = 1.5f;
@@ -89,7 +89,9 @@ int main(int argc, const char * argv[]) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Error with accidental use of legacy functions
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Non-resizable
+#ifndef _win32
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //On OS X
+#endif
     
     //Make a window object
     GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "My Window", nullptr, nullptr);
@@ -333,7 +335,7 @@ int main(int argc, const char * argv[]) {
     
     //Orthographic (non-3D projection) added so that different window sizes don't distort the scale
     glm::mat4 ortho;
-    ortho = glm::ortho((float)windowWidth / (float)windowHeight * -1.0f, (float)windowWidth / (float)windowHeight * 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+    ortho = glm::ortho((GLfloat)windowWidth / (GLfloat)windowHeight * -1.0f, (GLfloat)windowWidth / (GLfloat)windowHeight * 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
     
     //Send the model matrix to the shader
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "ortho"), 1, GL_FALSE, glm::value_ptr(ortho));
