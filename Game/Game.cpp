@@ -9,9 +9,8 @@
 #include "Game.hpp"
 
 //Constructor
-Game::Game(Shader shader, std::vector<std::vector<Tile> > board) {
+Game::Game(Shader shader, std::vector<std::vector<Tile> > board) : gameShader(shader) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->gameShader = shader;
     this->setVertexData(); //Set the vertex data with an std::array
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
@@ -35,7 +34,7 @@ Game::Game(Shader shader, std::vector<std::vector<Tile> > board) {
  * @param green The green value of the color, on a scale of 0.0 to 1.0. Outside this scale will be mapped to 0.0 or 1.0.
  * @param blue The blue value of the color, on a scale of 0.0 to 1.0. Outside this scale will be mapped to 0.0 or 1.0.
  */
-void Game::setClearColor(GLfloat red, GLfloat green, GLfloat blue) {
+const void Game::setClearColor(GLfloat red, GLfloat green, GLfloat blue) {
     red = red >= 1.0f ? 1.0f : red <= 0.0f ? 0.0f : red;
     green = green >= 1.0f ? 1.0f : green <= 0.0f ? 0.0f : green;
     blue = blue >= 1.0f ? 1.0f : blue <= 0.0f ? 0.0f : blue;
@@ -245,26 +244,7 @@ void Game::loadTexture(const GLchar* texPath, GLuint texNumber) {
         texNumber = 15; //Stops bad access from accessing greater than element 15 in the size-16 array textures
     }
     
-    //Load in the image for the container texture
-    image = SOIL_load_image(texPath, &textureWidth, &textureHeight, 0, SOIL_LOAD_RGB);
-    
-    //Make the texture
-    glGenTextures(1, &this->textures[texNumber]);
-    glBindTexture(GL_TEXTURE_2D, this->textures[texNumber]);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    //Generate the image for the currently bound texture object
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    
-    //Free the memory associated with the texture and unbind it
-    SOIL_free_image_data(image);
-    glBindTexture(GL_TEXTURE_2D, texNumber);
+    textures[texNumber] = Texture(texPath, texNumber);
 }
 
 /**
@@ -305,10 +285,11 @@ void Game::render() {
     glClear(GL_COLOR_BUFFER_BIT);
     
     //Use the shader
-    shader.use();
+    this->gameShader.use();
+    
+    
     
     //Set the texture
-    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, grassTex);
     glUniform1i(glGetUniformLocation(shader.program, "grassTex"), 0);

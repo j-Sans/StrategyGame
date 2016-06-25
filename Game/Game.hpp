@@ -30,6 +30,7 @@
 
 //Local includes
 #include "GLextensions/shader.hpp"
+#include "GLextensions/texture.hpp"
 #include "Tile.hpp"
 
 
@@ -56,7 +57,6 @@ public:
     //Public properties
     const GLuint windowWidth = 800;
     const GLuint windowHeight = 600;
-    const GLuint boardSize;
     
     //Public member functions
     const void setClearColor(GLfloat red, GLfloat green, GLfloat blue);
@@ -76,9 +76,7 @@ private:
     std::array<GLfloat, NUMBER_OF_TILES * INDICES_PER_TILES> vertexData; //Access the contained array within using ".data()"
     
     //Textures
-    int textureWidth, textureHeight;
-    unsigned char *image;
-    GLuint textures[16];
+    Texture textures[16];
     
     //Transformations
     glm::mat4 model; //Makes model isometric

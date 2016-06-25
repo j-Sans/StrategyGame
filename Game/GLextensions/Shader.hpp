@@ -47,6 +47,8 @@ public:
     void use();
     
     //Send uniforms to the shader
+    void uniformTex(const GLchar* name, GLuint texNum) { glUniform1i(glGetUniformLocation(this->program, name), texNum); }
+    
     void uniform1f(const GLchar* name, float f) { glUniform1f(glGetUniformLocation(this->program, name), f); }
     void uniform2f(const GLchar* name, glm::vec2 vec) { glUniform2f(glGetUniformLocation(this->program, name), vec.x, vec.y); }
     void uniform3f(const GLchar* name, glm::vec3 vec) { glUniform3f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z); }
