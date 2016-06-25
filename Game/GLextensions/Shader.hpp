@@ -45,6 +45,16 @@ public:
     
     //Use the program
     void use();
+    
+    //Send uniforms to the shader
+    void uniform1f(const GLchar* name, float f) { glUniform1f(glGetUniformLocation(this->program, name), f); }
+    void uniform2f(const GLchar* name, glm::vec2 vec) { glUniform2f(glGetUniformLocation(this->program, name), vec.x, vec.y); }
+    void uniform3f(const GLchar* name, glm::vec3 vec) { glUniform3f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z); }
+    void uniform4f(const GLchar* name, glm::vec4 vec) { glUniform4f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z, vec.w); }
+    
+    void uniformMat2(const GLchar* name, glm::mat2x2 mat) { glUniformMatrix2fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
+    void uniformMat3(const GLchar* name, glm::mat3x3 mat) { glUniformMatrix3fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
+    void uniformMat4(const GLchar* name, glm::mat4x4 mat) { glUniformMatrix4fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
 };
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {

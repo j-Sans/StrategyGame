@@ -34,11 +34,7 @@
 
 //Local includes
 #include "Tile.hpp"
-
-
-//Preprocessor directives
-#define OPEN_TERRAIN 0.0f
-#define MOUNTAIN_TERRAIN 1.0f
+#include "Game.hpp"
 
 
 //Functions:

@@ -10,6 +10,7 @@
 #define Game_hpp
 
 //Standard library includes
+#include <array>
 #include <vector>
 
 //GLEW: Locates memory location of OpenGL functions
@@ -31,6 +32,16 @@
 #include "GLextensions/shader.hpp"
 #include "Tile.hpp"
 
+
+//Preprocessor directives
+#define NUMBER_OF_TILES 100
+#define INDICES_PER_TILES 3
+
+#define OPEN_TERRAIN 0.0f
+#define MOUNTAIN_TERRAIN 1.0f
+
+
+
 //An array of booleans representing if, for each key, if that key is pressed
 //Declared here so it can work with static function keyCallback. That function needs to be static
 bool keys[1024];
@@ -45,20 +56,49 @@ public:
     //Public properties
     const GLuint windowWidth = 800;
     const GLuint windowHeight = 600;
+    const GLuint boardSize;
     
     //Public member functions
+    const void setClearColor(GLfloat red, GLfloat green, GLfloat blue);
     
     //Get functions
+    const GLfloat timeSinceLastFrame() { return this->deltaTime; }
     
 private:
     //Private properties
+    std::vector<std::vector<Tile> > board;
     
+    //OpenGL and GLFW properties
     GLFWwindow* window;
+    Shader gameShader; //Compiled shader
+    GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
+    GLuint VBO; //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
+    std::array<GLfloat, NUMBER_OF_TILES * INDICES_PER_TILES> vertexData; //Access the contained array within using ".data()"
     
+    //Textures
+    int textureWidth, textureHeight;
+    unsigned char *image;
+    GLuint textures[16];
     
+    //Transformations
+    glm::mat4 model; //Makes model isometric
+    glm::mat4 view; //Translates camera view
+    glm::mat4 projection; //Keeps scaling constant with different window sizes
+    
+    //Window data
+    GLfloat deltaTime = 0.0f;
+    GLfloat lastFrame = 0.0f;
+    glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
+
     //Private member functions
     static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
+    
     void initWindow();
+    void setVertexData();
+    void setBuffers();
+    void loadTexture(const GLchar* texPath, GLuint texNumber);
+    void presetTransformations(); //Contains matrix transformations to be done on the board. This sets model and projection matrices. Called only once
+    void render();
 };
 
 #endif /* Game_hpp */
