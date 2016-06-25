@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23CBFD551D1EC2AB00F0773D /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23CBFD531D1EC2AB00F0773D /* Game.cpp */; };
 		23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3C61D1B0BBA00AA01A1 /* main.cpp */; };
 		23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */; };
 		23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3D31D1B139100AA01A1 /* Tile.cpp */; };
@@ -29,6 +30,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		23CBFD531D1EC2AB00F0773D /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
+		23CBFD541D1EC2AB00F0773D /* Game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Game.hpp; sourceTree = "<group>"; };
 		23D6E3C31D1B0BBA00AA01A1 /* Game */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Game; sourceTree = BUILT_PRODUCTS_DIR; };
 		23D6E3C61D1B0BBA00AA01A1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Creature.cpp; sourceTree = "<group>"; };
@@ -85,6 +88,8 @@
 		23D6E3C51D1B0BBA00AA01A1 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				23CBFD531D1EC2AB00F0773D /* Game.cpp */,
+				23CBFD541D1EC2AB00F0773D /* Game.hpp */,
 				23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */,
 				23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */,
 				23D6E3D31D1B139100AA01A1 /* Tile.cpp */,
@@ -152,6 +157,7 @@
 			files = (
 				23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */,
 				23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */,
+				23CBFD551D1EC2AB00F0773D /* Game.cpp in Sources */,
 				23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
