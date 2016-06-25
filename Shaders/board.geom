@@ -13,21 +13,22 @@ out vec3 TexCoords; //First two are coordinates, third says which texture
 
 uniform mat4 model;
 uniform mat4 view;
+uniform mat4 ortho;
 
 void makeSquare(vec4 position) {
-    gl_Position = view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom left
+    gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom left
     TexCoords = vec3(0.0f, 0.0f, OPEN_TERRAIN);
     EmitVertex();
     
-    gl_Position = view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Bottom right
+    gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Bottom right
     TexCoords = vec3(1.0f, 0.0f, OPEN_TERRAIN);
     EmitVertex();
     
-    gl_Position = view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Top left
+    gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Top left
     TexCoords = vec3(0.0f, 1.0f, OPEN_TERRAIN);
     EmitVertex();
     
-    gl_Position = view * model * (position + vec4( 0.1f,  0.1f, 0.0f, 0.0f)); //Top right
+    gl_Position = ortho * view * model * (position + vec4( 0.1f,  0.1f, 0.0f, 0.0f)); //Top right
     TexCoords = vec3(1.0f, 1.0f, OPEN_TERRAIN);
     EmitVertex();
     
@@ -35,19 +36,19 @@ void makeSquare(vec4 position) {
 }
 
 void makeMountain(vec4 position) {
-    gl_Position = view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
+    gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
     TexCoords = vec3(0.0f, 1.0f, MOUNTAIN_TERRAIN);
     EmitVertex();
     
-    gl_Position = view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
+    gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
     TexCoords = vec3(0.5f, 1.0f, MOUNTAIN_TERRAIN);
     EmitVertex();
     
-    gl_Position = view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
+    gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
     TexCoords = vec3(0.0f, 0.5f, MOUNTAIN_TERRAIN);
     EmitVertex();
     
-    gl_Position = view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
+    gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
     TexCoords = vec3(1.0f, 0.0f, MOUNTAIN_TERRAIN);
     EmitVertex();
     

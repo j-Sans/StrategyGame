@@ -122,7 +122,7 @@ int main(int argc, const char * argv[]) {
     //The geometry shader will turn a point into a square centered at that point
     //Later on we will just load all of the map data in from a file. Hardcoded for now
     GLfloat vertices[] = {
-    //   position
+    //   position      terrain type
          0.9f,  0.9f,  MOUNTAIN_TERRAIN,
          0.9f,  0.7f,  MOUNTAIN_TERRAIN,
          0.9f,  0.5f,  MOUNTAIN_TERRAIN,
@@ -319,7 +319,7 @@ int main(int argc, const char * argv[]) {
     
     glm::mat4 model;
     
-    //make the board appear to be tilted away by keeping width double the size of heights
+    //Make the board appear to be tilted away by keeping width double the size of heights
     model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
     
     //Make the board rotated 45º
@@ -330,6 +330,13 @@ int main(int argc, const char * argv[]) {
     
     //View matrix
     glm::mat4 view;
+    
+    //Orthographic (non-3D projection) added so that different window sizes don't distort the scale
+    glm::mat4 ortho;
+    ortho = glm::ortho((float)windowWidth / (float)windowHeight * -1.0f, (float)windowWidth / (float)windowHeight * 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+    
+    //Send the model matrix to the shader
+    glUniformMatrix4fv(glGetUniformLocation(shader.program, "ortho"), 1, GL_FALSE, glm::value_ptr(ortho));
     
     //Game loop
     while(!glfwWindowShouldClose(window)) {
