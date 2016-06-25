@@ -9,6 +9,9 @@
 #include "Tile.hpp"
 
 //Constructors
+Tile::Tile(Terrain terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
+    this->tileTerrain = terrain;
+}
 
 //Destructor
 

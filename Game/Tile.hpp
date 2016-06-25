@@ -13,17 +13,16 @@
 
 enum Terrain {
     Open,
-    Forest,
     Mountain,
+    Forest,
     Water,
-    River,
-    Hill,
     CarrotFarm //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 };
 
 class Tile {
 public:
     //Constructors
+    Tile(Terrain terrain, unsigned int x, unsigned int y);
     
     //Destructor
     ~Tile();
@@ -34,6 +33,8 @@ public:
     //Public member functions
     
     //Get methods
+    const unsigned int x() { return this->tileX; }
+    const unsigned int y() { return this->tileY; }
     const Creature* creature() { return this->tileCreature; }
     const Terrain terrain() { return this->tileTerrain; }
     const bool occupied() { return this->tileCreature != nullptr ? true : false; }
@@ -44,6 +45,8 @@ public:
     
 private:
     //Private properties
+    const unsigned int tileX;
+    const unsigned int tileY;
     Creature* tileCreature = nullptr;
     Terrain tileTerrain = Open;
     

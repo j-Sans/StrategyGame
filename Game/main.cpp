@@ -12,6 +12,7 @@
 
 //Standard library includes
 #include <iostream>
+#include <vector>
 
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
@@ -35,11 +36,9 @@
 #include "Tile.hpp"
 
 
-
 //Preprocessor directives
 #define OPEN_TERRAIN 0.0f
 #define MOUNTAIN_TERRAIN 1.0f
-
 
 
 //Functions:
@@ -50,12 +49,17 @@ void keyCallback (GLFWwindow *window, int key, int scancode, int action, int mod
 //A function to be called that adjusts the camera position on arowkey clicks
 void moveCamera(GLfloat deltaTime);
 
+//A function that takes the game board and returns an array of the vertices
+GLfloat* getVertices(const std::vector<std::vector<Tile> >& board);
 
 
 //Variables:
 
 //Window size
 const GLuint windowWidth = 800, windowHeight = 600;
+
+//Board speed
+const GLuint boardWidth = 10;
 
 //Camera translation speed
 const GLfloat camSpeed = 1.5f;
@@ -77,10 +81,19 @@ GLfloat lastFrame = 0.0f;
 glm::vec3 cameraCenter;
 
 
-
 int main(int argc, const char * argv[]) {
     //Set up
     srand((int)time(NULL));
+    
+//Gameboard:
+    std::vector<std::vector<Tile> > board;
+    for (GLuint a = 0; a < boardWidth; a++) {
+        std::vector<Tile> row;
+        for (GLuint b = 0; b < boardWidth; b++) {
+            row.push_back(Tile(Open, a, b));
+        }
+        board.push_back(row);
+    }
     
 //Initialization:
     //Initiate GLFW
@@ -447,4 +460,15 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
             keys[key] = false;
         }
     }
+}
+
+/**
+ * A function that takes the game board and returns an array of the vertices
+ *
+ * @param board A 2D vector of Tile objects that store the board information.
+ *
+ * @return The pointer to an array of vertices that can directly be sent to the VBO. For each point, the array will contain the x and y positions from -1.0 to 1.0, along with a float representing the terrain type of the tile.
+ */
+GLfloat* getVertices(const std::vector<std::vector<Tile> >& board) {
+    // TO BE FINISHED
 }
