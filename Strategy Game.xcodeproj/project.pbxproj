@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		23CBFD551D1EC2AB00F0773D /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23CBFD531D1EC2AB00F0773D /* Game.cpp */; };
-		23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3C61D1B0BBA00AA01A1 /* main.cpp */; };
-		23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */; };
-		23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23D6E3D31D1B139100AA01A1 /* Tile.cpp */; };
+		237D5C851D1F7E2C005B5B85 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C841D1F7E2C005B5B85 /* main.cpp */; };
+		237D5C8A1D1F7E3A005B5B85 /* Creature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C861D1F7E3A005B5B85 /* Creature.cpp */; };
+		237D5C8D1D1F7E4A005B5B85 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C8B1D1F7E4A005B5B85 /* Tile.cpp */; };
+		237D5C931D1F8279005B5B85 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C921D1F8279005B5B85 /* Game.cpp */; };
+		237D5C981D1F911A005B5B85 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C971D1F911A005B5B85 /* Shader.cpp */; };
+		237D5C9C1D2025FD005B5B85 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C9B1D2025FD005B5B85 /* Texture.cpp */; };
 		23D6E3D71D1B4FEC00AA01A1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */; };
 		23D6E3D91D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */; };
 		23D6E3DB1D1B500100AA01A1 /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */; };
@@ -30,15 +32,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		230773EE1D1F016F00EB7233 /* GLextensions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GLextensions; sourceTree = "<group>"; };
-		23CBFD531D1EC2AB00F0773D /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
-		23CBFD541D1EC2AB00F0773D /* Game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Game.hpp; sourceTree = "<group>"; };
-		23D6E3C31D1B0BBA00AA01A1 /* Game */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Game; sourceTree = BUILT_PRODUCTS_DIR; };
-		23D6E3C61D1B0BBA00AA01A1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Creature.cpp; sourceTree = "<group>"; };
-		23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Creature.hpp; sourceTree = "<group>"; };
-		23D6E3D31D1B139100AA01A1 /* Tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
-		23D6E3D41D1B139100AA01A1 /* Tile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Tile.hpp; sourceTree = "<group>"; };
+		237D5C841D1F7E2C005B5B85 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = StrategyGame/main.cpp; sourceTree = SOURCE_ROOT; };
+		237D5C861D1F7E3A005B5B85 /* Creature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Creature.cpp; path = StrategyGame/Creature.cpp; sourceTree = SOURCE_ROOT; };
+		237D5C871D1F7E3A005B5B85 /* Creature.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Creature.hpp; path = StrategyGame/Creature.hpp; sourceTree = SOURCE_ROOT; };
+		237D5C881D1F7E3A005B5B85 /* Game.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Game.hpp; path = StrategyGame/Game.hpp; sourceTree = SOURCE_ROOT; };
+		237D5C8B1D1F7E4A005B5B85 /* Tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tile.cpp; path = StrategyGame/Tile.cpp; sourceTree = SOURCE_ROOT; };
+		237D5C8C1D1F7E4A005B5B85 /* Tile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Tile.hpp; path = StrategyGame/Tile.hpp; sourceTree = SOURCE_ROOT; };
+		237D5C8F1D1F7F39005B5B85 /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Shader.hpp; path = StrategyGame/Shader.hpp; sourceTree = SOURCE_ROOT; };
+		237D5C921D1F8279005B5B85 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = StrategyGame/Game.cpp; sourceTree = SOURCE_ROOT; };
+		237D5C941D1F8AAF005B5B85 /* Texture.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Texture.hpp; path = StrategyGame/Texture.hpp; sourceTree = SOURCE_ROOT; };
+		237D5C971D1F911A005B5B85 /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shader.cpp; path = StrategyGame/Shader.cpp; sourceTree = SOURCE_ROOT; };
+		237D5C9B1D2025FD005B5B85 /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = StrategyGame/Texture.cpp; sourceTree = SOURCE_ROOT; };
+		23D6E3C31D1B0BBA00AA01A1 /* Strategy Game */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Strategy Game"; sourceTree = BUILT_PRODUCTS_DIR; };
 		23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.1.13.0.dylib; path = ../../../../usr/local/lib/libGLEW.1.13.0.dylib; sourceTree = "<group>"; };
 		23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../usr/local/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
@@ -69,9 +74,8 @@
 				23D6E3DA1D1B500100AA01A1 /* libglfw.3.2.dylib */,
 				23D6E3D81D1B4FFA00AA01A1 /* libGLEW.1.13.0.dylib */,
 				23D6E3D61D1B4FEC00AA01A1 /* OpenGL.framework */,
-				23D6E3C51D1B0BBA00AA01A1 /* Game */,
+				23D6E3C51D1B0BBA00AA01A1 /* Strategy Game */,
 				23D6E3C41D1B0BBA00AA01A1 /* Products */,
-				230773EE1D1F016F00EB7233 /* GLextensions */,
 				23D6E3F91D1C460300AA01A1 /* Resources */,
 				23D6E3FA1D1C460300AA01A1 /* Shaders */,
 			);
@@ -80,31 +84,36 @@
 		23D6E3C41D1B0BBA00AA01A1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				23D6E3C31D1B0BBA00AA01A1 /* Game */,
+				23D6E3C31D1B0BBA00AA01A1 /* Strategy Game */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		23D6E3C51D1B0BBA00AA01A1 /* Game */ = {
+		23D6E3C51D1B0BBA00AA01A1 /* Strategy Game */ = {
 			isa = PBXGroup;
 			children = (
-				23CBFD531D1EC2AB00F0773D /* Game.cpp */,
-				23CBFD541D1EC2AB00F0773D /* Game.hpp */,
-				23D6E3CD1D1B0C1D00AA01A1 /* Creature.cpp */,
-				23D6E3CE1D1B0C1D00AA01A1 /* Creature.hpp */,
-				23D6E3D31D1B139100AA01A1 /* Tile.cpp */,
-				23D6E3D41D1B139100AA01A1 /* Tile.hpp */,
-				23D6E3C61D1B0BBA00AA01A1 /* main.cpp */,
+				237D5C861D1F7E3A005B5B85 /* Creature.cpp */,
+				237D5C871D1F7E3A005B5B85 /* Creature.hpp */,
+				237D5C8B1D1F7E4A005B5B85 /* Tile.cpp */,
+				237D5C8C1D1F7E4A005B5B85 /* Tile.hpp */,
+				237D5C881D1F7E3A005B5B85 /* Game.hpp */,
+				237D5C921D1F8279005B5B85 /* Game.cpp */,
+				237D5C8F1D1F7F39005B5B85 /* Shader.hpp */,
+				237D5C971D1F911A005B5B85 /* Shader.cpp */,
+				237D5C941D1F8AAF005B5B85 /* Texture.hpp */,
+				237D5C9B1D2025FD005B5B85 /* Texture.cpp */,
+				237D5C841D1F7E2C005B5B85 /* main.cpp */,
 			);
+			name = "Strategy Game";
 			path = Game;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		23D6E3C21D1B0BB900AA01A1 /* Game */ = {
+		23D6E3C21D1B0BB900AA01A1 /* Strategy Game */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 23D6E3CA1D1B0BBA00AA01A1 /* Build configuration list for PBXNativeTarget "Game" */;
+			buildConfigurationList = 23D6E3CA1D1B0BBA00AA01A1 /* Build configuration list for PBXNativeTarget "Strategy Game" */;
 			buildPhases = (
 				23D6E3BF1D1B0BB900AA01A1 /* Sources */,
 				23D6E3C01D1B0BB900AA01A1 /* Frameworks */,
@@ -114,9 +123,9 @@
 			);
 			dependencies = (
 			);
-			name = Game;
+			name = "Strategy Game";
 			productName = Game;
-			productReference = 23D6E3C31D1B0BBA00AA01A1 /* Game */;
+			productReference = 23D6E3C31D1B0BBA00AA01A1 /* Strategy Game */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -133,7 +142,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 23D6E3BE1D1B0BB900AA01A1 /* Build configuration list for PBXProject "Game" */;
+			buildConfigurationList = 23D6E3BE1D1B0BB900AA01A1 /* Build configuration list for PBXProject "Strategy Game" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -145,7 +154,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				23D6E3C21D1B0BB900AA01A1 /* Game */,
+				23D6E3C21D1B0BB900AA01A1 /* Strategy Game */,
 			);
 		};
 /* End PBXProject section */
@@ -155,10 +164,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				23D6E3D51D1B139100AA01A1 /* Tile.cpp in Sources */,
-				23D6E3CF1D1B0C1D00AA01A1 /* Creature.cpp in Sources */,
-				23CBFD551D1EC2AB00F0773D /* Game.cpp in Sources */,
-				23D6E3C71D1B0BBA00AA01A1 /* main.cpp in Sources */,
+				237D5C8D1D1F7E4A005B5B85 /* Tile.cpp in Sources */,
+				237D5C8A1D1F7E3A005B5B85 /* Creature.cpp in Sources */,
+				237D5C851D1F7E2C005B5B85 /* main.cpp in Sources */,
+				237D5C9C1D2025FD005B5B85 /* Texture.cpp in Sources */,
+				237D5C931D1F8279005B5B85 /* Game.cpp in Sources */,
+				237D5C981D1F911A005B5B85 /* Shader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,37 +260,25 @@
 		23D6E3CB1D1B0BBA00AA01A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include/,
-					/Users/Jake/Desktop/Game/,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib/,
-					"$(PROJECT_DIR)/Game/GLextensions",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				HEADER_SEARCH_PATHS = /usr/local/include/;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				PRODUCT_NAME = "Strategy Game";
 			};
 			name = Debug;
 		};
 		23D6E3CC1D1B0BBA00AA01A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include/,
-					/Users/Jake/Desktop/Game/,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib/,
-					"$(PROJECT_DIR)/Game/GLextensions",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				HEADER_SEARCH_PATHS = /usr/local/include/;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				PRODUCT_NAME = "Strategy Game";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		23D6E3BE1D1B0BB900AA01A1 /* Build configuration list for PBXProject "Game" */ = {
+		23D6E3BE1D1B0BB900AA01A1 /* Build configuration list for PBXProject "Strategy Game" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23D6E3C81D1B0BBA00AA01A1 /* Debug */,
@@ -288,7 +287,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		23D6E3CA1D1B0BBA00AA01A1 /* Build configuration list for PBXNativeTarget "Game" */ = {
+		23D6E3CA1D1B0BBA00AA01A1 /* Build configuration list for PBXNativeTarget "Strategy Game" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23D6E3CB1D1B0BBA00AA01A1 /* Debug */,

@@ -1,0 +1,54 @@
+//
+//  Texture.hpp
+//  Game
+//
+//  Created by Jake Sanders on 6/25/16.
+//  Copyright © 2016 Jake Sanders. All rights reserved.
+//
+
+#ifndef Texture_hpp
+#define Texture_hpp
+
+//Standard library includes
+#include <string>
+
+//GLEW: Locates memory location of OpenGL functions
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+//SOIL: Sets up texture loading
+#include <SOIL/SOIL.h>
+
+//Local includes
+#include "Shader.hpp"
+
+/**
+ * An object containing a loaded texture that can directly be called to be used.
+ *
+ * @param imagePath The path and filename of the image to be loaded in as a texture.
+ * @param texNumber The texture number that the texture should be connected with. This can only be a number from 0 to 31. This is used, for example, when calling and activating it as GL_TEXTURE0, or whichever number.
+ * @param uniformName The name of the sampler2D within GLSL to send the texture to when activated.
+ */
+class Texture {
+public:
+    //Constructor
+    Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName);
+    
+    //Public member functions
+    
+    /*
+     * Activate the texture and send the information to the given shader. This should be called right after a shader was used.
+     *
+     * @param shader The shader that was is currently being used when the texture is activated. The texture will be sent to this shader.
+     */
+    const void use(Shader shader);
+    
+private:
+    //Private properties
+    GLuint tex;
+    GLuint texNum;
+    GLuint id;
+    std::string name;
+};
+
+#endif /* Texture_hpp */

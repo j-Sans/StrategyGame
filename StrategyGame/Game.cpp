@@ -8,11 +8,43 @@
 
 #include "Game.hpp"
 
-//Constructor
-Game::Game(Shader shader, std::vector<std::vector<Tile> > board) : gameShader(shader) {
+bool keys[1024];
+
+//Constructor without geometry shader
+Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) {
     this->initWindow(); //Create the GLFW window and set the window property
     this->setVertexData(); //Set the vertex data with an std::array
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
+    
+    gameShader = Shader(vertexPath, fragmentPath);
+    
+    //Allow for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    //Load textures
+    //Exception only thrown if there are 32 textures already present
+    try {
+        this->loadTexture("Resources/grass.jpg", "grassTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading grass texture: " << e.what();
+    }
+    try {
+        this->loadTexture("Resources/mountain.png", "grassTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading mountain texture: " << e.what();
+    }
+    
+    this->presetTransformations();
+}
+
+//Constructor with geometry shader
+Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) {
+    this->initWindow(); //Create the GLFW window and set the window property
+    this->setVertexData(); //Set the vertex data with an std::array
+    this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
+    
+    gameShader = Shader(vertexPath, geometryPath, fragmentPath);
     
     //Allow for transparency
     glEnable(GL_BLEND);
@@ -36,13 +68,59 @@ Game::Game(Shader shader, std::vector<std::vector<Tile> > board) : gameShader(sh
 
 //Public member functions
 
-/**
- * Set the clear color of the screen.
- *
- * @param red The red value of the color, on a scale of 0.0 to 1.0. Outside this scale will be mapped to 0.0 or 1.0.
- * @param green The green value of the color, on a scale of 0.0 to 1.0. Outside this scale will be mapped to 0.0 or 1.0.
- * @param blue The blue value of the color, on a scale of 0.0 to 1.0. Outside this scale will be mapped to 0.0 or 1.0.
- */
+//A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
+void Game::render() {
+    GLfloat currentFrame = glfwGetTime();
+    this->deltaTime = currentFrame - this->lastFrame;
+    this->lastFrame = currentFrame;
+    
+    //GLFW gets any events that have occurred
+    glfwPollEvents();
+    
+    //Clears the screen after each rendering
+    glClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    //Use the shader
+    this->gameShader.use();
+    
+    for (auto tex = textures.begin(); tex != textures.end(); tex++) {
+        tex->use(this->gameShader);
+    }
+    
+    //Set the camera-translation vector based on arrowkey inputs
+    this->moveCamera();
+    
+    //Affect the camera position and send the view matrix to the shader
+    view = glm::translate(view, cameraCenter);
+    this->gameShader.uniformMat4("view", view);
+    
+    //Reset the view matrix
+    this->view = glm::mat4();
+    
+    //Bind the VAO and draw shapes
+    glBindVertexArray(this->VAO);
+    glDrawArrays(GL_POINTS, 0, 100);
+    glBindVertexArray(0);
+    
+    //Swap buffers so as to properly render without flickering
+    glfwSwapBuffers(this->gameWindow);
+}
+
+//Close the window
+void Game::closeWindow() {
+    glfwSetWindowShouldClose(this->gameWindow, GL_TRUE);;
+}
+
+//Terminate the window
+void Game::terminate() {
+    glDeleteVertexArrays(1, &this->VAO);
+    glDeleteBuffers(1, &this->VBO);
+    
+    glfwTerminate();
+}
+
+//Set the clear color of the screen.
 const void Game::setClearColor(GLfloat red, GLfloat green, GLfloat blue) {
     red = red >= 1.0f ? 1.0f : red <= 0.0f ? 0.0f : red;
     green = green >= 1.0f ? 1.0f : green <= 0.0f ? 0.0f : green;
@@ -50,11 +128,19 @@ const void Game::setClearColor(GLfloat red, GLfloat green, GLfloat blue) {
     this->clearColor = glm::vec3(red, green, blue);
 }
 
+//Get a pointer to the window
+GLFWwindow* Game::window() {
+    return this->gameWindow;
+}
+
+//Get the time since the previous frame
+const GLfloat Game::timeSinceLastFrame() {
+    return this->deltaTime;
+}
+
 //Private member functions
 
-/**
- * Initialize GLFW, GLEW, the key callback function, and the window itself.
- */
+//Initialize GLFW, GLEW, the key callback function, and the window itself.
 void Game::initWindow() {
     //Initiate GLFW
     glfwInit();
@@ -86,20 +172,18 @@ void Game::initWindow() {
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     glViewport(0, 0, viewportWidth, viewportHeight);
     
-    //Set key callback function    
+    //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
 }
 
-/**
- * Set the vertex data as a std::array in the object. Eventually will be made to get the data from the board or from a file, but is hardcoded for now.
- */
+//Set the vertex data as a std::array in the object. Eventually will be made to get the data from the board or from a file, but is hardcoded for now.
 void Game::setVertexData() {
     //Eventually this function will manipulate the board to get an output, or even load in from file
     
     //Make a 2D array of single points, which will each be the center of the board square
     //The geometry shader will turn a point into a square centered at that point
     vertexData = {
-    //  position      terrain type
+        //  position      terrain type
         0.9f,  0.9f,  MOUNTAIN_TERRAIN,
         0.9f,  0.7f,  MOUNTAIN_TERRAIN,
         0.9f,  0.5f,  MOUNTAIN_TERRAIN,
@@ -212,9 +296,7 @@ void Game::setVertexData() {
     };
 }
 
-/**
- * Initialize OpenGL buffers with the object's vertex data.
- */
+//Initialize OpenGL buffers with the object's vertex data.
 void Game::setBuffers() {
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
@@ -242,25 +324,15 @@ void Game::setBuffers() {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-/**
- * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
- *
- * @param texPath A string representing the path to the texture image.
- * @param texName A string representing the uniform name of the texture.
- */
+//Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
 void Game::loadTexture(const GLchar* texPath, const GLchar* texName) {
     if (textures.size() <= 32)
         textures.push_back(Texture(texPath, (GLuint)textures.size(), texName));
     else
         throw std::range_error("32 textures already loaded.");
 }
-
-/**
- * Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
- *
- * @param texPath A string representing the path to the texture image.
- * @param texName A string representing the uniform name of the texture.
- */
+    
+//Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
 void Game::replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName) {
     if (texIndex < textures.size())
         textures[texIndex] = Texture(texPath, texIndex, texName);
@@ -268,9 +340,7 @@ void Game::replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* 
         throw std::range_error("No texture loaded in that spot.");
 }
 
-/**
- * A function that sets matrix transformations to be done on the board. This sets the model matrix to rotate the board by 45º and then make it seem tilted away from the viewer. That is done by scaling so that the horizontal diagnal is double the vertical one. The projection matrix is also added, using glm::ortho, so that a non-3D orthographic projection is achieved. It is made so that regardless of window dimensions, the scaling on the board is always constant.
- */
+//Contains matrix transformations to be done on the board. This sets model and projection matrices. Called only once
 void Game::presetTransformations() {
     this->gameShader.use();
     
@@ -281,60 +351,16 @@ void Game::presetTransformations() {
     this->model = glm::rotate(this->model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     
     //Send the model matrix to the shader
-    gameShader.uniformMat4("model", model);
+    this->gameShader.uniformMat4("model", model);
     
     //Orthographic (non-3D projection) added so that different window sizes don't distort the scale
     this->projection = glm::ortho((GLfloat)windowWidth / (GLfloat)windowHeight * -1.0f, (GLfloat)windowWidth / (GLfloat)windowHeight * 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
     
     //Send the projection matrix to the shader
-    gameShader.uniformMat4("ortho", projection);
+    this->gameShader.uniformMat4("ortho", projection);
 }
 
-/**
- * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
- */
-void Game::render() {
-    GLfloat currentFrame = glfwGetTime();
-    this->deltaTime = currentFrame - this->lastFrame;
-    this->lastFrame = currentFrame;
-    
-    //GLFW gets any events that have occurred
-    glfwPollEvents();
-    
-    //Clears the screen after each rendering
-    glClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    //Use the shader
-    this->gameShader.use();
-    
-    for (auto tex = textures.begin(); tex != textures.end(); tex++) {
-        tex->use(this->gameShader);
-    }
-    
-    //Set the camera-translation vector based on arrowkey inputs
-    this->moveCamera();
-    
-    //Affect the camera position and send the view matrix to the shader
-    view = glm::translate(view, cameraCenter);
-    this->gameShader.uniformMat4("view", view);
-    
-    //Reset the view matrix
-    this->view = glm::mat4();
-    
-    //Bind the VAO and draw shapes
-    glBindVertexArray(this->VAO);
-    glDrawArrays(GL_POINTS, 0, 100);
-    glBindVertexArray(0);
-    
-    //Swap buffers so as to properly render without flickering
-    glfwSwapBuffers(this->gameWindow);
-}
-
-
-/**
- * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
- */
+//A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
 void Game::moveCamera() {
     GLfloat displacement = this->deltaTime * this->camSpeed;
     
@@ -362,15 +388,7 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-
-/**
- * A function GLFW can call when a key event occurs
- *
- * @param window The GLFWwindow object.
- * @param key The macro that will represent the key pressed
- * @param action The macro that represents if the key is being pressed, released, etc...
- * @param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
- */
+//A function GLFW can call when a key event occurs
 void Game::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
     if (key == GLFW_KEY_W && action == GLFW_PRESS && mode == GLFW_MOD_SUPER) { //Command-W: close the application
         glfwSetWindowShouldClose(window, GL_TRUE);

@@ -30,7 +30,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 //OpenGL additional classes includes
-#include "GLextensions/Shader.hpp"
+//#include "GLextensions/Shader.hpp"
 
 //Local includes
 #include "Tile.hpp"
@@ -52,16 +52,10 @@ GLfloat* getVertices(const std::vector<std::vector<Tile> >& board);
 //Variables:
 
 //Window size
-const GLuint windowWidth = 800, windowHeight = 600;
+//const GLuint windowWidth = 800, windowHeight = 600;
 
 //Board speed
 const GLuint boardWidth = 10;
-
-//Camera translation speed
-const GLfloat camSpeed = 1.5f;
-
-//Max camera distance from board center
-const GLfloat camMaxDisplacement = 1.0f;
 
 //True when the game should end
 bool gameOver = false;
@@ -91,7 +85,8 @@ int main(int argc, const char * argv[]) {
         board.push_back(row);
     }
     
-    Game G(Shader("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag"), board);
+    Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
+    
     /*
 //Initialization:
     //Initiate GLFW
@@ -400,12 +395,14 @@ int main(int argc, const char * argv[]) {
         G.render();
     }
     
+    G.terminate();
+
 //Termination:
     //Deallocate all any resources when we are finished
 //    glDeleteVertexArrays(1, &VAO);
 //    glDeleteBuffers(1, &VBO);
-    
-    glfwTerminate();
+//    
+//    glfwTerminate();
     return 0;
 }
 
@@ -414,32 +411,32 @@ int main(int argc, const char * argv[]) {
  *
  * @param deltaTime A GLfloat that represents the difference in time since the last call. Ensures that on all systems the camera moves at the same speed.
  */
-void moveCamera(GLfloat deltaTime) {
-    GLfloat displacement = deltaTime * camSpeed;
-    
-    if (keys[GLFW_KEY_DOWN]) {
-        cameraCenter.y += displacement;
-    }
-    if (keys[GLFW_KEY_UP]) {
-        cameraCenter.y -= displacement;
-    }
-    if (keys[GLFW_KEY_LEFT]) {
-        cameraCenter.x += displacement;
-    }
-    if (keys[GLFW_KEY_RIGHT]) {
-        cameraCenter.x -= displacement;
-    }
-    
-    //Guaruntees that the camera won't move too far from the board center
-    if (cameraCenter.x > camMaxDisplacement)
-        cameraCenter.x = camMaxDisplacement;
-    if (cameraCenter.x < -camMaxDisplacement)
-        cameraCenter.x = -camMaxDisplacement;
-    if (cameraCenter.y > camMaxDisplacement)
-        cameraCenter.y = camMaxDisplacement;
-    if (cameraCenter.y < -camMaxDisplacement)
-        cameraCenter.y = -camMaxDisplacement;
-}
+//void moveCamera(GLfloat deltaTime) {
+//    GLfloat displacement = deltaTime * camSpeed;
+//    
+//    if (keys[GLFW_KEY_DOWN]) {
+//        cameraCenter.y += displacement;
+//    }
+//    if (keys[GLFW_KEY_UP]) {
+//        cameraCenter.y -= displacement;
+//    }
+//    if (keys[GLFW_KEY_LEFT]) {
+//        cameraCenter.x += displacement;
+//    }
+//    if (keys[GLFW_KEY_RIGHT]) {
+//        cameraCenter.x -= displacement;
+//    }
+//    
+//    //Guaruntees that the camera won't move too far from the board center
+//    if (cameraCenter.x > camMaxDisplacement)
+//        cameraCenter.x = camMaxDisplacement;
+//    if (cameraCenter.x < -camMaxDisplacement)
+//        cameraCenter.x = -camMaxDisplacement;
+//    if (cameraCenter.y > camMaxDisplacement)
+//        cameraCenter.y = camMaxDisplacement;
+//    if (cameraCenter.y < -camMaxDisplacement)
+//        cameraCenter.y = -camMaxDisplacement;
+//}
 
 /**
  * A function GLFW can call when a key event occurs
@@ -449,20 +446,20 @@ void moveCamera(GLfloat deltaTime) {
  * @param action The macro that represents if the key is being pressed, released, etc...
  * @param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
  */
-void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_W && action == GLFW_PRESS && mode == GLFW_MOD_SUPER) { //Command-W: close the application
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-    if (key >= 0 && key < 1024) {
-        if (action == GLFW_PRESS) {
-            keys[key] = true;
-        }
-        if (action == GLFW_RELEASE) {
-            keys[key] = false;
-        }
-    }
-}
-
+//void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
+//    if (key == GLFW_KEY_W && action == GLFW_PRESS && mode == GLFW_MOD_SUPER) { //Command-W: close the application
+//        glfwSetWindowShouldClose(window, GL_TRUE);
+//    }
+//    if (key >= 0 && key < 1024) {
+//        if (action == GLFW_PRESS) {
+//            keys[key] = true;
+//        }
+//        if (action == GLFW_RELEASE) {
+//            keys[key] = false;
+//        }
+//    }
+//}
+//
 /**
  * A function that takes the game board and returns an array of the vertices
  *

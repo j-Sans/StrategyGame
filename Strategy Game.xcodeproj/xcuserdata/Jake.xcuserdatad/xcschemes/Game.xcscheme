@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "23D6E3C21D1B0BB900AA01A1"
-               BuildableName = "Game"
-               BlueprintName = "Game"
-               ReferencedContainer = "container:Game.xcodeproj">
+               BuildableName = "Strategy Game"
+               BlueprintName = "Strategy Game"
+               ReferencedContainer = "container:Strategy Game.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "23D6E3C21D1B0BB900AA01A1"
-            BuildableName = "Game"
-            BlueprintName = "Game"
-            ReferencedContainer = "container:Game.xcodeproj">
+            BuildableName = "Strategy Game"
+            BlueprintName = "Strategy Game"
+            ReferencedContainer = "container:Strategy Game.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -47,7 +47,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/Jake/Desktop/Game"
+      customWorkingDirectory = "/Users/Jake/Desktop/GameOld"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "23D6E3C21D1B0BB900AA01A1"
-            BuildableName = "Game"
-            BlueprintName = "Game"
-            ReferencedContainer = "container:Game.xcodeproj">
+            BuildableName = "Strategy Game"
+            BlueprintName = "Strategy Game"
+            ReferencedContainer = "container:Strategy Game.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -76,9 +76,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "23D6E3C21D1B0BB900AA01A1"
-            BuildableName = "Game"
-            BlueprintName = "Game"
-            ReferencedContainer = "container:Game.xcodeproj">
+            BuildableName = "Strategy Game"
+            BlueprintName = "Strategy Game"
+            ReferencedContainer = "container:Strategy Game.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

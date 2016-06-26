@@ -1,64 +1,17 @@
 //
-//  Shader.hpp
-//  BaseOpenGL
+//  Shader.cpp
+//  Strategy Game
 //
-//  Created by Jake Sanders on 6/6/16.
+//  Created by Jake Sanders on 6/26/16.
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
-//  Guided by the tutorial at http://learnopengl.com/#!Getting-started/Shaders by Joey De Vries
-//  This has been altered from the original code, and is not supported nor endorsed by LearnOpenGL
-//
 
-#ifndef Shader_hpp
-#define Shader_hpp
+#include "Shader.hpp"
 
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+//Only so that Game.hpp can have a shader property without declaring it initially. No other purpose.
+Shader::Shader() {}
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-
-/**
- * Constructor for a shader object that creates and compiles a shader program from text files containing shader code.
- *
- * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
- * @param geometryPath A c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is optional.
- * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
- */
-class Shader {
-public:
-    //The program ID
-    
-    /**
-     * The gl reference to the compiled shader program.
-     */
-    GLuint program;
-    
-    //Constructor that reads in and builds the shader with no geometry shader
-    Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
-    
-    //Constructor that reads in and builds the shader with a geometry shader
-    Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath);
-    
-    //Use the program
-    void use();
-    
-    //Send uniforms to the shader
-    void uniformTex(const GLchar* name, GLuint texNum) { glUniform1i(glGetUniformLocation(this->program, name), texNum); }
-    
-    void uniform1f(const GLchar* name, float f) { glUniform1f(glGetUniformLocation(this->program, name), f); }
-    void uniform2f(const GLchar* name, glm::vec2 vec) { glUniform2f(glGetUniformLocation(this->program, name), vec.x, vec.y); }
-    void uniform3f(const GLchar* name, glm::vec3 vec) { glUniform3f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z); }
-    void uniform4f(const GLchar* name, glm::vec4 vec) { glUniform4f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z, vec.w); }
-    
-    void uniformMat2(const GLchar* name, glm::mat2x2 mat) { glUniformMatrix2fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
-    void uniformMat3(const GLchar* name, glm::mat3x3 mat) { glUniformMatrix3fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
-    void uniformMat4(const GLchar* name, glm::mat4x4 mat) { glUniformMatrix4fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat)); }
-};
-
+//Constructor without the geometry shader
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     //Get the shader code:
     std::string vertexCode;
@@ -145,7 +98,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     glDeleteShader(fragmentShader);
 }
 
-
+//Constructor with the geometry shader
 Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath) {
     //Get the shader code:
     std::string vertexCode;
@@ -257,11 +210,40 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLcha
     glDeleteShader(fragmentShader);
 }
 
-/**
- * Uses the shader object by running the compiled shader program. Used as "glUseProgram()" would be.
- */
+//Use the program
 void Shader::use() {
     glUseProgram(this->program);
 }
 
-#endif /* Shader_hpp */
+//Functions to send uniforms of various types directly to the shader
+void Shader::uniformTex(const GLchar* name, GLuint texNum) {
+    glUniform1i(glGetUniformLocation(this->program, name), texNum);
+}
+
+void Shader::uniform1f(const GLchar* name, float f) {
+    glUniform1f(glGetUniformLocation(this->program, name), f);
+}
+
+void Shader::uniform2f(const GLchar* name, glm::vec2 vec) {
+    glUniform2f(glGetUniformLocation(this->program, name), vec.x, vec.y);
+}
+
+void Shader::uniform3f(const GLchar* name, glm::vec3 vec) {
+    glUniform3f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z);
+}
+
+void Shader::uniform4f(const GLchar* name, glm::vec4 vec) {
+    glUniform4f(glGetUniformLocation(this->program, name), vec.x, vec.y, vec.z, vec.w);
+}
+
+void Shader::uniformMat2(const GLchar* name, glm::mat2x2 mat) {
+    glUniformMatrix2fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Shader::uniformMat3(const GLchar* name, glm::mat3x3 mat) {
+    glUniformMatrix3fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Shader::uniformMat4(const GLchar* name, glm::mat4x4 mat) {
+    glUniformMatrix4fv(glGetUniformLocation(this->program, name), 1, GL_FALSE, glm::value_ptr(mat));
+}

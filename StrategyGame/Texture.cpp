@@ -1,31 +1,14 @@
 //
-//  texture.hpp
-//  Game
+//  Texture.cpp
+//  Strategy Game
 //
-//  Created by Jake Sanders on 6/25/16.
+//  Created by Jake Sanders on 6/26/16.
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
 
-#ifndef texture_hpp
-#define texture_hpp
+#include "Texture.hpp"
 
-#include <string>
-
-class Texture {
-public:
-    //Constructor
-    Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName);
-    
-    //Public member functions
-    const void use(Shader shader);
-private:
-    //Private properties
-    GLuint tex;
-    GLuint texNum;
-    GLuint id;
-    std::string name;
-};
-
+//Constructor
 Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName) {
     if (texNumber >= 32) {
         texNumber = 31; //Stops bad access from accessing greater than element 31 in the because OpenGL might only be able to use 32 textures.
@@ -62,10 +45,9 @@ Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* unifor
     glBindTexture(GL_TEXTURE_2D, this->texNum);
 }
 
+//Activate the texture and send the information to the given shader
 const void Texture::use(Shader shader) {
     glActiveTexture(this->id);
     glBindTexture(GL_TEXTURE_2D, this->tex);
     shader.uniformTex(this->name.c_str(), this->texNum);
 }
-
-#endif /* Texture_hpp */
