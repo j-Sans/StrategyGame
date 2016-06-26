@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		230EE1541D204F12007EB40E /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 230EE1521D204F12007EB40E /* Board.cpp */; };
 		237D5C851D1F7E2C005B5B85 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C841D1F7E2C005B5B85 /* main.cpp */; };
 		237D5C8A1D1F7E3A005B5B85 /* Creature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C861D1F7E3A005B5B85 /* Creature.cpp */; };
 		237D5C8D1D1F7E4A005B5B85 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 237D5C8B1D1F7E4A005B5B85 /* Tile.cpp */; };
@@ -32,6 +33,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		230EE1521D204F12007EB40E /* Board.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Board.cpp; path = StrategyGame/Board.cpp; sourceTree = SOURCE_ROOT; };
+		230EE1531D204F12007EB40E /* Board.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Board.hpp; path = StrategyGame/Board.hpp; sourceTree = SOURCE_ROOT; };
 		237D5C841D1F7E2C005B5B85 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = StrategyGame/main.cpp; sourceTree = SOURCE_ROOT; };
 		237D5C861D1F7E3A005B5B85 /* Creature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Creature.cpp; path = StrategyGame/Creature.cpp; sourceTree = SOURCE_ROOT; };
 		237D5C871D1F7E3A005B5B85 /* Creature.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Creature.hpp; path = StrategyGame/Creature.hpp; sourceTree = SOURCE_ROOT; };
@@ -92,16 +95,18 @@
 		23D6E3C51D1B0BBA00AA01A1 /* Strategy Game */ = {
 			isa = PBXGroup;
 			children = (
+				237D5C971D1F911A005B5B85 /* Shader.cpp */,
+				237D5C8F1D1F7F39005B5B85 /* Shader.hpp */,
+				237D5C9B1D2025FD005B5B85 /* Texture.cpp */,
+				237D5C941D1F8AAF005B5B85 /* Texture.hpp */,
 				237D5C861D1F7E3A005B5B85 /* Creature.cpp */,
 				237D5C871D1F7E3A005B5B85 /* Creature.hpp */,
 				237D5C8B1D1F7E4A005B5B85 /* Tile.cpp */,
 				237D5C8C1D1F7E4A005B5B85 /* Tile.hpp */,
+				230EE1521D204F12007EB40E /* Board.cpp */,
+				230EE1531D204F12007EB40E /* Board.hpp */,
 				237D5C881D1F7E3A005B5B85 /* Game.hpp */,
 				237D5C921D1F8279005B5B85 /* Game.cpp */,
-				237D5C8F1D1F7F39005B5B85 /* Shader.hpp */,
-				237D5C971D1F911A005B5B85 /* Shader.cpp */,
-				237D5C941D1F8AAF005B5B85 /* Texture.hpp */,
-				237D5C9B1D2025FD005B5B85 /* Texture.cpp */,
 				237D5C841D1F7E2C005B5B85 /* main.cpp */,
 			);
 			name = "Strategy Game";
@@ -164,6 +169,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				230EE1541D204F12007EB40E /* Board.cpp in Sources */,
 				237D5C8D1D1F7E4A005B5B85 /* Tile.cpp in Sources */,
 				237D5C8A1D1F7E3A005B5B85 /* Creature.cpp in Sources */,
 				237D5C851D1F7E2C005B5B85 /* main.cpp in Sources */,

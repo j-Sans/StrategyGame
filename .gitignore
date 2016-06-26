@@ -56,3 +56,5 @@ xcuserdata/
 *.out
 *.app
 >>>>>>> origin/master
+
+*.pbxproj

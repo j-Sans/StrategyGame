@@ -8,6 +8,8 @@
 
 #include "Game.hpp"
 
+//An array of booleans representing if, for each key, if that key is pressed
+//Declared here so it can work with static function keyCallback. That function needs to be static
 bool keys[1024];
 
 //Constructor without geometry shader

@@ -48,10 +48,6 @@
 
 
 
-//An array of booleans representing if, for each key, if that key is pressed
-//Declared here so it can work with static function keyCallback. That function needs to be static
-//bool keys[1024];
-
 /**
  * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
  *
@@ -174,6 +170,7 @@ private:
     
     /**
      * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
+     * An error will be thrown if there are already 32 textures loaded.
      *
      * @param texPath A string representing the path to the texture image.
      * @param texName A string representing the uniform name of the texture.
@@ -182,8 +179,10 @@ private:
     
     /**
      * Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
+     * An error will be thrown if there is no index texIndex within the vector of textures.
      *
      * @param texPath A string representing the path to the texture image.
+     * @param texIndex The index in the vector of textures to be replaced.
      * @param texName A string representing the uniform name of the texture.
      */
     void replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName);
