@@ -32,7 +32,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
         std::cout << "Error loading grass texture: " << e.what();
     }
     try {
-        this->loadTexture("Resources/mountain.png", "grassTex");
+        this->loadTexture("Resources/mountain.png", "mountainTex");
     } catch (std::exception e) {
         std::cout << "Error loading mountain texture: " << e.what();
     }
@@ -60,7 +60,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
         std::cout << "Error loading grass texture: " << e.what();
     }
     try {
-        this->loadTexture("Resources/mountain.png", "grassTex");
+        this->loadTexture("Resources/mountain.png", "mountainTex");
     } catch (std::exception e) {
         std::cout << "Error loading mountain texture: " << e.what();
     }
@@ -184,7 +184,7 @@ void Game::setVertexData() {
     
     //Make a 2D array of single points, which will each be the center of the board square
     //The geometry shader will turn a point into a square centered at that point
-    vertexData = {
+    GLfloat vertices[NUMBER_OF_TILES * INDICES_PER_TILES] = {
         //  position      terrain type
         0.9f,  0.9f,  MOUNTAIN_TERRAIN,
         0.9f,  0.7f,  MOUNTAIN_TERRAIN,
@@ -198,7 +198,7 @@ void Game::setVertexData() {
         0.9f, -0.9f,  OPEN_TERRAIN,
         
         0.7f,  0.9f,  MOUNTAIN_TERRAIN,
-        0.7f,  0.7f,  MOUNTAIN_TERRAIN,
+        0.7f,  0.7f,  OPEN_TERRAIN,
         0.7f,  0.5f,  OPEN_TERRAIN,
         0.7f,  0.3f,  OPEN_TERRAIN,
         0.7f,  0.1f,  OPEN_TERRAIN,
@@ -296,6 +296,10 @@ void Game::setVertexData() {
         -0.9f, -0.7f,  OPEN_TERRAIN,
         -0.9f, -0.9f,  OPEN_TERRAIN,
     };
+    
+    for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
+        this->vertexData[a] = vertices[a];
+    }
 }
 
 //Initialize OpenGL buffers with the object's vertex data.
@@ -310,10 +314,10 @@ void Game::setBuffers() {
     
     //Bind the other buffers with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData), this->vertexData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Positionn
+    //Position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     

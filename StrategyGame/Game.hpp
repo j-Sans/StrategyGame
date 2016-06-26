@@ -134,7 +134,7 @@ private:
     Shader gameShader; //Compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     GLuint VBO; //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
-    std::array<GLfloat, NUMBER_OF_TILES * INDICES_PER_TILES> vertexData; //Access the contained array within using ".data()"
+    GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
     
     //Textures
     std::vector<Texture> textures;
