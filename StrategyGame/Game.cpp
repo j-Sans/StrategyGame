@@ -377,7 +377,7 @@ void Game::moveCamera() {
         this->cameraCenter.x -= displacement;
     }
     
-    //Guaruntees that the camera won't move too far from the board center
+    //Guarantees that the camera won't move too far from the board center
     if (this->cameraCenter.x > this->camMaxDisplacement)
         this->cameraCenter.x = this->camMaxDisplacement;
     if (this->cameraCenter.x < -this->camMaxDisplacement)
