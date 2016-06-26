@@ -24,7 +24,7 @@ Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* unifor
     unsigned char *image;
     
     //Load in the image for the container texture
-    image = SOIL_load_image(imagePath, &textureWidth, &textureHeight, 0, SOIL_LOAD_RGB);
+    image = SOIL_load_image(imagePath, &textureWidth, &textureHeight, 0, SOIL_LOAD_RGBA);
     
     //Make the texture
     glGenTextures(1, &this->tex);
@@ -37,7 +37,7 @@ Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* unifor
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
     //Generate the image for the currently bound texture object
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     
     //Free the memory associated with the texture and unbind it
