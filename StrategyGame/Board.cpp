@@ -9,12 +9,6 @@
 #include "Board.hpp"
 
 void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
-
-    if (x >= this->gameBoard.size()) //is this protection really necessary?
-        throw std::range_error("X out of range");
-    if (y >= this->gameBoard[0].size())
-        throw std::range_error("Y out of range");
-    
     if (moveTo == North) {
         if (y > 0 && !this->gameBoard[x][y - 1].occupied()) {
             this->gameBoard[x][y - 1].setCreature(this->gameBoard[x][y].creature());
