@@ -180,6 +180,14 @@ void Game::initWindow() {
 
 //Set the vertex data as a std::array in the object. Eventually will be made to get the data from the board or from a file, but is hardcoded for now.
 void Game::setVertexData() {
+    GLfloat pointDistance = 0.2f;
+    
+    GLfloat locationOfFirstPoint = 0.0f;
+    locationOfFirstPoint -= (this->gameBoard.b)
+    
+    for (
+    
+    
     //Eventually this function will manipulate the board to get an output, or even load in from file
     
     //Make a 2D array of single points, which will each be the center of the board square

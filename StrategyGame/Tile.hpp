@@ -11,25 +11,22 @@
 
 #include "Creature.hpp"
 
-enum Terrain {
-    Open,
-    Mountain,
-    Forest,
-    Water,
-    CarrotFarm //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
-};
+#define OPEN_TERRAIN 0.0f
+#define MOUNTAIN_TERRAIN 1.0f
+#define WATER_TERRAIN 2.0f
+#define CARROT_FARM_TERRAIN 3.0f //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 
 /**
  * A class representing a single tile on the board and, if present, the creature on that tile.
  *
- * @param terrain The type of terrain represented by this tile.
+ * @param terrain A macro representing the terrain type. Possible options include: OPEN_TERRAIN, MOUNTAIN_TERRAIN, WATER_TERRAIN, and more to be added.
  * @param x The x coordinate of this tile on the board.
  * @param y The y coordinate of this tile on the board.
  */
 class Tile {
 public:
     //Constructors
-    Tile(Terrain terrain, unsigned int x, unsigned int y);
+    Tile(float terrain, unsigned int x, unsigned int y);
     
     //Destructor
     ~Tile();
@@ -65,7 +62,7 @@ public:
     /**
      * @return The terrain type of this tile.
      */
-    Terrain terrain();
+    float terrain();
     
     /**
      * @return A boolean representing if there is a creature on this tile currently.
@@ -81,7 +78,7 @@ private:
     const unsigned int tileX;
     const unsigned int tileY;
     Creature* tileCreature = nullptr;
-    Terrain tileTerrain = Open;
+    float tileTerrain;
     
     //const bool blocksVision;
     //const bool isRoughTerrain; //slows movement

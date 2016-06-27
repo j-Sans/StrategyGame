@@ -62,3 +62,11 @@ Tile Board::get(unsigned int x, unsigned int y) {
     }
     return gameBoard[x][y];
 }
+
+unsigned int Board::width() {
+    return this->gameBoard.size();
+}
+
+unsigned int Board::height(unsigned int x) {
+    return this->gameBoard[x].size();
+}

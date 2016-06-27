@@ -49,6 +49,18 @@ public:
      */
     Tile get(unsigned int x, unsigned int y);
     
+    /**
+     * @return The x-side width of the board.
+     */
+    unsigned int width();
+    
+    /**
+     * @param x The column x coordinate from which to get the size.
+     *
+     * @return The y-side height of the board.
+     */
+    unsigned int height(unsigned int x);
+    
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;

@@ -9,7 +9,7 @@
 #include "Tile.hpp"
 
 //Constructors
-Tile::Tile(Terrain terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
+Tile::Tile(float terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
     this->tileTerrain = terrain;
 }
 
@@ -43,7 +43,7 @@ Creature* Tile::creature() {
     return this->tileCreature;
 }
 
-Terrain Tile::terrain() {
+float Tile::terrain() {
     return this->tileTerrain;
 }
 

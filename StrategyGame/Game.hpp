@@ -37,6 +37,7 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "Tile.hpp"
+#include "Board.hpp"
 
 
 //Preprocessor directives
@@ -127,7 +128,7 @@ public:
     
 private:
     //Private properties
-    std::vector<std::vector<Tile> > board;
+    Board gameBoard;
     
     //OpenGL and GLFW properties
     GLFWwindow* gameWindow;
