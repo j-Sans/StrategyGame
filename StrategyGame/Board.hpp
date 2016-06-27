@@ -38,6 +38,17 @@ public:
     
     //Public get functions
     
+    /**
+     * Get the tile at the spot (x,y) from the board.
+     * Possible errors include if the x or y coordinates are greater than or equal to the size of the respective vectors.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     *
+     * @return The tile object at this location in the board.
+     */
+    Tile get(unsigned int x, unsigned int y);
+    
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;
