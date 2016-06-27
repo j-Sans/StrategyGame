@@ -60,6 +60,8 @@ int main(int argc, const char * argv[]) {
         board.push_back(row);
     }
     
+//    Board B(board);
+    
     Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
     //Game loop

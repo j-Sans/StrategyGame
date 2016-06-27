@@ -8,6 +8,16 @@
 
 #include "Board.hpp"
 
+//Constructors
+
+//Only so that Game.hpp can have a board property without declaring it initially. No other purpose.
+//Board::Board() {}
+
+Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
+//    this->gameBoard = board;
+}
+
+//Public member functions
 void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("X out of range");
@@ -64,9 +74,9 @@ Tile Board::get(unsigned int x, unsigned int y) {
 }
 
 unsigned int Board::width() {
-    return this->gameBoard.size();
+    return (unsigned int)this->gameBoard.size();
 }
 
 unsigned int Board::height(unsigned int x) {
-    return this->gameBoard[x].size();
+    return (unsigned int)this->gameBoard[x].size();
 }

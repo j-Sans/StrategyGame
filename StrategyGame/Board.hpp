@@ -15,10 +15,17 @@
 
 /**
  * A board class representing a 2D vector of the board.
+ *
+ * @param board A 2D vector of Tiles representing the game board.
  */
 class Board {
 public:
     //Constructor
+    
+    //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first.
+//    Board();
+    
+    Board(std::vector<std::vector<Tile> > board);
     
     //Destructor
     

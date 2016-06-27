@@ -13,9 +13,9 @@
 bool keys[1024];
 
 //Constructor without geometry shader
-Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) {
+Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setVertexData(); //Set the vertex data with an std::array
+    this->setVertexData(); //Set the vertex data with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, fragmentPath);
@@ -41,9 +41,9 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
 }
 
 //Constructor with geometry shader
-Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) {
+Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setVertexData(); //Set the vertex data with an std::array
+    this->setVertexData(); //Set the vertex data with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, geometryPath, fragmentPath);
@@ -180,14 +180,32 @@ void Game::initWindow() {
 
 //Set the vertex data as a std::array in the object. Eventually will be made to get the data from the board or from a file, but is hardcoded for now.
 void Game::setVertexData() {
+    //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
     GLfloat locationOfFirstPoint = 0.0f;
-    locationOfFirstPoint -= (this->gameBoard.b)
+    locationOfFirstPoint += (this->gameBoard.width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
     
-    for (
     
+    GLfloat vertices[NUMBER_OF_TILES * INDICES_PER_TILES];
     
+    GLuint index = 0;
+    
+    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            vertices[index] = locationOfFirstPoint - (x * pointDistance);
+            index++;
+            
+            vertices[index] = locationOfFirstPoint - (y * pointDistance);
+            index++;
+            
+            vertices[index] = this->gameBoard.get(x, y).terrain();
+            index++;
+        }
+    }
+    
+    /*
     //Eventually this function will manipulate the board to get an output, or even load in from file
     
     //Make a 2D array of single points, which will each be the center of the board square
@@ -304,7 +322,7 @@ void Game::setVertexData() {
         -0.9f, -0.7f,  OPEN_TERRAIN,
         -0.9f, -0.9f,  OPEN_TERRAIN,
     };
-    
+    */
     for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
         this->vertexData[a] = vertices[a];
     }
