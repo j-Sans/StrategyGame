@@ -10,18 +10,6 @@
 
 //Constructors
 
-/** Creates a creature object.
- *
- * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
- * @param maxHealth An unsigned int representing the max health of the creature.
- * @param maxEnergy An unsigned int representing the max energy of the creature.
- * @param attack An unsigned int representing the damage value the creature.
- * @param speed An unsigned int representing the movement rate per turn of the creature.
- * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
- * @param range An unsigned int representing the distance the creature can attack.
- * @param cost An unsigned int representing the cost of the creature in mana.
- * @param startDirection A Direction enum type representing the initial direction that the creature faces. Includes: North, East, South, and West.
- */
 Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureSpeed(speed), creatureVision(vision), creatureRange(range), creatureCost(cost) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
@@ -30,12 +18,6 @@ Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, un
 
 //Public member functions
 
-/** Reduces the creature's health by the damage argument, and if the creature dies, returns true.
- *
- * @param damage An unsigned int representing damage this creature takes.
- *
- * @return True if the creature dies, otherwise false.
- */
 bool Creature::takeDamage(unsigned int damage) {
     if (damage >= this->creatureHealth)
         return true; //The creature has died
@@ -43,4 +25,47 @@ bool Creature::takeDamage(unsigned int damage) {
         this->creatureHealth -= damage;
     
     return false; //The creature is still alive
+}
+
+const Race Creature::race() {
+    return this->creatureRace;
+}
+
+const unsigned int Creature::maxHealth() {
+    return this->creatureMaxHealth;
+}
+
+const unsigned int Creature::maxEnergy() {
+    return this->creatureMaxEnergy;
+}
+
+const unsigned int Creature::attack() {
+    return this->creatureAttack; }
+
+const unsigned int Creature::speed() {
+    return this->creatureSpeed;
+}
+
+const unsigned int Creature::vision() {
+    return this->creatureVision;
+}
+
+const unsigned int Creature::range() {
+    return this->creatureRange;
+}
+
+const unsigned int Creature::cost() {
+    return this->creatureCost;
+}
+
+unsigned int Creature::health() {
+    return this->creatureHealth;
+}
+
+unsigned int Creature::energy() {
+    return this->creatureEnergy;
+}
+
+Direction Creature::direction() {
+    return this->creatureDirection;
 }

@@ -22,13 +22,31 @@ Tile::~Tile() {
 }
 
 //Public member functions
-/** Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
- *
- * @param creature A pointer to the new creature. If nullptr, then the spot becomes empty.
- */
+
+// Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
 void Tile::setCreature(Creature *creature) {
     if (this->tileCreature != nullptr)
         delete this->tileCreature; //Prevent memory leaks
     
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
+}
+
+const unsigned int Tile::x() {
+    return this->tileX;
+}
+
+const unsigned int Tile::y() {
+    return this->tileY;
+}
+
+Creature* Tile::creature() {
+    return this->tileCreature;
+}
+
+Terrain Tile::terrain() {
+    return this->tileTerrain;
+}
+
+bool Tile::occupied() {
+    return this->tileCreature != nullptr ? true : false;
 }

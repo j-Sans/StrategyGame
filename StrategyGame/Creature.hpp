@@ -26,6 +26,18 @@ enum Direction {
     West,
 };
 
+/** A class representing a creature object.
+ *
+ * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
+ * @param maxHealth An unsigned int representing the max health of the creature.
+ * @param maxEnergy An unsigned int representing the max energy of the creature.
+ * @param attack An unsigned int representing the damage value the creature.
+ * @param speed An unsigned int representing the movement rate per turn of the creature.
+ * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
+ * @param range An unsigned int representing the distance the creature can attack.
+ * @param cost An unsigned int representing the cost of the creature in mana.
+ * @param startDirection A Direction enum type representing the initial direction that the creature faces. Includes: North, East, South, and West.
+ */
 class Creature {
 public:
     //Constructors
@@ -36,21 +48,71 @@ public:
     //Public properties
     
     //Public member functions
+    
+    /** Reduces the creature's health by the damage argument, and if the creature dies, returns true.
+     *
+     * @param damage An unsigned int representing damage this creature takes.
+     *
+     * @return True if the creature dies, otherwise false.
+     */
     bool takeDamage(unsigned int damage);
     
     //Get methods
-    const Race race() { return this->creatureRace; }
-    const unsigned int maxHealth() { return this->creatureMaxHealth; }
-    const unsigned int maxEnergy() { return this->creatureMaxEnergy; }
-    const unsigned int attack() { return this->creatureAttack; }
-    const unsigned int speed() { return this->creatureSpeed; }
-    const unsigned int vision() { return this->creatureVision; }
-    const unsigned int range() { return this->creatureRange; }
-    const unsigned int cost() { return this->creatureCost; }
-
-    const unsigned int health() { return this->creatureHealth; }
-    const unsigned int energy() { return this->creatureEnergy; }
-    const Direction direction() { return this->creatureDirection; }
+    
+    /**
+     * @return The race of this creature.
+     */
+    const Race race();
+    
+    /**
+     * @return The maximum health of this creature.
+     */
+    const unsigned int maxHealth();
+    
+    /**
+     * @return The maximum energy of this creature.
+     */
+    const unsigned int maxEnergy();
+    
+    /**
+     * @return The attack stat of this creature.
+     */
+    const unsigned int attack();
+    
+    /**
+     * @return The race of this creature.
+     */
+    const unsigned int speed();
+    
+    /**
+     * @return The race of this creature.
+     */
+    const unsigned int vision();
+    
+    /**
+     * @return The race of this creature.
+     */
+    const unsigned int range();
+    
+    /**
+     * @return The race of this creature.
+     */
+    const unsigned int cost();
+    
+    /**
+     * @return The race of this creature.
+     */
+    unsigned int health();
+    
+    /**
+     * @return The race of this creature.
+     */
+    unsigned int energy();
+    
+    /**
+     * @return The race of this creature.
+     */
+    Direction direction();
     
 private:
     //Private properties

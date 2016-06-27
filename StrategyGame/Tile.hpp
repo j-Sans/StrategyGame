@@ -19,6 +19,13 @@ enum Terrain {
     CarrotFarm //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 };
 
+/**
+ * A class representing a single tile on the board and, if present, the creature on that tile.
+ *
+ * @param terrain The type of terrain represented by this tile.
+ * @param x The x coordinate of this tile on the board.
+ * @param y The y coordinate of this tile on the board.
+ */
 class Tile {
 public:
     //Constructors
@@ -28,16 +35,42 @@ public:
     ~Tile();
     
     //Public properties
-    void setCreature(Creature *creature);
     
     //Public member functions
     
+    /** 
+     * Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
+     *
+     * @param creature A pointer to the new creature. If nullptr, then the spot becomes empty.
+     */
+    void setCreature(Creature *creature);
+    
     //Get methods
-    const unsigned int x() { return this->tileX; }
-    const unsigned int y() { return this->tileY; }
-    const Creature* creature() { return this->tileCreature; }
-    const Terrain terrain() { return this->tileTerrain; }
-    const bool occupied() { return this->tileCreature != nullptr ? true : false; }
+    
+    /**
+     * @return The x position of the tile in the board.
+     */
+    const unsigned int x();
+    
+    /**
+     * @return The y position of the tile in the board.
+     */
+    const unsigned int y();
+    
+    /**
+     * @return A pointer to the creature at this tile.
+     */
+    Creature* creature();
+    
+    /**
+     * @return The terrain type of this tile.
+     */
+    Terrain terrain();
+    
+    /**
+     * @return A boolean representing if there is a creature on this tile currently.
+     */
+    bool occupied();
     
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }
