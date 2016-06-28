@@ -70,7 +70,7 @@ public:
     const unsigned int maxHealth();
     
     /**
-     * @return The maximum energy (which is the number of action points including movement) of this creature.
+     * @return The maximum energy of this creature.
      */
     const unsigned int maxEnergy();
     
@@ -78,49 +78,49 @@ public:
      * @return The attack stat of this creature.
      */
     const unsigned int attack();
-
+    
     /**
-     * @return The vision radius of this creature.
+     * @return The race of this creature.
+     */
+    const unsigned int speed();
+    
+    /**
+     * @return The race of this creature.
      */
     const unsigned int vision();
     
     /**
-     * @return The attack range of this creature.
+     * @return The race of this creature.
      */
     const unsigned int range();
     
     /**
-     * @return The purchase cost of this creature.
+     * @return The race of this creature.
      */
     const unsigned int cost();
     
     /**
-     * @return The remaining health of this creature.
+     * @return The race of this creature.
      */
     unsigned int health();
     
     /**
-     * @return The remaining action points of this creature.
+     * @return The race of this creature.
      */
     unsigned int energy();
     
     /**
-     * @return The direction the creature is facing.
+     * @return The race of this creature.
      */
     Direction direction();
     
-    /**
-     * @return The combat type (if it is melee versus ranged) of this creature.
-     */
-    bool hasMeleeAttack();
-    
 private:
     //Private properties
-    bool hasMeleeAttack;
     const Race creatureRace;
     const unsigned int creatureMaxHealth;
     const unsigned int creatureMaxEnergy;
     const unsigned int creatureAttack;
+    const unsigned int creatureSpeed;
     const unsigned int creatureVision;
     const unsigned int creatureRange;
     const unsigned int creatureCost;

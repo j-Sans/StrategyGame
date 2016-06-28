@@ -43,8 +43,6 @@ public:
      */
     void moveCreature(unsigned int x, unsigned int y, Direction moveTo);
     
-    void creatureAttack(Tile attacker, Tile defender);
-    
     //Public get functions
     
     /**
