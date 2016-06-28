@@ -61,3 +61,5 @@ xcuserdata/
 *.xcworkspacedata
 *.xcworkspace
 *.xcodeproj
+
+.DS_Store

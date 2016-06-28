@@ -1,0 +1,17 @@
+To-Do List and Programming Communications to Collaborators.
+
+To-Do:
+— Add in multiplier for combat
+- Check to make sure all functions that can throw errors are called with try/catch
+	- At least make sure to go about this properly
+
+
+
+Note: Even if a function returns something (like bool) you don’t have to use its return value. For instance, the C printf function or the C++ std::list erase function (among others) return values but that often isn’t used. You can just call them like they were void, but having them as bool can help for when that is useful.
+————————————————
+MICHAEL:
+lol ill write this later, I really just wanted to delete my useless revert commits from the history.
+How do you remove commits such as Revert Revert from Github?
+
+JAKE: 
+It’s probably fine to leave them there. I did the same thing lol
