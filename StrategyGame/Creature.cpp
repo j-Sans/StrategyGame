@@ -69,3 +69,7 @@ unsigned int Creature::energy() {
 Direction Creature::direction() {
     return this->creatureDirection;
 }
+
+bool Creature::hasMeleeAttack() {
+    return this->hasMeleeAttack;
+}
