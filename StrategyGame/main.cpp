@@ -38,8 +38,6 @@
 
 
 //Variables:
-
-//Board speed
 const GLuint boardWidth = 10;
 
 
@@ -52,15 +50,13 @@ int main(int argc, const char * argv[]) {
     for (GLuint a = 0; a < boardWidth; a++) {
         std::vector<Tile> row;
         for (GLuint b = 0; b < boardWidth; b++) {
-            if (a == 2 && b == 2)
+            if (a <= 2 && b <= 1)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, a, b));
             else
                 row.push_back(Tile(OPEN_TERRAIN, a, b));
         }
         board.push_back(row);
     }
-    
-//    Board B(board);
     
     Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
