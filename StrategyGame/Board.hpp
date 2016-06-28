@@ -9,8 +9,10 @@
 #ifndef Board_hpp
 #define Board_hpp
 
+#include <math.h>
 #include <vector>
 #include <exception>
+
 #include "Tile.hpp"
 
 /**
@@ -43,7 +45,31 @@ public:
      */
     void moveCreature(unsigned int x, unsigned int y, Direction moveTo);
     
-    void creatureAttack(Tile attacker, Tile defender);
+    /**
+     * Have one creature attack the other creature.
+     * Possible errors include if the indices are off of the board.
+     *
+     * @param attackerX The x index of the attacker in the board.
+     * @param attackerY The y index of the attacker in the board.
+     * @param defenderX The x index of the defender in the board.
+     * @param defenderY The y index of the ∂efender in the board.
+     *
+     * @return Whether combat occurred or not, for various reasons.
+     */
+    bool attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY);
+    
+    /**
+     * Get the distance (in taxicab geometry) from one tile to another.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x1 The x index of the first coordinate in the board.
+     * @param y1 The y index of the first coordinate in the board.
+     * @param x2 The x index of the second coordinate in the board.
+     * @param y2 The y index of the second coordinate in the board.
+     *
+     * @return The distance (in taxicab geometry) from one tile to another.
+     */
+    unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
     
     //Public get functions
     

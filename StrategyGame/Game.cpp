@@ -200,7 +200,11 @@ void Game::setVertexData() {
             vertices[index] = locationOfFirstPoint - (y * pointDistance);
             index++;
             
-            vertices[index] = this->gameBoard.get(x, y).terrain();
+            try {
+                vertices[index] = this->gameBoard.get(x, y).terrain();
+            } catch (std::exception) {
+                vertices[index] = OPEN_TERRAIN;
+            }
             index++;
         }
     }

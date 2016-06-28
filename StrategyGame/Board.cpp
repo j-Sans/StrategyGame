@@ -63,24 +63,95 @@ void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
     }
 }
 
-void processCreatureCombat(Tile attackSquare, Tile defendSquare) {
-    int totalmodifier = 1; //calculateTotalModifier();
-    if (defendSquare.creature().hasMeleeAttack() = true && attackSquare.creature().hasMeleeAttack() = true) {
-        //The order of this gives attacking an advantage. If the attacker kills the defender, the defender won't be able to strike back.
-        if (defendSquare.takeDamage(/*   totalmodifier*     */  attackSquare.creature().attack()) = true) {
-            attackSquare.creature().energy() = 0;
-        }
-        else {
-            attackSquare.creature().energy() = 0;
-            attackSquare.creature().takeDamage(/*     totalmodifier*   */  defendSquare.creature().attack());
-            //tbh this would be easier for me if takeDamage were a void function and not a bool function. will talk to u later about making it a void function.
-        }
-
-        
-    } else { //Melee -> Melee both take damage. Melee -> Ranged, defender takes damage. Ranged -> Melee/Ranged, defender takes damage.
-        defendSquare.creature().takeDamage(attackSquare.creature().attack());
-        attackSquare.creature().energy() = 0;
+/*
+ * TO ADD:
+ * MODIFIER VALUE
+ */
+bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY) {
+    if (attackerX >= this->gameBoard.size()) {
+        throw std::range_error("Attacker x out of range");
     }
+    if (attackerY >= this->gameBoard[attackerX].size()) {
+        throw std::range_error("Attacker y out of range");
+    }
+    if (defenderX >= this->gameBoard.size()) {
+        throw std::range_error("Defender x out of range");
+    }
+    if (defenderY >= this->gameBoard[defenderX].size()) {
+        throw std::range_error("Defender y out of range");
+    }
+    
+    //Using pointers to get tiles by reference
+    Tile* attacker = &this->gameBoard[attackerX][attackerY];
+    Tile* defender = &this->gameBoard[attackerX][attackerY];
+    
+    //If both creatures are melee creatures
+    if (attacker->creature()->melee()) {
+        
+        //Check to make sure the creatures are one tile away from each other
+        unsigned int distanceBetweenTiles;
+        try {
+            distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY);
+        } catch (std::exception) {
+            return false; //Maybe it should throw an error instead? This happens only if the arguments are out of range of the board, but that should be caught above
+            
+            //throw std::range_error("Argument out of range");
+        }
+        
+        if (distanceBetweenTiles > 1) {
+            return false; //No combat occurs
+        } else {
+            bool defenderDied = defender->creature()->takeDamage(attacker->creature()->attack());
+            attacker->creature()->useAllEnergy();
+            
+            //If the defender is a melee fighter and survived, it can strike back
+            if (!defenderDied && defender->creature()->melee()) {
+                bool attackerDied = attacker->creature()->takeDamage(defender->creature()->attack());
+                if (attackerDied) {
+                    attacker->setCreature(nullptr); //Remove the dead creature
+                }
+            } else if (defenderDied) {
+                defender->setCreature(nullptr); //Remove the dead creature
+            }
+            
+            return true; //Combat occurs
+        }
+        
+    } else { //The attacker is a range fighter so there can be no strike back. To consider: other range units can strike back?
+        bool defenderDied = defender->creature()->takeDamage(attacker->creature()->attack());
+        attacker->creature()->useAllEnergy();
+        
+        if (defenderDied) {
+            defender->setCreature(nullptr); //Remove the dead creature
+        }
+        
+        return true;
+    }
+}
+
+unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
+    if (x1 >= this->gameBoard.size()) {
+        throw std::range_error("X1 out of range");
+    }
+    if (y1 >= this->gameBoard[x1].size()) {
+        throw std::range_error("Y1 out of range");
+    }
+    if (x2 >= this->gameBoard.size()) {
+        throw std::range_error("X2 out of range");
+    }
+    if (y2 >= this->gameBoard[x2].size()) {
+        throw std::range_error("Y2 out of range");
+    }
+    
+    //math.h 's abs function wasn't working properly
+    
+    //Get the difference in x coordinates
+    int xDisplacement = (int)x1 - (int)x2 < 0 ? x2 - x1 : x1 - x2;
+    
+    //Get the difference in y coordinates
+    int yDisplacement = (int)y1 - (int)y2 < 0 ? y2 - y1 : y1 - y2;
+    
+    return xDisplacement + yDisplacement;
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {

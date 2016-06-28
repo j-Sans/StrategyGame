@@ -41,7 +41,7 @@ enum Direction {
 class Creature {
 public:
     //Constructors
-    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int speed, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection);
+    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection);
     
     //Destructor
     
@@ -49,13 +49,26 @@ public:
     
     //Public member functions
     
-    /** Reduces the creature's health by the damage argument, and if the creature dies, returns true.
+    /** 
+     * Reduces the creature's health by the damage argument, and if the creature dies, returns true.
      *
      * @param damage An unsigned int representing damage this creature takes.
      *
      * @return True if the creature dies, otherwise false.
      */
     bool takeDamage(unsigned int damage);
+    
+    /**
+     * Reduces the creature's energy by the movement argument.
+     *
+     * @param energy An unsigned int representing movement this creature does. Equal to the energy loss.
+     */
+    void decrementEnergy(unsigned int energy);
+    
+    /**
+     * Reduces the creature's energy to 0. To be used after combat or other abilities are used.
+     */
+    void useAllEnergy();
     
     //Get methods
     
@@ -95,6 +108,11 @@ public:
     const unsigned int cost();
     
     /**
+     * @return The combat type (if it is melee versus ranged) of this creature.
+     */
+    const bool melee();
+    
+    /**
      * @return The remaining health of this creature.
      */
     unsigned int health();
@@ -109,14 +127,9 @@ public:
      */
     Direction direction();
     
-    /**
-     * @return The combat type (if it is melee versus ranged) of this creature.
-     */
-    bool hasMeleeAttack();
-    
 private:
     //Private properties
-    bool hasMeleeAttack;
+//    bool hasMeleeAttack;
     const Race creatureRace;
     const unsigned int creatureMaxHealth;
     const unsigned int creatureMaxEnergy;

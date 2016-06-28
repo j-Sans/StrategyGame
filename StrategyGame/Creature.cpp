@@ -27,6 +27,17 @@ bool Creature::takeDamage(unsigned int damage) {
     return false; //The creature is still alive
 }
 
+void Creature::decrementEnergy(unsigned int energy) {
+    if (energy < this->creatureEnergy)
+        this->creatureEnergy -= energy;
+    else
+        this->creatureEnergy = 0;
+}
+
+void Creature::useAllEnergy() {
+    this->creatureEnergy = 0;
+}
+
 const Race Creature::race() {
     return this->creatureRace;
 }
@@ -42,9 +53,11 @@ const unsigned int Creature::maxEnergy() {
 const unsigned int Creature::attack() {
     return this->creatureAttack; }
 
-const unsigned int Creature::speed() {
-    return this->creatureSpeed;
-}
+//Do we need this? Isn't speed just based on the amount of movement points the unit has?
+
+//const unsigned int Creature::speed() {
+//    return this->creatureSpeed;
+//}
 
 const unsigned int Creature::vision() {
     return this->creatureVision;
@@ -58,6 +71,10 @@ const unsigned int Creature::cost() {
     return this->creatureCost;
 }
 
+const bool Creature::melee() {
+    return this->creatureRange > 1 ? true : false;
+}
+
 unsigned int Creature::health() {
     return this->creatureHealth;
 }
@@ -68,8 +85,4 @@ unsigned int Creature::energy() {
 
 Direction Creature::direction() {
     return this->creatureDirection;
-}
-
-bool Creature::hasMeleeAttack() {
-    return this->hasMeleeAttack;
 }
