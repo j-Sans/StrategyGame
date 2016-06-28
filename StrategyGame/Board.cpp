@@ -63,6 +63,26 @@ void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
     }
 }
 
+void processCreatureCombat(Tile attackSquare, Tile defendSquare) {
+    int totalmodifier = 1; //calculateTotalModifier();
+    if (defendSquare.creature().hasMeleeAttack() = true && attackSquare.creature().hasMeleeAttack() = true) {
+        //The order of this gives attacking an advantage. If the attacker kills the defender, the defender won't be able to strike back.
+        if (defendSquare.takeDamage(/*   totalmodifier*     */  attackSquare.creature().attack()) = true) {
+            attackSquare.creature().energy() = 0;
+        }
+        else {
+            attackSquare.creature().energy() = 0;
+            attackSquare.creature().takeDamage(/*     totalmodifier*   */  defendSquare.creature().attack());
+            //tbh this would be easier for me if takeDamage were a void function and not a bool function. will talk to u later about making it a void function.
+        }
+
+        
+    } else { //Melee -> Melee both take damage. Melee -> Ranged, defender takes damage. Ranged -> Melee/Ranged, defender takes damage.
+        defendSquare.creature().takeDamage(attackSquare.creature().attack());
+        attackSquare.creature().energy() = 0;
+    }
+}
+
 Tile Board::get(unsigned int x, unsigned int y) {
     if (x >= gameBoard.size()) {
         throw std::range_error("X out of range");
