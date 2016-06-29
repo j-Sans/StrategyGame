@@ -15,12 +15,6 @@ Tile::Tile(float terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
 
 //Destructor
 
-/** Deletes this tile.
- */
-Tile::~Tile() {
-    delete this->tileCreature;
-}
-
 //Public member functions
 
 //Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.

@@ -10,7 +10,7 @@
 #define Tile_hpp
 
 #include "Creature.hpp"
-#include <experimental/optional>
+#include <iostream>
 
 #define OPEN_TERRAIN 0
 #define MOUNTAIN_TERRAIN 1
@@ -33,7 +33,6 @@ public:
     Tile(float terrain, unsigned int x, unsigned int y);
     
     //Destructor
-    ~Tile();
     
     //Public properties
     

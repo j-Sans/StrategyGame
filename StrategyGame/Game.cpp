@@ -15,7 +15,7 @@ bool keys[1024];
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(); //Set the data arrays with information from the board
+    this->setData(true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, fragmentPath);
@@ -48,7 +48,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
 //Constructor with geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(); //Set the data arrays with information from the board
+    this->setData(true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, geometryPath, fragmentPath);
@@ -191,7 +191,7 @@ void Game::initWindow() {
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Game::setData() {
+void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData) {
     //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
@@ -202,26 +202,28 @@ void Game::setData() {
     //Vertex data
     GLuint numberOfIndices = NUMBER_OF_TILES * INDICES_PER_TILES;
     
-    GLfloat vertices[numberOfIndices];
-    
     GLuint index = 0;
     
-    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
-                
-                //Sets the point location based on the location in the board and on the modifiers above.
-                vertices[index] = locationOfFirstPoint - (x * pointDistance);
-                index++;
-                
-                vertices[index] = locationOfFirstPoint - (y * pointDistance);
-                index++;
+    if (setVertexData) {
+        GLfloat vertices[numberOfIndices];
+        
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+                    
+                    //Sets the point location based on the location in the board and on the modifiers above.
+                    vertices[index] = locationOfFirstPoint - (x * pointDistance);
+                    index++;
+                    
+                    vertices[index] = locationOfFirstPoint - (y * pointDistance);
+                    index++;
+                }
             }
         }
-    }
-    
-    for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
-        this->vertexData[a] = vertices[a];
+        
+        for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
+            this->vertexData[a] = vertices[a];
+        }
     }
     
     //Terrain and creature data. One for each tile
@@ -235,12 +237,13 @@ void Game::setData() {
     for (GLuint x = 0; x < this->gameBoard.width(); x++) {
         for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
             if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
+                if (setTerrainData)
+                    //Gets the terrain of the tile
+                    terrains[index] = this->gameBoard.get(x, y).terrain();
                 
-                //Gets the terrain of the tile
-                terrains[index] = this->gameBoard.get(x, y).terrain();
-                
-                //Gets the creature on the tile
-                creatures[index] = this->gameBoard.get(x, y).creatureType();
+                if (setCreatureData)
+                    //Gets the creature on the tile
+                    creatures[index] = this->gameBoard.get(x, y).creatureType();
                 
                 //Increment
                 index++;
@@ -249,8 +252,10 @@ void Game::setData() {
     }
     
     for (int a = 0; a < NUMBER_OF_TILES; a++) {
-        this->terrainData[a] = terrains[a];
-        this->creatureData[a] = creatures[a];
+        if (setTerrainData)
+            this->terrainData[a] = terrains[a];
+        if (setCreatureData)
+            this->creatureData[a] = creatures[a];
     }
 
 }
@@ -343,6 +348,29 @@ void Game::presetTransformations() {
     
     //Send the projection matrix to the shader
     this->gameShader.uniformMat4("ortho", projection);
+}
+
+//A function to update the creature VBO. Should be called every frame
+void Game::updateCreatureBuffer() {
+    //Update creature data array
+    this->setData(false, false, true);
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(2);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
 }
 
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.

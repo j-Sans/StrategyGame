@@ -169,8 +169,12 @@ private:
     
     /**
      * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
+     *
+     * @param setVertexData A boolean indicating whether to update the vertex data array
+     * @param setTerrainData A boolean indicating whether to update the terrain data array
+     * @param setCreatureData A boolean indicating whether to update the creature data array
      */
-    void setData();
+    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData);
     
     /**
      * Initialize OpenGL buffers with the object's vertex data.
@@ -200,6 +204,11 @@ private:
      * A function that sets matrix transformations to be done on the board. This sets the model matrix to rotate the board by 45º and then make it seem tilted away from the viewer. That is done by scaling so that the horizontal diagnal is double the vertical one. The projection matrix is also added, using glm::ortho, so that a non-3D orthographic projection is achieved. It is made so that regardless of window dimensions, the scaling on the board is always constant.
      */
     void presetTransformations();
+    
+    /**
+     * A function to update the creature VBO. Should be called every frame.
+     */
+    void updateCreatureBuffer();
     
     /**
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
