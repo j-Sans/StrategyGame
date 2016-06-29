@@ -50,10 +50,7 @@ int main(int argc, const char * argv[]) {
     for (GLuint a = 0; a < boardWidth; a++) {
         std::vector<Tile> row;
         for (GLuint b = 0; b < boardWidth; b++) {
-            if (a == boardWidth - 1 && b == boardWidth - 1)
-                row.push_back(Tile(OPEN_TERRAIN, a, b));
-            else
-                row.push_back(Tile(OPEN_TERRAIN, a, b));
+            row.push_back(Tile(OPEN_TERRAIN, a, b));
         }
         board.push_back(row);
     }

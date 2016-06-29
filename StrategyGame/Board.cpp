@@ -154,6 +154,25 @@ unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int
     return xDisplacement + yDisplacement;
 }
 
+void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    this->creatures.push_back(creature);
+    
+    this->gameBoard[x][y].setCreature(&this->creatures.back());
+    
+    /*... UNFINISHED. TO ADD:
+     * STRUCT IN .HPP THAT ALLOWS A DELETE-CREATURE FUNCTION TO DELETE THE CREATURE FROM THE LIST BY ACCESSING THAT CREATURE'S COORDINATES. STRUCT COULD CONTAIN X, Y, AND CREATURE
+     * FUNCTION THAT DELETES A CREATURE AT A DESIGNATED SPOT
+     * TEST GRAPHICS WITH THIS CREATURE FUNCTION
+     */
+}
+
 Tile Board::get(unsigned int x, unsigned int y) {
     if (x >= gameBoard.size()) {
         throw std::range_error("X out of range");

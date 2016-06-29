@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include <vector>
+#include <list>
 #include <exception>
 
 #include "Tile.hpp"
@@ -71,6 +72,16 @@ public:
      */
     unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
     
+    /**
+     * Set a creature in the designated spot on the board.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     * @param creature A creature object to be set in the board at the designated spot.
+     */
+    void setCreature(unsigned int x, unsigned int y, Creature creature);
+    
     //Public get functions
     
     /**
@@ -99,6 +110,7 @@ public:
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;
+    std::list<Creature> creatures; //List of creatures on the game board, for board tiles to have pointers to
     
     //Private member functions
 };

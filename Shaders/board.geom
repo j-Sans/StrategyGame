@@ -46,7 +46,7 @@ void main() {
     }
     
     //Draw present creature
-//    drawCreature(gl_in[0].gl_Position, creature[0]);
+    drawCreature(gl_in[0].gl_Position, creature[0]);
 }
 
 void makeOpen(vec4 position) {
