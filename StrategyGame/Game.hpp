@@ -85,6 +85,11 @@ public:
      */
     const GLfloat camMaxDisplacement = 1.0f;
     
+    /**
+     * The game board, containing a 2D vector of Tile objects.
+     */
+    Board gameBoard;
+    
     //Public member functions
     
     /**
@@ -125,7 +130,6 @@ public:
     
 private:
     //Private properties
-    Board gameBoard;
     
     //OpenGL and GLFW properties
     GLFWwindow* gameWindow;

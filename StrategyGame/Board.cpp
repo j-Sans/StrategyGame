@@ -10,11 +10,7 @@
 
 //Constructors
 
-//Only so that Game.hpp can have a board property without declaring it initially. No other purpose.
-//Board::Board() {}
-
 Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
-//    this->gameBoard = board;
 }
 
 //Public member functions
@@ -162,15 +158,45 @@ void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
         throw std::range_error("Y out of range");
     }
     
-    this->creatures.push_back(creature);
+    this->creatures.push_back(CreatureInList(x, y, creature));
     
-    this->gameBoard[x][y].setCreature(&this->creatures.back());
+    this->gameBoard[x][y].setCreature(&this->creatures.back().creature);
     
     /*... UNFINISHED. TO ADD:
-     * STRUCT IN .HPP THAT ALLOWS A DELETE-CREATURE FUNCTION TO DELETE THE CREATURE FROM THE LIST BY ACCESSING THAT CREATURE'S COORDINATES. STRUCT COULD CONTAIN X, Y, AND CREATURE
-     * FUNCTION THAT DELETES A CREATURE AT A DESIGNATED SPOT
      * TEST GRAPHICS WITH THIS CREATURE FUNCTION
      */
+}
+
+void Board::deleteCreature(unsigned int x, unsigned int y) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    /* Note:
+     * The following for loop iterates through the list of board tiles with creatures until it finds the designated one, and it deletes it.
+     * It is known that this is incredibly inefficient.
+     * However, currently there are not too many board spaces that will have creatures for testing purposes.
+     
+     Ways to fix this in the future:
+     * Make a sort functino to get the list sorted in a way that is easy to go through to find the right spot.
+     * Use std::optional<Creature> instead of Creature* in Tile.hpp
+        std::optional (or std::experimental::optional) may not have come out yet, which is a slight problem.
+        There were issues getting it to work on 2013 MacBook Pro in Xcode 7, without much trying
+     * Download and add the boost library optional functionality
+     */
+    
+    for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+        if (listIter->x == x && listIter->y == y) {
+            this->gameBoard[x][y].setCreature(nullptr);
+            this->creatures.erase(listIter); //Delete the creature from the list if it is the specified creature.
+            break;
+        }
+    }
+    
+    //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {

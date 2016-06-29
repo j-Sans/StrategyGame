@@ -12,9 +12,22 @@
 #include <math.h>
 #include <vector>
 #include <list>
+#include <experimental/optional>
 #include <exception>
 
 #include "Tile.hpp"
+
+//How creatures are stored:
+//Creatures will be put into a std::list and then tiles will have pointers to the list elements. Each creature will have a unique position on the board, so the x and y coordinates are a unique combination for each creature, and can be used as a identifier for finding and deleting that creature.
+
+//A simple struct to represent the creature within the list of creatures. Creatures
+struct CreatureInList {
+    unsigned int x;
+    unsigned int y;
+    Creature creature;
+    
+    CreatureInList (unsigned int setX, unsigned int setY, Creature setCreature) : x(setX), y(setY), creature(setCreature) {}
+};
 
 /**
  * A board class representing a 2D vector of the board.
@@ -24,9 +37,6 @@
 class Board {
 public:
     //Constructor
-    
-    //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first.
-//    Board();
     
     Board(std::vector<std::vector<Tile> > board);
     
@@ -82,6 +92,15 @@ public:
      */
     void setCreature(unsigned int x, unsigned int y, Creature creature);
     
+    /**
+     * Delete the creature in the designated spot on the board.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     */
+    void deleteCreature(unsigned int x, unsigned int y);
+    
     //Public get functions
     
     /**
@@ -110,7 +129,7 @@ public:
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;
-    std::list<Creature> creatures; //List of creatures on the game board, for board tiles to have pointers to
+    std::list<CreatureInList> creatures; //List of creatures on the game board, for board tiles to have pointers to
     
     //Private member functions
 };

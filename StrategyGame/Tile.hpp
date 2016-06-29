@@ -10,6 +10,7 @@
 #define Tile_hpp
 
 #include "Creature.hpp"
+#include <experimental/optional>
 
 #define OPEN_TERRAIN 0
 #define MOUNTAIN_TERRAIN 1
@@ -86,7 +87,7 @@ private:
     const unsigned int tileX;
     const unsigned int tileY;
     Creature* tileCreature = nullptr;
-    float tileTerrain;
+    int tileTerrain;
     
     //const bool blocksVision;
     //const bool isRoughTerrain; //slows movement
