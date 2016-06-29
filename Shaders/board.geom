@@ -2,6 +2,9 @@
 
 //Preprocessor directives
 
+#define TEXTURE 0
+#define CREATURE 1
+
 //Terrain
 #define OPEN_TERRAIN 0
 #define MOUNTAIN_TERRAIN 1
@@ -18,27 +21,51 @@ layout (triangle_strip, max_vertices = 4) out;
 in int terrain[];
 in int creature[];
 
-out vec3 TexCoords; //First two are coordinates, third says which texture
+out vec2 TexCoords; //First two are coordinates, third says which texture
+out ivec2 TexType;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 ortho;
 
-void makeSquare(vec4 position) {
+
+//Functions
+void makeOpen(vec4 position);
+void makeMountain(vec4 position);
+void drawCreature(vec4 position, int creatureTypeToDraw);
+
+
+void main() {
+    //Draw the ground
+    if (terrain[0] == OPEN_TERRAIN) {
+        makeOpen(gl_in[0].gl_Position);
+    } else if (terrain[0] == MOUNTAIN_TERRAIN) {
+        makeMountain(gl_in[0].gl_Position);
+    }
+    
+    //Draw present creature
+    drawCreature(gl_in[0].gl_Position, creature[0]);
+}
+
+void makeOpen(vec4 position) {
     gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom left
-    TexCoords = vec3(0.0f, 0.0f, OPEN_TERRAIN);
+    TexCoords = vec2(0.0f, 0.0f);
+    TexType = ivec2(TEXTURE, OPEN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Bottom right
-    TexCoords = vec3(1.0f, 0.0f, OPEN_TERRAIN);
+    TexCoords = vec2(1.0f, 0.0f);
+    TexType = ivec2(TEXTURE, OPEN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Top left
-    TexCoords = vec3(0.0f, 1.0f, OPEN_TERRAIN);
+    TexCoords = vec2(0.0f, 1.0f);
+    TexType = ivec2(TEXTURE, OPEN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f,  0.1f, 0.0f, 0.0f)); //Top right
-    TexCoords = vec3(1.0f, 1.0f, OPEN_TERRAIN);
+    TexCoords = vec2(1.0f, 1.0f);
+    TexType = ivec2(TEXTURE, OPEN_TERRAIN);
     EmitVertex();
     
     EndPrimitive();
@@ -46,29 +73,50 @@ void makeSquare(vec4 position) {
 
 void makeMountain(vec4 position) {
     gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
-    TexCoords = vec3(0.0f, 1.0f, MOUNTAIN_TERRAIN);
+    TexCoords = vec2(0.0f, 1.0f);
+    TexType = ivec2(TEXTURE, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
-    TexCoords = vec3(0.5f, 1.0f, MOUNTAIN_TERRAIN);
+    TexCoords = vec2(0.5f, 1.0f);
+    TexType = ivec2(TEXTURE, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
-    TexCoords = vec3(0.0f, 0.5f, MOUNTAIN_TERRAIN);
+    TexCoords = vec2(0.0f, 0.5f);
+    TexType = ivec2(TEXTURE, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
-    TexCoords = vec3(1.0f, 0.0f, MOUNTAIN_TERRAIN);
+    TexCoords = vec2(1.0f, 0.0f);
+    TexType = ivec2(TEXTURE, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     EndPrimitive();
 }
 
-
-void main() {
-    if (terrain[0] == OPEN_TERRAIN) {
-        makeSquare(gl_in[0].gl_Position);
-    } else {
-        makeMountain(gl_in[0].gl_Position);
+void drawCreature(vec4 position, int creatureTypeToDraw) {
+    if (creatureTypeToDraw != NO_CREATURE) {
+        gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.0f, 0.0f, 0.0f));
+        TexCoords = vec2(0.0f, 0.0f);
+        TexType = ivec2(CREATURE, creatureTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + vec4( 0.0f, -0.1f, 0.0f, 0.0f));
+        TexCoords = vec2(1.0f, 0.0f);
+        TexType = ivec2(CREATURE, creatureTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + vec4( 0.1f,  0.0f, 0.0f, 0.0f));
+        TexCoords = vec2(0.0f, 1.0f);
+        TexType = ivec2(CREATURE, creatureTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + vec4( 0.0f,  0.1f, 0.0f, 0.0f));
+        TexCoords = vec2(1.0f, 1.0f);
+        TexType = ivec2(CREATURE, creatureTypeToDraw);
+        EmitVertex();
+        
+        EndPrimitive();
     }
 }

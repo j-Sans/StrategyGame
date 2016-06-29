@@ -64,6 +64,11 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
     } catch (std::exception e) {
         std::cout << "Error loading mountain texture: " << e.what();
     }
+    try {
+        this->loadTexture("Resources/stick_figure.png", "stickFigureTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading stick figure texture: " << e.what();
+    }
     
     this->presetTransformations();
 }
