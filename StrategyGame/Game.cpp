@@ -100,6 +100,9 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
+    //Update the creatures
+    this->updateCreatureBuffer();
+    
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
     
@@ -341,13 +344,21 @@ void Game::presetTransformations() {
     this->model = glm::rotate(this->model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     
     //Send the model matrix to the shader
-    this->gameShader.uniformMat4("model", model);
+    this->gameShader.uniformMat4("model", this->model);
     
     //Orthographic (non-3D projection) added so that different window sizes don't distort the scale
     this->projection = glm::ortho((GLfloat)windowWidth / (GLfloat)windowHeight * -1.0f, (GLfloat)windowWidth / (GLfloat)windowHeight * 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
     
     //Send the projection matrix to the shader
-    this->gameShader.uniformMat4("ortho", projection);
+    this->gameShader.uniformMat4("ortho", this->projection);
+    
+    //Make the board appear to be tilted away by keeping width double the size of heights
+    this->creatureMat = glm::scale(this->creatureMat, glm::vec3(0.5f, 0.5f, 1.0f));
+    
+    //Make the creature appear with the tile it's at
+    this->creatureMat = glm::rotate(this->creatureMat, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    
+    this->gameShader.uniformMat4("creatureMat", this->creatureMat);
 }
 
 //A function to update the creature VBO. Should be called every frame

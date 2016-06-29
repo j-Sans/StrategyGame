@@ -47,17 +47,20 @@ int main(int argc, const char * argv[]) {
     
 //Gameboard:
     std::vector<std::vector<Tile> > board;
-    for (GLuint a = 0; a < boardWidth; a++) {
+    for (GLuint x = 0; x < boardWidth; x++) {
         std::vector<Tile> row;
-        for (GLuint b = 0; b < boardWidth; b++) {
-            row.push_back(Tile(OPEN_TERRAIN, a, b));
+        for (GLuint y = 0; y < boardWidth; y++) {
+            if (x == 0 && y == 2)
+                row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
+            else
+                row.push_back(Tile(OPEN_TERRAIN, x, y));
         }
         board.push_back(row);
     }
     
     Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
-    G.gameBoard.setCreature(0, 0, Creature(Human, 1, 1, 1, 1, 1, 1, North));
+    G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North));
     
     //Game loop
     while(!glfwWindowShouldClose(G.window())) {

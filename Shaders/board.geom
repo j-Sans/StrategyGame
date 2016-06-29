@@ -16,19 +16,18 @@
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 layout (points) in;
-layout (triangle_strip, max_vertices = 4) out;
+layout (triangle_strip, max_vertices = 8) out;
 
 in int terrain[];
 in int creature[];
 
-out vec2 TexCoords; //First two are coordinates, third says which texture
-flat out ivec2 TexType;
-
-//out ivec2 TexType;
+out vec2 TexCoords;
+flat out ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 ortho;
+uniform mat4 creatureMat;
 
 
 //Functions
@@ -38,15 +37,17 @@ void drawCreature(vec4 position, int creatureTypeToDraw);
 
 
 void main() {
+    vec4 position = gl_in[0].gl_Position;
+    
     //Draw the ground
     if (terrain[0] == OPEN_TERRAIN) {
-        makeOpen(gl_in[0].gl_Position);
-    } else if (terrain[0] == MOUNTAIN_TERRAIN) {
-        makeMountain(gl_in[0].gl_Position);
+        makeOpen(position);
+    } else { //if (terrain[0] == MOUNTAIN_TERRAIN) {
+        makeMountain(position);
     }
     
     //Draw present creature
-    drawCreature(gl_in[0].gl_Position, creature[0]);
+    drawCreature(position, creature[0]);
 }
 
 void makeOpen(vec4 position) {
@@ -99,23 +100,23 @@ void makeMountain(vec4 position) {
 
 void drawCreature(vec4 position, int creatureTypeToDraw) {
     if (creatureTypeToDraw != NO_CREATURE) {
-        gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.0f, 0.0f, 0.0f));
-        TexCoords = vec2(0.0f, 0.0f);
+        gl_Position = ortho * view * creatureMat * (position + vec4( 0.0f, -0.1f, 0.0f, 0.0f));
+        TexCoords = vec2(1.0f, 1.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + vec4( 0.0f, -0.1f, 0.0f, 0.0f));
+        gl_Position = ortho * view * creatureMat * (position + vec4( 0.2f,  0.1f, 0.0f, 0.0f));
         TexCoords = vec2(1.0f, 0.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + vec4( 0.1f,  0.0f, 0.0f, 0.0f));
+        gl_Position = ortho * view * creatureMat* (position + vec4(-0.1f, -0.0f, 0.0f, 0.0f));
         TexCoords = vec2(0.0f, 1.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + vec4( 0.0f,  0.1f, 0.0f, 0.0f));
-        TexCoords = vec2(1.0f, 1.0f);
+        gl_Position = ortho * view * creatureMat * (position + vec4( 0.1f,  0.2f, 0.0f, 0.0f));
+        TexCoords = vec2(0.0f, 0.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
