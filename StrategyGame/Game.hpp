@@ -44,9 +44,6 @@
 #define NUMBER_OF_TILES 100
 #define INDICES_PER_TILES 2
 
-#define OPEN_TERRAIN 0.0f
-#define MOUNTAIN_TERRAIN 1.0f
-
 
 
 /**

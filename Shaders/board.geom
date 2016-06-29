@@ -8,6 +8,7 @@
 #define WATER_TERRAIN 2
 #define CARROT_FARM_TERRAIN 3 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 
+//Creature
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
