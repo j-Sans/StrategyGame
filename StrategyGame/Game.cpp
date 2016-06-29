@@ -276,7 +276,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(1, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     //Creature VBO:
@@ -287,7 +287,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
