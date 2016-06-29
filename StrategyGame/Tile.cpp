@@ -23,7 +23,7 @@ Tile::~Tile() {
 
 //Public member functions
 
-// Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
+//Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
 void Tile::setCreature(Creature *creature) {
     if (this->tileCreature != nullptr)
         delete this->tileCreature; //Prevent memory leaks
@@ -49,4 +49,13 @@ float Tile::terrain() {
 
 bool Tile::occupied() {
     return this->tileCreature != nullptr ? true : false;
+}
+
+//Currently this returns the basic stick figure creature whenever there is any creature.
+unsigned int Tile::creatureType() {
+    if (this->tileCreature == nullptr) {
+        return NO_CREATURE;
+    } else {
+        return STICK_FIGURE_CREATURE;
+    }
 }

@@ -42,7 +42,7 @@
 
 //Preprocessor directives
 #define NUMBER_OF_TILES 100
-#define INDICES_PER_TILES 3
+#define INDICES_PER_TILES 2
 
 #define OPEN_TERRAIN 0.0f
 #define MOUNTAIN_TERRAIN 1.0f
@@ -134,8 +134,15 @@ private:
     GLFWwindow* gameWindow;
     Shader gameShader; //Compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
-    GLuint VBO; //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
+    //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
+    GLuint vertexVBO;
+    GLuint terrainVBO;
+    GLuint creatureVBO;
+    
+    //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
+    GLfloat terrainData[NUMBER_OF_TILES];
+    GLfloat creatureData[NUMBER_OF_TILES];
     
     //Textures
     std::vector<Texture> textures;
@@ -160,9 +167,9 @@ private:
     void initWindow();
     
     /**
-     * Set the vertex data as a std::array in the object. Eventually will be made to get the data from the board or from a file, but is hardcoded for now.
+     * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
      */
-    void setVertexData();
+    void setData();
     
     /**
      * Initialize OpenGL buffers with the object's vertex data.

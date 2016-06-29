@@ -11,10 +11,13 @@
 
 #include "Creature.hpp"
 
-#define OPEN_TERRAIN 0.0f
-#define MOUNTAIN_TERRAIN 1.0f
-#define WATER_TERRAIN 2.0f
-#define CARROT_FARM_TERRAIN 3.0f //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
+#define OPEN_TERRAIN 0
+#define MOUNTAIN_TERRAIN 1
+#define WATER_TERRAIN 2
+#define CARROT_FARM_TERRAIN 3 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
+
+#define NO_CREATURE 0
+#define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 /**
  * A class representing a single tile on the board and, if present, the creature on that tile.
@@ -68,6 +71,11 @@ public:
      * @return A boolean representing if there is a creature on this tile currently.
      */
     bool occupied();
+    
+    /**
+     * @return The type of the creature, indicating which texture to use to the openGL VBO. Currently returns the basic creature if there is any creature.
+     */
+    unsigned int creatureType();
     
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }

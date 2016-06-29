@@ -178,8 +178,8 @@ void Game::initWindow() {
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
 }
 
-//Set the vertex data as a std::array in the object. Eventually will be made to get the data from the board or from a file, but is hardcoded for now.
-void Game::setVertexData() {
+//Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
+void Game::setData() {
     //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
@@ -187,31 +187,60 @@ void Game::setVertexData() {
     locationOfFirstPoint += (this->gameBoard.width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
     locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
     
+    //Vertex data
+    GLuint numberOfIndices = NUMBER_OF_TILES * INDICES_PER_TILES;
     
-    GLfloat vertices[NUMBER_OF_TILES * INDICES_PER_TILES];
+    GLfloat vertices[numberOfIndices];
     
     GLuint index = 0;
     
     for (GLuint x = 0; x < this->gameBoard.width(); x++) {
         for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            vertices[index] = locationOfFirstPoint - (x * pointDistance);
-            index++;
-            
-            vertices[index] = locationOfFirstPoint - (y * pointDistance);
-            index++;
-            
-            try {
-                vertices[index] = this->gameBoard.get(x, y).terrain();
-            } catch (std::exception) {
-                vertices[index] = OPEN_TERRAIN;
+            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+                
+                //Sets the point location based on the location in the board and on the modifiers above.
+                vertices[index] = locationOfFirstPoint - (x * pointDistance);
+                index++;
+                
+                vertices[index] = locationOfFirstPoint - (y * pointDistance);
+                index++;
             }
-            index++;
         }
     }
     
     for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
         this->vertexData[a] = vertices[a];
     }
+    
+    //Terrain and creature data. One for each tile
+    numberOfIndices = NUMBER_OF_TILES;
+    
+    GLuint terrains[numberOfIndices];
+    GLuint creatures[numberOfIndices];
+    
+    index = 0;
+    
+    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+                
+                //Gets the terrain of the tile
+                terrains[index] = this->gameBoard.get(x, y).terrain();
+                
+                //Gets the creature on the tile
+                creatures[index] = this->gameBoard.get(x, y).creatureType();
+                
+                //Increment
+                index++;
+            }
+        }
+    }
+    
+    for (int a = 0; a < NUMBER_OF_TILES; a++) {
+        this->terrainData[a] = terrains[a];
+        this->creatureData[a] = creatures[a];
+    }
+
 }
 
 //Initialize OpenGL buffers with the object's vertex data.
@@ -219,19 +248,43 @@ void Game::setBuffers() {
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &this->VBO);
+    glGenBuffers(1, &this->vertexVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
     
-    //Bind the other buffers with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    //Vertex VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData), this->vertexData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, INDICES_PER_TILES * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+    
+    //Terrain VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData), this->terrainData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLuint), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    
+    //Creature VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLuint), (GLvoid*)0);
+    glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
