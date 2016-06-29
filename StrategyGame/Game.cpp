@@ -224,10 +224,12 @@ void Game::setData() {
     
     for (GLuint x = 0; x < this->gameBoard.width(); x++) {
         for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+            if (index < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
                 
                 //Gets the terrain of the tile
                 terrains[index] = this->gameBoard.get(x, y).terrain();
+                
+                std::cout << index << ": " << this->gameBoard.get(x, y).terrain() << std::endl;
                 
                 //Gets the creature on the tile
                 creatures[index] = this->gameBoard.get(x, y).creatureType();
