@@ -141,8 +141,8 @@ private:
     
     //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
-    GLfloat terrainData[NUMBER_OF_TILES];
-    GLfloat creatureData[NUMBER_OF_TILES];
+    GLint terrainData[NUMBER_OF_TILES];
+    GLint creatureData[NUMBER_OF_TILES];
     
     //Textures
     std::vector<Texture> textures;

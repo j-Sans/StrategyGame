@@ -15,7 +15,7 @@ bool keys[1024];
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setVertexData(); //Set the vertex data with information from the board
+    this->setData(); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, fragmentPath);
@@ -43,7 +43,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
 //Constructor with geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setVertexData(); //Set the vertex data with information from the board
+    this->setData(); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, geometryPath, fragmentPath);
@@ -111,13 +111,15 @@ void Game::render() {
 
 //Close the window
 void Game::closeWindow() {
-    glfwSetWindowShouldClose(this->gameWindow, GL_TRUE);;
+    glfwSetWindowShouldClose(this->gameWindow, GL_TRUE);
 }
 
 //Terminate the window
 void Game::terminate() {
     glDeleteVertexArrays(1, &this->VAO);
-    glDeleteBuffers(1, &this->VBO);
+    glDeleteBuffers(1, &this->vertexVBO);
+    glDeleteBuffers(1, &this->terrainVBO);
+    glDeleteBuffers(1, &this->creatureVBO);
     
     glfwTerminate();
 }
@@ -215,8 +217,8 @@ void Game::setData() {
     //Terrain and creature data. One for each tile
     numberOfIndices = NUMBER_OF_TILES;
     
-    GLuint terrains[numberOfIndices];
-    GLuint creatures[numberOfIndices];
+    GLint terrains[numberOfIndices];
+    GLint creatures[numberOfIndices];
     
     index = 0;
     
@@ -249,6 +251,8 @@ void Game::setBuffers() {
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->vertexVBO);
+    glGenBuffers(1, &this->terrainVBO);
+    glGenBuffers(1, &this->creatureVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -272,7 +276,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLuint), (GLvoid*)0);
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     //Creature VBO:
@@ -283,7 +287,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLuint), (GLvoid*)0);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
