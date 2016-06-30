@@ -100,23 +100,23 @@ void makeMountain(vec4 position) {
 
 void drawCreature(vec4 position, int creatureTypeToDraw) {
     if (creatureTypeToDraw != NO_CREATURE) {
-        gl_Position = ortho * view * creatureMat * (position + vec4( 0.0f, -0.1f, 0.0f, 0.0f));
-        TexCoords = vec2(1.0f, 1.0f);
+        gl_Position = ortho * view * creatureMat * (position + vec4( 0.25f,  0.15f, 0.0f, 0.0f)); //Top right
+        TexCoords = vec2(0.0f, 0.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * creatureMat * (position + vec4( 0.2f,  0.1f, 0.0f, 0.0f));
-        TexCoords = vec2(1.0f, 0.0f);
-        TexType = ivec2(CREATURE, creatureTypeToDraw);
-        EmitVertex();
-        
-        gl_Position = ortho * view * creatureMat* (position + vec4(-0.1f, -0.0f, 0.0f, 0.0f));
+        gl_Position = ortho * view * creatureMat * (position + vec4( 0.05f, -0.05f, 0.0f, 0.0f)); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * creatureMat * (position + vec4( 0.1f,  0.2f, 0.0f, 0.0f));
-        TexCoords = vec2(0.0f, 0.0f);
+        gl_Position = ortho * view * creatureMat* (position + vec4( 0.15f, 0.25f, 0.0f, 0.0f)); //Top left
+        TexCoords = vec2(1.0f, 0.0f);
+        TexType = ivec2(CREATURE, creatureTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * creatureMat * (position + vec4(-0.05f,  0.05f, 0.0f, 0.0f)); //Bottom left
+        TexCoords = vec2(1.0f, 1.0f);
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
