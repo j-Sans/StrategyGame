@@ -41,7 +41,7 @@
 
 
 //Preprocessor directives
-#define NUMBER_OF_TILES 100
+#define NUMBER_OF_TILES 144
 #define INDICES_PER_TILES 2
 
 
@@ -66,6 +66,11 @@ public:
     //Public properties
     
     /**
+     * The width and height of the board.
+     */
+    static const GLuint boardWidth = 12;
+    
+    /**
      * The set width of the window. Due to high screen resolution, the final window may not actually be this many pixels wide.
      */
     const GLuint windowWidth = 800;
@@ -83,7 +88,7 @@ public:
     /**
      * A limiting factor preventing the camera from moving too far off screen.
      */
-    const GLfloat camMaxDisplacement = 1.0f;
+    const GLfloat camMaxDisplacement = boardWidth / 10.0f;
     
     /**
      * The game board, containing a 2D vector of Tile objects.

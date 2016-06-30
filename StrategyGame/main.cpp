@@ -37,13 +37,11 @@
 #include "Game.hpp"
 
 
-//Variables:
-const GLuint boardWidth = 10;
-
-
 int main(int argc, const char * argv[]) {
     //Set up
     srand((int)time(NULL));
+    
+    int boardWidth = Game::boardWidth;
     
 //Gameboard:
     std::vector<std::vector<Tile> > board;

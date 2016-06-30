@@ -115,7 +115,7 @@ void Game::render() {
     
     //Bind the VAO and draw shapes
     glBindVertexArray(this->VAO);
-    glDrawArrays(GL_POINTS, 0, 100);
+    glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
     //Swap buffers so as to properly render without flickering
