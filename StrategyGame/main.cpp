@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
     for (GLuint x = 0; x < BOARD_WIDTH; x++) {
         std::vector<Tile> row;
         for (GLuint y = 0; y < BOARD_WIDTH; y++) {
-            if (x == 0 && y == 2)
+            if (x == 0 && y == 1)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
             else
                 row.push_back(Tile(OPEN_TERRAIN, x, y));

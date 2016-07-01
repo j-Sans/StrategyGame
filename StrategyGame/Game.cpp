@@ -114,8 +114,6 @@ void Game::render() {
     try {
         glm::ivec2 mousePos = calculateTile();
         
-        std::cout << "mousePos: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
-        
         this->gameBoard.setColor(mousePos.x, mousePos.y, Red);
     } catch (std::range_error) {
         
@@ -508,9 +506,10 @@ glm::ivec2 Game::calculateTile() {
     xPos -= 1.0f;
     yPos -= 1.0f;
     
-    glm::vec4 mousePos(xPos, yPos, 0.0f, 1.0f);
+    //So that -1 is the bottom of the screen, not the top
+    yPos = -yPos;
     
-    mousePos = this->projection * this->view * this->model * mousePos;
+    glm::vec2 mousePos(xPos, yPos);
     
     glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
     
@@ -533,8 +532,11 @@ glm::ivec2 Game::calculateTile() {
     //Distance horizontally is double the distance of the vertical one because it was compressed vertically.
     //The horizontal distance is the max of the above distances, and the vertical distance the minimum
     
-    GLfloat horizontalDistance = fmaxf(distance1, distance2);
     GLfloat verticalDistance = fminf(distance1, distance2);
+    GLfloat horizontalDistance = 2 * verticalDistance;
+//    GLfloat horizontalDistance = fmaxf(distance1, distance2);
+    
+    std::cout << "horizontalDistance: " << horizontalDistance << ", verticalDistance: " << verticalDistance << std::endl;
     
     //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
     
@@ -554,7 +556,7 @@ glm::ivec2 Game::calculateTile() {
         // (h,k) is the point below the center
         
         GLfloat h = center.x;
-        GLfloat k = center.y - verticalDistance;
+        GLfloat k = center.y - (verticalDistance / 2);
         
         if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
             pointInIndex = false;
@@ -573,7 +575,7 @@ glm::ivec2 Game::calculateTile() {
         // (h,k) is the point above the center
         
         h = center.x; //h stays the same
-        k = center.y + verticalDistance;
+        k = center.y + (verticalDistance / 2);
         
         if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
             pointInIndex = false;

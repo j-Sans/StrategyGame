@@ -36,7 +36,7 @@ void main() {
     } else if (TexType.x == CREATURE) {
         //Draw the creature
 //        if (TexType.y == STICK_FIGURE_CREATURE) {
-            color = TileColor * texture(stickFigureTex, TexCoords);
+            color = texture(stickFigureTex, TexCoords);
 //        }
     }
 }
