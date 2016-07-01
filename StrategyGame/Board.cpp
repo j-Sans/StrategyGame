@@ -59,6 +59,27 @@ void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
     }
 }
 
+void Board::moveCreature(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
+    if (x >= this->gameBoard.size()) //is this protection really necessary?
+        throw std::range_error("Initial x out of range");
+    if (y >= this->gameBoard[x].size())
+        throw std::range_error("Initial y out of range");
+    if (destinationX >= this->gameBoard.size())
+        throw std::range_error("Destination x out of range");
+    if (destinationY >= this->gameBoard[destinationX].size())
+        throw std::range_error("Destination y out of range");
+    
+    if (destinationX == x && destinationY == y)
+        throw std::logic_error("Already at destination");
+    
+    if (!this->gameBoard[destinationX][destinationY].occupied()) {
+        this->gameBoard[destinationX][destinationY].setCreature(this->gameBoard[x][y].creature());
+        this->gameBoard[x][y].setCreature(nullptr);
+    } else {
+        throw std::range_error("Destination tile occupied");
+    }
+}
+
 /*
  * TO ADD:
  * MODIFIER VALUE

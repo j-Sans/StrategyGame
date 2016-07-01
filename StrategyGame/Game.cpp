@@ -108,16 +108,28 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
-    if (activateTile) { //If the mouse was clicked, set the color of the tile that was clicked
+    //If the mouse was clicked, set the color of the tile that was clicked
+    if (activateTile) {
         glm::ivec2 mousePos;
         
         try {
-            mousePos = mouseTile();
+            mousePos = mouseTile(); //Fails if mouse is outside of the board
             
-            if (mousePos == this->selectedTile) { //Reset selectedTile if the current tile was clicked again
+            GLuint x = mousePos.x;
+            GLuint y = mousePos.y;
+            
+            //Reset the tile if the current tile is clicked again
+            if (mousePos == this->selectedTile) {
+                this->gameBoard.setStyle(this->selectedTile.x, this->selectedTile.y, Regular);
                 this->selectedTile = glm::vec2(-1, -1);
-            } else {
-                this->selectedTile = glm::vec2(mousePos.x, mousePos.y);
+                
+            //If it is an empty spot, change the selected tile to that spot
+            } else if (this->gameBoard.get(x, y).style() == Regular) {
+                this->selectedTile = glm::vec2(x, y); //The next section below this if (activateTile) will set this up
+                //FILL IN THIS ******************************************************************************************************************
+                //Neaten this part up with the next section much below this large if statement
+            } else if (this->gameBoard.get(x, y).style() == OpenAdj) {
+                this->gameBoard.
             }
         } catch (std::exception e) {
             //The mouse was outside of the board
@@ -127,12 +139,12 @@ void Game::render() {
         }
         
         activateTile = false;
-    }
-    
-    //Set all tile colors to White (all light reflected, normal color)
-    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            this->gameBoard.setStyle(x, y, Regular);
+        
+        //Set all tile colors to White (all light reflected, normal color)
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
         }
     }
     
@@ -187,6 +199,13 @@ void Game::render() {
         }
     } catch (std::exception e) {
         //No tile selected (Internally, selectedTile = (-1, -1) )
+        
+        //Reset all tile styles to regular (unselected)
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
+        }
     }
     
     //Update the creatures

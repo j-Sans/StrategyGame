@@ -57,6 +57,17 @@ public:
     void moveCreature(unsigned int x, unsigned int y, Direction moveTo);
     
     /**
+     * Move a creature from the designated spot in the designated direction.
+     * Possible errors include if the destination is occupied or if the destination is off of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     * @param destinationX The x index of the destination coordinate in the board.
+     * @param destinationY The y index of the destination coordinate in the board.
+     */
+    void moveCreature(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
+    
+    /**
      * Have one creature attack the other creature.
      * Possible errors include if the indices are off of the board.
      *
