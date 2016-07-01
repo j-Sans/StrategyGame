@@ -625,7 +625,7 @@ glm::ivec2 Game::mouseTile() {
     //The horizontal distance is the max of the above distances, and the vertical distance the minimum
     
     GLfloat verticalDistance = fminf(distance1, distance2);
-    GLfloat horizontalDistance = 2 * verticalDistance;
+    GLfloat horizontalDistance = fmaxf(distance1, distance2);
     
     //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
     
