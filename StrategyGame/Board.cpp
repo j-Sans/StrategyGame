@@ -195,7 +195,7 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
     //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
 }
 
-void Board::setColor(unsigned int x, unsigned int y, Color color) {
+void Board::setStyle(unsigned int x, unsigned int y, Style style) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range");
     }
@@ -203,7 +203,7 @@ void Board::setColor(unsigned int x, unsigned int y, Color color) {
         throw std::range_error("Y out of range");
     }
     
-    this->gameBoard[x][y].setColor(color);
+    this->gameBoard[x][y].setStyle(style);
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {

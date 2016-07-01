@@ -132,17 +132,54 @@ void Game::render() {
     //Set all tile colors to White (all light reflected, normal color)
     for (GLuint x = 0; x < this->gameBoard.width(); x++) {
         for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            this->gameBoard.setColor(x, y, White);
+            this->gameBoard.setStyle(x, y, Regular);
         }
     }
     
-    //Set the selected tile's color to Red
     try {
-        this->gameBoard.setColor(this->selectedTile.x, this->selectedTile.y, Red);
+        //Highlight the selected tile
+        this->gameBoard.setStyle(this->selectedTile.x, this->selectedTile.y, Selected);
+        
+        //The rest of the code will only execute if no error is thrown, which means there is a selected tile
+        
+        //If the selected tile is a creature, highlight adjacent tiles by adding them to the moveToTiles list
+        if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) {
+            Creature creature = *this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature();
+            GLuint x = this->selectedTile.x;
+            GLuint y = this->selectedTile.y;
+            
+            try { //North tile
+                if (this->gameBoard.get(x, y - 1).passableByCreature(creature))
+                    this->gameBoard.setStyle(x, y - 1, OpenAdj);
+            } catch (std::exception e) {
+                //No northern tile
+            }
+            
+            try { //West tile
+                if (this->gameBoard.get(x - 1, y).passableByCreature(creature))
+                    this->gameBoard.setStyle(x - 1, y, OpenAdj);
+            } catch (std::exception e) {
+                //No western tile
+            }
+            
+            try { //South tile
+                if (this->gameBoard.get(x, y + 1).passableByCreature(creature))
+                    this->gameBoard.setStyle(x, y + 1, OpenAdj);
+            } catch (std::exception e) {
+                //No southern tile
+            }
+            
+            try { //East tile
+                if (this->gameBoard.get(x + 1, y).passableByCreature(creature))
+                   this->gameBoard.setStyle(x + 1, y, OpenAdj);
+            } catch (std::exception e) {
+                //No eastern tile
+            }
+            
+        }
     } catch (std::exception e) {
         //No tile selected (Internally, selectedTile = (-1, -1) )
     }
-    
     
     //Update the creatures
     this->updateCreatureBuffer();
@@ -284,7 +321,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
     
     GLint terrains[numberOfIndices];
     GLint creatures[numberOfIndices];
-    GLint colors[3 * numberOfIndices];
+    GLfloat colors[3 * numberOfIndices];
     
     index = 0;
     
@@ -576,7 +613,7 @@ glm::ivec2 Game::mouseTile() {
         
         bool pointInIndex = true;
         
-        //Lower left inequality:
+        //Lower left inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
         // y > ( -slope ) ( x - h ) + k
         // (h,k) is the point below the center
         
@@ -585,17 +622,19 @@ glm::ivec2 Game::mouseTile() {
         
         if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
             pointInIndex = false;
+            continue;
         }
         
-        //Lower right inequality:
+        //Lower right inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
         // y > ( slope ) ( x - h ) + k
         // (h,k) is the point below the center, the same as previously
         
         if (mousePos.y < ( slope ) * ( mousePos.x - h ) + k) { //If it's below this line
             pointInIndex = false;
+            continue;
         }
         
-        //Upper left inequality:
+        //Upper left inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
         // y < ( slope ) ( x - h ) + k
         // (h,k) is the point above the center
         
@@ -604,13 +643,15 @@ glm::ivec2 Game::mouseTile() {
         
         if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
             pointInIndex = false;
+            continue;
         }
-        //Upper right inequality:
+        //Upper right inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
         // y < ( -slope ) ( x - h ) + k
         // (h,k) is the point above the center, the same as previously
         
         if (mousePos.y > ( -slope ) * ( mousePos.x - h ) + k) { //If it's above this line
             pointInIndex = false;
+            continue;
         }
         
         if (pointInIndex) { //The point was in bounds

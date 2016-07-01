@@ -25,8 +25,17 @@ void Tile::setCreature(Creature *creature) {
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
 }
 
-void Tile::setColor(Color color) {
-    this->tileColor = color;
+void Tile::setStyle(Style style) {
+    this->tileStyle = style;
+    
+    if (style == Regular)
+        this->tileColor = White;
+    else if (style == Selected)
+        this->tileColor = Tile::selectedTileColor;
+    else if (style == OpenAdj)
+        this->tileColor = Tile::openAdjTileColor;
+    else if (style == AttackableAdj)
+        this->tileColor = Tile::attackableAdjTileColor;
 }
 
 const unsigned int Tile::x() {
@@ -66,16 +75,42 @@ glm::vec3 Tile::color() {
     if (this->tileColor == White)
         return glm::vec3(1.0f, 1.0f, 1.0f);
     else if (this->tileColor == Grey)
-        return glm::vec3(0.67f, 0.67f, 0.67f);
+        return glm::vec3(0.625f, 0.625f, 0.625f);
     else if (this->tileColor == Red)
-        return glm::vec3(1.0f, 0.0f, 0.0f);
+        return glm::vec3(1.0f, 0.625f, 0.625f);
     else if (this->tileColor == Yellow)
-        return glm::vec3(1.0f, 1.0f, 0.0f);
+        return glm::vec3(1.0f, 1.0f, 0.625f);
     else if (this->tileColor == Green)
-        return glm::vec3(0.0f, 1.0f, 0.0f);
+        return glm::vec3(0.62f, 1.0f, 0.625f);
+    else if (this->tileColor == Cyan)
+        return glm::vec3(0.625f, 1.0f, 1.0f);
     else if (this->tileColor == Blue)
-        return glm::vec3(0.0f, 0.0f, 1.0f);
+        return glm::vec3(0.625f, 0.625f, 1.0f);
     
     //Something went wrong. Return White to have an unaltered color
     return glm::vec3(1.0f, 1.0f, 1.0f);
+}
+
+Style Tile::style() {
+    return this->tileStyle;
+}
+
+bool Tile::passableByCreature(Creature creature) {
+    //Mountains are not passable (except by dwarves)
+    if (this->tileTerrain == MOUNTAIN_TERRAIN && creature.race() != Dwarf) {
+        return false;
+    }
+    
+    //Water is never passable
+    if (this->tileTerrain == WATER_TERRAIN) {
+        return false;
+    }
+    
+    //Tiles with creatures are never passable
+    if (this->occupied()) {
+        return false;
+    }
+    
+    //Everything else is passable
+    return true;
 }

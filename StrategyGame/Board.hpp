@@ -107,9 +107,9 @@ public:
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
-     * @param color A color to be set in the board at the designated spot. Possible colors include White, Grey, Red, Yellow, Green, and Blue. White means no alterations.
+     * @param style A style to be set in the board at the designated spot. Possible colors include Regular, Selected, OpenAdj, and AttackableAdj.
      */
-    void setColor(unsigned int x, unsigned int y, Color color);
+    void setStyle(unsigned int x, unsigned int y, Style style);
     
     //Public get functions
     

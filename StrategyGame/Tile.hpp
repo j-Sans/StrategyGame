@@ -31,7 +31,15 @@ enum Color {
     Red,
     Yellow,
     Green,
+    Cyan,
     Blue,
+};
+
+enum Style {
+    Regular,
+    Selected,
+    OpenAdj,
+    AttackableAdj,
 };
 
 /**
@@ -50,6 +58,21 @@ public:
     
     //Public properties
     
+    /**
+     * The color of selected tiles.
+     */
+    static const Color selectedTileColor = Grey;
+    
+    /**
+     * The color of adjacent open tiles.
+     */
+    static const Color openAdjTileColor = Cyan;
+    
+    /**
+     * The color of adjacent attackable tiles.
+     */
+    static const Color attackableAdjTileColor = Red;
+    
     //Public member functions
     
     /** 
@@ -60,11 +83,11 @@ public:
     void setCreature(Creature *creature);
     
     /**
-     * Sets a color to alter the hue of this tile.
+     * Sets a style to alter the hue of this tile.
      *
-     * @param color A Color type representing the color. Colors include White, Grey, Red, Yellow, Green, and Blue. White means no alteration.
+     * @param style A style type representing the color. Styles include Regular, Selected, OpenAdj, and AttackableAdj.
      */
-    void setColor(Color color);
+    void setStyle(Style style);
     
     //Get methods
     
@@ -99,7 +122,7 @@ public:
     unsigned int creatureType();
     
     /**
-     * @return The name of the color of this tile, of type Color enum. Possible values include White, Grey, Red, Yellow, Green, and Blue.
+     * @return The name of the color of this tile, of type Color enum. Possible values include White, Grey, Red, Yellow, Green, Cyan, and Blue.
      */
     Color colorName();
     
@@ -107,6 +130,16 @@ public:
      * @return The color alteration of the tile as a vec3 of RGB values. Values range from 0.0 to 1.0.
      */
     glm::vec3 color();
+    
+    /**
+     * @return The style of this tile, of type Style enum. Possible values include Regular, Selected, OpenAdj, and AttackableAdj.
+     */
+    Style style();
+    
+    /**
+     * @return A boolean representing whether the creature would be able to go through this tile.
+     */
+    bool passableByCreature(Creature creature);
     
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }
@@ -119,6 +152,7 @@ private:
     Creature* tileCreature = nullptr;
     int tileTerrain;
     Color tileColor = White;
+    Style tileStyle = Regular;
     
     //const bool blocksVision;
     //const bool isRoughTerrain; //slows movement
