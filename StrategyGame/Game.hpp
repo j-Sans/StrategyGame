@@ -220,6 +220,11 @@ private:
     void updateCreatureBuffer();
     
     /**
+     * A function to update the color VBO. Should be called every frame.
+     */
+    void updateColorBuffer();
+    
+    /**
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
      */
     void moveCamera();

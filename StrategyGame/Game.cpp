@@ -107,6 +107,9 @@ void Game::render() {
     //Update the creatures
     this->updateCreatureBuffer();
     
+    //Update tile colors
+    this->updateColorBuffer();
+    
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
     
@@ -406,6 +409,29 @@ void Game::updateCreatureBuffer() {
     //Position
     glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
+}
+
+//A function to update the creature VBO. Should be called every frame
+void Game::updateColorBuffer() {
+    //Update creature data array
+    this->setData(false, false, false, true);
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(3);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
