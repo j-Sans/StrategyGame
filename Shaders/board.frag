@@ -16,6 +16,7 @@
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 in vec2 TexCoords;
+in vec4 TileColor;
 flat in ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
 out vec4 color;
@@ -28,14 +29,14 @@ void main() {
     if (TexType.x == TERRAIN) {
         //Draw the ground
         if (TexType.y == MOUNTAIN_TERRAIN) {
-            color = texture(mountainTex, TexCoords);
+            color = TileColor * texture(mountainTex, TexCoords);
         } else if (TexType.y == OPEN_TERRAIN) {
-            color = texture(grassTex, TexCoords);
+            color = TileColor * texture(grassTex, TexCoords);
         }
     } else if (TexType.x == CREATURE) {
         //Draw the creature
 //        if (TexType.y == STICK_FIGURE_CREATURE) {
-            color = texture(stickFigureTex, TexCoords);
+            color = TileColor * texture(stickFigureTex, TexCoords);
 //        }
     }
 }

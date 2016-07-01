@@ -20,8 +20,10 @@ layout (triangle_strip, max_vertices = 8) out;
 
 in int terrain[];
 in int creature[];
+in vec4 tileColor[];
 
 out vec2 TexCoords;
+out vec4 TileColor;
 flat out ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
 uniform mat4 model;
@@ -53,21 +55,25 @@ void main() {
 void makeOpen(vec4 position) {
     gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom left
     TexCoords = vec2(0.0f, 0.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Bottom right
     TexCoords = vec2(1.0f, 0.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Top left
     TexCoords = vec2(0.0f, 1.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f,  0.1f, 0.0f, 0.0f)); //Top right
     TexCoords = vec2(1.0f, 1.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
@@ -77,21 +83,25 @@ void makeOpen(vec4 position) {
 void makeMountain(vec4 position) {
     gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
     TexCoords = vec2(0.0f, 1.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
     TexCoords = vec2(0.5f, 1.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
     TexCoords = vec2(0.0f, 0.5f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
     TexCoords = vec2(1.0f, 0.0f);
+    TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
     EmitVertex();
     
@@ -102,21 +112,25 @@ void drawCreature(vec4 position, int creatureTypeToDraw) {
     if (creatureTypeToDraw != NO_CREATURE) {
         gl_Position = ortho * view * creatureMat * (position + vec4( 0.25f,  0.15f, 0.0f, 0.0f)); //Top right
         TexCoords = vec2(0.0f, 0.0f);
+        TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
         gl_Position = ortho * view * creatureMat * (position + vec4( 0.05f, -0.05f, 0.0f, 0.0f)); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
+        TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
         gl_Position = ortho * view * creatureMat* (position + vec4( 0.15f, 0.25f, 0.0f, 0.0f)); //Top left
         TexCoords = vec2(1.0f, 0.0f);
+        TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
         gl_Position = ortho * view * creatureMat * (position + vec4(-0.05f,  0.05f, 0.0f, 0.0f)); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
+        TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         

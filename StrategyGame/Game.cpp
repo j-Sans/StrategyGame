@@ -15,7 +15,7 @@ bool keys[1024];
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true); //Set all of the data arrays with information from the board
+    this->setData(true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, fragmentPath);
@@ -48,7 +48,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
 //Constructor with geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true); //Set the data arrays with information from the board
+    this->setData(true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, geometryPath, fragmentPath);
@@ -198,7 +198,7 @@ void Game::initWindow() {
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData) {
+void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData) {
     //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
@@ -238,6 +238,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
     
     GLint terrains[numberOfIndices];
     GLint creatures[numberOfIndices];
+    GLint colors[3 * numberOfIndices];
     
     index = 0;
     
@@ -251,6 +252,12 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
                 if (setCreatureData)
                     //Gets the creature on the tile
                     creatures[index] = this->gameBoard.get(x, y).creatureType();
+                
+                if (setColorData) {
+                    //Gets the color alteration of the tile
+                    colors[3 * index] = this->gameBoard.get(x, y).color().x;
+                    colors[(3 * index) + 1] = this->gameBoard.get(x, y).color().y;
+                    colors[(3 * index) + 2] = this->gameBoard.get(x, y).color().z;
                 
                 //Increment
                 index++;
@@ -275,6 +282,7 @@ void Game::setBuffers() {
     glGenBuffers(1, &this->vertexVBO);
     glGenBuffers(1, &this->terrainVBO);
     glGenBuffers(1, &this->creatureVBO);
+    glGenBuffers(1, &this->colorVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -311,6 +319,17 @@ void Game::setBuffers() {
     //Position
     glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
+    
+    //Color VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(3);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
@@ -368,7 +387,7 @@ void Game::presetTransformations() {
 //A function to update the creature VBO. Should be called every frame
 void Game::updateCreatureBuffer() {
     //Update creature data array
-    this->setData(false, false, true);
+    this->setData(false, false, true, false);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
