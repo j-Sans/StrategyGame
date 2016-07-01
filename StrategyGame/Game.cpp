@@ -258,6 +258,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
                     colors[3 * index] = this->gameBoard.get(x, y).color().x;
                     colors[(3 * index) + 1] = this->gameBoard.get(x, y).color().y;
                     colors[(3 * index) + 2] = this->gameBoard.get(x, y).color().z;
+                }
                 
                 //Increment
                 index++;
@@ -270,6 +271,11 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->terrainData[a] = terrains[a];
         if (setCreatureData)
             this->creatureData[a] = creatures[a];
+        if (setColorData) {
+            this->colorData[3 * a] = colors[3 * a];
+            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
+            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
+        }
     }
 
 }
