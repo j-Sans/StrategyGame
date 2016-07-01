@@ -104,6 +104,12 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
+    for (GLuint x = 0; x < this->gameBoard.width()  ; x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            this->gameBoard.setColor(x, y, White);
+        }
+    }
+    
     //ERROR: "X out of range"
     try {
         glm::ivec2 mousePos = calculateTile();
