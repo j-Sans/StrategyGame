@@ -14,7 +14,7 @@ Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
 //Public member functions
-void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
+void Board::moveCreatureByDirection(unsigned int x, unsigned int y, Direction moveTo) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("X out of range");
     if (y >= this->gameBoard[0].size())
@@ -59,7 +59,7 @@ void Board::moveCreature(unsigned int x, unsigned int y, Direction moveTo) {
     }
 }
 
-void Board::moveCreature(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
+void Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("Initial x out of range");
     if (y >= this->gameBoard[x].size())
@@ -228,13 +228,13 @@ void Board::setStyle(unsigned int x, unsigned int y, Style style) {
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {
-    if (x >= gameBoard.size()) {
+    if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range");
     }
-    if (x >= gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+    if (x >= this->gameBoard[x].size()) {
+        throw std::range_error("Y  out of range");
     }
-    return gameBoard[x][y];
+    return this->gameBoard[x][y];
 }
 
 unsigned int Board::width() {

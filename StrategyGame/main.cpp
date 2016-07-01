@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
     
     G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North));
     
-    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North)); //RENDERS IN THE WRONG LOCATION
+//    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North)); //RENDERS IN THE WRONG LOCATION
     
     //Game loop
     while(!glfwWindowShouldClose(G.window())) {

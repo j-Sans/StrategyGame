@@ -54,18 +54,18 @@ public:
      * @param y The y index of the coordinate in the board.
      * @param moveTo The direction in which to move. Possible direction types include North, East, South, and West.
      */
-    void moveCreature(unsigned int x, unsigned int y, Direction moveTo);
+    void moveCreatureByDirection(unsigned int x, unsigned int y, Direction moveTo);
     
     /**
      * Move a creature from the designated spot in the designated direction.
-     * Possible errors include if the destination is occupied or if the destination is off of the board.
+     * Possible errors include if the destination is occupied or if either it or the original location is off of the board.
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
      * @param destinationX The x index of the destination coordinate in the board.
      * @param destinationY The y index of the destination coordinate in the board.
      */
-    void moveCreature(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
+    void moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
     
     /**
      * Have one creature attack the other creature.

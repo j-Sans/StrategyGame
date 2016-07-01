@@ -76,7 +76,8 @@ public:
     //Public member functions
     
     /** 
-     * Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
+     * Sets a creature as the creature located in this tile.
+     *  Warning: Does not deletes the old creature!
      *
      * @param creature A pointer to the new creature. If nullptr, then the spot becomes empty.
      */

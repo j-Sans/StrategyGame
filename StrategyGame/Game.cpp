@@ -115,31 +115,108 @@ void Game::render() {
         try {
             mousePos = mouseTile(); //Fails if mouse is outside of the board
             
-            GLuint x = mousePos.x;
-            GLuint y = mousePos.y;
-            
-            //Reset the tile if the current tile is clicked again
+            //Reset the tile (and others) if the current tile is clicked again
             if (mousePos == this->selectedTile) {
-                this->gameBoard.setStyle(this->selectedTile.x, this->selectedTile.y, Regular);
-                this->selectedTile = glm::vec2(-1, -1);
                 
-            //If it is an empty spot, change the selected tile to that spot
-            } else if (this->gameBoard.get(x, y).style() == Regular) {
-                this->selectedTile = glm::vec2(x, y); //The next section below this if (activateTile) will set this up
-                //FILL IN THIS ******************************************************************************************************************
-                //Neaten this part up with the next section much below this large if statement
-            } else if (this->gameBoard.get(x, y).style() == OpenAdj) {
-                this->gameBoard.
+                //Goes through all tiles and sets them to regular
+                for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+                    for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                        this->gameBoard.setStyle(x, y, Regular);
+                    }
+                }
+                
+                //Set selectedTile to null results
+                this->selectedTile = glm::ivec2(-1, -1);
             }
+            
+            //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
+            else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Regular) {
+                
+                //Reset all tiles (this one is highlighted after)
+                for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+                    for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                        this->gameBoard.setStyle(x, y, Regular);
+                    }
+                }
+                
+                //Select this new tile
+                this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
+                
+                //If the selected tile is a creature, highlight adjacent tiles
+                if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr) {
+                    
+                    Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
+                    
+                    try { //North tile
+                        if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
+                            this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
+                        else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr)
+                            this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
+                    } catch (std::exception e) {
+                        //No northern tile
+                    }
+                    
+                    try { //West tile
+                        if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
+                            this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
+                        else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr)
+                            this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
+                    } catch (std::exception e) {
+                        //No western tile
+                    }
+                    
+                    try { //South tile
+                        if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
+                            this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
+                        else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr)
+                            this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
+                    } catch (std::exception e) {
+                        //No southern tile
+                    }
+                    
+                    try { //East tile
+                        if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
+                            this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
+                        else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr)
+                            this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
+                    } catch (std::exception e) {
+                        //No eastern tile
+                    }
+                }
+                
+                this->selectedTile = mousePos;
+            }
+            
+            else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == OpenAdj) {
+                
+                std::cout << "OpenAdj tile selected" << std::endl;
+                
+                this->gameBoard.moveCreatureByLocation(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+                
+                //Reset all tiles
+                for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+                    for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                        this->gameBoard.setStyle(x, y, Regular);
+                    }
+                }
+                
+                this->selectedTile = glm::ivec2(-1, -1);
+            }
+            
+            //Add attacking
+            
         } catch (std::exception e) {
             //The mouse was outside of the board
             // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
             
-            //Nothing needs to be done, just no tile is displayed
+            //Nothing needs to be done, just no tile is highlighted
         }
         
         activateTile = false;
-        
+    
+    }
+    
+        /*
         //Set all tile colors to White (all light reflected, normal color)
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
@@ -206,7 +283,7 @@ void Game::render() {
                 this->gameBoard.setStyle(x, y, Regular);
             }
         }
-    }
+    }*/
     
     //Update the creatures
     this->updateCreatureBuffer();

@@ -17,10 +17,8 @@ Tile::Tile(float terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
 
 //Public member functions
 
-//Sets a creature as the creature located in this tile. Deletes the old creature to avoid memory leaks, and adjusts whether the tile is occupied.
+//Sets a creature as the creature located in this tile. Warning: Does not deletes the old creature!
 void Tile::setCreature(Creature *creature) {
-    if (this->tileCreature != nullptr)
-        delete this->tileCreature; //Prevent memory leaks
     
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
 }
