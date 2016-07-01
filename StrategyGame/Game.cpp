@@ -12,6 +12,9 @@
 //Declared here so it can work with static function keyCallback. That function needs to be static
 bool keys[1024];
 
+//A boolean representing if the active tile should be set. This boolean is set in the mouse button callback function
+bool activateTile = false;
+
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
@@ -104,23 +107,27 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
-    for (GLuint x = 0; x < this->gameBoard.width()  ; x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            this->gameBoard.setColor(x, y, White);
+    if (activateTile) { //If the mouse was clicked, set the color of the tile that was clicked
+        glm::ivec2 mousePos;
+        
+        try {
+            mousePos = mouseTile();
+            
+            if (mousePos == this->selectedTile) { //Reset selectedTile if the current tile was clicked again
+                this->gameBoard.setColor(mousePos.x, mousePos.y, White);
+                this->selectedTile = glm::vec2(-1, -1);
+            } else {
+                this->gameBoard.setColor(mousePos.x, mousePos.y, Red);
+                this->selectedTile = glm::vec2(mousePos.x, mousePos.y);
+            }
+        } catch (std::exception e) {
+            //The mouse was outside of the board
+            // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
+            
+            //Nothing needs to be done, just no tile is displayed
         }
-    }
-    
-    glm::ivec2 mousePos;
-    
-    try {
-        mousePos = mouseTile();
         
-        this->gameBoard.setColor(mousePos.x, mousePos.y, Red);
-    } catch (std::exception e) {
-        //The mouse was outside of the board
-        // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
-        
-        //Nothing needs to be done, just no tile is displayed
+        activateTile = false;
     }
     
     //Update the creatures
@@ -217,6 +224,9 @@ void Game::initWindow() {
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
+    
+    //Set mouse button click callback function
+    glfwSetMouseButtonCallback(this->gameWindow, this->mouseButtonCallback);
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
@@ -603,7 +613,6 @@ glm::ivec2 Game::mouseTile() {
     
     glm::ivec2 tileIndexVec;
     
-    //ERROR RETURNING CORRECT INDEX
     tileIndexVec.x = (int)(tileIndex / BOARD_WIDTH); //The x index in the 2D vector
     
     tileIndexVec.y = tileIndex - (BOARD_WIDTH * tileIndexVec.x); //The y index in the 2D vector
@@ -632,15 +641,7 @@ void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int m
     glfwGetCursorPos(window, &xPos, &yPos);
     
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
-        
-        
-        
-        
-
-    
-    
-    
-    
+        activateTile = true;
     }
     
     

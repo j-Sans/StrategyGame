@@ -58,6 +58,10 @@ unsigned int Tile::creatureType() {
     }
 }
 
+Color Tile::colorName() {
+    return this->tileColor;
+}
+
 glm::vec3 Tile::color() {
     if (this->tileColor == White)
         return glm::vec3(1.0f, 1.0f, 1.0f);

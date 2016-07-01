@@ -151,7 +151,7 @@ private:
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
     GLint terrainData[NUMBER_OF_TILES];
     GLint creatureData[NUMBER_OF_TILES];
-    GLfloat colorData[3 * NUMBER_OF_TILES];
+    GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
     
     //Textures
     std::vector<Texture> textures;
@@ -168,6 +168,9 @@ private:
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
+    
+    //Board data
+    glm::ivec2 selectedTile = glm::ivec2(-1, -1);
 
     //Private member functions
     
@@ -233,7 +236,7 @@ private:
      * A function to calculate the tile closest to the mouse location at any given point in time.
      * Possible errors include if the board size is below 2x2 or if the mouse is outside of the board.
      *
-     * @return The tile indices in the board, the 2D vector.
+     * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
      */
     glm::ivec2 mouseTile();
     

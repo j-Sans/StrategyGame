@@ -99,7 +99,12 @@ public:
     unsigned int creatureType();
     
     /**
-     * @return The color alteration of the tile as a vec3. Values range from 0.0 to 1.0.
+     * @return The name of the color of this tile, of type Color enum. Possible values include White, Grey, Red, Yellow, Green, and Blue.
+     */
+    Color colorName();
+    
+    /**
+     * @return The color alteration of the tile as a vec3 of RGB values. Values range from 0.0 to 1.0.
      */
     glm::vec3 color();
     
