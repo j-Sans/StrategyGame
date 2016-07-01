@@ -12,6 +12,11 @@
 #include "Creature.hpp"
 #include <iostream>
 
+//GLM: OpenGL mathematics for rotations, translations, dilations
+#include <GLM/glm.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
+
 #define OPEN_TERRAIN 0
 #define MOUNTAIN_TERRAIN 1
 #define WATER_TERRAIN 2
@@ -19,6 +24,15 @@
 
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
+
+enum Color {
+    White,
+    Grey,
+    Red,
+    Yellow,
+    Green,
+    Blue,
+};
 
 /**
  * A class representing a single tile on the board and, if present, the creature on that tile.
@@ -44,6 +58,13 @@ public:
      * @param creature A pointer to the new creature. If nullptr, then the spot becomes empty.
      */
     void setCreature(Creature *creature);
+    
+    /**
+     * Sets a color to alter the hue of this tile.
+     *
+     * @param color A Color type representing the color. Colors include White, Grey, Red, Yellow, Green, and Blue. White means no alteration.
+     */
+    void setColor(Color color);
     
     //Get methods
     
@@ -77,6 +98,11 @@ public:
      */
     unsigned int creatureType();
     
+    /**
+     * @return The color alteration of the tile as a vec3. Values range from 0.0 to 1.0.
+     */
+    glm::vec3 color();
+    
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }
     //const bool rough() { return this->isRoughTerrain; }
@@ -87,6 +113,7 @@ private:
     const unsigned int tileY;
     Creature* tileCreature = nullptr;
     int tileTerrain;
+    Color tileColor = White;
     
     //const bool blocksVision;
     //const bool isRoughTerrain; //slows movement

@@ -25,6 +25,10 @@ void Tile::setCreature(Creature *creature) {
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
 }
 
+void Tile::setColor(Color color) {
+    this->tileColor = color;
+}
+
 const unsigned int Tile::x() {
     return this->tileX;
 }
@@ -52,4 +56,22 @@ unsigned int Tile::creatureType() {
     } else {
         return STICK_FIGURE_CREATURE;
     }
+}
+
+glm::vec3 Tile::color() {
+    if (this->tileColor == White)
+        return glm::vec3(1.0f, 1.0f, 1.0f);
+    else if (this->tileColor == Grey)
+        return glm::vec3(0.67f, 0.67f, 0.67f);
+    else if (this->tileColor == Red)
+        return glm::vec3(1.0f, 0.0f, 0.0f);
+    else if (this->tileColor == Yellow)
+        return glm::vec3(1.0f, 1.0f, 0.0f);
+    else if (this->tileColor == Green)
+        return glm::vec3(0.0f, 1.0f, 0.0f);
+    else if (this->tileColor == Blue)
+        return glm::vec3(0.0f, 0.0f, 1.0f);
+    
+    //Something went wrong. Return White to have an unaltered color
+    return glm::vec3(1.0f, 1.0f, 1.0f);
 }
