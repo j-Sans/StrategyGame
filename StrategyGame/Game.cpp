@@ -426,10 +426,19 @@ GLint Game::calculateTile() {
     
     glfwGetWindowSize(this->gameWindow, &width, &height);
     
-    //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
+    //Get the mousePos to be in the same coordinates as the vertexData (-1 to 1)
     
+    //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
     xPos /= width;
     yPos /= height;
+    
+    //Now make it 0 to 2 by doubling it
+    xPos *= 2.0f;
+    yPos *= 2.0f;
+    
+    //Now subtract 1 to get it between -1 and 1
+    xPos -= 1.0f;
+    yPos -= 1.0f;
     
     glm::vec4 mousePos(xPos, yPos, 0.0f, 1.0f);
     
