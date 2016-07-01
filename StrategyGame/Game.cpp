@@ -110,13 +110,17 @@ void Game::render() {
         }
     }
     
-    //ERROR: "X out of range"
+    glm::ivec2 mousePos;
+    
     try {
-        glm::ivec2 mousePos = calculateTile();
+        mousePos = mouseTile();
         
         this->gameBoard.setColor(mousePos.x, mousePos.y, Red);
-    } catch (std::range_error) {
+    } catch (std::exception e) {
+        //The mouse was outside of the board
+        // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
         
+        //Nothing needs to be done, just no tile is displayed
     }
     
     //Update the creatures
@@ -482,7 +486,7 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-glm::ivec2 Game::calculateTile() {
+glm::ivec2 Game::mouseTile() {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
     int width, height;
@@ -534,9 +538,6 @@ glm::ivec2 Game::calculateTile() {
     
     GLfloat verticalDistance = fminf(distance1, distance2);
     GLfloat horizontalDistance = 2 * verticalDistance;
-//    GLfloat horizontalDistance = fmaxf(distance1, distance2);
-    
-    std::cout << "horizontalDistance: " << horizontalDistance << ", verticalDistance: " << verticalDistance << std::endl;
     
     //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
     
@@ -597,16 +598,15 @@ glm::ivec2 Game::calculateTile() {
     //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
     //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
     
-    if (tileIndex == -1) {
+    if (tileIndex == -1)
         throw std::range_error("Mouse outside of board");
-    }
     
     glm::ivec2 tileIndexVec;
     
     //ERROR RETURNING CORRECT INDEX
-    tileIndexVec.x = tileIndex % BOARD_WIDTH; //The x index in the 2D vector
+    tileIndexVec.x = (int)(tileIndex / BOARD_WIDTH); //The x index in the 2D vector
     
-    tileIndexVec.y = tileIndex - (BOARD_WIDTH * (tileIndex % BOARD_WIDTH)); //The y index in the 2D vector
+    tileIndexVec.y = tileIndex - (BOARD_WIDTH * tileIndexVec.x); //The y index in the 2D vector
     
     return tileIndexVec;
 }

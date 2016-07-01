@@ -233,9 +233,9 @@ private:
      * A function to calculate the tile closest to the mouse location at any given point in time.
      * Possible errors include if the board size is below 2x2 or if the mouse is outside of the board.
      *
-     * @return The tile index in the board, the 2D vector.
+     * @return The tile indices in the board, the 2D vector.
      */
-    glm::ivec2 calculateTile();
+    glm::ivec2 mouseTile();
     
     /**
      * A function GLFW can call when a key event occurs.
