@@ -233,9 +233,9 @@ private:
      * A function to calculate the tile closest to the mouse location at any given point in time.
      * Possible errors include if the board size is below 2x2.
      *
-     * @return The tile number based on the order in vertex data. Because the vertex data array has 2 indices per vertex (one per coordinate), this number times 2 is the index of the first coordinate in the vertex data. If the mouse isn't over a tile, -1 is returned.
+     * @return The tile index in the board, the 2D vector.
      */
-    GLint calculateTile();
+    glm::vec2 calculateTile();
     
     /**
      * A function GLFW can call when a key event occurs.

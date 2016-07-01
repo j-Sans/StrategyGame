@@ -101,6 +101,16 @@ public:
      */
     void deleteCreature(unsigned int x, unsigned int y);
     
+    /**
+     * Set a color in the designated spot on the board.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     * @param color A color to be set in the board at the designated spot. Possible colors include White, Grey, Red, Yellow, Green, and Blue. White means no alterations.
+     */
+    void setColor(unsigned int x, unsigned int y, Color color);
+    
     //Public get functions
     
     /**

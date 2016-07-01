@@ -161,10 +161,6 @@ void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
     this->creatures.push_back(CreatureInList(x, y, creature));
     
     this->gameBoard[x][y].setCreature(&this->creatures.back().creature);
-    
-    /*... UNFINISHED. TO ADD:
-     * TEST GRAPHICS WITH THIS CREATURE FUNCTION
-     */
 }
 
 void Board::deleteCreature(unsigned int x, unsigned int y) {
@@ -197,6 +193,17 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
     }
     
     //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
+}
+
+void Board::setColor(unsigned int x, unsigned int y, Color color) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    this->gameBoard[x][y].setColor(color);
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {

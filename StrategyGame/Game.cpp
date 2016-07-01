@@ -104,6 +104,8 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
+    this->gameBoard.
+    
     //Update the creatures
     this->updateCreatureBuffer();
     
@@ -467,7 +469,7 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-GLint Game::calculateTile() {
+glm::vec2 Game::calculateTile() {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
     int width, height;
@@ -578,7 +580,13 @@ GLint Game::calculateTile() {
     //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
     //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
     
-    return tileIndex;
+    glm::vec2 tileIndexVec;
+    
+    tileIndexVec.x = tileIndex % BOARD_WIDTH; //The x index in the 2D vector
+    
+    tileIndexVec.y = tileIndex - (tileIndex % BOARD_WIDTH); //The y index in the 2D vector
+    
+    return tileIndexVec;
 }
 
 //A function GLFW can call when a key event occurs
