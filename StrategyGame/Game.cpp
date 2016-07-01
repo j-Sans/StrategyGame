@@ -524,10 +524,10 @@ GLint Game::calculateTile() {
         }
     }
     
-    //If no tile was found, -1 is returned. Otherwise, the index pointing to the first coordinate of the tile in vertexData is returned
-    //Since there are double the number of coordinates, this coordinate is double the coordinate in the array of glm::vec2's
+    //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
+    //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
     
-    return 2 * tileIndex;
+    return tileIndex;
 }
 
 //A function GLFW can call when a key event occurs
