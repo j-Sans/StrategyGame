@@ -233,6 +233,11 @@ private:
     void moveCamera();
     
     /**
+     * A function that alters the style and colors of tiles based on mouse clicks.
+     */
+    void updateTileStyle();
+    
+    /**
      * A function to calculate the tile closest to the mouse location at any given point in time.
      * Possible errors include if the board size is below 2x2 or if the mouse is outside of the board.
      *

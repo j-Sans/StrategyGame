@@ -231,9 +231,10 @@ Tile Board::get(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range");
     }
-    if (x >= this->gameBoard[x].size()) {
-        throw std::range_error("Y  out of range");
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
     }
+    
     return this->gameBoard[x][y];
 }
 
