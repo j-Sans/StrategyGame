@@ -160,7 +160,6 @@ private:
     glm::mat4 model; //Makes model isometric
     glm::mat4 view; //Translates camera view
     glm::mat4 projection; //Keeps board scale constant with different window sizes
-    glm::mat4 creatureMat; //Scaling for creatures
     
     glm::vec3 cameraCenter;
     

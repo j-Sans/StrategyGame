@@ -108,27 +108,29 @@ void makeMountain(vec4 position) {
     EndPrimitive();
 }
 
+//Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
+//The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid
 void drawCreature(vec4 position, int creatureTypeToDraw) {
     if (creatureTypeToDraw != NO_CREATURE) {
-        gl_Position = ortho * view * creatureMat * (position + vec4( 0.25f,  0.15f, 0.0f, 0.0f)); //Top right
+        gl_Position = ortho * view * model * (position + vec4( 0.225f,  0.175f, 0.0f, 0.0f)); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * creatureMat * (position + vec4( 0.05f, -0.05f, 0.0f, 0.0f)); //Bottom right
+        gl_Position = ortho * view * model * (position + vec4( 0.025f, -0.025f, 0.0f, 0.0f)); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * creatureMat* (position + vec4( 0.15f, 0.25f, 0.0f, 0.0f)); //Top left
+        gl_Position = ortho * view * model * (position + vec4( 0.175f, 0.225f, 0.0f, 0.0f)); //Top left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * creatureMat * (position + vec4(-0.05f,  0.05f, 0.0f, 0.0f)); //Bottom left
+        gl_Position = ortho * view * model * (position + vec4(-0.025f,  0.025f, 0.0f, 0.0f)); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);

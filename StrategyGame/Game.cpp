@@ -397,14 +397,6 @@ void Game::presetTransformations() {
     
     //Send the projection matrix to the shader
     this->gameShader.uniformMat4("ortho", this->projection);
-    
-    //Make the board appear to be tilted away by keeping width double the size of heights
-    this->creatureMat = glm::scale(this->creatureMat, glm::vec3(0.5f, 0.5f, 1.0f));
-    
-    //Make the creature appear with the tile it's at
-    this->creatureMat = glm::rotate(this->creatureMat, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    
-    this->gameShader.uniformMat4("creatureMat", this->creatureMat);
 }
 
 //A function to update the creature VBO. Should be called every frame
