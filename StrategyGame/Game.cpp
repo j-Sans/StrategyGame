@@ -104,7 +104,12 @@ void Game::render() {
         tex->use(this->gameShader);
     }
     
-    this->gameBoard.
+    //ERROR: "X out of range"
+    glm::ivec2 mousePos = calculateTile();
+    
+    std::cout << "mousePos: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
+    
+    this->gameBoard.setColor(mousePos.x, mousePos.y, Red);
     
     //Update the creatures
     this->updateCreatureBuffer();
@@ -469,7 +474,7 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-glm::vec2 Game::calculateTile() {
+glm::ivec2 Game::calculateTile() {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
     int width, height;
@@ -580,8 +585,9 @@ glm::vec2 Game::calculateTile() {
     //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
     //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
     
-    glm::vec2 tileIndexVec;
+    glm::ivec2 tileIndexVec;
     
+    //ERROR RETURNING CORRECT INDEX
     tileIndexVec.x = tileIndex % BOARD_WIDTH; //The x index in the 2D vector
     
     tileIndexVec.y = tileIndex - (tileIndex % BOARD_WIDTH); //The y index in the 2D vector

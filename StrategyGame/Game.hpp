@@ -235,7 +235,7 @@ private:
      *
      * @return The tile index in the board, the 2D vector.
      */
-    glm::vec2 calculateTile();
+    glm::ivec2 calculateTile();
     
     /**
      * A function GLFW can call when a key event occurs.
