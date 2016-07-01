@@ -124,12 +124,12 @@ void Game::render() {
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
     
-    //Affect the camera position and send the view matrix to the shader
-    view = glm::translate(view, cameraCenter);
-    this->gameShader.uniformMat4("view", view);
-    
     //Reset the view matrix
     this->view = glm::mat4();
+    
+    //Affect the camera position and send the view matrix to the shader
+    this->view = glm::translate(this->view, cameraCenter);
+    this->gameShader.uniformMat4("view", this->view);
     
     //Bind the VAO and draw shapes
     glBindVertexArray(this->VAO);
@@ -559,8 +559,6 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
         }
         
         else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == OpenAdj) {
-            
-            std::cout << "OpenAdj tile selected" << std::endl;
             
             this->gameBoard.moveCreatureByLocation(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
             
