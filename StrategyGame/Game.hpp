@@ -10,7 +10,7 @@
 #define Game_hpp
 
 //Standard library includes
-#include <array>
+#include <math.h>
 #include <vector>
 #include <exception>
 
@@ -41,7 +41,8 @@
 
 
 //Preprocessor directives
-#define NUMBER_OF_TILES 144
+#define BOARD_WIDTH 12
+#define NUMBER_OF_TILES BOARD_WIDTH * BOARD_WIDTH
 #define INDICES_PER_TILES 2
 
 
@@ -66,11 +67,6 @@ public:
     //Public properties
     
     /**
-     * The width and height of the board.
-     */
-    static const GLuint boardWidth = 12;
-    
-    /**
      * The set width of the window. Due to high screen resolution, the final window may not actually be this many pixels wide.
      */
     const GLuint windowWidth = 800;
@@ -88,7 +84,7 @@ public:
     /**
      * A limiting factor preventing the camera from moving too far off screen.
      */
-    const GLfloat camMaxDisplacement = boardWidth / 10.0f;
+    const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
     /**
      * The game board, containing a 2D vector of Tile objects.
@@ -96,6 +92,11 @@ public:
     Board gameBoard;
     
     //Public member functions
+    
+    /**
+     * Distance formula using Pythagorean Theorem
+     */
+    static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
     
     /**
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
@@ -222,14 +223,31 @@ private:
     void moveCamera();
     
     /**
+     * A function
+     *
+     *
+     */
+    GLint calculateTile();
+    
+    /**
      * A function GLFW can call when a key event occurs.
      *
      * @param window The GLFWwindow object.
      * @param key The macro that will represent the key pressed
      * @param action The macro that represents if the key is being pressed, released, etc...
+     * @param mods The macro representing which, if any, modes are activated, such as shift, command, etc...
+     */
+    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+    
+    /**
+     * A function GLFW can call when a mouse click occurs.
+     *
+     * @param window The GLFWwindow object.
+     * @param button The macro that will represent the mouse button pressed
+     * @param action The macro that represents if the key is being pressed, released, etc...
      * @param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
      */
-    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
+    static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 };
 
 #endif /* Game_hpp */

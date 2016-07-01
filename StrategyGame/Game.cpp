@@ -80,6 +80,10 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
 
 //Public member functions
 
+GLfloat Game::getDistance(glm::vec2 point1, glm::vec2 point2) {
+    return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
+}
+
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 void Game::render() {
     GLfloat currentFrame = glfwGetTime();
@@ -412,9 +416,114 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
+GLint Game::calculateTile() {
+    GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
+    
+    int width, height;
+    double xPos, yPos;
+    
+    glfwGetCursorPos(this->gameWindow, &xPos, &yPos);
+    
+    glfwGetWindowSize(this->gameWindow, &width, &height);
+    
+    //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
+    
+    xPos /= width;
+    yPos /= height;
+    
+    glm::vec4 mousePos(xPos, yPos, 0.0f, 1.0f);
+    
+    mousePos = this->projection * this->view * this->model * mousePos;
+    
+    glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+    
+    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+        tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+    }
+    
+    //The distance from one point to the horizontal point and the vertical point:
+    
+    //The points diagonally above and below each vertex become horizontal and vertical after rotation. To find them, find the point below the vertex and add one and subtract one.
+    
+    if (BOARD_WIDTH * BOARD_WIDTH < BOARD_WIDTH + 1) { //In case finding the distances (just below) would cause a bad access
+        throw std::length_error("Board too small");
+    }
+    
+    GLfloat distance1 = Game::getDistance(tileCenters[0], tileCenters[0 + BOARD_WIDTH + 1]); //Diagonal down and to the right
+    GLfloat distance2 = Game::getDistance(tileCenters[1], tileCenters[1 + BOARD_WIDTH - 1]); //Diagonal down and to the left
+    
+    //Distance horizontally is double the distance of the vertical one because it was compressed vertically.
+    //The horizontal distance is the max of the above distances, and the vertical distance the minimum
+    
+    GLfloat horizontalDistance = fmaxf(distance1, distance2);
+    GLfloat verticalDistance = fminf(distance1, distance2);
+    
+    //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
+    
+    GLfloat slope = verticalDistance / horizontalDistance; // = rise / run
+    
+    //Using line equation:
+    // y = slope ( x - h ) + k
+    //Where (h,k) is a point on the line
+    
+    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        glm::vec2 center = glm::vec2(tileCenters[index].x, tileCenters[index].y);
+        
+        bool pointInIndex = true;
+        
+        //Lower left inequality:
+        // y > ( -slope ) ( x - h ) + k
+        // (h,k) is the point below the center
+        
+        GLfloat h = center.x;
+        GLfloat k = center.y - verticalDistance;
+        
+        if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
+            pointInIndex = false;
+        }
+        
+        //Lower right inequality:
+        // y > ( slope ) ( x - h ) + k
+        // (h,k) is the point below the center, the same as previously
+        
+        if (mousePos.y < ( slope ) * ( mousePos.x - h ) + k) { //If it's below this line
+            pointInIndex = false;
+        }
+        
+        //Upper left inequality:
+        // y < ( slope ) ( x - h ) + k
+        // (h,k) is the point above the center
+        
+        h = center.x; //h stays the same
+        k = center.y + verticalDistance;
+        
+        if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
+            pointInIndex = false;
+        }
+        //Upper right inequality:
+        // y < ( -slope ) ( x - h ) + k
+        // (h,k) is the point above the center, the same as previously
+        
+        if (mousePos.y > ( -slope ) * ( mousePos.x - h ) + k) { //If it's above this line
+            pointInIndex = false;
+        }
+        
+        if (pointInIndex) { //The point was in bounds
+            tileIndex = index;
+            break; //Point found, no need to search more
+        }
+    }
+    
+    //If no tile was found, -1 is returned. Otherwise, the index pointing to the first coordinate of the tile in vertexData is returned
+    //Since there are double the number of coordinates, this coordinate is double the coordinate in the array of glm::vec2's
+    
+    return 2 * tileIndex;
+}
+
 //A function GLFW can call when a key event occurs
-void Game::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_W && action == GLFW_PRESS && mode == GLFW_MOD_SUPER) { //Command-W: close the application
+void Game::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_W && action == GLFW_PRESS && mods == GLFW_MOD_SUPER) { //Command-W: close the application
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
     if (key >= 0 && key < 1024) {
@@ -425,4 +534,24 @@ void Game::keyCallback(GLFWwindow *window, int key, int scancode, int action, in
             keys[key] = false;
         }
     }
+}
+
+//A function GLFW can call when a key event occurs
+void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+    double xPos, yPos;
+    glfwGetCursorPos(window, &xPos, &yPos);
+    
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        
+        
+        
+        
+
+    
+    
+    
+    
+    }
+    
+    
 }

@@ -29,9 +29,6 @@
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 
-//OpenGL additional classes includes
-//#include "GLextensions/Shader.hpp"
-
 //Local includes
 #include "Tile.hpp"
 #include "Game.hpp"
@@ -41,13 +38,11 @@ int main(int argc, const char * argv[]) {
     //Set up
     srand((int)time(NULL));
     
-    int boardWidth = Game::boardWidth;
-    
 //Gameboard:
     std::vector<std::vector<Tile> > board;
-    for (GLuint x = 0; x < boardWidth; x++) {
+    for (GLuint x = 0; x < BOARD_WIDTH; x++) {
         std::vector<Tile> row;
-        for (GLuint y = 0; y < boardWidth; y++) {
+        for (GLuint y = 0; y < BOARD_WIDTH; y++) {
             if (x == 0 && y == 2)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
             else
