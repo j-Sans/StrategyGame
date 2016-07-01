@@ -231,7 +231,7 @@ private:
     
     /**
      * A function to calculate the tile closest to the mouse location at any given point in time.
-     * Possible errors include if the board size is below 2x2.
+     * Possible errors include if the board size is below 2x2 or if the mouse is outside of the board.
      *
      * @return The tile index in the board, the 2D vector.
      */
