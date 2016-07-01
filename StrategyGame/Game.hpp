@@ -223,9 +223,10 @@ private:
     void moveCamera();
     
     /**
-     * A function
+     * A function to calculate the tile closest to the mouse location at any given point in time.
+     * Possible errors include if the board size is below 2x2.
      *
-     *
+     * @return the index of the first coordinate of the tile in the vertex data array. If the mouse isn't over a tile, -1 is returned.
      */
     GLint calculateTile();
     
