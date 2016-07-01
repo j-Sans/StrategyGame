@@ -103,6 +103,7 @@ void Game::render() {
     //Use the shader
     this->gameShader.use();
     
+    //Prepare all of the textures
     for (auto tex = textures.begin(); tex != textures.end(); tex++) {
         tex->use(this->gameShader);
     }
@@ -114,10 +115,8 @@ void Game::render() {
             mousePos = mouseTile();
             
             if (mousePos == this->selectedTile) { //Reset selectedTile if the current tile was clicked again
-                this->gameBoard.setColor(mousePos.x, mousePos.y, White);
                 this->selectedTile = glm::vec2(-1, -1);
             } else {
-                this->gameBoard.setColor(mousePos.x, mousePos.y, Red);
                 this->selectedTile = glm::vec2(mousePos.x, mousePos.y);
             }
         } catch (std::exception e) {
@@ -129,6 +128,21 @@ void Game::render() {
         
         activateTile = false;
     }
+    
+    //Set all tile colors to White (all light reflected, normal color)
+    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            this->gameBoard.setColor(x, y, White);
+        }
+    }
+    
+    //Set the selected tile's color to Red
+    try {
+        this->gameBoard.setColor(this->selectedTile.x, this->selectedTile.y, Red);
+    } catch (std::exception e) {
+        //No tile selected (Internally, selectedTile = (-1, -1) )
+    }
+    
     
     //Update the creatures
     this->updateCreatureBuffer();
@@ -640,9 +654,7 @@ void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int m
     double xPos, yPos;
     glfwGetCursorPos(window, &xPos, &yPos);
     
-    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         activateTile = true;
     }
-    
-    
 }
