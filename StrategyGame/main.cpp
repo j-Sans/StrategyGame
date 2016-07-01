@@ -55,6 +55,8 @@ int main(int argc, const char * argv[]) {
     
     G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North));
     
+    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North));
+    
     //Game loop
     while(!glfwWindowShouldClose(G.window())) {
         G.render();

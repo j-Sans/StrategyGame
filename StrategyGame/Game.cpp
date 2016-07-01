@@ -151,6 +151,8 @@ void Game::render() {
             try { //North tile
                 if (this->gameBoard.get(x, y - 1).passableByCreature(creature))
                     this->gameBoard.setStyle(x, y - 1, OpenAdj);
+                else if (this->gameBoard.get(x, y - 1).creature() != nullptr)
+                    this->gameBoard.setStyle(x, y - 1, AttackableAdj);
             } catch (std::exception e) {
                 //No northern tile
             }
@@ -158,6 +160,8 @@ void Game::render() {
             try { //West tile
                 if (this->gameBoard.get(x - 1, y).passableByCreature(creature))
                     this->gameBoard.setStyle(x - 1, y, OpenAdj);
+                else if (this->gameBoard.get(x - 1, y).creature() != nullptr)
+                    this->gameBoard.setStyle(x - 1, y, AttackableAdj);
             } catch (std::exception e) {
                 //No western tile
             }
@@ -165,13 +169,17 @@ void Game::render() {
             try { //South tile
                 if (this->gameBoard.get(x, y + 1).passableByCreature(creature))
                     this->gameBoard.setStyle(x, y + 1, OpenAdj);
+                else if (this->gameBoard.get(x, y + 1).creature() != nullptr)
+                    this->gameBoard.setStyle(x, y + 1, AttackableAdj);
             } catch (std::exception e) {
                 //No southern tile
             }
             
             try { //East tile
                 if (this->gameBoard.get(x + 1, y).passableByCreature(creature))
-                   this->gameBoard.setStyle(x + 1, y, OpenAdj);
+                    this->gameBoard.setStyle(x + 1, y, OpenAdj);
+                else if (this->gameBoard.get(x + 1, y).creature() != nullptr)
+                    this->gameBoard.setStyle(x + 1, y, AttackableAdj);
             } catch (std::exception e) {
                 //No eastern tile
             }
