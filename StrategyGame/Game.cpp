@@ -576,6 +576,7 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
             this->selectedTile = mousePos;
         }
         
+        //Movement
         else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == OpenAdj) {
             
             this->gameBoard.moveCreatureByLocation(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
@@ -590,7 +591,20 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
             this->selectedTile = glm::ivec2(-1, -1);
         }
         
-        //Add attacking
+        //Attacking
+        else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == AttackableAdj) {
+            
+            this->gameBoard.attack(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+            
+            //Reset all tiles
+            for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+                for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                    this->gameBoard.setStyle(x, y, Regular);
+                }
+            }
+            
+            this->selectedTile = glm::ivec2(-1, -1);
+        }
         
     } catch (std::exception e) {
         //The mouse was outside of the board
