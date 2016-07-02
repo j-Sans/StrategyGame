@@ -4,6 +4,7 @@
 
 #define TERRAIN 0
 #define CREATURE 1
+#define DAMAGE 2
 
 //Terrain
 #define OPEN_TERRAIN 0
@@ -24,6 +25,7 @@ out vec4 color;
 uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
 uniform sampler2D stickFigureTex;
+uniform sampler2D numbersTex;
 
 void main() {
     if (TexType.x == TERRAIN) {
@@ -38,5 +40,10 @@ void main() {
         if (TexType.y == STICK_FIGURE_CREATURE) {
             color = texture(stickFigureTex, TexCoords);
         }
+    } else if (TexType.x == DAMAGE) {
+        //Draw the damage box
+        float digitOffset = 1.0f / 9.0f; //This is the width of one digit in the texture containing all of the digits
+        
+        color = TileColor + texture(numbersTex, TexCoords);
     }
 }

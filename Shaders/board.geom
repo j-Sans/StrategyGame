@@ -4,6 +4,7 @@
 
 #define TERRAIN 0
 #define CREATURE 1
+#define DAMAGE 2
 
 //Terrain
 #define OPEN_TERRAIN 0
@@ -16,7 +17,9 @@
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 layout (points) in;
-layout (triangle_strip, max_vertices = 8) out;
+layout (triangle_strip, max_vertices = 12) out;
+
+//4 vertices for tile, 4 vertices for creature, and 4 vertices for the damage box
 
 in int terrain[];
 in int creature[];
@@ -35,11 +38,19 @@ uniform mat4 creatureMat;
 //Functions
 void makeOpen(vec4 position);
 void makeMountain(vec4 position);
-void drawCreature(vec4 position, int creatureTypeToDraw);
-
+void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]);
+void drawDamageBox(vec4 position, int damage, vec4 rect[4]);
 
 void main() {
     vec4 position = gl_in[0].gl_Position;
+    
+    //Rectangle coordinates with these transformations
+    vec4 rect[] = vec4[](
+        vec4( 0.45f,  0.35f, 0.0f, 0.0f),
+        vec4( 0.05f, -0.05f, 0.0f, 0.0f),
+        vec4( 0.35f, 0.45f, 0.0f, 0.0f),
+        vec4(-0.05f,  0.05f, 0.0f, 0.0f)
+    );
     
     //Draw the ground
     if (terrain[0] == OPEN_TERRAIN) {
@@ -49,7 +60,11 @@ void main() {
     }
     
     //Draw present creature
-    drawCreature(position, creature[0]);
+    drawCreature(position, creature[0], rect);
+    
+    //Draw damage box
+    drawDamageBox(position, 3, rect);
+    
 }
 
 void makeOpen(vec4 position) {
@@ -110,27 +125,27 @@ void makeMountain(vec4 position) {
 
 //Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
 //The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid
-void drawCreature(vec4 position, int creatureTypeToDraw) {
+void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
     if (creatureTypeToDraw != NO_CREATURE) {
-        gl_Position = ortho * view * model * (position + vec4( 0.225f,  0.175f, 0.0f, 0.0f)); //Top right
+        gl_Position = ortho * view * model * (position + (0.5f * vec4( 0.45f,  0.35f, 0.0f, 0.0f))); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + vec4( 0.025f, -0.025f, 0.0f, 0.0f)); //Bottom right
+        gl_Position = ortho * view * model * (position + (0.5f * vec4( 0.05f, -0.05f, 0.0f, 0.0f))); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + vec4( 0.175f, 0.225f, 0.0f, 0.0f)); //Top left
+        gl_Position = ortho * view * model * (position + (0.5f * vec4( 0.35f, 0.45f, 0.0f, 0.0f))); //Top left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + vec4(-0.025f,  0.025f, 0.0f, 0.0f)); //Bottom left
+        gl_Position = ortho * view * model * (position + (0.5f * vec4(-0.05f,  0.05f, 0.0f, 0.0f))); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
@@ -138,4 +153,34 @@ void drawCreature(vec4 position, int creatureTypeToDraw) {
         
         EndPrimitive();
     }
+}
+
+void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
+    float digitOffset = 1.0f / 10.0f; //This is the width of one digit in the texture containing all of the digits
+    
+    gl_Position = ortho * view * model * (position + (.25 * rect[0].x)); //Bottom
+    TexCoords = vec2(digitOffset + (digitOffset * damage), 0.0f);
+    TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    TexType = ivec2(DAMAGE, damage);
+    EmitVertex();
+    
+    gl_Position = ortho * view * model * (position + (.25 * rect[1].y)); //Right
+    TexCoords = vec2(digitOffset + (digitOffset * damage), 1.0f);
+    TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    TexType = ivec2(DAMAGE, damage);
+    EmitVertex();
+    
+    gl_Position = ortho * view * model * (position + (.25 * rect[2].z)); //Left
+    TexCoords = vec2(digitOffset * damage, 0.0f);
+    TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    TexType = ivec2(DAMAGE, damage);
+    EmitVertex();
+    
+    gl_Position = ortho * view * model * (position + (.25 * rect[3].w)); //Top
+    TexCoords = vec2(digitOffset * damage, 1.0f);
+    TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    TexType = ivec2(DAMAGE, damage);
+    EmitVertex();
+    
+    EndPrimitive();
 }
