@@ -127,25 +127,25 @@ void makeMountain(vec4 position) {
 //The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
     if (creatureTypeToDraw != NO_CREATURE) {
-        gl_Position = ortho * view * model * (position + (0.5f * vec4( 0.45f,  0.35f, 0.0f, 0.0f))); //Top right
+        gl_Position = ortho * view * model * (position + (0.5f * rect[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * vec4( 0.05f, -0.05f, 0.0f, 0.0f))); //Bottom right
+        gl_Position = ortho * view * model * (position + (0.5f * rect[1])); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * vec4( 0.35f, 0.45f, 0.0f, 0.0f))); //Top left
+        gl_Position = ortho * view * model * (position + (0.5f * rect[2])); //Top left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * vec4(-0.05f,  0.05f, 0.0f, 0.0f))); //Bottom left
+        gl_Position = ortho * view * model * (position + (0.5f * rect[3])); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
@@ -158,25 +158,25 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
     float digitOffset = 1.0f / 10.0f; //This is the width of one digit in the texture containing all of the digits
     
-    gl_Position = ortho * view * model * (position + (.25 * rect[0].x)); //Bottom
+    gl_Position = ortho * view * model * (position + (0.125f * rect[0])); //Bottom
     TexCoords = vec2(digitOffset + (digitOffset * damage), 0.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (.25 * rect[1].y)); //Right
+    gl_Position = ortho * view * model * (position + (0.125f * rect[1])); //Right
     TexCoords = vec2(digitOffset + (digitOffset * damage), 1.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (.25 * rect[2].z)); //Left
+    gl_Position = ortho * view * model * (position + (0.125f * rect[2])); //Left
     TexCoords = vec2(digitOffset * damage, 0.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (.25 * rect[3].w)); //Top
+    gl_Position = ortho * view * model * (position + (0.125f * rect[3])); //Top
     TexCoords = vec2(digitOffset * damage, 1.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
