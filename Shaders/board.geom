@@ -44,7 +44,7 @@ void main() {
     //Draw the ground
     if (terrain[0] == OPEN_TERRAIN) {
         makeOpen(position);
-    } else { //if (terrain[0] == MOUNTAIN_TERRAIN) {
+    } else if (terrain[0] == MOUNTAIN_TERRAIN) {
         makeMountain(position);
     }
     

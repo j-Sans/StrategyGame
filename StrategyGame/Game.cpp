@@ -329,7 +329,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(1, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     //Creature VBO:
@@ -340,7 +340,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     //Color VBO:
@@ -413,7 +413,7 @@ void Game::updateCreatureBuffer() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -570,7 +570,12 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
         //The mouse was outside of the board
         // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
         
-        //Nothing needs to be done, just no tile is highlighted
+        //Reset all tiles
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
+        }
     }
 }
 
