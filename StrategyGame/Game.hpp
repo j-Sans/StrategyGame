@@ -146,12 +146,14 @@ private:
     GLuint terrainVBO;
     GLuint creatureVBO;
     GLuint colorVBO;
+    GLuint damageVBO;
     
     //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
     GLint terrainData[NUMBER_OF_TILES];
-    GLint creatureData[NUMBER_OF_TILES];
+    GLint creatureData[2 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction. Direction is not yet implemented
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
+    GLint damageData[NUMBER_OF_TILES];
     
     //Textures
     std::vector<Texture> textures;
@@ -184,8 +186,10 @@ private:
      * @param setVertexData A boolean indicating whether to update the vertex data array
      * @param setTerrainData A boolean indicating whether to update the terrain data array
      * @param setCreatureData A boolean indicating whether to update the creature data array
+     * @param setColorData A boolean indicating whether to update the color data array
+     * @param setDamageData A boolean indicating whether to update the damage data array
      */
-    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData);
+    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData);
     
     /**
      * Initialize OpenGL buffers with the object's vertex data.

@@ -17,12 +17,13 @@
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 layout (points) in;
-layout (triangle_strip, max_vertices = 12) out;
+layout (triangle_strip, max_vertices = 20) out;
 
-//4 vertices for tile, 4 vertices for creature, and 4 vertices for the damage box
+//4 vertices for tile, 4 vertices for creature, and up to 12 vertices for the damage box (4 * number of digits)
 
 in int terrain[];
 in int creature[];
+in int creatureDamage[];
 in vec4 tileColor[];
 
 out vec2 TexCoords;
@@ -63,7 +64,8 @@ void main() {
     drawCreature(position, creature[0], rect);
     
     //Draw damage box
-    drawDamageBox(position, 3, rect);
+    if (creatureDamage[0] != 0)
+        drawDamageBox(position, creatureDamage[0], rect);
     
 }
 

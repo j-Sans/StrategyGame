@@ -18,7 +18,7 @@ bool activateTile = false;
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true); //Set all of the data arrays with information from the board
+    this->setData(true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, fragmentPath);
@@ -56,7 +56,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
 //Constructor with geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true); //Set the data arrays with information from the board
+    this->setData(true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, geometryPath, fragmentPath);
@@ -161,6 +161,8 @@ void Game::terminate() {
     glDeleteBuffers(1, &this->vertexVBO);
     glDeleteBuffers(1, &this->terrainVBO);
     glDeleteBuffers(1, &this->creatureVBO);
+    glDeleteBuffers(1, &this->colorVBO);
+    glDeleteBuffers(1, &this->damageVBO);
     
     glfwTerminate();
 }
@@ -225,7 +227,7 @@ void Game::initWindow() {
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData) {
+void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData) {
     //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
@@ -297,14 +299,16 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
         if (setTerrainData)
             this->terrainData[a] = terrains[a];
         if (setCreatureData)
-            this->creatureData[a] = creatures[a];
+            this->creatureData[2 * a] = creatures[a];
+            //Skip the directions spot for now. It does nothing
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
             this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
             this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
         }
+        if (setDamageData)
+            this->damageData[a] = 0;
     }
-
 }
 
 //Initialize OpenGL buffers with the object's vertex data.
@@ -316,6 +320,7 @@ void Game::setBuffers() {
     glGenBuffers(1, &this->terrainVBO);
     glGenBuffers(1, &this->creatureVBO);
     glGenBuffers(1, &this->colorVBO);
+    glGenBuffers(1, &this->damageVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -350,7 +355,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     //Color VBO:
@@ -363,6 +368,17 @@ void Game::setBuffers() {
     //Position
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(3);
+    
+    //Damage VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(4);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
@@ -412,7 +428,7 @@ void Game::presetTransformations() {
 //A function to update the creature VBO. Should be called every frame
 void Game::updateCreatureBuffer() {
     //Update creature data array
-    this->setData(false, false, true, false);
+    this->setData(false, false, true, false, false);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -423,7 +439,7 @@ void Game::updateCreatureBuffer() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -435,7 +451,7 @@ void Game::updateCreatureBuffer() {
 //A function to update the creature VBO. Should be called every frame
 void Game::updateColorBuffer() {
     //Update creature data array
-    this->setData(false, false, false, true);
+    this->setData(false, false, false, true, false);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
