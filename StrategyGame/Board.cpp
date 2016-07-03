@@ -14,13 +14,13 @@ Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
 //Public member functions
-void Board::moveCreatureByDirection(unsigned int x, unsigned int y, Direction moveTo) {
+void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("X out of range");
     if (y >= this->gameBoard[0].size())
         throw std::range_error("Y out of range");
     
-    if (moveTo == North) {
+    if (direction == NORTH) {
         if (y > 0 && !this->gameBoard[x][y - 1].occupied()) {
             this->gameBoard[x][y - 1].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
@@ -29,7 +29,7 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, Direction mo
         } else {
             throw std::range_error("No northern tile available");
         }
-    } else if (moveTo == West) {
+    } else if (direction == WEST) {
         if (x > 0 && !this->gameBoard[x - 1][y].occupied()) {
             this->gameBoard[x - 1][y].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
@@ -38,7 +38,7 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, Direction mo
         } else {
             throw std::range_error("No western tile available");
         }
-    } else if (moveTo == South) {
+    } else if (direction == SOUTH) {
         if (y < this->gameBoard[x].size() - 1 && !this->gameBoard[x][y + 1].occupied()) {
             this->gameBoard[x][y + 1].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
@@ -47,7 +47,7 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, Direction mo
         } else {
             throw std::range_error("No southern tile available");
         }
-    } else if (moveTo == East) {
+    } else if (direction == EAST) {
         if (x < this->gameBoard.size() - 1 && !this->gameBoard[x + 1][y].occupied()) {
             this->gameBoard[x + 1][y].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
@@ -56,6 +56,8 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, Direction mo
         } else {
             throw std::range_error("No eastern tile available");
         }
+    } else {
+        throw std::range_error("Not a valid direction");
     }
 }
 

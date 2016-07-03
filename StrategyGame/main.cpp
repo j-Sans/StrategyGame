@@ -53,9 +53,9 @@ int main(int argc, const char * argv[]) {
     
     Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
-    G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North));
+    G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH));
     
-    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, North));
+    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH));
     
     //Game loop
     while(!glfwWindowShouldClose(G.window())) {

@@ -10,10 +10,14 @@
 
 //Constructors
 
-Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureVision(vision), creatureRange(range), creatureCost(cost) {
+Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureVision(vision), creatureRange(range), creatureCost(cost) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
-    this->creatureDirection = startDirection;
+    
+    if (startDirection > 3) //Makes sure the direction is valid, otherwise faces north. Can't be less than 0 because it is unsigned.
+        this->creatureDirection = NORTH;
+    else
+        this->creatureDirection = startDirection;
 }
 
 //Public member functions
@@ -83,6 +87,6 @@ unsigned int Creature::energy() {
     return this->creatureEnergy;
 }
 
-Direction Creature::direction() {
+int Creature::direction() {
     return this->creatureDirection;
 }

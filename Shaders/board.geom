@@ -6,6 +6,12 @@
 #define CREATURE 1
 #define DAMAGE 2
 
+//Direction
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
 //Terrain
 #define OPEN_TERRAIN 0
 #define MOUNTAIN_TERRAIN 1
@@ -23,8 +29,10 @@ layout (triangle_strip, max_vertices = 12) out;
 
 in int terrain[];
 in int creature[];
+in int creatureDirection[];
 in int creatureDamage[];
 in vec4 tileColor[];
+in float creatureOffset[];
 
 out vec2 TexCoords;
 out vec4 TileColor;
@@ -128,6 +136,24 @@ void makeMountain(vec4 position) {
 //Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
 //The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
+    if (creatureDirection == NORTH) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].y -= creatureOffset;
+        }
+    } else if (creatureDirection == EAST) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].x += creatureOffset;
+        }
+    } else if (creatureDirection == SOUTH) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].y += creatureOffset;
+        }
+    } else if (creatureDirection == WEST) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].x -= creatureOffset;
+        }
+    }
+    
     if (creatureTypeToDraw != NO_CREATURE) {
         gl_Position = ortho * view * model * (position + (0.5f * rect[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);

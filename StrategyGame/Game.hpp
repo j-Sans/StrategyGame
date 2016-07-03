@@ -87,6 +87,11 @@ public:
     const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
     /**
+     * The speed that the creature moves when it is animated.
+     */
+    const GLfloat creatureSpeed = 1.0f;
+    
+    /**
      * Time before deletion of damage boxes, in seconds.
      */
     const GLfloat damageBoxTime = 3.0f;
@@ -152,6 +157,7 @@ private:
     GLuint creatureVBO;
     GLuint colorVBO;
     GLuint damageVBO;
+    GLuint offsetVBO;
     
     //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
@@ -159,6 +165,7 @@ private:
     GLint creatureData[2 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction. Direction is not yet implemented
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
     GLint damageData[NUMBER_OF_TILES];
+    GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
     
     GLint existenceTimeForDamageData[NUMBER_OF_TILES]; //For each damage data, represents the amount of time that box has existed for
     
@@ -195,8 +202,9 @@ private:
      * @param setCreatureData A boolean indicating whether to update the creature data array
      * @param setColorData A boolean indicating whether to update the color data array
      * @param setDamageData A boolean indicating whether to update the damage data array
+     * @param setOffsetData A boolean indicating whether to update the offset data array
      */
-    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData);
+    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData);
     
     /**
      * Initialize OpenGL buffers with the object's vertex data.
@@ -241,6 +249,11 @@ private:
      * A function to update the damage VBO. Should be called every frame.
      */
     void updateDamageBuffer();
+    
+    /**
+     * A functin to update the offset data. Should be called every frame. Not completed.
+     */
+    void updateCreatureOffset();
     
     /**
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.

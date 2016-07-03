@@ -9,6 +9,11 @@
 #ifndef Creature_hpp
 #define Creature_hpp
 
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
 enum Race {
     Human,
     Elf,
@@ -17,13 +22,6 @@ enum Race {
     Goblin,
     Undead,
     Vampire,
-};
-
-enum Direction {
-    North,
-    East,
-    South,
-    West,
 };
 
 /** A class representing a creature object.
@@ -36,12 +34,12 @@ enum Direction {
  * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
  * @param range An unsigned int representing the distance the creature can attack.
  * @param cost An unsigned int representing the cost of the creature in mana.
- * @param startDirection A Direction enum type representing the initial direction that the creature faces. Includes: North, East, South, and West.
+ * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
  */
 class Creature {
 public:
     //Constructors
-    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, Direction startDirection);
+    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection);
     
     //Destructor
     
@@ -123,9 +121,9 @@ public:
     unsigned int energy();
     
     /**
-     * @return The direction the creature is facing.
+     * @return The direction the creature is facing, as a macro (int). Includes: NORTH, EAST, SOUTH, and WEST.
      */
-    Direction direction();
+    int direction();
     
 private:
     //Private properties
@@ -140,7 +138,7 @@ private:
     
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
-    Direction creatureDirection;
+    int creatureDirection;
     //vector<int> promotions; //Need to import vector, but not now, implement later.
     
     

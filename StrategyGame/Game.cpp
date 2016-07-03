@@ -18,7 +18,7 @@ bool activateTile = false;
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true, true); //Set all of the data arrays with information from the board
+    this->setData(true, true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, fragmentPath);
@@ -56,7 +56,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
 //Constructor with geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true, true); //Set the data arrays with information from the board
+    this->setData(true, true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     gameShader = Shader(vertexPath, geometryPath, fragmentPath);
@@ -230,7 +230,7 @@ void Game::initWindow() {
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData) {
+void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData) {
     //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
@@ -303,7 +303,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->terrainData[a] = terrains[a];
         if (setCreatureData)
             this->creatureData[2 * a] = creatures[a];
-            //Skip the directions spot for now. It does nothing
+            //Skip the directions spot and offset spot for now. It does nothing yet
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
             this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
@@ -312,6 +312,9 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
         if (setDamageData) {
             this->damageData[a] = 0;
             this->existenceTimeForDamageData[a] = 0;
+        }
+        if (setOffsetData) {
+            this->offsetData[a] = 0;
         }
     }
 }
@@ -387,6 +390,19 @@ void Game::setBuffers() {
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
+    //Offset VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(5);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
     
@@ -433,7 +449,7 @@ void Game::presetTransformations() {
 //A function to update the creature VBO. Should be called every frame
 void Game::updateCreatureBuffer() {
     //Update creature data array
-    this->setData(false, false, true, false, false);
+    this->setData(false, false, true, false, false, false);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -456,7 +472,7 @@ void Game::updateCreatureBuffer() {
 //A function to update the color VBO. Should be called every frame
 void Game::updateColorBuffer() {
     //Update creature data array
-    this->setData(false, false, false, true, false);
+    this->setData(false, false, false, true, false, false);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -505,6 +521,10 @@ void Game::updateDamageBuffer() {
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
+}
+
+void Game::updateCreatureOffset() {
+    
 }
 
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
@@ -636,9 +656,6 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
             glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
             glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
             
-            //Why does the commented out one not work?
-            
-//            this->gameBoard.attack(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
             this->gameBoard.attack(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
             
             //Set the damage data on the defending square equal to damage dealt by the attacker
