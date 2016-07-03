@@ -57,7 +57,7 @@ void main() {
     vec4 rect[] = vec4[](
         vec4( 0.45f,  0.35f, 0.0f, 0.0f),
         vec4( 0.05f, -0.05f, 0.0f, 0.0f),
-        vec4( 0.35f, 0.45f, 0.0f, 0.0f),
+        vec4( 0.35f,  0.45f, 0.0f, 0.0f),
         vec4(-0.05f,  0.05f, 0.0f, 0.0f)
     );
     
@@ -136,22 +136,26 @@ void makeMountain(vec4 position) {
 //Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
 //The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
-    if (creatureDirection[0] == NORTH) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].y -= creatureOffset[0];
-        }
-    } else if (creatureDirection[0] == EAST) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].x += creatureOffset[0];
-        }
-    } else if (creatureDirection[0] == SOUTH) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].y += creatureOffset[0];
-        }
-    } else if (creatureDirection[0] == WEST) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].x -= creatureOffset[0];
-        }
+//    if (creatureDirection[0] == NORTH) {
+//        for (int a = 0; a < 4; a++) {
+//            rect[a].y -= creatureOffset[0];
+//        }
+//    } else if (creatureDirection[0] == EAST) {
+//        for (int a = 0; a < 4; a++) {
+//            rect[a].x += creatureOffset[0];
+//        }
+//    } else if (creatureDirection[0] == SOUTH) {
+//        for (int a = 0; a < 4; a++) {
+//            rect[a].y += creatureOffset[0];
+//        }
+//    } else if (creatureDirection[0] == WEST) {
+//        for (int a = 0; a < 4; a++) {
+//            rect[a].x -= creatureOffset[0];
+//        }
+//    }
+//    
+    for (int a = 0; a < 4; a++) {
+        rect[a] = vec4(rect[a].x + creatureOffset[0], rect[a].y + creatureOffset[0], 0.0f, 0.0f);
     }
     
     if (creatureTypeToDraw != NO_CREATURE) {

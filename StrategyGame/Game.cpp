@@ -134,6 +134,9 @@ void Game::render() {
     //Update damage boxes
     this->updateDamageBuffer();
     
+    //Update creature offset, so as to implement animation
+    this->updateCreatureOffset();
+    
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
     
@@ -166,6 +169,7 @@ void Game::terminate() {
     glDeleteBuffers(1, &this->creatureVBO);
     glDeleteBuffers(1, &this->colorVBO);
     glDeleteBuffers(1, &this->damageVBO);
+    glDeleteBuffers(1, &this->offsetVBO);
     
     glfwTerminate();
 }
@@ -317,6 +321,8 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->offsetData[a] = 0;
         }
     }
+    
+    std::cout << "Offsetting: " << this->offsetData[this->gameBoard.width() + 1] << std::endl;
 }
 
 //Initialize OpenGL buffers with the object's vertex data.
@@ -529,7 +535,7 @@ void Game::updateCreatureOffset() {
     
     //Goes through all tiles and continues moving any that are moving
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
-        if (this->offsetData[tile] != 0) {
+        if (this->offsetData[tile] > 0) {
             this->offsetData[tile] += displacement;
         }
     }
@@ -580,7 +586,8 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-void Game::updateTileStyle() {glm::ivec2 mousePos;
+void Game::updateTileStyle() {
+    glm::ivec2 mousePos;
     
     try {
         mousePos = mouseTile(); //Fails if mouse is outside of the board
@@ -660,7 +667,9 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
         //Movement
         else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == OpenAdj) {
             
-            this->gameBoard.moveCreatureByLocation(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+            this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] += (this->creatureSpeed * this->deltaTime);
+            
+            //this->gameBoard.moveCreatureByLocation(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
             
             //Reset all tiles
             for (GLuint x = 0; x < this->gameBoard.width(); x++) {
