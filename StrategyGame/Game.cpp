@@ -329,6 +329,7 @@ void Game::setBuffers() {
     glGenBuffers(1, &this->creatureVBO);
     glGenBuffers(1, &this->colorVBO);
     glGenBuffers(1, &this->damageVBO);
+    glGenBuffers(1, &this->offsetVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
