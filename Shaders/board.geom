@@ -17,9 +17,9 @@
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 layout (points) in;
-layout (triangle_strip, max_vertices = 20) out;
+layout (triangle_strip, max_vertices = 12) out;
 
-//4 vertices for tile, 4 vertices for creature, and up to 12 vertices for the damage box (4 * number of digits)
+//4 vertices for tile, 4 vertices for creature, and up to 4 vertices for the damage box (4 * number of digits), for now only 1
 
 in int terrain[];
 in int creature[];

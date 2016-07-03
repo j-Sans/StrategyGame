@@ -131,6 +131,9 @@ void Game::render() {
     //Update tile colors
     this->updateColorBuffer();
     
+    //Update damage boxes
+    this->updateDamageBuffer();
+    
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
     
@@ -448,7 +451,7 @@ void Game::updateCreatureBuffer() {
     glBindVertexArray(0);
 }
 
-//A function to update the creature VBO. Should be called every frame
+//A function to update the color VBO. Should be called every frame
 void Game::updateColorBuffer() {
     //Update creature data array
     this->setData(false, false, false, true, false);
@@ -464,6 +467,27 @@ void Game::updateColorBuffer() {
     //Position
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(3);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
+}
+
+//A function to update the damage VBO. Should be called every frame
+void Game::updateDamageBuffer() {
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(4);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
@@ -594,7 +618,21 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
         //Attacking
         else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == AttackableAdj) {
             
-            this->gameBoard.attack(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+            int attackDamage = 0;
+            int defendDamage = 0;
+            
+            glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
+            glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
+            
+            //Why does the commented out one not work?
+            
+//            this->gameBoard.attack(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+            this->gameBoard.attack(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+            
+            this->damageData[(defender.x * this->gameBoard.width()) + defender.y] = attackDamage;
+            
+            this->damageData[(attacker.x * this->gameBoard.width()) + attacker.y] = defendDamage;
+            
             
             //Reset all tiles
             for (GLuint x = 0; x < this->gameBoard.width(); x++) {

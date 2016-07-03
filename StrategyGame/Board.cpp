@@ -84,7 +84,7 @@ void Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
  * TO ADD:
  * MODIFIER VALUE
  */
-bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY) {
+bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
     if (attackerX >= this->gameBoard.size()) {
         throw std::range_error("Attacker x out of range");
     }
@@ -100,7 +100,7 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
     
     //Using pointers to get tiles by reference
     Tile* attacker = &this->gameBoard[attackerX][attackerY];
-    Tile* defender = &this->gameBoard[attackerX][attackerY];
+    Tile* defender = &this->gameBoard[defenderX][defenderY];
     
     //If both creatures are melee creatures
     if (attacker->creature()->melee()) {
@@ -118,28 +118,50 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
         if (distanceBetweenTiles > 1) {
             return false; //No combat occurs
         } else {
-            bool defenderDied = defender->creature()->takeDamage(attacker->creature()->attack());
+            
+            int damageDealtByAttacker = attacker->creature()->attack();
+            
+            bool defenderDied = defender->creature()->takeDamage(damageDealtByAttacker);
             attacker->creature()->useAllEnergy();
+            
+            if (attackDamage != nullptr)
+                *attackDamage = damageDealtByAttacker;
             
             //If the defender is a melee fighter and survived, it can strike back
             if (!defenderDied && defender->creature()->melee()) {
-                bool attackerDied = attacker->creature()->takeDamage(defender->creature()->attack());
+                std::cout << "Defender survived" << std::endl;
+                
+                int damageDealtByDefender = defender->creature()->attack();
+                
+                bool attackerDied = attacker->creature()->takeDamage(damageDealtByDefender);
+                
+                if (defendDamage != nullptr)
+                    *defendDamage = damageDealtByDefender;
+                
                 if (attackerDied) {
-                    attacker->setCreature(nullptr); //Remove the dead creature
+                    this->deleteCreature(attacker->x(), attacker->y());//Remove the dead creature
                 }
             } else if (defenderDied) {
-                defender->setCreature(nullptr); //Remove the dead creature
+                this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
+                
+                if (attacker->creature() == nullptr)
+                    std::cout << "nullptr attacker" << std::endl;
             }
             
             return true; //Combat occurs
         }
         
     } else { //The attacker is a range fighter so there can be no strike back. To consider: other range units can strike back?
-        bool defenderDied = defender->creature()->takeDamage(attacker->creature()->attack());
+        int damageDealtByAttacker = attacker->creature()->attack();
+        
+        bool defenderDied = defender->creature()->takeDamage(damageDealtByAttacker);
         attacker->creature()->useAllEnergy();
         
+        if (attackDamage != nullptr)
+            *attackDamage = damageDealtByAttacker;
+        
         if (defenderDied) {
-            defender->setCreature(nullptr); //Remove the dead creature
+            this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
         }
         
         return true;

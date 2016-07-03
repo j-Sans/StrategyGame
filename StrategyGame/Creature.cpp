@@ -72,7 +72,7 @@ const unsigned int Creature::cost() {
 }
 
 const bool Creature::melee() {
-    return this->creatureRange > 1 ? true : false;
+    return this->creatureRange > 1 ? false : true;
 }
 
 unsigned int Creature::health() {

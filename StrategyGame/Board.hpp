@@ -76,9 +76,12 @@ public:
      * @param defenderX The x index of the defender in the board.
      * @param defenderY The y index of the ∂efender in the board.
      *
+     * @param attackDamage An int to store the damage dealt by the attacker. Use nullptr if no int is needed to store this.
+     * @param defendDamage An int to store the damage dealt by the defender. Use nullptr if no int is needed to store this.
+     *
      * @return Whether combat occurred or not, for various reasons.
      */
-    bool attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY);
+    bool attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
     
     /**
      * Get the distance (in taxicab geometry) from one tile to another.

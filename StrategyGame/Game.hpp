@@ -231,6 +231,11 @@ private:
     void updateColorBuffer();
     
     /**
+     * A function to update the damage VBO. Should be called every frame.
+     */
+    void updateDamageBuffer();
+    
+    /**
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
      */
     void moveCamera();
