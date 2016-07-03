@@ -309,8 +309,10 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
             this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
         }
-        if (setDamageData)
+        if (setDamageData) {
             this->damageData[a] = 0;
+            this->existenceTimeForDamageData[a] = 0;
+        }
     }
 }
 
@@ -476,6 +478,16 @@ void Game::updateColorBuffer() {
 
 //A function to update the damage VBO. Should be called every frame
 void Game::updateDamageBuffer() {
+    //Goes through existence times and updates them based on glfwGetTime()
+    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+        if (this->damageData[tile] != 0) {
+            if (glfwGetTime() - this->existenceTimeForDamageData[tile] > this->damageBoxTime) {
+                //If the damage box has existed for long enough
+                this->damageData[tile] = 0;
+                this->existenceTimeForDamageData[tile] = 0;
+            }
+        }
+    }
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -629,9 +641,13 @@ void Game::updateTileStyle() {glm::ivec2 mousePos;
 //            this->gameBoard.attack(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
             this->gameBoard.attack(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
             
+            //Set the damage data on the defending square equal to damage dealt by the attacker
             this->damageData[(defender.x * this->gameBoard.width()) + defender.y] = attackDamage;
+            this->existenceTimeForDamageData[(defender.x * this->gameBoard.width()) + defender.y] = glfwGetTime();
             
+            //Set the damage data on the attacking square equal to damage dealt by the defender
             this->damageData[(attacker.x * this->gameBoard.width()) + attacker.y] = defendDamage;
+            this->existenceTimeForDamageData[(attacker.x * this->gameBoard.width()) + attacker.y] = glfwGetTime();
             
             
             //Reset all tiles

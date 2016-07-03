@@ -143,9 +143,6 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
                 }
             } else if (defenderDied) {
                 this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
-                
-                if (attacker->creature() == nullptr)
-                    std::cout << "nullptr attacker" << std::endl;
             }
             
             return true; //Combat occurs
