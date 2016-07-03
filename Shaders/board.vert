@@ -18,7 +18,7 @@ void main() {
     gl_Position = vec4(position.x, position.y, 0.0f, 1.0f);
     terrain = terrainInt;
     creature = creatureInt.x;
-    creatureDirection = creatureInt.y
+    creatureDirection = creatureInt.y;
     creatureDamage = damageInt;
     tileColor = vec4(tileColorIn, 1.0f);
     creatureOffset = offset;

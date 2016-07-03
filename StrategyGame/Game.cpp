@@ -524,7 +524,31 @@ void Game::updateDamageBuffer() {
 }
 
 void Game::updateCreatureOffset() {
+    GLfloat displacement = this->creatureSpeed * deltaTime;
     
+    //Goes through all tiles and continues moving any that are moving
+    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+        if (this->offsetData[tile] != 0) {
+            this->offsetData[tile] += displacement;
+        }
+    }
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(5);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
 }
 
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
