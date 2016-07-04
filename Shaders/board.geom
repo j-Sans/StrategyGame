@@ -144,11 +144,11 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         }
     } else if (creatureDirection[0] == EAST) {
         for (int a = 0; a < 4; a++) {
-            rect[a].x -= creatureOffset[0];
+            rect[a].x += creatureOffset[0] >= 0 ? 0 : (0.4 + creatureOffset[0]); //Because the creature moves first, the offset should be decreasing towards 0 as the creature approaches the tile
         }
     } else if (creatureDirection[0] == SOUTH) {
         for (int a = 0; a < 4; a++) {
-            rect[a].y -= creatureOffset[0];
+            rect[a].y += creatureOffset[0] >= 0 ? 0 : (0.4 + creatureOffset[0]); //Because the creature moves first, the offset should be decreasing towards 0 as the creature approaches the tile
         }
     } else if (creatureDirection[0] == WEST) {
         for (int a = 0; a < 4; a++) {

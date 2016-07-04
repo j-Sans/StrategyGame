@@ -327,7 +327,6 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->existenceTimeForDamageData[a] = 0;
         }
         if (setOffsetData) {
-//            this->creatureData[(2 * a) + 1] = 0; //Because direction and offset would both be set the first time, so this is here.
             this->offsetData[a] = 0;
         }
     }
@@ -543,6 +542,51 @@ void Game::updateCreatureOffset() {
     
     //Goes through all tiles and continues moving any that are moving
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+        
+        GLuint direction = this->creatureData[(2 * tile) + 1];
+        
+        glm::ivec2 boardLoc;
+        boardLoc.x = tile / this->gameBoard.width();
+        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
+        
+        if (direction == NORTH || direction == WEST) {
+            //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
+            
+            if (this->offsetData[tile] > 0.0) {
+                this->offsetData[tile] += displacement;
+            }
+            
+            //At 0.4, it has reached the next tile
+            if (this->offsetData[tile] > 0.4) {
+                this->offsetData[tile] = 0.0;
+                
+                try {
+                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
+                } catch (std::exception e) {
+                    //The creature can't move in that direction for some reason...
+                    //This should never happen because the clicked location was an open adjacent tile, so there should be no reason it can't be moved there
+                }
+            }
+        } else if (direction == SOUTH || direction == EAST) {
+            //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
+            
+            //The displacement goes negative. In the shader, this is added to 0.4, so it gets closer to 0 as it gets closer to the new tile.
+            if (this->offsetData[tile] < 0.0) {
+                this->offsetData[tile] -= displacement;
+            }
+            
+            //At 0.4, it has reached the next tile
+            if (this->offsetData[tile] < -0.4) {
+                this->offsetData[tile] = 0.0;
+                
+                //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
+            }
+        }
+        
+        
+        
+        /*
+        
         if (this->offsetData[tile] > 0) {
             this->offsetData[tile] += displacement;
         }
@@ -569,7 +613,6 @@ void Game::updateCreatureOffset() {
                     //Board is already furthest east, or there is a creature east. Either way, can't move east
                 }
             } else if (direction == SOUTH) {
-                
                 try {
                     this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, SOUTH);
                 } catch(std::exception e) {
@@ -583,6 +626,7 @@ void Game::updateCreatureOffset() {
                 }
             }
         }
+         */
     }
     
     //First we bind the VAO
@@ -664,14 +708,12 @@ void Game::updateTileStyle() {
             //Select this new tile
             this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
             
-            //If the selected tile is a creature, highlight adjacent tiles
+            //If the selected tile is a creature, highlight adjacent tiles and update the creature's direction
             if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr) {
                 
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
                 
                 try { //North tile
-//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, NORTH);
-                    
                     if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr)
@@ -681,8 +723,6 @@ void Game::updateTileStyle() {
                 }
                 
                 try { //West tile
-//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, WEST);
-                    
                     if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr)
@@ -692,8 +732,6 @@ void Game::updateTileStyle() {
                 }
                 
                 try { //South tile
-//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, SOUTH);
-
                     if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr)
@@ -703,8 +741,6 @@ void Game::updateTileStyle() {
                 }
                 
                 try { //East tile
-//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, EAST);
-
                     if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr)
@@ -739,9 +775,23 @@ void Game::updateTileStyle() {
             //Set the direction that was found at the selected creature
             this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
             
-            this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] += (this->creatureSpeed * this->deltaTime);
+            //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
+            //For these directions, the creature is moved after, in the function that updates the offset data
+            if (direction == NORTH || direction == WEST)
+                this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] += (this->creatureSpeed * this->deltaTime);
             
-            //this->gameBoard.moveCreatureByLocation(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+            //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
+            //For these directions, the creature is moved here, and then the offset is slowly updated to follow
+            if (direction == SOUTH || direction == EAST) {
+                this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] -= (this->creatureSpeed * this->deltaTime);
+                
+                try {
+                    this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
+                } catch (std::exception e) {
+                    //The creature can't move in that direction for some reason...
+                    //This should never happen because the clicked location was an open adjacent tile, so there should be no reason it can't be moved there
+                }
+            }
             
             //Reset all tiles
             for (GLuint x = 0; x < this->gameBoard.width(); x++) {
@@ -796,6 +846,7 @@ void Game::updateTileStyle() {
     }
 }
 
+//Calculates the tile that the mouse is over
 glm::ivec2 Game::mouseTile() {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
