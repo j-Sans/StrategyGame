@@ -125,6 +125,9 @@ void Game::render() {
         activateTile = false;
     }
     
+    //Update creature offset, so as to implement animation
+    this->updateCreatureOffset();
+    
     //Update the creatures
     this->updateCreatureBuffer();
     
@@ -133,9 +136,6 @@ void Game::render() {
     
     //Update damage boxes
     this->updateDamageBuffer();
-    
-    //Update creature offset, so as to implement animation
-    this->updateCreatureOffset();
     
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
@@ -305,9 +305,10 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
     for (int a = 0; a < NUMBER_OF_TILES; a++) {
         if (setTerrainData)
             this->terrainData[a] = terrains[a];
-        if (setCreatureData)
+        if (setCreatureData) {
             this->creatureData[2 * a] = creatures[a];
-            //Skip the directions spot and offset spot for now. It does nothing yet
+            this->creatureData[(2 * a) + 1] = 0;
+        }
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
             this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
@@ -321,8 +322,6 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->offsetData[a] = 0;
         }
     }
-    
-    std::cout << "Offsetting: " << this->offsetData[this->gameBoard.width() + 1] << std::endl;
 }
 
 //Initialize OpenGL buffers with the object's vertex data.
@@ -537,6 +536,54 @@ void Game::updateCreatureOffset() {
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         if (this->offsetData[tile] > 0) {
             this->offsetData[tile] += displacement;
+        }
+        
+        if (this->offsetData[tile] > 0.2) {
+            this->offsetData[tile] = 0;
+            
+            GLuint direction = creatureData[(2 * tile) + 1];
+            
+            glm::ivec2 boardLoc;
+            boardLoc.x = tile / this->gameBoard.width();
+            boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
+            
+            if (direction == NORTH) {
+                try {
+                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, NORTH);
+                } catch(std::exception e) {
+                    //Board is already north, or there is a creature north. Either way, can't move north
+                }
+                
+                //If the tile is not too far north already
+                if ((GLint)tile - (GLint)this->gameBoard.width() >= 0) {
+                    this->creatureData[2 * tile] = NO_CREATURE;
+                    this->creatureData[2 * (tile - this->gameBoard.width())] = STICK_FIGURE_CREATURE;
+                }
+            } else if (direction == EAST) {
+                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, EAST);
+                
+                //If the tile is not too far east already
+                if (tile + 1 < NUMBER_OF_TILES) {
+                    this->creatureData[2 * tile] = NO_CREATURE;
+                    this->creatureData[2 * (tile + 1)] = STICK_FIGURE_CREATURE;
+                }
+            } else if (direction == SOUTH) {
+                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, SOUTH);
+                
+                //If the tile is not too far north already
+                if (tile + this->gameBoard.width() < NUMBER_OF_TILES) {
+                    this->creatureData[2 * tile] = NO_CREATURE;
+                    this->creatureData[2 * (tile + this->gameBoard.width())] = STICK_FIGURE_CREATURE;
+                }
+            } else if (direction == WEST) {
+                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, WEST);
+                
+                //If the tile is not too far east already
+                if ((GLint)tile - 1 >= 0) {
+                    this->creatureData[2 * tile] = NO_CREATURE;
+                    this->creatureData[2 * (tile - 1)] = STICK_FIGURE_CREATURE;
+                }
+            }
         }
     }
     

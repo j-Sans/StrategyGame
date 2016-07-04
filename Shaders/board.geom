@@ -43,6 +43,8 @@ uniform mat4 view;
 uniform mat4 ortho;
 uniform mat4 creatureMat;
 
+//uniform float slope;
+
 
 //Functions
 void makeOpen(vec4 position);
@@ -136,26 +138,27 @@ void makeMountain(vec4 position) {
 //Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
 //The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
-//    if (creatureDirection[0] == NORTH) {
-//        for (int a = 0; a < 4; a++) {
-//            rect[a].y -= creatureOffset[0];
-//        }
-//    } else if (creatureDirection[0] == EAST) {
-//        for (int a = 0; a < 4; a++) {
-//            rect[a].x += creatureOffset[0];
-//        }
-//    } else if (creatureDirection[0] == SOUTH) {
-//        for (int a = 0; a < 4; a++) {
-//            rect[a].y += creatureOffset[0];
-//        }
-//    } else if (creatureDirection[0] == WEST) {
-//        for (int a = 0; a < 4; a++) {
-//            rect[a].x -= creatureOffset[0];
-//        }
-//    }
-//    
+    if (creatureDirection[0] == NORTH) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].y += creatureOffset[0];
+        }
+    } else if (creatureDirection[0] == EAST) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].x += creatureOffset[0];
+        }
+    } else if (creatureDirection[0] == SOUTH) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].y -= creatureOffset[0];
+        }
+    } else if (creatureDirection[0] == WEST) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].x += creatureOffset[0];
+        }
+    }
+    
+    
     for (int a = 0; a < 4; a++) {
-        rect[a] = vec4(rect[a].x + creatureOffset[0], rect[a].y + creatureOffset[0], 0.0f, 0.0f);
+        rect[a].y += creatureOffset[0];
     }
     
     if (creatureTypeToDraw != NO_CREATURE) {

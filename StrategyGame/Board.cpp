@@ -15,7 +15,7 @@ Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 
 //Public member functions
 void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
-    if (x >= this->gameBoard.size()) //is this protection really necessary?
+    if (x >= this->gameBoard.size())
         throw std::range_error("X out of range");
     if (y >= this->gameBoard[0].size())
         throw std::range_error("Y out of range");
