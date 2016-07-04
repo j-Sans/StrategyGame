@@ -42,6 +42,11 @@ void Creature::useAllEnergy() {
     this->creatureEnergy = 0;
 }
 
+void Creature::setDirection(unsigned int direction) {
+    if (direction <= 3) //If direction is NORTH, EAST, SOUTH, or WEST, because those are up to 3.
+        this->creatureDirection = direction;
+}
+
 const Race Creature::race() {
     return this->creatureRace;
 }

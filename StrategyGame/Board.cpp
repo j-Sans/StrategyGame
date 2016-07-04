@@ -15,6 +15,21 @@ Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 
 //Public member functions
 void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
+    
+    /* Note:
+     * The following sections contain for loop that iterates through the list of board tiles with creatures until it finds the designated one, and it deletes it.
+     * It is known that this is incredibly inefficient.
+     * However, currently there are not too many board spaces that will have creatures for testing purposes.
+     
+     Ways to fix this in the future:
+     * Make a sort functino to get the list sorted in a way that is easy to go through to find the right spot.
+     * Use std::optional<Creature> instead of Creature* in Tile.hpp
+     std::optional (or std::experimental::optional) may not have come out yet, which is a slight problem.
+     There were issues getting it to work on 2013 MacBook Pro in Xcode 7, without much trying
+     * Download and add the boost library optional functionality
+     */
+    
+    
     if (x >= this->gameBoard.size())
         throw std::range_error("X out of range");
     if (y >= this->gameBoard[0].size())
@@ -24,6 +39,15 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         if (y > 0 && !this->gameBoard[x][y - 1].occupied()) {
             this->gameBoard[x][y - 1].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Find the creature, and update its location on the board
+            for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+                if (listIter->x == x && listIter->y == y) {
+                    listIter->y -= 1; //Moves the creature north a tile. y can't be 0 because that is checked above
+                    break;
+                }
+            }
+            
         } else if (this->gameBoard[x][y - 1].occupied()) {
             throw std::range_error("Northern tile occupied");
         } else {
@@ -33,6 +57,15 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         if (x > 0 && !this->gameBoard[x - 1][y].occupied()) {
             this->gameBoard[x - 1][y].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Find the creature, and update its location on the board
+            for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+                if (listIter->x == x && listIter->y == y) {
+                    listIter->x -= 1; //Moves the creature west a tile. x can't be 0 because that is checked above
+                    break;
+                }
+            }
+            
         } else if (this->gameBoard[x - 1][y].occupied()) {
             throw std::range_error("Western tile occupied");
         } else {
@@ -42,6 +75,15 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         if (y < this->gameBoard[x].size() - 1 && !this->gameBoard[x][y + 1].occupied()) {
             this->gameBoard[x][y + 1].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Find the creature, and update its location on the board
+            for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+                if (listIter->x == x && listIter->y == y) {
+                    listIter->y += 1; //Moves the creature south a tile. y can't be the maximum because that is checked above
+                    break;
+                }
+            }
+            
         } else if (this->gameBoard[x][y + 1].occupied()) {
             throw std::range_error("Southern tile occupied");
         } else {
@@ -51,6 +93,15 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         if (x < this->gameBoard.size() - 1 && !this->gameBoard[x + 1][y].occupied()) {
             this->gameBoard[x + 1][y].setCreature(this->gameBoard[x][y].creature());
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Find the creature, and update its location on the board
+            for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+                if (listIter->x == x && listIter->y == y) {
+                    listIter->x += 1; //Moves the creature south a tile. x can't be the maximum because that is checked above
+                    break;
+                }
+            }
+            
         } else if (this->gameBoard[x + 1][y].occupied()) {
             throw std::range_error("Eastern tile occupied");
         } else {
@@ -77,6 +128,17 @@ void Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     if (!this->gameBoard[destinationX][destinationY].occupied()) {
         this->gameBoard[destinationX][destinationY].setCreature(this->gameBoard[x][y].creature());
         this->gameBoard[x][y].setCreature(nullptr);
+        
+        //Find the creature, and update its location on the board
+        for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+            if (listIter->x == x && listIter->y == y) {
+                //Moves the creature in the list to that spot
+                listIter->x = destinationX;
+                listIter->y = destinationY;
+                break;
+            }
+        }
+        
     } else {
         throw std::range_error("Destination tile occupied");
     }
@@ -246,6 +308,23 @@ void Board::setStyle(unsigned int x, unsigned int y, Style style) {
     }
     
     this->gameBoard[x][y].setStyle(style);
+}
+
+void Board::setDirection(unsigned int x, unsigned int y, unsigned int direction) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    if (this->gameBoard[x][y].creature() == nullptr)
+        throw std::range_error("No creature at the designated spot");
+    
+    if (direction > 3)
+        throw std::range_error("Not a valid direction");
+    
+    this->gameBoard[x][y].setDirection(direction);
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {

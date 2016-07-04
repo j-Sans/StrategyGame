@@ -89,7 +89,7 @@ public:
     /**
      * The speed that the creature moves when it is animated.
      */
-    const GLfloat creatureSpeed = 1.0f;
+    const GLfloat creatureSpeed = 1.5f;
     
     /**
      * Time before deletion of damage boxes, in seconds.

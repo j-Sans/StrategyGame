@@ -144,7 +144,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         }
     } else if (creatureDirection[0] == EAST) {
         for (int a = 0; a < 4; a++) {
-            rect[a].x += creatureOffset[0];
+            rect[a].x -= creatureOffset[0];
         }
     } else if (creatureDirection[0] == SOUTH) {
         for (int a = 0; a < 4; a++) {
@@ -154,11 +154,6 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         for (int a = 0; a < 4; a++) {
             rect[a].x += creatureOffset[0];
         }
-    }
-    
-    
-    for (int a = 0; a < 4; a++) {
-        rect[a].y += creatureOffset[0];
     }
     
     if (creatureTypeToDraw != NO_CREATURE) {

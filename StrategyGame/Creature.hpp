@@ -68,6 +68,11 @@ public:
      */
     void useAllEnergy();
     
+    /**
+     * Sets the direction of this creature, as long as the direction is valid. Includes NORTH, EAST, SOUTH, and WEST.
+     */
+    void setDirection(unsigned int direction);
+    
     //Get methods
     
     /**

@@ -125,6 +125,16 @@ public:
      */
     void setStyle(unsigned int x, unsigned int y, Style style);
     
+    /**
+     * Set a direction for the creature at the designated spot on the board.
+     * Possible errors include if the coordinates are outside of the range of the board, if there is no creature, or if the direction is not valid.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     * @param direction A direction macro to be set at the creature at the designated spot. Includes: North, East, South, and West.
+     */
+    void setDirection(unsigned int x, unsigned int y, unsigned int direction);
+    
     //Public get functions
     
     /**

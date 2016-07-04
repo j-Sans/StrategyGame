@@ -36,6 +36,12 @@ void Tile::setStyle(Style style) {
         this->tileColor = Tile::attackableAdjTileColor;
 }
 
+void Tile::setDirection(unsigned int direction) {
+    if (this->tileCreature != nullptr && direction <= 3) { //As long as there is a creature and the direction is valid
+        this->tileCreature->setDirection(direction);
+    }
+}
+
 const unsigned int Tile::x() {
     return this->tileX;
 }

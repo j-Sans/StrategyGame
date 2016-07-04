@@ -125,7 +125,7 @@ void Game::render() {
         activateTile = false;
     }
     
-    //Update creature offset, so as to implement animation
+    //Update creature offset, so as to implement animation. Done before updating creature buffer so that updates are rendered
     this->updateCreatureOffset();
     
     //Update the creatures
@@ -274,6 +274,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
     
     GLint terrains[numberOfIndices];
     GLint creatures[numberOfIndices];
+    GLint directions[numberOfIndices];
     GLfloat colors[3 * numberOfIndices];
     
     index = 0;
@@ -285,10 +286,16 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
                     //Gets the terrain of the tile
                     terrains[index] = this->gameBoard.get(x, y).terrain();
                 
-                if (setCreatureData)
+                if (setCreatureData) {
                     //Gets the creature on the tile
                     creatures[index] = this->gameBoard.get(x, y).creatureType();
-                
+                    
+                    //Gets the direction if there is a creature there
+                    if (this->gameBoard.get(x, y).creature() != nullptr)
+                        directions[index] = this->gameBoard.get(x, y).creature()->direction();
+                    else
+                        directions[index] = NORTH;
+                }
                 if (setColorData) {
                     //Gets the color alteration of the tile
                     colors[3 * index] = this->gameBoard.get(x, y).color().x;
@@ -307,7 +314,8 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->terrainData[a] = terrains[a];
         if (setCreatureData) {
             this->creatureData[2 * a] = creatures[a];
-            this->creatureData[(2 * a) + 1] = 0;
+            
+            this->creatureData[(2 * a) + 1] = directions[a];
         }
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
@@ -319,6 +327,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
             this->existenceTimeForDamageData[a] = 0;
         }
         if (setOffsetData) {
+//            this->creatureData[(2 * a) + 1] = 0; //Because direction and offset would both be set the first time, so this is here.
             this->offsetData[a] = 0;
         }
     }
@@ -538,7 +547,7 @@ void Game::updateCreatureOffset() {
             this->offsetData[tile] += displacement;
         }
         
-        if (this->offsetData[tile] > 0.2) {
+        if (this->offsetData[tile] > 0.4) { //At a distance of 0.4, it has reached the neighboring tile, so we just move the creature
             this->offsetData[tile] = 0;
             
             GLuint direction = creatureData[(2 * tile) + 1];
@@ -551,37 +560,26 @@ void Game::updateCreatureOffset() {
                 try {
                     this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, NORTH);
                 } catch(std::exception e) {
-                    //Board is already north, or there is a creature north. Either way, can't move north
-                }
-                
-                //If the tile is not too far north already
-                if ((GLint)tile - (GLint)this->gameBoard.width() >= 0) {
-                    this->creatureData[2 * tile] = NO_CREATURE;
-                    this->creatureData[2 * (tile - this->gameBoard.width())] = STICK_FIGURE_CREATURE;
+                    //Board is already furthest north, or there is a creature north. Either way, can't move north
                 }
             } else if (direction == EAST) {
-                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, EAST);
-                
-                //If the tile is not too far east already
-                if (tile + 1 < NUMBER_OF_TILES) {
-                    this->creatureData[2 * tile] = NO_CREATURE;
-                    this->creatureData[2 * (tile + 1)] = STICK_FIGURE_CREATURE;
+                try {
+                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, EAST);
+                } catch(std::exception e) {
+                    //Board is already furthest east, or there is a creature east. Either way, can't move east
                 }
             } else if (direction == SOUTH) {
-                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, SOUTH);
                 
-                //If the tile is not too far north already
-                if (tile + this->gameBoard.width() < NUMBER_OF_TILES) {
-                    this->creatureData[2 * tile] = NO_CREATURE;
-                    this->creatureData[2 * (tile + this->gameBoard.width())] = STICK_FIGURE_CREATURE;
+                try {
+                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, SOUTH);
+                } catch(std::exception e) {
+                    //Board is already furthest south, or there is a creature south. Either way, can't move south
                 }
             } else if (direction == WEST) {
-                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, WEST);
-                
-                //If the tile is not too far east already
-                if ((GLint)tile - 1 >= 0) {
-                    this->creatureData[2 * tile] = NO_CREATURE;
-                    this->creatureData[2 * (tile - 1)] = STICK_FIGURE_CREATURE;
+                try {
+                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, WEST);
+                } catch(std::exception e) {
+                    //Board is already furthest west, or there is a creature west. Either way, can't move west
                 }
             }
         }
@@ -672,6 +670,8 @@ void Game::updateTileStyle() {
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
                 
                 try { //North tile
+//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, NORTH);
+                    
                     if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr)
@@ -681,6 +681,8 @@ void Game::updateTileStyle() {
                 }
                 
                 try { //West tile
+//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, WEST);
+                    
                     if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr)
@@ -690,6 +692,8 @@ void Game::updateTileStyle() {
                 }
                 
                 try { //South tile
+//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, SOUTH);
+
                     if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr)
@@ -699,6 +703,8 @@ void Game::updateTileStyle() {
                 }
                 
                 try { //East tile
+//                    this->gameBoard.setDirection(mousePos.x, mousePos.y, EAST);
+
                     if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
                         this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
                     else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr)
@@ -713,6 +719,25 @@ void Game::updateTileStyle() {
         
         //Movement
         else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == OpenAdj) {
+            
+            //Get the direction of the click
+            int direction = 0;
+            
+            if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1) {
+                direction = NORTH;
+            }
+            if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y) {
+                direction = EAST;
+            }
+            if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1) {
+                direction = SOUTH;
+            }
+            if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y) {
+                direction = WEST;
+            }
+            
+            //Set the direction that was found at the selected creature
+            this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
             
             this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] += (this->creatureSpeed * this->deltaTime);
             

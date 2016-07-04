@@ -90,6 +90,13 @@ public:
      */
     void setStyle(Style style);
     
+    /**
+     * Sets a direction at the creature at this tile.
+     *
+     * @param direction A direction macro representing the direction. Includes NORTH, EAST, SOUTH, and WEST.
+     */
+    void setDirection(unsigned int direction);
+    
     //Get methods
     
     /**
