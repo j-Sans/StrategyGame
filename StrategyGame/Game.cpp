@@ -568,21 +568,30 @@ void Game::updateCreatureOffset() {
                 }
             }
         } else if (direction == SOUTH || direction == EAST) {
-            //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
-            
-            //The displacement goes negative. In the shader, this is added to 0.4, so it gets closer to 0 as it gets closer to the new tile.
-            if (this->offsetData[tile] < 0.0) {
-                this->offsetData[tile] -= displacement;
+            GLuint index = tile;
+            if (direction == SOUTH) {
+                index += this->gameBoard.width(); //One row below
+            } else if (direction == EAST) {
+                index += 1; //One tile further
             }
             
-            //At 0.4, it has reached the next tile
-            if (this->offsetData[tile] < -0.4) {
-                this->offsetData[tile] = 0.0;
+            if (tile < NUMBER_OF_TILES) {
+            
+                //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
                 
-                //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
+                //The displacement goes negative. In the shader, this is added to 0.4, so it gets closer to 0 as it gets closer to the new tile.
+                if (this->offsetData[tile] < 0.0) {
+                    this->offsetData[tile] += displacement;
+                }
+                
+                //At 0.4, it has reached the next tile
+                if (this->offsetData[tile] >= 0.0) {
+                    this->offsetData[tile] = 0.0;
+                    
+                    //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
+                }
             }
         }
-        
         
         
         /*
@@ -783,13 +792,23 @@ void Game::updateTileStyle() {
             //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
             //For these directions, the creature is moved here, and then the offset is slowly updated to follow
             if (direction == SOUTH || direction == EAST) {
-                this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] -= (this->creatureSpeed * this->deltaTime);
+                GLuint tile; //The location in the data array
                 
-                try {
-                    this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
-                } catch (std::exception e) {
-                    //The creature can't move in that direction for some reason...
-                    //This should never happen because the clicked location was an open adjacent tile, so there should be no reason it can't be moved there
+                if (direction == SOUTH) {
+                    tile = (this->selectedTile.x * this->gameBoard.width()) + (this->selectedTile.y + 1); //One row below
+                } else if (direction == EAST) {
+                    tile = ((this->selectedTile.x + 1) * this->gameBoard.width()) + this->selectedTile.y; //One tile further
+                }
+                
+                if (tile < NUMBER_OF_TILES) {
+                    this->offsetData[tile] = -0.4; //-= (this->creatureSpeed * this->deltaTime);
+                    
+                    try {
+                        this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
+                    } catch (std::exception e) {
+                        //The creature can't move in that direction for some reason...
+                        //This should never happen because the clicked location was an open adjacent tile, so there should be no reason it can't be moved there
+                    }
                 }
             }
             
