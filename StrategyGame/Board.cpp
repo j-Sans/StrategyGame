@@ -133,6 +133,8 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     } else {
         return false;
     }
+    
+    return true;
 }
 
 /*
