@@ -14,7 +14,7 @@ Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
 //Public member functions
-void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
+bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
     
     /* Note:
      * The following sections contain for loop that iterates through the list of board tiles with creatures until it finds the designated one, and it deletes it.
@@ -48,10 +48,8 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
                 }
             }
             
-        } else if (this->gameBoard[x][y - 1].occupied()) {
-            throw std::range_error("Northern tile occupied");
-        } else {
-            throw std::range_error("No northern tile available");
+        } else { //Can't move to the tile
+            return false;
         }
     } else if (direction == WEST) {
         if (x > 0 && !this->gameBoard[x - 1][y].occupied()) {
@@ -66,10 +64,8 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
                 }
             }
             
-        } else if (this->gameBoard[x - 1][y].occupied()) {
-            throw std::range_error("Western tile occupied");
         } else {
-            throw std::range_error("No western tile available");
+            return false;
         }
     } else if (direction == SOUTH) {
         if (y < this->gameBoard[x].size() - 1 && !this->gameBoard[x][y + 1].occupied()) {
@@ -84,10 +80,8 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
                 }
             }
             
-        } else if (this->gameBoard[x][y + 1].occupied()) {
-            throw std::range_error("Southern tile occupied");
         } else {
-            throw std::range_error("No southern tile available");
+            return false;
         }
     } else if (direction == EAST) {
         if (x < this->gameBoard.size() - 1 && !this->gameBoard[x + 1][y].occupied()) {
@@ -102,17 +96,14 @@ void Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
                 }
             }
             
-        } else if (this->gameBoard[x + 1][y].occupied()) {
-            throw std::range_error("Eastern tile occupied");
         } else {
-            throw std::range_error("No eastern tile available");
+            return false;
         }
-    } else {
-        throw std::range_error("Not a valid direction");
     }
+    return true;
 }
 
-void Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
+bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("Initial x out of range");
     if (y >= this->gameBoard[x].size())
@@ -122,8 +113,8 @@ void Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     if (destinationY >= this->gameBoard[destinationX].size())
         throw std::range_error("Destination y out of range");
     
-    if (destinationX == x && destinationY == y)
-        throw std::logic_error("Already at destination");
+    if (destinationX == x && destinationY == y) //If the creature is at the destinatino, no moving happens
+        return false;
     
     if (!this->gameBoard[destinationX][destinationY].occupied()) {
         this->gameBoard[destinationX][destinationY].setCreature(this->gameBoard[x][y].creature());
@@ -140,7 +131,7 @@ void Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
         }
         
     } else {
-        throw std::range_error("Destination tile occupied");
+        return false;
     }
 }
 
@@ -193,8 +184,6 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
             
             //If the defender is a melee fighter and survived, it can strike back
             if (!defenderDied && defender->creature()->melee()) {
-                std::cout << "Defender survived" << std::endl;
-                
                 int damageDealtByDefender = defender->creature()->attack();
                 
                 bool attackerDied = attacker->creature()->takeDamage(damageDealtByDefender);
@@ -310,7 +299,7 @@ void Board::setStyle(unsigned int x, unsigned int y, Style style) {
     this->gameBoard[x][y].setStyle(style);
 }
 
-void Board::setDirection(unsigned int x, unsigned int y, unsigned int direction) {
+bool Board::setDirection(unsigned int x, unsigned int y, unsigned int direction) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range");
     }
@@ -319,12 +308,13 @@ void Board::setDirection(unsigned int x, unsigned int y, unsigned int direction)
     }
     
     if (this->gameBoard[x][y].creature() == nullptr)
-        throw std::range_error("No creature at the designated spot");
+        return false;
     
     if (direction > 3)
-        throw std::range_error("Not a valid direction");
+        return false;
     
     this->gameBoard[x][y].setDirection(direction);
+    return true;
 }
 
 Tile Board::get(unsigned int x, unsigned int y) {

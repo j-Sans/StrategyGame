@@ -267,7 +267,8 @@ private:
     
     /**
      * A function to calculate the tile closest to the mouse location at any given point in time.
-     * Possible errors include if the board size is below 2x2 or if the mouse is outside of the board.
+     * (-1, -1) is returned if the selection was outside of the board.
+     * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
      *
      * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
      */

@@ -985,8 +985,9 @@ glm::ivec2 Game::mouseTile() {
     //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
     //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
     
+    //Return negative coordinates if the click is outside of all tiles
     if (tileIndex == -1)
-        throw std::range_error("Mouse outside of board");
+        return glm::ivec2(-1, -1);
     
     glm::ivec2 tileIndexVec;
     

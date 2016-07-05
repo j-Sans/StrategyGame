@@ -48,24 +48,28 @@ public:
     
     /**
      * Move a creature from the designated spot in the designated direction.
-     * Possible errors include if the destination is occupied or if the destination is off of the board.
+     * Possible errors include if the destination is off of the board.
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
-     * @param direction The direction in which to move. Possible direction types include NORTH, EAST, SOUTH, and WEST.
+     * @param direction The direction in which to move. Possible direction types include NORTH, EAST, SOUTH, and WEST. If the direction is not valid nothing happens.
+     *
+     * @return Whether the creature could be moved in the direction specified.
      */
-    void moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction);
+    bool moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction);
     
     /**
      * Move a creature from the designated spot in the designated direction.
-     * Possible errors include if the destination is occupied or if either it or the original location is off of the board.
+     * Possible errors include if the destination is off of the board.
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
      * @param destinationX The x index of the destination coordinate in the board.
      * @param destinationY The y index of the destination coordinate in the board.
+     *
+     * @return Whether the creature was moved to the destination. False is returned if it is already at its destination.
      */
-    void moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
+    bool moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
     
     /**
      * Have one creature attack the other creature.
@@ -85,7 +89,7 @@ public:
     
     /**
      * Get the distance (in taxicab geometry) from one tile to another.
-     * Possible errors include if the coordinates are outside of the range of the board.
+     * Possible errors include if the coordinates are off of the board.
      *
      * @param x1 The x index of the first coordinate in the board.
      * @param y1 The y index of the first coordinate in the board.
@@ -127,13 +131,15 @@ public:
     
     /**
      * Set a direction for the creature at the designated spot on the board.
-     * Possible errors include if the coordinates are outside of the range of the board, if there is no creature, or if the direction is not valid.
+     * Possible errors include if the coordinates are outside of the range of the board.
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
      * @param direction A direction macro to be set at the creature at the designated spot. Includes: North, East, South, and West.
+     *
+     * @return whether a direction was successfully set for a creature at the designated location.
      */
-    void setDirection(unsigned int x, unsigned int y, unsigned int direction);
+    bool setDirection(unsigned int x, unsigned int y, unsigned int direction);
     
     //Public get functions
     
