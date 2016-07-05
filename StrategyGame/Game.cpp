@@ -560,12 +560,7 @@ void Game::updateCreatureOffset() {
             if (this->offsetData[tile] > 0.4) {
                 this->offsetData[tile] = 0.0;
                 
-                try {
-                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
-                } catch (std::exception e) {
-                    //The creature can't move in that direction for some reason...
-                    //This should never happen because the clicked location was an open adjacent tile, so there should be no reason it can't be moved there
-                }
+                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
             }
         } else if (direction == SOUTH || direction == EAST) {
             GLuint index = tile;
@@ -592,50 +587,6 @@ void Game::updateCreatureOffset() {
                 }
             }
         }
-        
-        
-        /*
-        
-        if (this->offsetData[tile] > 0) {
-            this->offsetData[tile] += displacement;
-        }
-        
-        if (this->offsetData[tile] > 0.4) { //At a distance of 0.4, it has reached the neighboring tile, so we just move the creature
-            this->offsetData[tile] = 0;
-            
-            GLuint direction = creatureData[(2 * tile) + 1];
-            
-            glm::ivec2 boardLoc;
-            boardLoc.x = tile / this->gameBoard.width();
-            boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
-            
-            if (direction == NORTH) {
-                try {
-                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, NORTH);
-                } catch(std::exception e) {
-                    //Board is already furthest north, or there is a creature north. Either way, can't move north
-                }
-            } else if (direction == EAST) {
-                try {
-                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, EAST);
-                } catch(std::exception e) {
-                    //Board is already furthest east, or there is a creature east. Either way, can't move east
-                }
-            } else if (direction == SOUTH) {
-                try {
-                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, SOUTH);
-                } catch(std::exception e) {
-                    //Board is already furthest south, or there is a creature south. Either way, can't move south
-                }
-            } else if (direction == WEST) {
-                try {
-                    this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, WEST);
-                } catch(std::exception e) {
-                    //Board is already furthest west, or there is a creature west. Either way, can't move west
-                }
-            }
-        }
-         */
     }
     
     //First we bind the VAO
@@ -685,24 +636,18 @@ void Game::moveCamera() {
 }
 
 void Game::updateTileStyle() {
-    glm::ivec2 mousePos = glm::ivec2(-1, -1);
+    glm::ivec2 mousePos;
     
-    try {
-        mousePos = mouseTile(); //Fails if mouse is outside of the board
-    } catch (std::exception e) {
-        
-        //The mouse was outside of the board
-        // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
-        
-        //Reset all tiles
+    mousePos = mouseTile(); //Fails if mouse is outside of the board
+    
+    //Reset all tiles if the mouse clicked out of the screen
+    if (mousePos == glm::ivec2(-1, -1)) {
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
                 this->gameBoard.setStyle(x, y, Regular);
             }
         }
-    }
-    
-    if (mousePos != glm::ivec2(-1, -1)) {
+    } else {
         //Reset the tile (and others) if the current tile is clicked again
         if (mousePos == this->selectedTile) {
             
@@ -735,41 +680,29 @@ void Game::updateTileStyle() {
                 
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
                 
-                try { //North tile
-                    if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr)
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
-                } catch (std::exception e) {
-                    //No northern tile
-                }
+                //North tile
+                if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr)
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
                 
-                try { //West tile
-                    if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr)
-                        this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
-                } catch (std::exception e) {
-                    //No western tile
-                }
+                //West tile
+                if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr)
+                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
                 
-                try { //South tile
-                    if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr)
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
-                } catch (std::exception e) {
-                    //No southern tile
-                }
+                //South tile
+                if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr)
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
                 
-                try { //East tile
-                    if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr)
-                        this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
-                } catch (std::exception e) {
-                    //No eastern tile
-                }
+                //East tile
+                if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr)
+                    this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
             }
             
             this->selectedTile = mousePos;
@@ -816,12 +749,7 @@ void Game::updateTileStyle() {
                 if (tile < NUMBER_OF_TILES) {
                     this->offsetData[tile] = -0.4; //-= (this->creatureSpeed * this->deltaTime);
                     
-                    try {
-                        this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
-                    } catch (std::exception e) {
-                        //The creature can't move in that direction for some reason...
-                        //This should never happen because the clicked location was an open adjacent tile, so there should be no reason it can't be moved there
-                    }
+                    this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
                 }
             }
             
@@ -864,7 +792,6 @@ void Game::updateTileStyle() {
             
             this->selectedTile = glm::ivec2(-1, -1);
         }
-        
     }
 }
 

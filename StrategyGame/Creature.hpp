@@ -24,7 +24,7 @@ enum Race {
     Vampire,
 };
 
-/** A class representing a creature object.
+/*! A class representing a creature object.
  *
  * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
  * @param maxHealth An unsigned int representing the max health of the creature.
@@ -47,7 +47,7 @@ public:
     
     //Public member functions
     
-    /** 
+    /*! 
      * Reduces the creature's health by the damage argument, and if the creature dies, returns true.
      *
      * @param damage An unsigned int representing damage this creature takes.
@@ -56,76 +56,76 @@ public:
      */
     bool takeDamage(unsigned int damage);
     
-    /**
+    /*!
      * Reduces the creature's energy by the movement argument.
      *
      * @param energy An unsigned int representing movement this creature does. Equal to the energy loss.
      */
     void decrementEnergy(unsigned int energy);
     
-    /**
+    /*!
      * Reduces the creature's energy to 0. To be used after combat or other abilities are used.
      */
     void useAllEnergy();
     
-    /**
+    /*!
      * Sets the direction of this creature, as long as the direction is valid. Includes NORTH, EAST, SOUTH, and WEST.
      */
     void setDirection(unsigned int direction);
     
     //Get methods
     
-    /**
+    /*!
      * @return The race of this creature.
      */
     const Race race();
     
-    /**
+    /*!
      * @return The maximum health of this creature.
      */
     const unsigned int maxHealth();
     
-    /**
+    /*!
      * @return The maximum energy (which is the number of action points including movement) of this creature.
      */
     const unsigned int maxEnergy();
     
-    /**
+    /*!
      * @return The attack stat of this creature.
      */
     const unsigned int attack();
 
-    /**
+    /*!
      * @return The vision radius of this creature.
      */
     const unsigned int vision();
     
-    /**
+    /*!
      * @return The attack range of this creature.
      */
     const unsigned int range();
     
-    /**
+    /*!
      * @return The purchase cost of this creature.
      */
     const unsigned int cost();
     
-    /**
+    /*!
      * @return The combat type (if it is melee versus ranged) of this creature.
      */
     const bool melee();
     
-    /**
+    /*!
      * @return The remaining health of this creature.
      */
     unsigned int health();
     
-    /**
+    /*!
      * @return The remaining action points of this creature.
      */
     unsigned int energy();
     
-    /**
+    /*!
      * @return The direction the creature is facing, as a macro (int). Includes: NORTH, EAST, SOUTH, and WEST.
      */
     int direction();

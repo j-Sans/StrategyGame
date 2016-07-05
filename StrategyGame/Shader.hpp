@@ -6,7 +6,7 @@
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
 //  Guided by the tutorial at http://learnopengl.com/#!Getting-started/Shaders by Joey De Vries
-//  This has been altered from the original code, and is not supported nor endorsed by LearnOpenGL
+//  This has been altered from the original code, and is not endoresed nor endorsed by LearnOpenGL
 //
 
 #ifndef Shader_hpp
@@ -26,7 +26,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 
-/**
+/*!
  * A shader object that contains the compiled shader program. Can be used with a simple function and also can take different types of uniforms.
  *
  * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
@@ -37,7 +37,7 @@ class Shader {
 public:
     //The program ID
     
-    /**
+    /*!
      * The gl reference to the compiled shader program.
      */
     GLuint program;
@@ -51,14 +51,14 @@ public:
     //Constructor that reads in and builds the shader with a geometry shader
     Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath);
     
-    /**
+    /*!
      * Uses the shader object by running the compiled shader program. Used as "glUseProgram()" would be.
      */
     void use();
     
     //Send uniforms to the shader
     
-    /**
+    /*!
      * Send a texture to the shader program.
      *
      * @param name The name of the sampler2D in GLSL.
@@ -66,7 +66,7 @@ public:
      */
     void uniformTex(const GLchar* name, GLuint texNum);
     
-    /**
+    /*!
      * Send a float to the shader program.
      *
      * @param name The name of the float in GLSL.
@@ -74,7 +74,7 @@ public:
      */
     void uniform1f(const GLchar* name, float f);
     
-    /**
+    /*!
      * Send a vector of length 2 to the shader program.
      *
      * @param name The name of the vec2 in GLSL.
@@ -82,7 +82,7 @@ public:
      */
     void uniform2f(const GLchar* name, glm::vec2 vec);
     
-    /**
+    /*!
      * Send a vector of length 3 to the shader program.
      *
      * @param name The name of the vec3 in GLSL.
@@ -90,7 +90,7 @@ public:
      */
     void uniform3f(const GLchar* name, glm::vec3 vec);
     
-    /**
+    /*!
      * Send a vector of length 4 to the shader program.
      *
      * @param name The name of the vec4 in GLSL.
@@ -98,7 +98,7 @@ public:
      */
     void uniform4f(const GLchar* name, glm::vec4 vec);
     
-    /**
+    /*!
      * Send a 2x2 matrix to the shader program.
      *
      * @param name The name of the mat2 in GLSL.
@@ -106,7 +106,7 @@ public:
      */
     void uniformMat2(const GLchar* name, glm::mat2x2 mat);
     
-    /**
+    /*!
      * Send a 3x3 matrix to the shader program.
      *
      * @param name The name of the mat3 in GLSL.
@@ -114,7 +114,7 @@ public:
      */
     void uniformMat3(const GLchar* name, glm::mat3x3 mat);
     
-    /**
+    /*!
      * Send a 4x4 matrix to the shader program.
      *
      * @param name The name of the mat4 in GLSL.

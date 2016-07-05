@@ -47,7 +47,7 @@
 
 
 
-/**
+/*!
  * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
  *
  * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
@@ -66,64 +66,64 @@ public:
     
     //Public properties
     
-    /**
+    /*!
      * The set width of the window. Due to high screen resolution, the final window may not actually be this many pixels wide.
      */
     const GLuint windowWidth = 800;
     
-    /**
+    /*!
      * The set height of the window. Due to high screen resolution, the final window may not actually be this many pixels high.
      */
     const GLuint windowHeight = 600;
     
-    /**
+    /*!
      * The speed at which the camera pans across the board.
      */
     const GLfloat camSpeed = 1.5f;
     
-    /**
+    /*!
      * A limiting factor preventing the camera from moving too far off screen.
      */
     const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
-    /**
+    /*!
      * The speed that the creature moves when it is animated.
      */
     const GLfloat creatureSpeed = 1.5f;
     
-    /**
+    /*!
      * Time before deletion of damage boxes, in seconds.
      */
     const GLfloat damageBoxTime = 3.0f;
     
-    /**
+    /*!
      * The game board, containing a 2D vector of Tile objects.
      */
     Board gameBoard;
     
     //Public member functions
     
-    /**
+    /*!
      * Distance formula using Pythagorean Theorem
      */
     static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
     
-    /**
+    /*!
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
      */
     void render();
     
-    /**
+    /*!
      * A function that closes the window. Should be called within game loop to exit the loop.
      */
     void closeWindow();
     
-    /**
+    /*!
      * A function that helps to terminates the program and deallocates various resources. Should be called after closeWindow(), after leaving the game loop.
      */
     void terminate();
     
-    /**
+    /*!
      * Set the clear color of the screen.
      *
      * @param red The red value of the color, on a scale of 0.0 to 1.0. Outside this scale will be mapped to 0.0 or 1.0.
@@ -134,12 +134,12 @@ public:
     
     //Get functions
     
-    /**
+    /*!
      * @return A pointer to the GLFWwindow object.
      */
     GLFWwindow* window();
     
-    /**
+    /*!
      * @return A GLfloat representing the time (in seconds) since the last frame.
      */
     const GLfloat timeSinceLastFrame();
@@ -189,12 +189,12 @@ private:
 
     //Private member functions
     
-    /**
+    /*!
      * Initialize GLFW, GLEW, the key callback function, and the window itself.
      */
     void initWindow();
     
-    /**
+    /*!
      * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
      *
      * @param setVertexData A boolean indicating whether to update the vertex data array
@@ -206,12 +206,12 @@ private:
      */
     void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData);
     
-    /**
+    /*!
      * Initialize OpenGL buffers with the object's vertex data.
      */
     void setBuffers();
     
-    /**
+    /*!
      * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
      * An error will be thrown if there are already 32 textures loaded.
      *
@@ -220,7 +220,7 @@ private:
      */
     void loadTexture(const GLchar* texPath, const GLchar* texName);
     
-    /**
+    /*!
      * Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
      * An error will be thrown if there is no index texIndex within the vector of textures.
      *
@@ -230,42 +230,42 @@ private:
      */
     void replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName);
     
-    /**
+    /*!
      * A function that sets matrix transformations to be done on the board. This sets the model matrix to rotate the board by 45º and then make it seem tilted away from the viewer. That is done by scaling so that the horizontal diagnal is double the vertical one. The projection matrix is also added, using glm::ortho, so that a non-3D orthographic projection is achieved. It is made so that regardless of window dimensions, the scaling on the board is always constant.
      */
     void presetTransformations();
     
-    /**
+    /*!
      * A function to update the creature VBO. Should be called every frame.
      */
     void updateCreatureBuffer();
     
-    /**
+    /*!
      * A function to update the color VBO. Should be called every frame.
      */
     void updateColorBuffer();
     
-    /**
+    /*!
      * A function to update the damage VBO. Should be called every frame.
      */
     void updateDamageBuffer();
     
-    /**
+    /*!
      * A functin to update the offset data. Should be called every frame. Not completed.
      */
     void updateCreatureOffset();
     
-    /**
+    /*!
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
      */
     void moveCamera();
     
-    /**
+    /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
     void updateTileStyle();
     
-    /**
+    /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
      * (-1, -1) is returned if the selection was outside of the board.
      * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
@@ -274,7 +274,7 @@ private:
      */
     glm::ivec2 mouseTile();
     
-    /**
+    /*!
      * A function GLFW can call when a key event occurs.
      *
      * @param window The GLFWwindow object.
@@ -284,7 +284,7 @@ private:
      */
     static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
     
-    /**
+    /*!
      * A function GLFW can call when a mouse click occurs.
      *
      * @param window The GLFWwindow object.

@@ -42,7 +42,7 @@ enum Style {
     AttackableAdj,
 };
 
-/**
+/*!
  * A class representing a single tile on the board and, if present, the creature on that tile.
  *
  * @param terrain A macro representing the terrain type. Possible options include: OPEN_TERRAIN, MOUNTAIN_TERRAIN, WATER_TERRAIN, and more to be added.
@@ -58,24 +58,24 @@ public:
     
     //Public properties
     
-    /**
+    /*!
      * The color of selected tiles.
      */
     static const Color selectedTileColor = Grey;
     
-    /**
+    /*!
      * The color of adjacent open tiles.
      */
     static const Color openAdjTileColor = Cyan;
     
-    /**
+    /*!
      * The color of adjacent attackable tiles.
      */
     static const Color attackableAdjTileColor = Red;
     
     //Public member functions
     
-    /** 
+    /*! 
      * Sets a creature as the creature located in this tile.
      *  Warning: Does not deletes the old creature!
      *
@@ -83,14 +83,14 @@ public:
      */
     void setCreature(Creature *creature);
     
-    /**
+    /*!
      * Sets a style to alter the hue of this tile.
      *
      * @param style A style type representing the color. Styles include Regular, Selected, OpenAdj, and AttackableAdj.
      */
     void setStyle(Style style);
     
-    /**
+    /*!
      * Sets a direction at the creature at this tile.
      *
      * @param direction A direction macro representing the direction. Includes NORTH, EAST, SOUTH, and WEST.
@@ -99,52 +99,52 @@ public:
     
     //Get methods
     
-    /**
+    /*!
      * @return The x position of the tile in the board.
      */
     const unsigned int x();
     
-    /**
+    /*!
      * @return The y position of the tile in the board.
      */
     const unsigned int y();
     
-    /**
+    /*!
      * @return A pointer to the creature at this tile.
      */
     Creature* creature();
     
-    /**
+    /*!
      * @return The terrain type of this tile.
      */
     float terrain();
     
-    /**
+    /*!
      * @return A boolean representing if there is a creature on this tile currently.
      */
     bool occupied();
     
-    /**
+    /*!
      * @return The type of the creature, indicating which texture to use to the openGL VBO. Currently returns the basic creature if there is any creature.
      */
     unsigned int creatureType();
     
-    /**
+    /*!
      * @return The name of the color of this tile, of type Color enum. Possible values include White, Grey, Red, Yellow, Green, Cyan, and Blue.
      */
     Color colorName();
     
-    /**
+    /*!
      * @return The color alteration of the tile as a vec3 of RGB values. Values range from 0.0 to 1.0.
      */
     glm::vec3 color();
     
-    /**
+    /*!
      * @return The style of this tile, of type Style enum. Possible values include Regular, Selected, OpenAdj, and AttackableAdj.
      */
     Style style();
     
-    /**
+    /*!
      * @return A boolean representing whether the creature would be able to go through this tile.
      */
     bool passableByCreature(Creature creature);

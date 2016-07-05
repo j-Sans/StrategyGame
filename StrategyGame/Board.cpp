@@ -164,13 +164,7 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
         
         //Check to make sure the creatures are one tile away from each other
         unsigned int distanceBetweenTiles;
-        try {
-            distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY);
-        } catch (std::exception) {
-            return false; //Maybe it should throw an error instead? This happens only if the arguments are out of range of the board, but that should be caught above
-            
-            //throw std::range_error("Argument out of range");
-        }
+        distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY); //An error is only thrown if arguments are out of range, but that is checked above
         
         if (distanceBetweenTiles > 1) {
             return false; //No combat occurs

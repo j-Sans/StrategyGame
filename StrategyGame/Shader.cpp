@@ -5,6 +5,9 @@
 //  Created by Jake Sanders on 6/26/16.
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
+//  Guided by the tutorial at http://learnopengl.com/#!Getting-started/Shaders by Joey De Vries
+//  This has been altered from the original code, and is not endoresed nor endorsed by LearnOpenGL
+//
 
 #include "Shader.hpp"
 
@@ -22,8 +25,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     // ensures ifstream objects can throw exceptions:
     vShaderFile.exceptions(std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::badbit);
-    try
-    {
+    try {
         // Open files
         vShaderFile.open(vertexPath);
         fShaderFile.open(fragmentPath);
@@ -40,7 +42,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
         // Convert stream into GLchar array
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
-    } catch(std::ifstream::failure e) {
+    } catch (std::ifstream::failure e) {
         std::cout << "Error reading in shaders from file.\n";
     }
     
@@ -112,8 +114,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLcha
     vShaderFile.exceptions(std::ifstream::badbit);
     gShaderFile.exceptions(std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::badbit);
-    try
-    {
+    try {
         // Open files
         vShaderFile.open(vertexPath);
         gShaderFile.open(geometryPath);
@@ -134,7 +135,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLcha
         vertexCode = vShaderStream.str();
         geometryCode = gShaderStream.str();
         fragmentCode = fShaderStream.str();
-    } catch(std::ifstream::failure e) {
+    } catch (std::ifstream::failure e) {
         std::cout << "Error reading in shaders from file.\n";
     }
     

@@ -22,7 +22,7 @@
 //Local includes
 #include "Shader.hpp"
 
-/**
+/*!
  * An object containing a loaded texture that can directly be called to be used.
  *
  * @param imagePath The path and filename of the image to be loaded in as a texture.
