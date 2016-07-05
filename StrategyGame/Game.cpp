@@ -685,11 +685,24 @@ void Game::moveCamera() {
 }
 
 void Game::updateTileStyle() {
-    glm::ivec2 mousePos;
+    glm::ivec2 mousePos = glm::ivec2(-1, -1);
     
     try {
         mousePos = mouseTile(); //Fails if mouse is outside of the board
+    } catch (std::exception e) {
         
+        //The mouse was outside of the board
+        // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
+        
+        //Reset all tiles
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
+        }
+    }
+    
+    if (mousePos != glm::ivec2(-1, -1)) {
         //Reset the tile (and others) if the current tile is clicked again
         if (mousePos == this->selectedTile) {
             
@@ -787,7 +800,7 @@ void Game::updateTileStyle() {
             //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
             //For these directions, the creature is moved after, in the function that updates the offset data
             if (direction == NORTH || direction == WEST)
-                this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] += (this->creatureSpeed * this->deltaTime);
+                this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] = (this->creatureSpeed * this->deltaTime);
             
             //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
             //For these directions, the creature is moved here, and then the offset is slowly updated to follow
@@ -852,16 +865,6 @@ void Game::updateTileStyle() {
             this->selectedTile = glm::ivec2(-1, -1);
         }
         
-    } catch (std::exception e) {
-        //The mouse was outside of the board
-        // (Or mouseTile() returned an out of bounds index, but this shouldn't happen)
-        
-        //Reset all tiles
-        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
-            }
-        }
     }
 }
 
