@@ -10,7 +10,7 @@
 
 //Constructors
 
-Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureVision(vision), creatureRange(range), creatureCost(cost) {
+Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureVision(vision), creatureRange(range), creatureCost(cost), creatureController(controller) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
     
@@ -94,4 +94,8 @@ unsigned int Creature::energy() {
 
 int Creature::direction() {
     return this->creatureDirection;
+}
+
+const unsigned int Creature::controller() {
+    return this->creatureController;
 }

@@ -26,7 +26,7 @@ struct CreatureInList {
     unsigned int y;
     Creature creature;
     
-    CreatureInList (unsigned int setX, unsigned int setY, Creature setCreature) : x(setX), y(setY), creature(setCreature) {}
+    CreatureInList(unsigned int setX, unsigned int setY, Creature setCreature) : x(setX), y(setY), creature(setCreature) {}
 };
 
 class Board {

@@ -30,12 +30,15 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 //Local includes
-#include "Tile.hpp"
 #include "Game.hpp"
+#include "Player.hpp"
+
+
+#define NUMBER_OF_PLAYERS 2
 
 
 int main(int argc, const char * argv[]) {
-    //Set up
+//Set up:
     srand((int)time(NULL));
     
 //Gameboard:
@@ -53,9 +56,11 @@ int main(int argc, const char * argv[]) {
     
     Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
-    G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH));
+    Player players[NUMBER_OF_PLAYERS];
     
-    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH));
+    G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH, 0));
+    
+    G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH, 1));
     
     //Game loop
     while(!glfwWindowShouldClose(G.window())) {

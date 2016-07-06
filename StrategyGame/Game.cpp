@@ -683,25 +683,25 @@ void Game::updateSelected() {
                 //North tile
                 if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr)
+                else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
                     this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
                 
                 //West tile
                 if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr)
+                else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x - 1, mousePos.y).creature()->controller() != this->activePlayer)
                     this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
                 
                 //South tile
                 if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr)
+                else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y + 1).creature()->controller() != this->activePlayer)
                     this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
                 
                 //East tile
                 if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr)
+                else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
                     this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
             }
             

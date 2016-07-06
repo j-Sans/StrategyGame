@@ -39,7 +39,7 @@ enum Race {
 class Creature {
 public:
     //Constructors
-    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection);
+    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
     
     //Destructor
     
@@ -130,9 +130,14 @@ public:
      */
     int direction();
     
+    /*!
+     * @return The controller of the creature.
+     */
+    const unsigned int controller();
+    
 private:
     //Private properties
-    const unsigned int controller;
+    const unsigned int creatureController;
     
     const Race creatureRace;
     const unsigned int creatureMaxHealth;

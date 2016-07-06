@@ -101,6 +101,11 @@ public:
      */
     Board gameBoard;
     
+    /*!
+     * The player who is currently taking his or her turn.
+     */
+    unsigned int activePlayer = 0;
+    
     //Public member functions
     
     /*!
