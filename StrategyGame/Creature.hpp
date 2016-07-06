@@ -132,7 +132,8 @@ public:
     
 private:
     //Private properties
-//    bool hasMeleeAttack;
+    const unsigned int controller;
+    
     const Race creatureRace;
     const unsigned int creatureMaxHealth;
     const unsigned int creatureMaxEnergy;
@@ -144,8 +145,6 @@ private:
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
     int creatureDirection;
-    //vector<int> promotions; //Need to import vector, but not now, implement later.
-    
     
     //Private member functions
 };

@@ -263,7 +263,7 @@ private:
     /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
-    void updateTileStyle();
+    void updateSelected();
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.

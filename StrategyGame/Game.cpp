@@ -120,7 +120,7 @@ void Game::render() {
     
     //If the mouse was clicked, set the color of the tile that was clicked
     if (activateTile) {
-        this->updateTileStyle();
+        this->updateSelected();
         
         activateTile = false;
     }
@@ -574,7 +574,7 @@ void Game::updateCreatureOffset() {
             
                 //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
                 
-                //The displacement goes negative. In the shader, this is added to 0.4, so it gets closer to 0 as it gets closer to the new tile.
+                //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
                 if (this->offsetData[tile] < 0.0) {
                     this->offsetData[tile] += displacement;
                 }
@@ -635,7 +635,7 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-void Game::updateTileStyle() {
+void Game::updateSelected() {
     glm::ivec2 mousePos;
     
     mousePos = mouseTile(); //Fails if mouse is outside of the board
