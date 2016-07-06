@@ -676,7 +676,7 @@ void Game::updateSelected() {
             this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
             
             //If the selected tile is a creature, highlight adjacent tiles and update the creature's direction
-            if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr) {
+            if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
                 
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
                 
