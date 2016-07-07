@@ -49,6 +49,11 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
     } catch (std::exception e) {
         std::cout << "Error loading numbers texture: " << e.what();
     }
+    try {
+        this->loadTexture("Resources/circle.png", "circleTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading circle texture: " << e.what();
+    }
     
     this->presetTransformations();
 }
@@ -86,6 +91,11 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
         this->loadTexture("Resources/numbers.png", "numbersTex");
     } catch (std::exception e) {
         std::cout << "Error loading numbers texture: " << e.what();
+    }
+    try {
+        this->loadTexture("Resources/circle.png", "circleTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading circle texture: " << e.what();
     }
     
     this->presetTransformations();
