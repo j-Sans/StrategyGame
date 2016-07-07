@@ -46,6 +46,9 @@
 #define INDICES_PER_TILES 2
 
 
+#define FULL_SCREEN
+
+
 
 /*!
  * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.

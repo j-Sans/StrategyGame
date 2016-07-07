@@ -8,10 +8,10 @@
 #define CIRCLE 3
 
 //Controller color
-#define PLAYER_0_COLOR vec4(1.0f, 1.0f, 0.0f, 1.0f)
-#define PLAYER_1_COLOR vec4(0.0f, 0.0f, 1.0f, 1.0f)
-#define PLAYER_2_COLOR vec4(1.0f, 0.0f, 1.0f, 1.0f)
-#define PLAYER_3_COLOR vec4(0.0f, 1.0f, 1.0f, 1.0f)
+#define PLAYER_0_COLOR vec4(0.6f, 0.3f, 0.0f, 1.0f) //Player 0 has an orange highlight
+#define PLAYER_1_COLOR vec4(0.0f, 0.3f, 0.9f, 1.0f) //Player 1 has a blue highlight
+#define PLAYER_2_COLOR vec4(0.8f, 0.1f, 0.2f, 1.0f) //Player 2 has a red highlight
+#define PLAYER_3_COLOR vec4(0.0f, 0.3f, 0.0f, 1.0f) //Player 3 has a green highlight
 
 //Terrain
 #define OPEN_TERRAIN 0
