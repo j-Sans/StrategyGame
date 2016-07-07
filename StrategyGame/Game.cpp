@@ -285,6 +285,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
     GLint terrains[numberOfIndices];
     GLint creatures[numberOfIndices];
     GLint directions[numberOfIndices];
+    GLint controllers[numberOfIndices];
     GLfloat colors[3 * numberOfIndices];
     
     index = 0;
@@ -301,10 +302,13 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
                     creatures[index] = this->gameBoard.get(x, y).creatureType();
                     
                     //Gets the direction if there is a creature there
-                    if (this->gameBoard.get(x, y).creature() != nullptr)
+                    if (this->gameBoard.get(x, y).creature() != nullptr) {
                         directions[index] = this->gameBoard.get(x, y).creature()->direction();
-                    else
+                        controllers[index] = this->gameBoard.get(x, y).creature()->controller();
+                    } else {
                         directions[index] = NORTH;
+                        controllers[index] = 0;
+                    }
                 }
                 if (setColorData) {
                     //Gets the color alteration of the tile
@@ -323,9 +327,9 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
         if (setTerrainData)
             this->terrainData[a] = terrains[a];
         if (setCreatureData) {
-            this->creatureData[2 * a] = creatures[a];
-            
-            this->creatureData[(2 * a) + 1] = directions[a];
+            this->creatureData[3 * a] = creatures[a];
+            this->creatureData[(3 * a) + 1] = directions[a];
+            this->creatureData[(3 * a) + 2] = controllers[a];
         }
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
@@ -387,7 +391,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     //Color VBO:
@@ -484,7 +488,7 @@ void Game::updateCreatureBuffer() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -553,7 +557,7 @@ void Game::updateCreatureOffset() {
     //Goes through all tiles and continues moving any that are moving
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
-        GLuint direction = this->creatureData[(2 * tile) + 1];
+        GLuint direction = this->creatureData[(3 * tile) + 1];
         
         glm::ivec2 boardLoc;
         boardLoc.x = tile / this->gameBoard.width();

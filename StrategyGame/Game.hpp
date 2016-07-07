@@ -167,7 +167,7 @@ private:
     //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
     GLint terrainData[NUMBER_OF_TILES];
-    GLint creatureData[2 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction. Direction is not yet implemented
+    GLint creatureData[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
     GLint damageData[NUMBER_OF_TILES];
     GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
