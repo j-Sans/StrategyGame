@@ -5,7 +5,8 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
-#define CIRCLE 3
+#define CIRCLE 3 /*_UNSELECTED 3
+#define CIRCLE_SELECTED 4*/
 
 //Terrain
 #define OPEN_TERRAIN 0
@@ -52,7 +53,15 @@ void main() {
         
     } else if (TexType.x == CIRCLE) {
         //Draw the circle under the creature
-        color = texture(circleTex, TexCoords);
         
-    }
+        vec4 colorVec = texture(circleTex, TexCoords);
+        
+        color = vec4(colorVec.xyz, 0.33f * colorVec.w);
+    } /*else if (TexType.x == CIRCLE_SELECTED) {
+        //Draw the circle under the creature
+        
+        vec4 colorVec = texture(circleTex, TexCoords);
+        
+        color = vec4(colorVec.xyz, 0.67f * colorVec.w);
+    }*/
 }

@@ -5,7 +5,8 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
-#define CIRCLE 3
+#define CIRCLE 3 /*_UNSELECTED 3
+#define CIRCLE_SELECTED 4*/
 
 //Direction
 #define NORTH 0
