@@ -5,8 +5,7 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
-#define CIRCLE 3 /*_UNSELECTED 3
-#define CIRCLE_SELECTED 4*/
+#define CIRCLE 3
 
 //Direction
 #define NORTH 0
@@ -32,6 +31,7 @@ layout (triangle_strip, max_vertices = 16) out;
 in int terrain[];
 in int creature[];
 in int creatureDirection[];
+in int creatureController[];
 in int creatureDamage[];
 in vec4 tileColor[];
 in float creatureOffset[];
@@ -196,25 +196,25 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, 0);
+        TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, 0);
+        TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, 0);
+        TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, 0);
+        TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
         EndPrimitive();

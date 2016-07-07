@@ -16,7 +16,7 @@ public:
     
 private:
     const std::string name;
-    
+    unsigned int mana;
 };
 
 #endif /* Player_hpp */

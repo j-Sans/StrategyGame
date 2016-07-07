@@ -5,8 +5,13 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
-#define CIRCLE 3 /*_UNSELECTED 3
-#define CIRCLE_SELECTED 4*/
+#define CIRCLE 3
+
+//Controller color
+#define PLAYER_0_COLOR vec4(1.0f, 1.0f, 0.0f, 1.0f)
+#define PLAYER_1_COLOR vec4(0.0f, 0.0f, 1.0f, 1.0f)
+#define PLAYER_2_COLOR vec4(1.0f, 0.0f, 1.0f, 1.0f)
+#define PLAYER_3_COLOR vec4(0.0f, 1.0f, 1.0f, 1.0f)
 
 //Terrain
 #define OPEN_TERRAIN 0
@@ -54,14 +59,19 @@ void main() {
     } else if (TexType.x == CIRCLE) {
         //Draw the circle under the creature
         
-        vec4 colorVec = texture(circleTex, TexCoords);
+        vec4 controllerColor;
+        
+        if (TexType.y == 0) //Controller is player 0
+            controllerColor = PLAYER_0_COLOR;
+        else if (TexType.y == 1) //Controller is player 1
+                controllerColor = PLAYER_1_COLOR;
+        else if (TexType.y == 2) //Controller is player 2
+            controllerColor = PLAYER_2_COLOR;
+        else if (TexType.y == 3) //Controller is player 3
+            controllerColor = PLAYER_3_COLOR;
+        
+        vec4 colorVec = texture(circleTex, TexCoords) * controllerColor;
         
         color = vec4(colorVec.xyz, 0.33f * colorVec.w);
-    } /*else if (TexType.x == CIRCLE_SELECTED) {
-        //Draw the circle under the creature
-        
-        vec4 colorVec = texture(circleTex, TexCoords);
-        
-        color = vec4(colorVec.xyz, 0.67f * colorVec.w);
-    }*/
+    }
 }
