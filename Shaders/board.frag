@@ -5,6 +5,7 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
+#define CIRCLE 3
 
 //Terrain
 #define OPEN_TERRAIN 0
@@ -26,6 +27,7 @@ uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
 uniform sampler2D stickFigureTex;
 uniform sampler2D numbersTex;
+uniform sampler2D circleTex;
 
 void main() {
     if (TexType.x == TERRAIN) {
@@ -35,15 +37,22 @@ void main() {
         } else if (TexType.y == OPEN_TERRAIN) {
             color = TileColor * texture(grassTex, TexCoords);
         }
+        
     } else if (TexType.x == CREATURE) {
         //Draw the creature
         if (TexType.y == STICK_FIGURE_CREATURE) {
             color = texture(stickFigureTex, TexCoords);
         }
+        
     } else if (TexType.x == DAMAGE) {
         //Draw the damage box
         float digitOffset = 1.0f / 9.0f; //This is the width of one digit in the texture containing all of the digits
         
         color = TileColor + texture(numbersTex, TexCoords);
+        
+    } else if (TexType.x == CIRCLE) {
+        //Draw the circle under the creature
+        color = texture(circleTex, TexCoords);
+        
     }
 }
