@@ -34,6 +34,8 @@ void Tile::setStyle(Style style) {
         this->tileColor = Tile::openAdjTileColor;
     else if (style == AttackableAdj)
         this->tileColor = Tile::attackableAdjTileColor;
+    else if (style == Reachable)
+        this->tileColor = Tile::openAdjTileColor; //Reachable will eventually phase out openAdjTile as movement is fully implemented, so it uses the same color.
 }
 
 void Tile::setDirection(unsigned int direction) {
@@ -83,13 +85,17 @@ glm::vec3 Tile::color() {
     else if (this->tileColor == Red)
         return glm::vec3(1.0f, 0.625f, 0.625f);
     else if (this->tileColor == Yellow)
-        return glm::vec3(1.0f, 1.0f, 0.625f);
+        return glm::vec3(1.0f, 1.0f, 0.5f);
     else if (this->tileColor == Green)
         return glm::vec3(0.62f, 1.0f, 0.625f);
     else if (this->tileColor == Cyan)
         return glm::vec3(0.625f, 1.0f, 1.0f);
     else if (this->tileColor == Blue)
         return glm::vec3(0.625f, 0.625f, 1.0f);
+    else if (this->tileColor == Purple)
+        return glm::vec3(0.5f, 0.1f, 0.9f);
+    else if (this->tileColor == BlueGrey)
+        return glm::vec3(0.6f, 0.7f, 1.0f);
     
     //Something went wrong. Return White to have an unaltered color
     return glm::vec3(1.0f, 1.0f, 1.0f);

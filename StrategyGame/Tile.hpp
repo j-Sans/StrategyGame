@@ -27,12 +27,14 @@
 
 enum Color {
     White,
-    Grey,
+    Grey, //Revealed
     Red,
     Yellow,
     Green,
     Cyan,
     Blue,
+    Purple,
+    BlueGrey, //Selection
 };
 
 enum Style {
@@ -40,6 +42,7 @@ enum Style {
     Selected,
     OpenAdj,
     AttackableAdj,
+    Reachable,
 };
 
 /*!
@@ -61,7 +64,7 @@ public:
     /*!
      * The color of selected tiles.
      */
-    static const Color selectedTileColor = Grey;
+    static const Color selectedTileColor = BlueGrey;
     
     /*!
      * The color of adjacent open tiles.
