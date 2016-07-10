@@ -21,7 +21,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
     this->setData(true, true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
-    gameShader = Shader(vertexPath, fragmentPath);
+    this->gameShader = Shader(vertexPath, fragmentPath);
     
     //Allow for transparency
     glEnable(GL_BLEND);
@@ -64,7 +64,9 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
     this->setData(true, true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
-    gameShader = Shader(vertexPath, geometryPath, fragmentPath);
+    this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
+    
+    this->testInterface = Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow);
     
     //Allow for transparency
     glEnable(GL_BLEND);
@@ -162,6 +164,8 @@ void Game::render() {
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
+    this->testInterface.render();
+    
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
 }
@@ -219,7 +223,7 @@ void Game::initWindow() {
     //Make a window object
     this->gameWindow = glfwCreateWindow(this->windowWidth, this->windowHeight, "Game", nullptr, nullptr);
     
-#ifdef FULL_SCREEN
+#ifdef FULL_SCREEN //Makes the window take up the entire screen but still be within a moveable window
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
@@ -244,6 +248,7 @@ void Game::initWindow() {
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     glViewport(0, 0, viewportWidth, viewportHeight);
+    //glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
@@ -424,8 +429,6 @@ void Game::setBuffers() {
     //Position
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(4);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     //Offset VBO:
     

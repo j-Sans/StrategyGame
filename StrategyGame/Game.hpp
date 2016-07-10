@@ -39,6 +39,8 @@
 #include "Tile.hpp"
 #include "Board.hpp"
 
+#include "Interface.hpp"
+
 
 //Preprocessor directives
 #define BOARD_WIDTH 12
@@ -194,6 +196,10 @@ private:
     
     //Board data
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
+    
+    
+    Interface testInterface;
+    
 
     //Private member functions
     

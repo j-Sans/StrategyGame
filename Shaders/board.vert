@@ -1,6 +1,6 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
+layout (location = 0) in vec2 position;
 layout (location = 1) in int terrainInt;
 layout (location = 2) in ivec3 creatureInt;
 layout (location = 3) in vec3 tileColorIn;
