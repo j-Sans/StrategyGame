@@ -261,7 +261,7 @@ void Game::initWindow() {
     //Tell OpenGL window information
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
-    glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
@@ -467,7 +467,11 @@ void Game::setInterface() {
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     
-    this->interfaces.push_back(Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow, 0, 0, viewportWidth / 6, viewportHeight));
+    this->interfaces.push_back(Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow, 0, 0, viewportWidth / 6.0, viewportHeight));
+    
+    this->interfaces.push_back(Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow, viewportWidth * 1.0 / 6.0, 0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0));
+    
+    this->interfaces.push_back(Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight));
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -942,7 +946,7 @@ glm::ivec2 Game::mouseTile() {
         // (h,k) is the point below the center
         
         GLfloat h = center.x;
-        GLfloat k = center.y - (verticalDistance / 2);
+        GLfloat k = center.y - (verticalDistance / 2.0);
         
         if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
             pointInIndex = false;
@@ -963,7 +967,7 @@ glm::ivec2 Game::mouseTile() {
         // (h,k) is the point above the center
         
         h = center.x; //h stays the same
-        k = center.y + (verticalDistance / 2);
+        k = center.y + (verticalDistance / 2.0);
         
         if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
             pointInIndex = false;

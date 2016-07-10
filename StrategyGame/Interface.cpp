@@ -67,10 +67,10 @@ void Interface::render() {
     glBindVertexArray(0);
     
     //Set the box where OpenGL can draw
-    glScissor(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4);
+    glScissor(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);
     
     //Reset window information for game rendering
-    glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
 }
 
 void Interface::updateViewport() {
