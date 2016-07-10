@@ -224,7 +224,7 @@ void Game::initWindow() {
     
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-    glfwSetWindowMonitor(this->gameWindow, NULL, 0, 0, mode->width, mode->height, mode->refreshRate);
+    glfwSetWindowMonitor(this->gameWindow, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
 #endif
     
     if (this->gameWindow == nullptr) { //If the window isn't created, return an error
