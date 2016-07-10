@@ -684,10 +684,12 @@ void Game::moveCamera() {
 void Game::updateSelected() {
     glm::ivec2 mousePos;
     
-    mousePos = mouseTile(); //Fails if mouse is outside of the board
+    mousePos = mouseTile();
     
-    //Reset all tiles if the mouse clicked out of the screen
-    if (mousePos == glm::ivec2(-1, -1)) {
+    if (mousePos == INTERFACE_BOX_SELECTION) {
+        //Don't alter the selected tile if the interface box has been clicked
+    } else if (mousePos == NO_SELECTION) {
+        //Reset all tiles if the mouse clicked out of the screen
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
                 this->gameBoard.setStyle(x, y, Regular);
@@ -705,7 +707,7 @@ void Game::updateSelected() {
             }
             
             //Set selectedTile to null results
-            this->selectedTile = glm::ivec2(-1, -1);
+            this->selectedTile = NO_SELECTION;
         }
         
         //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
@@ -814,7 +816,7 @@ void Game::updateSelected() {
                 }
             }
             
-            this->selectedTile = glm::ivec2(-1, -1);
+            this->selectedTile = NO_SELECTION;
         }
         
         //Attacking
@@ -844,7 +846,7 @@ void Game::updateSelected() {
                 }
             }
             
-            this->selectedTile = glm::ivec2(-1, -1);
+            this->selectedTile = NO_SELECTION;
         }
     }
 }
@@ -861,6 +863,25 @@ glm::ivec2 Game::mouseTile() {
     glfwGetWindowSize(this->gameWindow, &width, &height);
     
     //Get the mousePos to be in the same coordinates as the vertexData (-1 to 1)
+    
+    
+    
+    //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
+    if (xPos > (width * 5.0 / 6.0) || xPos < (width / 6.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Only the middle 2/3 of the screen is the board, so make the start of that section 0
+    xPos -= (width / 6.0);
+
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    xPos *= (3.0 / 2.0);
+    
+    //Do the same for y, except that only the bottom 1/4 of the screen is not part of the board
+    if (yPos > (height * 3.0 / 4.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    yPos *= (4.0 / 3.0);
     
     //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
     xPos /= width;
@@ -968,7 +989,7 @@ glm::ivec2 Game::mouseTile() {
     
     //Return negative coordinates if the click is outside of all tiles
     if (tileIndex == -1)
-        return glm::ivec2(-1, -1);
+        return NO_SELECTION;
     
     glm::ivec2 tileIndexVec;
     

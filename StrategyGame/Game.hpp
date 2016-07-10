@@ -47,6 +47,8 @@
 #define NUMBER_OF_TILES BOARD_WIDTH * BOARD_WIDTH
 #define INDICES_PER_TILES 2
 
+#define NO_SELECTION glm::ivec2(-1, -1)
+#define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
 
 #define FULL_SCREEN
 
