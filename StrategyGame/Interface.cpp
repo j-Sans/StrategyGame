@@ -15,13 +15,13 @@ Interface::Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWw
     this->interfaceShader = Shader(vertexPath, fragmentPath);
     
     GLfloat data[] = {
-        -0.5, -0.5,
-        -0.5,  0.5,
-         0.5, -0.5,
+        -1.0, -1.0,
+        -1.0,  1.0,
+         1.0, -1.0,
         
-        -0.5,  0.5,
-         0.5, -0.5,
-         0.5,  0.5,
+        -1.0,  1.0,
+         1.0, -1.0,
+         1.0,  1.0,
     };
     
     //Draw with OpenGL
@@ -49,6 +49,8 @@ void Interface::render() {
     glfwGetFramebufferSize(this->interfaceWindow, &viewportWidth, &viewportHeight);
     glViewport(0, 0, viewportWidth / 6, viewportHeight); //So that this is drawn on the first sixth of the screen
     
+    //Set the box where OpenGL can draw
+    glScissor(0, 0, viewportWidth / 6, viewportHeight);
     
     //Bind the VAO and draw shapes
     this->interfaceShader.use();
@@ -56,6 +58,9 @@ void Interface::render() {
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    
+    //Set the box where OpenGL can draw
+    glScissor(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4);
     
     //Reset window information for game rendering
     glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs

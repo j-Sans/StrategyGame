@@ -27,6 +27,9 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
+    //Allow for multiple windows
+    glEnable(GL_SCISSOR_TEST);
+    
     //Load textures
     //Exception only thrown if there are 32 textures already present
     try {
@@ -71,6 +74,9 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    //Allow for multiple windows
+    glEnable(GL_SCISSOR_TEST);
     
     //Load textures
     //Exception only thrown if there are 32 textures already present
@@ -118,9 +124,15 @@ void Game::render() {
     //GLFW gets any events that have occurred
     glfwPollEvents();
     
+    //So the whole screen is cleared
+    glDisable(GL_SCISSOR_TEST);
+    
     //Clears the screen after each rendering
     glClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    
+    //So multiple windows exist again
+    glEnable(GL_SCISSOR_TEST);
     
     //Use the shader
     this->gameShader.use();
@@ -247,8 +259,7 @@ void Game::initWindow() {
     //Tell OpenGL window information
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
-    glViewport(0, 0, viewportWidth, viewportHeight);
-    //glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
