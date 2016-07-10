@@ -10,9 +10,16 @@
 
 Interface::Interface() {}
 
-Interface::Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window) {
+Interface::Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
     this->interfaceWindow = window;
     this->interfaceShader = Shader(vertexPath, fragmentPath);
+    
+    //Set viewport specifics
+    this->lowerLeftX = x;
+    this->lowerLeftY = y;
+    this->boxWidth = width;
+    this->boxHeight = height;
+    glfwGetFramebufferSize(this->interfaceWindow, &this->viewportWidth, &this->viewportHeight);
     
     GLfloat data[] = {
         -1.0, -1.0,
@@ -44,13 +51,13 @@ Interface::Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWw
 }
 
 void Interface::render() {
-    //Tell OpenGL window information
-    int viewportWidth, viewportHeight;
-    glfwGetFramebufferSize(this->interfaceWindow, &viewportWidth, &viewportHeight);
-    glViewport(0, 0, viewportWidth / 6, viewportHeight); //So that this is drawn on the first sixth of the screen
+    //Get updated information about the viewport
+    this->updateViewport();
+    
+    glViewport(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
     
     //Set the box where OpenGL can draw
-    glScissor(0, 0, viewportWidth / 6, viewportHeight);
+    glScissor(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
     
     //Bind the VAO and draw shapes
     this->interfaceShader.use();
@@ -64,4 +71,25 @@ void Interface::render() {
     
     //Reset window information for game rendering
     glViewport(viewportWidth / 6, viewportHeight / 4, viewportWidth * 2 / 3, viewportHeight * 3 / 4); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+}
+
+void Interface::updateViewport() {
+    GLuint oldViewportWidth = this->viewportWidth;
+    GLuint oldViewportHeight = this->viewportHeight;
+    
+    glfwGetFramebufferSize(this->interfaceWindow, &this->viewportWidth, &this->viewportHeight);
+    
+    //If the viewport size has changed, update the interface viewports by multiplying them by the ratio
+    
+    //Update the width
+    if (oldViewportWidth != this->viewportWidth) {
+        this->lowerLeftX *= (this->viewportWidth / oldViewportWidth);
+        this->boxWidth *= (this->viewportWidth / oldViewportWidth);
+    }
+    
+    //Update the height
+    if (oldViewportHeight != this->viewportHeight) {
+        this->lowerLeftY *= (this->viewportHeight / oldViewportHeight);
+        this->boxHeight *= (this->viewportHeight / oldViewportHeight);
+    }
 }

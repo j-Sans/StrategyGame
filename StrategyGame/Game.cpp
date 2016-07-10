@@ -69,7 +69,7 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
     
     this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
     
-    this->testInterface = Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow);
+    this->setInterface();
     
     //Allow for transparency
     glEnable(GL_BLEND);
@@ -176,7 +176,9 @@ void Game::render() {
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
-    this->testInterface.render();
+    for (GLuint a = 0; a < interfaces.size(); a++) {
+        this->interfaces[a].render();
+    }
     
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
@@ -459,6 +461,13 @@ void Game::setBuffers() {
     
     //Uncomment for wireframe mode
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+void Game::setInterface() {
+    int viewportWidth, viewportHeight;
+    glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
+    
+    this->interfaces.push_back(Interface("Shaders/interface.vert", "Shaders/interface.frag", this->gameWindow, 0, 0, viewportWidth / 6, viewportHeight));
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.

@@ -24,7 +24,7 @@ public:
     //Constructors
     Interface();
     
-    Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window);
+    Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
     
     //Public member functions
     void render();
@@ -36,6 +36,18 @@ private:
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
+    
+    //Viewport information
+    GLuint lowerLeftX;
+    GLuint lowerLeftY;
+    GLuint boxWidth;
+    GLuint boxHeight;
+    
+    int viewportWidth;
+    int viewportHeight;
+    
+    //Private member functions
+    void updateViewport();
     
 };
 

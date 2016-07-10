@@ -198,7 +198,7 @@ private:
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
     
-    Interface testInterface;
+    std::vector<Interface> interfaces;
     
 
     //Private member functions
@@ -224,6 +224,11 @@ private:
      * Initialize OpenGL buffers with the object's vertex data.
      */
     void setBuffers();
+    
+    /*!
+     * Initialize the interface
+     */
+    void setInterface();
     
     /*!
      * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
