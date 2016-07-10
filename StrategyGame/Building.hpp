@@ -11,13 +11,32 @@
 
 class Building {
 public:
+    //Constructor
+    
+    //Destructor
+    
+    //Public member functions
+    
+    //Public get functions
+    
+    /*!
+     * @return The maximum health of this building.
+     */
+    const unsigned int maxHealth();
+    
+    /*!
+     * @return The current health of this building.
+     */
+    unsigned int health();
+    
+    /*!
+     * @return The cost of this building
+     */
+    const unsigned int cost();
     
 private:
-    const unsigned int buildingVision;
+    //Private properties
     const unsigned int buildingMaxHealth;
-    const unsigned int buildingAttack;
-    const unsigned int buildingHeal;
-    const unsigned int buildingMana;
     const unsigned int buildingCost;
     
     unsigned int buildingHealth;

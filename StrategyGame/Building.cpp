@@ -7,3 +7,15 @@
 //
 
 #include "Building.hpp"
+
+const unsigned int Building::maxHealth() {
+    return this->buildingMaxHealth;
+}
+
+unsigned int Building::health() {
+    return this->buildingHealth;
+}
+
+const unsigned int Building::cost() {
+    return this->buildingCost;
+}
