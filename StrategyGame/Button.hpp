@@ -1,13 +1,13 @@
 //
-//  Interface.hpp
+//  Button.hpp
 //  Strategy Game
 //
-//  Created by Jake Sanders on 7/9/16.
+//  Created by Jake Sanders on 7/10/16.
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
 
-#ifndef Interface_hpp
-#define Interface_hpp
+#ifndef Button_hpp
+#define Button_hpp
 
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
@@ -19,12 +19,12 @@
 //Local includes
 #include "Shader.hpp"
 
-class Interface {
+class Button {
 public:
     //Constructors
-    Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
+    Button(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
     
-    Interface(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
+    Button(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
     
     //Public member functions
     void render();
@@ -32,7 +32,7 @@ public:
 private:
     //OpenGL and GLFW properties
     GLFWwindow* interfaceWindow;
-    Shader interfaceShader; //Compiled shader
+    Shader *buttonShader; //Pointer to a compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
@@ -51,4 +51,4 @@ private:
     
 };
 
-#endif /* Interface_hpp */
+#endif /* Button_hpp */
