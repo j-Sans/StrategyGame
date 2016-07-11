@@ -779,7 +779,6 @@ void Game::updateSelected() {
                 }
                 
                 //East tile
-<<<<<<< HEAD
                 if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
                 else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
@@ -804,13 +803,7 @@ void Game::updateSelected() {
                     } else if (this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature() != nullptr && this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature()->controller() != this->activePlayer) {
                         this->gameBoard.setStyle(reachableTiles.at(i).x(), reachableTiles.at(i).y(), AttackableAdj);
                     }
-=======
-                if (mousePos.x + 1 < this->gameBoard.width()) {
-                    if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
-                        this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
->>>>>>> origin/master
+
                 }
             }
             
