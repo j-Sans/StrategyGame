@@ -268,6 +268,9 @@ private:
     /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
+    
+    std::vector<Tile> getReachableTiles(Tile creature);
+    
     void updateSelected();
     
     /*!

@@ -4,4 +4,22 @@
    <FileRef
       location = "self:/Users/Jake/Desktop/Game/Strategy Game.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:../README.md">
+   </FileRef>
+   <FileRef
+      location = "group:../Resources">
+   </FileRef>
+   <FileRef
+      location = "group:../Shaders">
+   </FileRef>
+   <FileRef
+      location = "group:">
+   </FileRef>
+   <FileRef
+      location = "group:../StrategyGame">
+   </FileRef>
+   <FileRef
+      location = "group:../To-Do and Disynchronized Programming Communications (where you question your collaborator&apos;s programming choices).txt">
+   </FileRef>
 </Workspace>

@@ -635,6 +635,24 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
+std::vector<Tile> Game::getReachableTiles (Tile creature) {
+    glm::ivec2 mousePos;
+    
+    mousePos = mouseTile();
+    
+    std::vector<Tile> reachableTiles;
+    for (int x = 0; x < this->gameBoard.width(); x++) {
+        for (int y = 0; y < this->gameBoard.height(x); y++) {
+            unsigned int distanceBetweenTiles;
+            distanceBetweenTiles = gameBoard.tileDistances(mousePos.x, mousePos.y, x, y);
+            if (distanceBetweenTiles <= 2/*this->gameBoard.get(mousePos.x, mousePos.y).creature()->energy()*/) {
+                reachableTiles.push_back(this->gameBoard.get(x, y));
+            }
+        }
+    }
+    return reachableTiles;
+}
+
 void Game::updateSelected() {
     glm::ivec2 mousePos;
     
@@ -647,9 +665,10 @@ void Game::updateSelected() {
                 this->gameBoard.setStyle(x, y, Regular);
             }
         }
-    } else {
-        //Reset the tile (and others) if the current tile is clicked again
-        if (mousePos == this->selectedTile) {
+    }
+    
+    //Reset the tile (and others) if the current tile is clicked again
+    else if (mousePos == this->selectedTile) {
             
             //Goes through all tiles and sets them to regular
             for (GLuint x = 0; x < this->gameBoard.width(); x++) {
@@ -675,6 +694,7 @@ void Game::updateSelected() {
             //Select this new tile
             this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
             
+            /*
             //If the selected tile is a creature, highlight adjacent tiles and update the creature's direction
             if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
                 
@@ -703,13 +723,34 @@ void Game::updateSelected() {
                     this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
                 else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
                     this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
+            }*/
+            
+              //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
+          
+            if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
+                std::vector<Tile> reachableTiles = getReachableTiles(gameBoard.get(mousePos.x, mousePos.y));
+                
+                Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
+                std::cout << "hello ";
+                for (int i = 0; i < reachableTiles.size(); i++){
+                    std::cout << reachableTiles.at(i).x() << ", " << reachableTiles.at(i).y() << ' ';
+                    
+                    //THE FOLLOWING LINES ARE THE PROBLEM AREA
+                    if (this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).passableByCreature(creature)) {
+                        std::cout << reachableTiles.size();
+                        this->gameBoard.setStyle(reachableTiles.at(i).x(), reachableTiles.at(i).y(), Reachable);
+                        std::cout << "no";
+                    } else if (this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature() != nullptr && this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature()->controller() != this->activePlayer) {
+                        this->gameBoard.setStyle(reachableTiles.at(i).x(), reachableTiles.at(i).y(), AttackableAdj);
+                    }
+                }
             }
             
             this->selectedTile = mousePos;
         }
         
         //Movement
-        else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == OpenAdj) {
+        else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
             
             //Get the direction of the click
             int direction = 0;
@@ -793,7 +834,7 @@ void Game::updateSelected() {
             this->selectedTile = glm::ivec2(-1, -1);
         }
     }
-}
+
 
 //Calculates the tile that the mouse is over
 glm::ivec2 Game::mouseTile() {
