@@ -26,7 +26,7 @@
 class Interface {
 public:
     //Constructors
-    Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
+    Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons);
     
     //Public member functions
     void render();

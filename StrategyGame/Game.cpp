@@ -471,11 +471,11 @@ void Game::setInterface() {
     
     this->buttonShader = Shader("Shaders/button.vert", "Shaders/button.frag");
     
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, 0, 0, viewportWidth / 6.0, viewportHeight));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, 0, 0, viewportWidth / 6.0, viewportHeight, true));
     
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 1.0 / 6.0, 0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 1.0 / 6.0, 0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0, false));
     
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight, true));
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.

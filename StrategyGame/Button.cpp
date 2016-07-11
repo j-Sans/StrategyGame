@@ -8,41 +8,20 @@
 
 #include "Button.hpp"
 
-Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLfloat viewportWidth, GLfloat viewportHeight) {
+Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxlowerLeftX(interfaceX), interfaceBoxlowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
+    
     this->buttonWindow = window;
     this->buttonShader = shader;
     
-    //Set viewport specifics
-    this->lowerLeftX = x;
-    this->lowerLeftY = y;
-    this->boxWidth = width;
-    this->boxHeight = height;
-    
-    //Put the box coordinates and information in terms of -1 to 1
-    this->lowerLeftX *= 2.0;
-    this->lowerLeftX -= 1.0;
-    
-    this->lowerLeftY *= 2.0;
-    this->lowerLeftY -= 1.0;
-    
-    this->boxWidth *= 2.0;
-    
-    this->boxHeight *= 2.0;
-    
     GLfloat data[] = {
         this->lowerLeftX, this->lowerLeftY,
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
+        this->lowerLeftX + this->buttonWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->buttonHeight,
         
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
+        this->lowerLeftX + this->buttonWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->buttonHeight,
+        this->lowerLeftX + this->buttonWidth, this->lowerLeftY + this->buttonHeight,
     };
-    
-    std::cout << "(" << data[0] << ", " << data[1] << ")" << std::endl;
-    std::cout << "(" << data[2] << ", " << data[3] << ")" << std::endl;
-    std::cout << "(" << data[4] << ", " << data[5] << ")" << std::endl;
-    std::cout << "(" << data[10] << ", " << data[11] << ")" << std::endl << std::endl;
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
@@ -70,4 +49,8 @@ void Button::render() {
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+}
+
+void Button::updateMouse() {
+    
 }

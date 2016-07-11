@@ -22,10 +22,12 @@
 class Button {
 public:
     //Constructors
-    Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLfloat viewportWidth, GLfloat viewportHeight);
+    Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight);
     
     //Public member functions
     void render();
+    
+    void updateMouse();
     
 private:
     //OpenGL and GLFW properties
@@ -36,10 +38,15 @@ private:
     GLuint VBO;
     
     //Viewport information
-    GLfloat lowerLeftX;
-    GLfloat lowerLeftY;
-    GLfloat boxWidth;
-    GLfloat boxHeight;
+    const GLfloat lowerLeftX;
+    const GLfloat lowerLeftY;
+    const GLfloat buttonWidth;
+    const GLfloat buttonHeight;
+    
+    const GLfloat interfaceBoxlowerLeftX;
+    const GLfloat interfaceBoxlowerLeftY;
+    const GLfloat interfaceBoxWidth;
+    const GLfloat interfaceBoxHeight;
     
     //Private member functions
     void setBuffers();

@@ -8,7 +8,7 @@
 
 #include "Interface.hpp"
 
-Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
+Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons) {
     this->interfaceWindow = window;
     this->interfaceShader = shader;
     this->buttonShader = shaderForButtons;
@@ -30,7 +30,8 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
          1.0,  1.0,
     };
     
-    this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->boxWidth, this->boxHeight));
+    if (withButtons)
+        this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight));
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
