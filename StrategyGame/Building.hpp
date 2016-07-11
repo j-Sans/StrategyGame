@@ -9,6 +9,9 @@
 #ifndef Building_hpp
 #define Building_hpp
 
+/*!
+ * A class representing a creature object/
+ */
 class Building {
 public:
     //Constructor

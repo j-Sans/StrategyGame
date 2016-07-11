@@ -24,7 +24,8 @@ enum Race {
     Vampire,
 };
 
-/*! A class representing a creature object.
+/*! 
+ * A class representing a creature object.
  *
  * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
  * @param maxHealth An unsigned int representing the max health of the creature.
