@@ -8,18 +8,37 @@
 
 #include "Button.hpp"
 
-Button::Button(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
+Button::Button(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, GLfloat viewportWidth, GLfloat viewportHeight) {
     this->buttonWindow = window;
     this->buttonShader = shader;
     
+    //Set viewport specifics
+    this->lowerLeftX = x;
+    this->lowerLeftY = y;
+    this->boxWidth = width;
+    this->boxHeight = height;
+    
+    //Put the box coordinates and information in terms of -1 to 1
+    this->lowerLeftX *= 2.0 / viewportWidth;
+    this->lowerLeftX -= 1.0;
+    
+    this->lowerLeftY *= 2.0 / viewportHeight;
+    this->lowerLeftY -= 1.0;
+    
+    this->boxWidth *= 2.0 / viewportWidth;
+    this->boxWidth -= 1.0;
+    
+    this->boxHeight *= 2.0 / viewportHeight;
+    this->boxHeight -= 1.0;
+    
     GLfloat data[] = {
-        -1.0, -1.0,
-        -1.0,  1.0,
-         1.0, -1.0,
+        this->lowerLeftX, this->lowerLeftY,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
         
-        -1.0,  1.0,
-         1.0, -1.0,
-         1.0,  1.0,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
     };
     
     //Draw with OpenGL

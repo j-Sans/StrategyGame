@@ -22,7 +22,7 @@
 class Button {
 public:
     //Constructors
-    Button(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
+    Button(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, GLfloat viewportWidth, GLfloat viewportHeight);
     
     //Public member functions
     void render();
@@ -30,16 +30,16 @@ public:
 private:
     //OpenGL and GLFW properties
     GLFWwindow* buttonWindow;
-    Shader *buttonShader; //Pointer to a compiled shader
+    Shader* buttonShader; //Pointer to a compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
     
     //Viewport information
-    GLuint lowerLeftX;
-    GLuint lowerLeftY;
-    GLuint boxWidth;
-    GLuint boxHeight;
+    GLfloat lowerLeftX;
+    GLfloat lowerLeftY;
+    GLfloat boxWidth;
+    GLfloat boxHeight;
     
     //Private member functions
     void setBuffers();
