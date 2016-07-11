@@ -792,16 +792,16 @@ void Game::updateSelected() {
                 
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
                 std::cout << "hello ";
-                for (int i = 0; i < reachableTiles.size(); i++){
-                    std::cout << reachableTiles.at(i).x() << ", " << reachableTiles.at(i).y() << ' ';
+                for (GLuint a = 0; a < reachableTiles.size(); a++) {
+                    std::cout << reachableTiles[a].x() << ", " << reachableTiles[a].y() << " " << std::endl;
                     
                     //THE FOLLOWING LINES ARE THE PROBLEM AREA
-                    if (this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).passableByCreature(creature)) {
+                    if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                         std::cout << reachableTiles.size();
-                        this->gameBoard.setStyle(reachableTiles.at(i).x(), reachableTiles.at(i).y(), Reachable);
+                        this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
                         std::cout << "no";
-                    } else if (this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature() != nullptr && this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature()->controller() != this->activePlayer) {
-                        this->gameBoard.setStyle(reachableTiles.at(i).x(), reachableTiles.at(i).y(), AttackableAdj);
+                    } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
+                        this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
                     }
 
                 }
