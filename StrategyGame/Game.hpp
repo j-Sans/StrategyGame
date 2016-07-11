@@ -39,11 +39,18 @@
 #include "Tile.hpp"
 #include "Board.hpp"
 
+#include "Interface.hpp"
+
 
 //Preprocessor directives
 #define BOARD_WIDTH 12
 #define NUMBER_OF_TILES BOARD_WIDTH * BOARD_WIDTH
 #define INDICES_PER_TILES 2
+
+#define NO_SELECTION glm::ivec2(-1, -1)
+#define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
+
+#define FULL_SCREEN
 
 
 
@@ -167,7 +174,7 @@ private:
     //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
     GLint terrainData[NUMBER_OF_TILES];
-    GLint creatureData[2 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction. Direction is not yet implemented
+    GLint creatureData[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
     GLint damageData[NUMBER_OF_TILES];
     GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
@@ -191,6 +198,12 @@ private:
     
     //Board data
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
+    
+    //Interfaces
+    std::vector<Interface> interfaces;
+    Shader interfaceShader;
+    Shader buttonShader;
+    
 
     //Private member functions
     
@@ -215,6 +228,11 @@ private:
      * Initialize OpenGL buffers with the object's vertex data.
      */
     void setBuffers();
+    
+    /*!
+     * Initialize the interface
+     */
+    void setInterface();
     
     /*!
      * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.

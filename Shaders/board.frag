@@ -5,6 +5,13 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
+#define CIRCLE 3
+
+//Controller color
+#define PLAYER_0_COLOR vec4(0.6f, 0.3f, 0.0f, 1.0f) //Player 0 has an orange highlight
+#define PLAYER_1_COLOR vec4(0.0f, 0.3f, 0.9f, 1.0f) //Player 1 has a blue highlight
+#define PLAYER_2_COLOR vec4(0.8f, 0.1f, 0.2f, 1.0f) //Player 2 has a red highlight
+#define PLAYER_3_COLOR vec4(0.0f, 0.3f, 0.0f, 1.0f) //Player 3 has a green highlight
 
 //Terrain
 #define OPEN_TERRAIN 0
@@ -26,6 +33,7 @@ uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
 uniform sampler2D stickFigureTex;
 uniform sampler2D numbersTex;
+uniform sampler2D circleTex;
 
 void main() {
     if (TexType.x == TERRAIN) {
@@ -35,15 +43,35 @@ void main() {
         } else if (TexType.y == OPEN_TERRAIN) {
             color = TileColor * texture(grassTex, TexCoords);
         }
+        
     } else if (TexType.x == CREATURE) {
         //Draw the creature
         if (TexType.y == STICK_FIGURE_CREATURE) {
             color = texture(stickFigureTex, TexCoords);
         }
+        
     } else if (TexType.x == DAMAGE) {
         //Draw the damage box
         float digitOffset = 1.0f / 9.0f; //This is the width of one digit in the texture containing all of the digits
         
         color = TileColor + texture(numbersTex, TexCoords);
+        
+    } else if (TexType.x == CIRCLE) {
+        //Draw the circle under the creature
+        
+        vec4 controllerColor;
+        
+        if (TexType.y == 0) //Controller is player 0
+            controllerColor = PLAYER_0_COLOR;
+        else if (TexType.y == 1) //Controller is player 1
+                controllerColor = PLAYER_1_COLOR;
+        else if (TexType.y == 2) //Controller is player 2
+            controllerColor = PLAYER_2_COLOR;
+        else if (TexType.y == 3) //Controller is player 3
+            controllerColor = PLAYER_3_COLOR;
+        
+        vec4 colorVec = texture(circleTex, TexCoords) * controllerColor;
+        
+        color = vec4(colorVec.xyz, 0.33f * colorVec.w);
     }
 }

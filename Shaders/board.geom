@@ -5,6 +5,7 @@
 #define TERRAIN 0
 #define CREATURE 1
 #define DAMAGE 2
+#define CIRCLE 3
 
 //Direction
 #define NORTH 0
@@ -23,13 +24,14 @@
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
 layout (points) in;
-layout (triangle_strip, max_vertices = 12) out;
+layout (triangle_strip, max_vertices = 16) out;
 
-//4 vertices for tile, 4 vertices for creature, and up to 4 vertices for the damage box (4 * number of digits), for now only 1
+//4 vertices for tile, 4 vertices for creature, 4 vertices for the damage box, and 4 for the circle
 
 in int terrain[];
 in int creature[];
 in int creatureDirection[];
+in int creatureController[];
 in int creatureDamage[];
 in vec4 tileColor[];
 in float creatureOffset[];
@@ -51,6 +53,7 @@ void makeOpen(vec4 position);
 void makeMountain(vec4 position);
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]);
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]);
+//void drawCircle(vec4 position);
 
 void main() {
     vec4 position = gl_in[0].gl_Position;
@@ -72,6 +75,9 @@ void main() {
     
     //Draw present creature
     drawCreature(position, creature[0], rect);
+    
+//    if (creature[0] != NO_CREATURE)
+//        drawCircle(position);
     
     //Draw damage box
     if (creatureDamage[0] != 0)
@@ -144,11 +150,11 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         }
     } else if (creatureDirection[0] == EAST) {
         for (int a = 0; a < 4; a++) {
-            rect[a].x -= creatureOffset[0];// >= 0 ? 0 : (0.4 + creatureOffset[0]); //Because the creature moves first, the offset should be decreasing towards 0 as the creature approaches the tile
+            rect[a].x -= creatureOffset[0];
         }
     } else if (creatureDirection[0] == SOUTH) {
         for (int a = 0; a < 4; a++) {
-            rect[a].y -= creatureOffset[0];// >= 0 ? 0 : (0.4 + creatureOffset[0]); //Because the creature moves first, the offset should be decreasing towards 0 as the creature approaches the tile
+            rect[a].y -= creatureOffset[0];
         }
     } else if (creatureDirection[0] == WEST) {
         for (int a = 0; a < 4; a++) {
@@ -157,6 +163,65 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
     }
     
     if (creatureTypeToDraw != NO_CREATURE) {
+        
+        //Draw the circle for the creature
+        
+        //The positions of a diamond in the shape of the tile
+        vec4 tileDiamond[] = vec4[](
+            vec4(-0.1f, -0.1f, 0.0f, 0.0f),
+            vec4( 0.1f, -0.1f, 0.0f, 0.0f),
+            vec4(-0.1f,  0.1f, 0.0f, 0.0f),
+            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+        );
+        
+        if (creatureDirection[0] == NORTH) {
+            for (int a = 0; a < 4; a++) {
+                tileDiamond[a].y += creatureOffset[0];
+            }
+        } else if (creatureDirection[0] == EAST) {
+            for (int a = 0; a < 4; a++) {
+                tileDiamond[a].x -= creatureOffset[0];
+            }
+        } else if (creatureDirection[0] == SOUTH) {
+            for (int a = 0; a < 4; a++) {
+                tileDiamond[a].y -= creatureOffset[0];
+            }
+        } else if (creatureDirection[0] == WEST) {
+            for (int a = 0; a < 4; a++) {
+                tileDiamond[a].x += creatureOffset[0];
+            }
+        }
+        
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
+        TexCoords = vec2(0.0f, 0.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
+        TexCoords = vec2(0.0f, 1.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
+        TexCoords = vec2(1.0f, 0.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
+        TexCoords = vec2(1.0f, 1.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        EndPrimitive();
+        
+        
+        //Draw the creature after
+        
         gl_Position = ortho * view * model * (position + (0.5f * rect[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
@@ -214,3 +279,25 @@ void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
     
     EndPrimitive();
 }
+/*
+void drawCircle(vec4 position) {
+    if (creatureDirection[0] == NORTH) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].y += creatureOffset[0];
+        }
+    } else if (creatureDirection[0] == EAST) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].x -= creatureOffset[0];
+        }
+    } else if (creatureDirection[0] == SOUTH) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].y -= creatureOffset[0];
+        }
+    } else if (creatureDirection[0] == WEST) {
+        for (int a = 0; a < 4; a++) {
+            rect[a].x += creatureOffset[0];
+        }
+    }
+    
+    
+}*/

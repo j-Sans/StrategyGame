@@ -21,11 +21,14 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
     this->setData(true, true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
-    gameShader = Shader(vertexPath, fragmentPath);
+    this->gameShader = Shader(vertexPath, fragmentPath);
     
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    //Allow for multiple windows
+    glEnable(GL_SCISSOR_TEST);
     
     //Load textures
     //Exception only thrown if there are 32 textures already present
@@ -48,6 +51,11 @@ Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std
         this->loadTexture("Resources/numbers.png", "numbersTex");
     } catch (std::exception e) {
         std::cout << "Error loading numbers texture: " << e.what();
+    }
+    try {
+        this->loadTexture("Resources/circle.png", "circleTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading circle texture: " << e.what();
     }
     
     this->presetTransformations();
@@ -59,11 +67,16 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
     this->setData(true, true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
-    gameShader = Shader(vertexPath, geometryPath, fragmentPath);
+    this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
+    
+    this->setInterface();
     
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    //Allow for multiple windows
+    glEnable(GL_SCISSOR_TEST);
     
     //Load textures
     //Exception only thrown if there are 32 textures already present
@@ -86,6 +99,11 @@ Game::Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* f
         this->loadTexture("Resources/numbers.png", "numbersTex");
     } catch (std::exception e) {
         std::cout << "Error loading numbers texture: " << e.what();
+    }
+    try {
+        this->loadTexture("Resources/circle.png", "circleTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading circle texture: " << e.what();
     }
     
     this->presetTransformations();
@@ -106,9 +124,15 @@ void Game::render() {
     //GLFW gets any events that have occurred
     glfwPollEvents();
     
+    //So the whole screen is cleared
+    glDisable(GL_SCISSOR_TEST);
+    
     //Clears the screen after each rendering
     glClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    
+    //So multiple windows exist again
+    glEnable(GL_SCISSOR_TEST);
     
     //Use the shader
     this->gameShader.use();
@@ -151,6 +175,10 @@ void Game::render() {
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
+    
+    for (GLuint a = 0; a < interfaces.size(); a++) {
+        this->interfaces[a].render();
+    }
     
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
@@ -208,6 +236,15 @@ void Game::initWindow() {
     
     //Make a window object
     this->gameWindow = glfwCreateWindow(this->windowWidth, this->windowHeight, "Game", nullptr, nullptr);
+    
+#ifdef FULL_SCREEN //Makes the window take up the entire screen but still be within a moveable window
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+    glfwSetWindowMonitor(this->gameWindow, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
+#endif
+    
     if (this->gameWindow == nullptr) { //If the window isn't created, return an error
         glfwTerminate();
         std::cout << "Failed to create GLFW Window.\n";
@@ -224,7 +261,7 @@ void Game::initWindow() {
     //Tell OpenGL window information
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
-    glViewport(0, 0, viewportWidth, viewportHeight);
+    glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
@@ -275,6 +312,7 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
     GLint terrains[numberOfIndices];
     GLint creatures[numberOfIndices];
     GLint directions[numberOfIndices];
+    GLint controllers[numberOfIndices];
     GLfloat colors[3 * numberOfIndices];
     
     index = 0;
@@ -291,10 +329,13 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
                     creatures[index] = this->gameBoard.get(x, y).creatureType();
                     
                     //Gets the direction if there is a creature there
-                    if (this->gameBoard.get(x, y).creature() != nullptr)
+                    if (this->gameBoard.get(x, y).creature() != nullptr) {
                         directions[index] = this->gameBoard.get(x, y).creature()->direction();
-                    else
+                        controllers[index] = this->gameBoard.get(x, y).creature()->controller();
+                    } else {
                         directions[index] = NORTH;
+                        controllers[index] = 0;
+                    }
                 }
                 if (setColorData) {
                     //Gets the color alteration of the tile
@@ -313,9 +354,9 @@ void Game::setData(bool setVertexData, bool setTerrainData, bool setCreatureData
         if (setTerrainData)
             this->terrainData[a] = terrains[a];
         if (setCreatureData) {
-            this->creatureData[2 * a] = creatures[a];
-            
-            this->creatureData[(2 * a) + 1] = directions[a];
+            this->creatureData[3 * a] = creatures[a];
+            this->creatureData[(3 * a) + 1] = directions[a];
+            this->creatureData[(3 * a) + 2] = controllers[a];
         }
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
@@ -377,7 +418,7 @@ void Game::setBuffers() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     //Color VBO:
@@ -402,8 +443,6 @@ void Game::setBuffers() {
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(4);
     
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
     //Offset VBO:
     
     //Bind the VBO with the data
@@ -422,6 +461,19 @@ void Game::setBuffers() {
     
     //Uncomment for wireframe mode
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+void Game::setInterface() {
+    int viewportWidth, viewportHeight;
+    glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
+    
+    this->interfaceShader = Shader("Shaders/interface.vert", "Shaders/interface.frag");
+    
+    this->interfaces.push_back(Interface(&this->interfaceShader, this->gameWindow, 0, 0, viewportWidth / 6.0, viewportHeight));
+    
+    this->interfaces.push_back(Interface(&this->interfaceShader, this->gameWindow, viewportWidth * 1.0 / 6.0, 0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0));
+    
+    this->interfaces.push_back(Interface(&this->interfaceShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight));
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -474,7 +526,7 @@ void Game::updateCreatureBuffer() {
     
     //Next we tell OpenGL how to interpret the array
     //Position
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -543,7 +595,7 @@ void Game::updateCreatureOffset() {
     //Goes through all tiles and continues moving any that are moving
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
-        GLuint direction = this->creatureData[(2 * tile) + 1];
+        GLuint direction = this->creatureData[(3 * tile) + 1];
         
         glm::ivec2 boardLoc;
         boardLoc.x = tile / this->gameBoard.width();
@@ -656,10 +708,12 @@ std::vector<Tile> Game::getReachableTiles (Tile creature) {
 void Game::updateSelected() {
     glm::ivec2 mousePos;
     
-    mousePos = mouseTile(); //Fails if mouse is outside of the board
+    mousePos = mouseTile();
     
-    //Reset all tiles if the mouse clicked out of the screen
-    if (mousePos == glm::ivec2(-1, -1)) {
+    if (mousePos == INTERFACE_BOX_SELECTION) {
+        //Don't alter the selected tile if the interface box has been clicked
+    } else if (mousePos == NO_SELECTION) {
+        //Reset all tiles if the mouse clicked out of the screen
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
                 this->gameBoard.setStyle(x, y, Regular);
@@ -678,7 +732,7 @@ void Game::updateSelected() {
             }
             
             //Set selectedTile to null results
-            this->selectedTile = glm::ivec2(-1, -1);
+            this->selectedTile = NO_SELECTION;
         }
         
         //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
@@ -701,24 +755,31 @@ void Game::updateSelected() {
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
                 
                 //North tile
-                if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
+                if (mousePos.y > 0) {
+                    if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
+                        this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
+                    else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
+                        this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
+                }
                 
                 //West tile
-                if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x - 1, mousePos.y).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
+                if (mousePos.x > 0) {
+                    if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
+                        this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
+                    else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x - 1, mousePos.y).creature()->controller() != this->activePlayer)
+                        this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
+                }
                 
                 //South tile
-                if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y + 1).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
+                if (mousePos.y + 1 < this->gameBoard.height(mousePos.x)) {
+                    if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
+                        this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
+                    else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y + 1).creature()->controller() != this->activePlayer)
+                        this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
+                }
                 
                 //East tile
+<<<<<<< HEAD
                 if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
                 else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
@@ -743,6 +804,13 @@ void Game::updateSelected() {
                     } else if (this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature() != nullptr && this->gameBoard.get(reachableTiles.at(i).x(), reachableTiles.at(i).y()).creature()->controller() != this->activePlayer) {
                         this->gameBoard.setStyle(reachableTiles.at(i).x(), reachableTiles.at(i).y(), AttackableAdj);
                     }
+=======
+                if (mousePos.x + 1 < this->gameBoard.width()) {
+                    if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
+                        this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
+                    else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
+                        this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
+>>>>>>> origin/master
                 }
             }
             
@@ -801,7 +869,7 @@ void Game::updateSelected() {
                 }
             }
             
-            this->selectedTile = glm::ivec2(-1, -1);
+            this->selectedTile = NO_SELECTION;
         }
         
         //Attacking
@@ -831,7 +899,7 @@ void Game::updateSelected() {
                 }
             }
             
-            this->selectedTile = glm::ivec2(-1, -1);
+            this->selectedTile = NO_SELECTION;
         }
     }
 
@@ -848,6 +916,25 @@ glm::ivec2 Game::mouseTile() {
     glfwGetWindowSize(this->gameWindow, &width, &height);
     
     //Get the mousePos to be in the same coordinates as the vertexData (-1 to 1)
+    
+    
+    
+    //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
+    if (xPos > (width * 5.0 / 6.0) || xPos < (width / 6.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Only the middle 2/3 of the screen is the board, so make the start of that section 0
+    xPos -= (width / 6.0);
+
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    xPos *= (3.0 / 2.0);
+    
+    //Do the same for y, except that only the bottom 1/4 of the screen is not part of the board
+    if (yPos > (height * 3.0 / 4.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    yPos *= (4.0 / 3.0);
     
     //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
     xPos /= width;
@@ -908,7 +995,7 @@ glm::ivec2 Game::mouseTile() {
         // (h,k) is the point below the center
         
         GLfloat h = center.x;
-        GLfloat k = center.y - (verticalDistance / 2);
+        GLfloat k = center.y - (verticalDistance / 2.0);
         
         if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
             pointInIndex = false;
@@ -929,7 +1016,7 @@ glm::ivec2 Game::mouseTile() {
         // (h,k) is the point above the center
         
         h = center.x; //h stays the same
-        k = center.y + (verticalDistance / 2);
+        k = center.y + (verticalDistance / 2.0);
         
         if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
             pointInIndex = false;
@@ -955,7 +1042,7 @@ glm::ivec2 Game::mouseTile() {
     
     //Return negative coordinates if the click is outside of all tiles
     if (tileIndex == -1)
-        return glm::ivec2(-1, -1);
+        return NO_SELECTION;
     
     glm::ivec2 tileIndexVec;
     
