@@ -2,11 +2,8 @@
 
 out vec4 color;
 
-uniform int highlighted;
+in float Color;
 
 void main() {
-    if (highlighted == 1)
-        color = vec4(0.67f, 0.67f, 0.67f, 1.0f);
-    else
-        color = vec4(0.33f, 0.33f, 0.33f, 1.0f);
+    color = vec4(Color, Color, Color, 1.0f);
 }

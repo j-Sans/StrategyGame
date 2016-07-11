@@ -38,7 +38,8 @@ private:
     Shader* buttonShader; //Pointer to a compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
-    GLuint VBO;
+    GLuint buttonVBO;
+    GLuint colorVBO;
     
     //Viewport information
     const GLfloat lowerLeftX;
@@ -50,9 +51,6 @@ private:
     const GLfloat interfaceBoxlowerLeftY;
     const GLfloat interfaceBoxWidth;
     const GLfloat interfaceBoxHeight;
-    
-    //Button stats
-    bool highlighted = true;
     
     //Private member functions
     void setBuffers();
