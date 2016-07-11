@@ -62,13 +62,9 @@ int main(int argc, const char * argv[]) {
     
     G.gameBoard.setCreature(2, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH, 1));
     
-<<<<<<< HEAD
-    G.gameBoard.setCreature(4, 1, Creature(Human, 1, 2, 1, 1, 1, 1, NORTH, 0));
-=======
     G.gameBoard.setCreature(3, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH, 2));
     
     G.gameBoard.setCreature(4, 1, Creature(Human, 1, 1, 2, 1, 1, 1, NORTH, 3));
->>>>>>> origin/master
     
     //Game loop
     while(!glfwWindowShouldClose(G.window())) {
