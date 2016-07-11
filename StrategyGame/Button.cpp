@@ -43,8 +43,12 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
 }
 
 void Button::render() {
+    this->updateMouse();
+    
     //Bind the VAO and draw shapes
     this->buttonShader->use();
+    
+    this->buttonShader->uniform1i("highlighted", this->highlighted);
     
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -52,5 +56,22 @@ void Button::render() {
 }
 
 void Button::updateMouse() {
+    glm::dvec2 mousePos;
     
+    //Get the mouse position and set it to mousePos. It is relative to the upper left corner of the screen
+    glfwGetCursorPos(this->buttonWindow, &mousePos.x, &mousePos.y);
+    
+    GLfloat actualButtonWidth = this->buttonWidth / 2.0; //From 0 to 1
+    GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
+    GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
+    GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
+    
+    actualButtonWidth *= this->interfaceBoxWidth;
+    actualButtonHeight *= this->interfaceBoxHeight;
+    
+    if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) {
+        this->highlighted = true;
+    } else {
+        this->highlighted = false;
+    }
 }

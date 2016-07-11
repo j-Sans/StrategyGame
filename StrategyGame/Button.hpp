@@ -16,6 +16,9 @@
 //GLFW: Window functionality
 #include <GLFW/glfw3.h>
 
+//GLM: OpenGL mathematics for vectors here
+#include <GLM/glm.hpp>
+
 //Local includes
 #include "Shader.hpp"
 
@@ -47,6 +50,9 @@ private:
     const GLfloat interfaceBoxlowerLeftY;
     const GLfloat interfaceBoxWidth;
     const GLfloat interfaceBoxHeight;
+    
+    //Button stats
+    bool highlighted = true;
     
     //Private member functions
     void setBuffers();

@@ -67,6 +67,14 @@ public:
     void uniformTex(const GLchar* name, GLuint texNum);
     
     /*!
+     * Send an int to the shader program.
+     *
+     * @param name The name of the int in GLSL.
+     * @param i The int to send.
+     */
+    void uniform1i(const GLchar* name, int i);
+    
+    /*!
      * Send a float to the shader program.
      *
      * @param name The name of the float in GLSL.

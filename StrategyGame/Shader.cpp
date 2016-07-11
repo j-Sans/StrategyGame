@@ -221,6 +221,10 @@ void Shader::uniformTex(const GLchar* name, GLuint texNum) {
     glUniform1i(glGetUniformLocation(this->program, name), texNum);
 }
 
+void Shader::uniform1i(const GLchar* name, int i) {
+    glUniform1i(glGetUniformLocation(this->program, name), i);
+}
+
 void Shader::uniform1f(const GLchar* name, float f) {
     glUniform1f(glGetUniformLocation(this->program, name), f);
 }
