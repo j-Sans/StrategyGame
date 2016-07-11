@@ -26,7 +26,7 @@
 class Interface {
 public:
     //Constructors
-    Interface(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
+    Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
     
     //Public member functions
     void render();
@@ -35,6 +35,7 @@ private:
     //OpenGL and GLFW properties
     GLFWwindow* interfaceWindow;
     Shader *interfaceShader; //Compiled shader
+    Shader *buttonShader; //Shader for the buttons
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;

@@ -8,9 +8,10 @@
 
 #include "Interface.hpp"
 
-Interface::Interface(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
+Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
     this->interfaceWindow = window;
     this->interfaceShader = shader;
+    this->buttonShader = shaderForButtons;
     
     //Set viewport specifics
     this->lowerLeftX = x;
@@ -28,6 +29,8 @@ Interface::Interface(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLu
          1.0, -1.0,
          1.0,  1.0,
     };
+    
+    this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->boxWidth, this->boxHeight));
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
@@ -60,13 +63,13 @@ void Interface::render() {
     //Bind the VAO and draw shapes
     this->interfaceShader->use();
     
-    for (GLuint a = 0; a < this->buttons.size(); a++) {
-        this->buttons[a].render();
-    }
-    
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    
+    for (GLuint a = 0; a < this->buttons.size(); a++) {
+        this->buttons[a].render();
+    }
     
     //Reset window information for game rendering
     glScissor(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);

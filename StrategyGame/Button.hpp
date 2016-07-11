@@ -22,7 +22,7 @@
 class Button {
 public:
     //Constructors
-    Button(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, GLfloat viewportWidth, GLfloat viewportHeight);
+    Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLfloat viewportWidth, GLfloat viewportHeight);
     
     //Public member functions
     void render();
