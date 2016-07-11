@@ -9,6 +9,9 @@
 #ifndef Interface_hpp
 #define Interface_hpp
 
+//Standard library includes
+#include <vector>
+
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -18,13 +21,12 @@
 
 //Local includes
 #include "Shader.hpp"
+#include "Button.hpp"
 
 class Interface {
 public:
     //Constructors
-    Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
-    
-    Interface(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
+    Interface(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height);
     
     //Public member functions
     void render();
@@ -32,7 +34,7 @@ public:
 private:
     //OpenGL and GLFW properties
     GLFWwindow* interfaceWindow;
-    Shader interfaceShader; //Compiled shader
+    Shader *interfaceShader; //Compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
@@ -42,6 +44,8 @@ private:
     GLuint lowerLeftY;
     GLuint boxWidth;
     GLuint boxHeight;
+    
+    std::vector<Button> buttons;
     
     int viewportWidth;
     int viewportHeight;

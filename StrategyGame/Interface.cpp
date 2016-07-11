@@ -8,9 +8,9 @@
 
 #include "Interface.hpp"
 
-Interface::Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
+Interface::Interface(Shader* shader, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
     this->interfaceWindow = window;
-    this->interfaceShader = Shader(vertexPath, fragmentPath);
+    this->interfaceShader = shader;
     
     //Set viewport specifics
     this->lowerLeftX = x;
@@ -48,46 +48,6 @@ Interface::Interface(const GLchar* vertexPath, const GLchar* fragmentPath, GLFWw
     glBindVertexArray(0);
 }
 
-Interface::Interface(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height) {
-    this->interfaceWindow = window;
-    this->interfaceShader = Shader(vertexPath, geometryPath, fragmentPath);
-    
-    //Set viewport specifics
-    this->lowerLeftX = x;
-    this->lowerLeftY = y;
-    this->boxWidth = width;
-    this->boxHeight = height;
-    glfwGetFramebufferSize(this->interfaceWindow, &this->viewportWidth, &this->viewportHeight);
-    
-    GLfloat data[] = {
-        -1.0, -1.0,
-        -1.0,  1.0,
-        1.0, -1.0,
-        
-        -1.0,  1.0,
-        1.0, -1.0,
-        1.0,  1.0,
-    };
-    
-    //Draw with OpenGL
-    glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &this->VBO);
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    //Position
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
-
 void Interface::render() {
     //Get updated information about the viewport
     this->updateViewport();
@@ -98,7 +58,11 @@ void Interface::render() {
     glScissor(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
     
     //Bind the VAO and draw shapes
-    this->interfaceShader.use();
+    this->interfaceShader->use();
+    
+    for (GLuint a = 0; a < this->buttons.size(); a++) {
+        this->buttons[a].render();
+    }
     
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

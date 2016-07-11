@@ -199,8 +199,10 @@ private:
     //Board data
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
-    
+    //Interfaces
     std::vector<Interface> interfaces;
+    Shader interfaceShader;
+    Shader buttonShader;
     
 
     //Private member functions
