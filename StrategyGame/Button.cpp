@@ -10,10 +10,13 @@
 
 Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxlowerLeftX(interfaceX), interfaceBoxlowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
     
+    //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!
+    
     this->buttonWindow = window;
     this->buttonShader = shader;
     
     GLfloat data[] = {
+        //Rectangle is drawn by two triangles
         this->lowerLeftX, this->lowerLeftY,
         this->lowerLeftX + this->buttonWidth, this->lowerLeftY,
         this->lowerLeftX, this->lowerLeftY + this->buttonHeight,
@@ -86,13 +89,14 @@ void Button::updateMouse() {
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
     GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
+    std::cout << lowerLeftX;
     
     actualButtonWidth *= this->interfaceBoxWidth;
     actualButtonHeight *= this->interfaceBoxHeight;
     
     GLfloat color[6];
     
-    if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) {
+    if (mousePos.x >= actualButtonX + actualButtonWidth/4 && mousePos.x <= actualButtonX + actualButtonWidth*3/4  && mousePos.y >= actualButtonY + actualButtonHeight/4 && mousePos.y <= actualButtonY + actualButtonHeight*3/4) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         

@@ -471,10 +471,13 @@ void Game::setInterface() {
     
     this->buttonShader = Shader("Shaders/button.vert", "Shaders/button.frag");
     
+    //Left-Side Game UI (brown rectangle)
     this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, 0, 0, viewportWidth / 6.0, viewportHeight, true));
     
+    //Game Visualizer
     this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 1.0 / 6.0, 0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0, false));
     
+    //Right-Side Game UI (brown rectangle)
     this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight, true));
 }
 
