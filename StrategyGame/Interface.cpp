@@ -30,8 +30,9 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
          1.0,  1.0,
     };
     
-    if (withButtons)
+    if (withButtons) {
         this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight));
+    }
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);

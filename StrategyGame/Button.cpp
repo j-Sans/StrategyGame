@@ -12,6 +12,8 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     
     //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!
     
+    //This way they are from -1 to 1. Then i directly send the numbers from -1 to 1 to OpenGL, and OpenGL draws them like that. OpenGL thinks the left side of the interface box is -1 and the right side is 1.
+    
     this->buttonWindow = window;
     this->buttonShader = shader;
     
@@ -88,15 +90,20 @@ void Button::updateMouse() {
     GLfloat actualButtonWidth = this->buttonWidth / 2.0; //From 0 to 1
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
-    GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
-    std::cout << lowerLeftX;
+    GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left
     
+    //Scale the dimensions with the interface box size
     actualButtonWidth *= this->interfaceBoxWidth;
     actualButtonHeight *= this->interfaceBoxHeight;
     
+    actualButtonX += (actualButtonWidth / 4.0);
+    actualButtonY += (actualButtonHeight / 4.0);
+    
+    std::cout << "X: " << actualButtonX << ", Y: " << actualButtonY << std::endl;
+    
     GLfloat color[6];
     
-    if (mousePos.x >= actualButtonX + actualButtonWidth/4 && mousePos.x <= actualButtonX + actualButtonWidth*3/4  && mousePos.y >= actualButtonY + actualButtonHeight/4 && mousePos.y <= actualButtonY + actualButtonHeight*3/4) {
+    if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + (actualButtonWidth * 3.0 / 4.0) && mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + (actualButtonHeight * 3.0 / 4.0)) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         
