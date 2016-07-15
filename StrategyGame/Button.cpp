@@ -9,8 +9,8 @@
 #include "Button.hpp"
 
 Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxlowerLeftX(interfaceX), interfaceBoxlowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
-    
-    //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!
+
+    //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!!!! WHY DO YOU OPPOSE TOP-LEFT ORIGIN!!!!!!!?!!?!?!?!?!?!?
     
     this->buttonWindow = window;
     this->buttonShader = shader;
@@ -30,6 +30,8 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     for (int a = 0; a < 6; a++) {
         color[a] = 0.33f;
     }
+    
+    //We should have a constructor for circular buttons as well.
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
@@ -89,7 +91,6 @@ void Button::updateMouse() {
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
     GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
-    std::cout << lowerLeftX;
     
     actualButtonWidth *= this->interfaceBoxWidth;
     actualButtonHeight *= this->interfaceBoxHeight;
