@@ -706,15 +706,16 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-std::vector<Tile> Game::getReachableTiles (Tile creature) {
-    glm::ivec2 mousePos;
+std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
+    //Set the selected tile as the one inputted
+    glm::ivec2 selectedTile = glm::ivec2(creatureTile.x(), creatureTile.y());
     
-    mousePos = mouseTile();
+    //Go through all tiles and find if they are within range
     std::vector<Tile> reachableTiles;
-    for (int x = 0; x < this->gameBoard.width(); x++) {
-        for (int y = 0; y < this->gameBoard.height(x); y++) {
-            unsigned int distanceBetweenTiles;
-            distanceBetweenTiles = gameBoard.tileDistances(mousePos.x, mousePos.y, x, y);
+    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            GLuint distanceBetweenTiles = gameBoard.tileDistances(selectedTile.x, selectedTile.y, x, y);
+            
             if (distanceBetweenTiles <= 2/*this->gameBoard.get(mousePos.x, mousePos.y).creature()->energy()*/) {
                 reachableTiles.push_back(this->gameBoard.get(x, y));
             }

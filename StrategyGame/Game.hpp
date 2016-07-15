@@ -284,11 +284,17 @@ private:
     void moveCamera();
     
     /*!
+     * A function that gets all of the tiles that a creature can reach.
+     *
+     * @param creature The tile containing the specified creature that is going to be moving.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
+     */
+    std::vector<Tile> getReachableTiles(Tile creatureTile);
+    
+    /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
-    
-    std::vector<Tile> getReachableTiles(Tile creature);
-    
     void updateSelected();
     
     /*!
