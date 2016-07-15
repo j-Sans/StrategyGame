@@ -10,7 +10,7 @@
 
 Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxlowerLeftX(interfaceX), interfaceBoxlowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
 
-    //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!!!! WHY DO YOU OPPOSE TOP-LEFT ORIGIN!!!!!!!?!!?!?!?!?!?!?
+    //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative?
     
     //This way they are from -1 to 1. Then i directly send the numbers from -1 to 1 to OpenGL, and OpenGL draws them like that. OpenGL thinks the left side of the interface box is -1 and the right side is 1.
     
@@ -99,7 +99,7 @@ void Button::updateMouse() {
     GLfloat actualButtonWidth = this->buttonWidth / 2.0; //From 0 to 1
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
-    GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
+    GLfloat actualButtonY = ((1.0 + this->lowerLeftY) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
 
     
     //Scale the dimensions with the interface box size
@@ -122,7 +122,7 @@ void Button::updateMouse() {
     
     //if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + (actualButtonWidth * 3.0 / 4.0) && mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + (actualButtonHeight * 3.0 / 4.0)) {
     
-    if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth)/* && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)*/) {
+    if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth && mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         
