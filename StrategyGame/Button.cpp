@@ -99,11 +99,8 @@ void Button::updateMouse() {
     GLfloat actualButtonWidth = this->buttonWidth / 2.0; //From 0 to 1
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
-<<<<<<< HEAD
     GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
-=======
-    GLfloat actualButtonY = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
->>>>>>> origin/master
+
     
     //Scale the dimensions with the interface box size
     actualButtonX *= this->interfaceBoxWidth;
