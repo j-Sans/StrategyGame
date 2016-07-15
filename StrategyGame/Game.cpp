@@ -796,15 +796,12 @@ void Game::updateSelected() {
                 std::vector<Tile> reachableTiles = getReachableTiles(gameBoard.get(mousePos.x, mousePos.y));
                 
                 Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
-                std::cout << "hello ";
                 for (GLuint a = 0; a < reachableTiles.size(); a++) {
-                    std::cout << reachableTiles[a].x() << ", " << reachableTiles[a].y() << " " << std::endl;
                     
                     //THE FOLLOWING LINES ARE THE PROBLEM AREA
                     if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                         std::cout << reachableTiles.size();
                         this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                        std::cout << "no";
                     } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
                         this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
                     }

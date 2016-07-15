@@ -9,18 +9,9 @@
 #include "Button.hpp"
 
 Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
-
-    //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative?
-    
-    //This way they are from -1 to 1. Then i directly send the numbers from -1 to 1 to OpenGL, and OpenGL draws them like that. OpenGL thinks the left side of the interface box is -1 and the right side is 1.
     
     this->buttonWindow = window;
     this->buttonShader = shader;
-    
-    std::cout << "lowerLeftX: " << this->lowerLeftX << ", lowerLeftY: " << this->lowerLeftY << std::endl;
-    std::cout << "buttonWidth: " << this->buttonWidth << ", buttonHeight: " << this->buttonHeight << std::endl;
-    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxLowerLeftX << ", interfaceBoxLower: " << this->interfaceBoxLowerLeftY << std::endl;
-    std::cout << "interfaceBoxWidth: " << this->interfaceBoxWidth << ", interfaceBoxHeight: " << this->interfaceBoxHeight << std::endl << std::endl;
     
     GLfloat data[] = {
         //Rectangle is drawn by two triangles
@@ -38,7 +29,9 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
         color[a] = 0.33f;
     }
     
-    //We should have a constructor for circular buttons as well.
+//    We should have a constructor for circular buttons as well.
+    
+//    We could, but that can be difficult. I'm not sure how to do them exactly, and while it would probably say on google, I don't think we need it yet
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
@@ -110,16 +103,7 @@ void Button::updateMouse() {
     actualButtonX += this->interfaceBoxLowerLeftX;
     actualButtonY += this->interfaceBoxLowerLeftY;
     
-    std::cout << "actualX: " << actualButtonX << ", actualY: " << actualButtonY << std::endl;
-    std::cout << "actualButtonWidth: " << actualButtonWidth << ", actualButtonHeight: " << actualButtonHeight << std::endl;
-    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxLowerLeftX << ", interfaceBoxLowerY: " << this->interfaceBoxLowerLeftY << std::endl;
-    std::cout << "interfaceBoxWidth: " << this->interfaceBoxWidth << ", interfaceBoxHeight: " << this->interfaceBoxHeight << std::endl << std::endl;
-    
-//    std::cout << "X: " << actualButtonX << ", Y: " << actualButtonY << std::endl;
-    
     GLfloat color[6];
-    
-    //if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + (actualButtonWidth * 3.0 / 4.0) && mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + (actualButtonHeight * 3.0 / 4.0)) {
     
     if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) {
         
