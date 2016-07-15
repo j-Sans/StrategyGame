@@ -13,7 +13,7 @@
 bool keys[1024];
 
 //A boolean representing if the active tile should be set. This boolean is set in the mouse button callback function
-bool activateTile = false;
+bool mouseDown = false;
 
 //Constructor without geometry shader
 Game::Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
@@ -143,10 +143,12 @@ void Game::render() {
     }
     
     //If the mouse was clicked, set the color of the tile that was clicked
-    if (activateTile) {
-        this->updateSelected();
+    if (mouseDown) {
+        //Set mouseDown to false because this next function deals with the mouse and updates accordingly.
+        mouseDown = false;
         
-        activateTile = false;
+        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click
+        this->updateSelected();
     }
     
     //Update creature offset, so as to implement animation. Done before updating creature buffer so that updates are rendered
@@ -177,8 +179,12 @@ void Game::render() {
     glBindVertexArray(0);
     
     for (GLuint a = 0; a < interfaces.size(); a++) {
-        this->interfaces[a].render();
+        this->interfaces[a].render(mouseDown);
     }
+    
+    //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
+    if (mouseDown)
+        mouseDown = false;
     
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
@@ -696,7 +702,6 @@ std::vector<Tile> Game::getReachableTiles (Tile creature) {
     glm::ivec2 mousePos;
     
     mousePos = mouseTile();
-    
     std::vector<Tile> reachableTiles;
     for (int x = 0; x < this->gameBoard.width(); x++) {
         for (int y = 0; y < this->gameBoard.height(x); y++) {
@@ -717,6 +722,10 @@ void Game::updateSelected() {
     
     if (mousePos == INTERFACE_BOX_SELECTION) {
         //Don't alter the selected tile if the interface box has been clicked
+        
+        //Make mouseDown true again so the interface box can check the mouse click location
+        mouseDown = true;
+        
     } else if (mousePos == NO_SELECTION) {
         //Reset all tiles if the mouse clicked out of the screen
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
@@ -728,175 +737,174 @@ void Game::updateSelected() {
     
     //Reset the tile (and others) if the current tile is clicked again
     else if (mousePos == this->selectedTile) {
-            
-            //Goes through all tiles and sets them to regular
-            for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-                for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
-                }
+        
+        //Goes through all tiles and sets them to regular
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
             }
-            
-            //Set selectedTile to null results
-            this->selectedTile = NO_SELECTION;
         }
         
-        //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
-        else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Regular) {
-            
-            //Reset all tiles (this one is highlighted after)
-            for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-                for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
-                }
-            }
-            
-            //Select this new tile
-            this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
-            
-            /*
-            //If the selected tile is a creature, highlight adjacent tiles and update the creature's direction
-            if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
-                
-                Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
-                
-                //North tile
-                if (mousePos.y > 0) {
-                    if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
-                }
-                
-                //West tile
-                if (mousePos.x > 0) {
-                    if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x - 1, mousePos.y).creature()->controller() != this->activePlayer)
-                        this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
-                }
-                
-                //South tile
-                if (mousePos.y + 1 < this->gameBoard.height(mousePos.x)) {
-                    if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
-                    else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y + 1).creature()->controller() != this->activePlayer)
-                        this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
-                }
-                
-                //East tile
-                if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
-            }*/
-            
-              //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
-          
-            if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
-                std::vector<Tile> reachableTiles = getReachableTiles(gameBoard.get(mousePos.x, mousePos.y));
-                
-                Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
-                for (GLuint a = 0; a < reachableTiles.size(); a++) {
-                    
-                    //THE FOLLOWING LINES ARE THE PROBLEM AREA
-                    if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                        std::cout << reachableTiles.size();
-                        this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                    } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
-                        this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
-                    }
-
-                }
-            }
-            
-            this->selectedTile = mousePos;
-        }
-        
-        //Movement
-        else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
-            
-            //Get the direction of the click
-            int direction = 0;
-            
-            if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1) {
-                direction = NORTH;
-            }
-            if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y) {
-                direction = EAST;
-            }
-            if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1) {
-                direction = SOUTH;
-            }
-            if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y) {
-                direction = WEST;
-            }
-            
-            //Set the direction that was found at the selected creature
-            this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
-            
-            //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
-            //For these directions, the creature is moved after, in the function that updates the offset data
-            if (direction == NORTH || direction == WEST)
-                this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] = (this->creatureSpeed * this->deltaTime);
-            
-            //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
-            //For these directions, the creature is moved here, and then the offset is slowly updated to follow
-            if (direction == SOUTH || direction == EAST) {
-                GLuint tile; //The location in the data array
-                
-                if (direction == SOUTH) {
-                    tile = (this->selectedTile.x * this->gameBoard.width()) + (this->selectedTile.y + 1); //One row below
-                } else if (direction == EAST) {
-                    tile = ((this->selectedTile.x + 1) * this->gameBoard.width()) + this->selectedTile.y; //One tile further
-                }
-                
-                if (tile < NUMBER_OF_TILES) {
-                    this->offsetData[tile] = -0.4; //-= (this->creatureSpeed * this->deltaTime);
-                    
-                    this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
-                }
-            }
-            
-            //Reset all tiles
-            for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-                for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
-                }
-            }
-            
-            this->selectedTile = NO_SELECTION;
-        }
-        
-        //Attacking
-        else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == AttackableAdj) {
-            
-            int attackDamage = 0;
-            int defendDamage = 0;
-            
-            glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
-            glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
-            
-            this->gameBoard.attack(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
-            
-            //Set the damage data on the defending square equal to damage dealt by the attacker
-            this->damageData[(defender.x * this->gameBoard.width()) + defender.y] = attackDamage;
-            this->existenceTimeForDamageData[(defender.x * this->gameBoard.width()) + defender.y] = glfwGetTime();
-            
-            //Set the damage data on the attacking square equal to damage dealt by the defender
-            this->damageData[(attacker.x * this->gameBoard.width()) + attacker.y] = defendDamage;
-            this->existenceTimeForDamageData[(attacker.x * this->gameBoard.width()) + attacker.y] = glfwGetTime();
-            
-            
-            //Reset all tiles
-            for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-                for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
-                }
-            }
-            
-            this->selectedTile = NO_SELECTION;
-        }
+        //Set selectedTile to null results
+        this->selectedTile = NO_SELECTION;
     }
+    
+    //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
+    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Regular) {
+        
+        //Reset all tiles (this one is highlighted after)
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
+        }
+        
+        //Select this new tile
+        this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
+        
+        /*
+        //If the selected tile is a creature, highlight adjacent tiles and update the creature's direction
+        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
+            
+            Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
+            
+            //North tile
+            if (mousePos.y > 0) {
+                if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
+            }
+            
+            //West tile
+            if (mousePos.x > 0) {
+                if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x - 1, mousePos.y).creature()->controller() != this->activePlayer)
+                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
+            }
+            
+            //South tile
+            if (mousePos.y + 1 < this->gameBoard.height(mousePos.x)) {
+                if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
+                else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y + 1).creature()->controller() != this->activePlayer)
+                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
+            }
+            
+            //East tile
+            if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
+                this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
+            else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
+                this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
+        }*/
+        
+          //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
+      
+        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
+            std::vector<Tile> reachableTiles = getReachableTiles(gameBoard.get(mousePos.x, mousePos.y));
+            
+            Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
+            for (GLuint a = 0; a < reachableTiles.size(); a++) {
+                
+                //THE FOLLOWING LINES ARE THE PROBLEM AREA
+                if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
+                    std::cout << reachableTiles.size();
+                    this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
+                } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
+                    this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
+                }
+            }
+        }
+        
+        this->selectedTile = mousePos;
+    }
+    
+    //Movement
+    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
+        
+        //Get the direction of the click
+        int direction = 0;
+        
+        if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1) {
+            direction = NORTH;
+        }
+        if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y) {
+            direction = EAST;
+        }
+        if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1) {
+            direction = SOUTH;
+        }
+        if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y) {
+            direction = WEST;
+        }
+        
+        //Set the direction that was found at the selected creature
+        this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
+        
+        //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
+        //For these directions, the creature is moved after, in the function that updates the offset data
+        if (direction == NORTH || direction == WEST)
+            this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] = (this->creatureSpeed * this->deltaTime);
+        
+        //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
+        //For these directions, the creature is moved here, and then the offset is slowly updated to follow
+        if (direction == SOUTH || direction == EAST) {
+            GLuint tile; //The location in the data array
+            
+            if (direction == SOUTH) {
+                tile = (this->selectedTile.x * this->gameBoard.width()) + (this->selectedTile.y + 1); //One row below
+            } else if (direction == EAST) {
+                tile = ((this->selectedTile.x + 1) * this->gameBoard.width()) + this->selectedTile.y; //One tile further
+            }
+            
+            if (tile < NUMBER_OF_TILES) {
+                this->offsetData[tile] = -0.4; //-= (this->creatureSpeed * this->deltaTime);
+                
+                this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
+            }
+        }
+        
+        //Reset all tiles
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
+        }
+        
+        this->selectedTile = NO_SELECTION;
+    }
+    
+    //Attacking
+    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == AttackableAdj) {
+        
+        int attackDamage = 0;
+        int defendDamage = 0;
+        
+        glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
+        glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
+        
+        this->gameBoard.attack(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+        
+        //Set the damage data on the defending square equal to damage dealt by the attacker
+        this->damageData[(defender.x * this->gameBoard.width()) + defender.y] = attackDamage;
+        this->existenceTimeForDamageData[(defender.x * this->gameBoard.width()) + defender.y] = glfwGetTime();
+        
+        //Set the damage data on the attacking square equal to damage dealt by the defender
+        this->damageData[(attacker.x * this->gameBoard.width()) + attacker.y] = defendDamage;
+        this->existenceTimeForDamageData[(attacker.x * this->gameBoard.width()) + attacker.y] = glfwGetTime();
+        
+        
+        //Reset all tiles
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+            }
+        }
+        
+        this->selectedTile = NO_SELECTION;
+    }
+}
 
 
 //Calculates the tile that the mouse is over
@@ -1071,6 +1079,6 @@ void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int m
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         std::cout << "Mouse: (" << xPos << ", " << yPos << ")" << std::endl;
         
-        activateTile = true;
+        mouseDown = true;
     }
 }

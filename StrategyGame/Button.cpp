@@ -61,8 +61,8 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     glBindVertexArray(0);
 }
 
-void Button::render() {
-    this->updateMouse();
+void Button::render(bool mouseDown) {
+    this->updateMouse(mouseDown);
     
     //Bind the VAO and draw shapes
     this->buttonShader->use();
@@ -72,20 +72,24 @@ void Button::render() {
     glBindVertexArray(0);
 }
 
-void Button::updateMouse() {
+void Button::updateMouse(bool mouseDown) {
     glm::dvec2 mousePos;
     
     //Get the mouse position and set it to mousePos. It is relative to the upper left corner of the screen
     glfwGetCursorPos(this->buttonWindow, &mousePos.x, &mousePos.y);
     
+    //Get the size of the window in terms of pixels, which is what the interface coordinates are in terms of
     glm::ivec2 frameBufferSize;
     glfwGetFramebufferSize(this->buttonWindow, &frameBufferSize.x, &frameBufferSize.y);
     
+    //Get the size of the window in terms of screen coordinates, which is what the mouse coordinates are in terms of
     glm::ivec2 windowSize;
     glfwGetWindowSize(this->buttonWindow, &windowSize.x, &windowSize.y);
     
+    //Flip the mouse's y so it is based from bottom left, not top left, corner
     mousePos.y = windowSize.y - mousePos.y;
     
+    //Convert mouse to pixel coordinates from screen coordinates
     mousePos.x *= (double)frameBufferSize.x / (double)windowSize.x;
     mousePos.y *= (double)frameBufferSize.y / (double)windowSize.y;
     
@@ -105,8 +109,32 @@ void Button::updateMouse() {
     
     GLfloat color[6];
     
-    if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) {
+    //Make the button darker if it is pressed.
+    if (this->pressed) {
+        //First we bind the VAO
+        glBindVertexArray(this->VAO);
         
+        for (int a = 0; a < 6; a++) {
+            color[a] = 0.17f;
+        }
+        
+        //Color VBO
+        glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
+        
+        //Next we tell OpenGL how to interpret the array
+        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(1);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    } else if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) { //Otherwise, highlight if it is being hovered
+        
+        //If the mouse is down at this button, make the button pressed
+        if (mouseDown)
+            this->pressed = true;
+        
+        //If the mouse is highlighting over the button
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         

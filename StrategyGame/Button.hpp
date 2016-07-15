@@ -45,15 +45,15 @@ public:
     
     /*!
      * A function to render the button. Should be called within the interface's rendering function.
+     *
+     * @param mouseDown A boolean representing if the mouse is currently pressed. This can set the button to being pressed.
      */
-    void render();
-    
-    /*!
-     * A function to locate the mouse and update the color of the button if it should be highlighted. NOT YET FULLY FUNCTIONAL ***
-     */
-    void updateMouse();
+    void render(bool mouseDown);
     
 private:
+    //Button properties
+    bool pressed = false;
+    
     //OpenGL and GLFW properties
     GLFWwindow* buttonWindow;
     Shader* buttonShader; //Pointer to a compiled shader
@@ -74,7 +74,13 @@ private:
     const GLfloat interfaceBoxHeight;
     
     //Private member functions
-    void setBuffers();
+    
+    /*!
+     * A function to locate the mouse and update the color of the button if it should be highlighted.
+     *
+     * @param mouseDown A boolean representing if the mouse is currently pressed. This can set the button to being pressed.
+     */
+    void updateMouse(bool mouseDown);
     
 };
 
