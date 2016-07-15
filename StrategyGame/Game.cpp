@@ -178,8 +178,16 @@ void Game::render() {
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
+    //Go through the interfaces and render them
     for (GLuint a = 0; a < interfaces.size(); a++) {
-        this->interfaces[a].render(mouseDown);
+        this->interfaces[a].render(mouseDown); //This renders the interface and its buttons
+        
+        //Go through hte buttons and check if they are pressed, and do any consequential actions
+        for (auto button = this->interfaces[a].buttons.begin(); button != interfaces[a].buttons.end(); button++) {
+            if (button->isPressed()) {
+                //Deal with button action
+            }
+        }
     }
     
     //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
@@ -1076,9 +1084,6 @@ void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int m
     double xPos, yPos;
     glfwGetCursorPos(window, &xPos, &yPos);
     
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        std::cout << "Mouse: (" << xPos << ", " << yPos << ")" << std::endl;
-        
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         mouseDown = true;
-    }
 }

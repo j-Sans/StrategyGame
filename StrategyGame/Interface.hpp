@@ -40,6 +40,9 @@ public:
     //Constructors
     Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons);
     
+    //Public properties
+    std::vector<Button> buttons; //So that the buttons can be accessed by the game
+    
     //Public member functions
     
     /*!
@@ -63,8 +66,6 @@ private:
     GLuint lowerLeftY;
     GLuint boxWidth;
     GLuint boxHeight;
-    
-    std::vector<Button> buttons;
     
     int viewportWidth;
     int viewportHeight;

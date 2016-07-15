@@ -9,6 +9,9 @@
 #ifndef Button_hpp
 #define Button_hpp
 
+//Standard library includes
+#include <string>
+
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -39,7 +42,7 @@
 class Button {
 public:
     //Constructors
-    Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight);
+    Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string action);
     
     //Public member functions
     
@@ -50,16 +53,24 @@ public:
      */
     void render(bool mouseDown);
     
+    //Public get functions
+    
     /*!
      * A function that returns the pressed state of the button as a boolean. If that value is true, then pressed is internally changed to false.
      *
-     * @return
+     * @return Whether the button is pressed or not.
      */
     bool isPressed();
+    
+    /*!
+     * @return An std::string representing the action that should be done when this button is pressed. The string should be interpreted in the Game class.
+     */
+    std::string action();
     
 private:
     //Button properties
     bool pressed = false;
+    std::string buttonAction; //A string to represent the actions that this button does.
     
     //OpenGL and GLFW properties
     GLFWwindow* buttonWindow;

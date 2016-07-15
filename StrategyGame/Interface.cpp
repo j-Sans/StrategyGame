@@ -31,7 +31,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
     };
     
     if (withButtons) {
-        this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight));
+        this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn"));
     }
     
     //Draw with OpenGL
