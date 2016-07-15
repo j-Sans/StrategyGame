@@ -68,8 +68,8 @@ private:
     const GLfloat buttonWidth;
     const GLfloat buttonHeight;
     
-    const GLfloat interfaceBoxlowerLeftX;
-    const GLfloat interfaceBoxlowerLeftY;
+    const GLfloat interfaceBoxLowerLeftX;
+    const GLfloat interfaceBoxLowerLeftY;
     const GLfloat interfaceBoxWidth;
     const GLfloat interfaceBoxHeight;
     

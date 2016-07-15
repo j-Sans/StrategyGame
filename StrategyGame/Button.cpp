@@ -8,7 +8,7 @@
 
 #include "Button.hpp"
 
-Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxlowerLeftX(interfaceX), interfaceBoxlowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
+Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
     
     //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!
     
@@ -19,7 +19,7 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     
     std::cout << "lowerLeftX: " << this->lowerLeftX << ", lowerLeftY: " << this->lowerLeftY << std::endl;
     std::cout << "buttonWidth: " << this->buttonWidth << ", buttonHeight: " << this->buttonHeight << std::endl;
-    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxlowerLeftX << ", interfaceBoxLower: " << this->interfaceBoxlowerLeftY << std::endl;
+    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxLowerLeftX << ", interfaceBoxLower: " << this->interfaceBoxLowerLeftY << std::endl;
     std::cout << "interfaceBoxWidth: " << this->interfaceBoxWidth << ", interfaceBoxHeight: " << this->interfaceBoxHeight << std::endl << std::endl;
     
     GLfloat data[] = {
@@ -97,7 +97,7 @@ void Button::updateMouse() {
     GLfloat actualButtonWidth = this->buttonWidth / 2.0; //From 0 to 1
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
-    GLfloat actualButtonY = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
+    GLfloat actualButtonY = (1.0 + this->lowerLeftY) / 2.0; //From 0 to 1
     
     //Scale the dimensions with the interface box size
     actualButtonX *= this->interfaceBoxWidth;
@@ -105,12 +105,12 @@ void Button::updateMouse() {
     actualButtonWidth *= this->interfaceBoxWidth;
     actualButtonHeight *= this->interfaceBoxHeight;
     
-    actualButtonX += this->interfaceBoxlowerLeftX;
-    actualButtonY += this->interfaceBoxlowerLeftY;
+    actualButtonX += this->interfaceBoxLowerLeftX;
+    actualButtonY += this->interfaceBoxLowerLeftY;
     
     std::cout << "actualX: " << actualButtonX << ", actualY: " << actualButtonY << std::endl;
     std::cout << "actualButtonWidth: " << actualButtonWidth << ", actualButtonHeight: " << actualButtonHeight << std::endl;
-    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxlowerLeftX << ", interfaceBoxLower: " << this->interfaceBoxlowerLeftY << std::endl;
+    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxLowerLeftX << ", interfaceBoxLowerY: " << this->interfaceBoxLowerLeftY << std::endl;
     std::cout << "interfaceBoxWidth: " << this->interfaceBoxWidth << ", interfaceBoxHeight: " << this->interfaceBoxHeight << std::endl << std::endl;
     
 //    std::cout << "X: " << actualButtonX << ", Y: " << actualButtonY << std::endl;
@@ -119,7 +119,7 @@ void Button::updateMouse() {
     
     //if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + (actualButtonWidth * 3.0 / 4.0) && mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + (actualButtonHeight * 3.0 / 4.0)) {
     
-    if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth)/* && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)*/) {
+    if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         
