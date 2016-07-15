@@ -185,7 +185,7 @@ void Game::render() {
         //Go through hte buttons and check if they are pressed, and do any consequential actions
         for (auto button = this->interfaces[a].buttons.begin(); button != interfaces[a].buttons.end(); button++) {
             if (button->isPressed()) {
-                //Deal with button action
+                this->processButton(button->action());
             }
         }
     }
@@ -706,24 +706,6 @@ void Game::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
-std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
-    //Set the selected tile as the one inputted
-    glm::ivec2 selectedTile = glm::ivec2(creatureTile.x(), creatureTile.y());
-    
-    //Go through all tiles and find if they are within range
-    std::vector<Tile> reachableTiles;
-    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            GLuint distanceBetweenTiles = gameBoard.tileDistances(selectedTile.x, selectedTile.y, x, y);
-            
-            if (distanceBetweenTiles <= 2/*this->gameBoard.get(mousePos.x, mousePos.y).creature()->energy()*/) {
-                reachableTiles.push_back(this->gameBoard.get(x, y));
-            }
-        }
-    }
-    return reachableTiles;
-}
-
 void Game::updateSelected() {
     glm::ivec2 mousePos;
     
@@ -818,7 +800,6 @@ void Game::updateSelected() {
                 
                 //THE FOLLOWING LINES ARE THE PROBLEM AREA
                 if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                    std::cout << reachableTiles.size();
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
                 } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
@@ -915,6 +896,20 @@ void Game::updateSelected() {
     }
 }
 
+void Game::processButton(std::string action) {
+    //Process the button indicating to move to the next turn
+    if (action == "next turn") {
+        //Iterate through the entire board and reset style and energy.
+        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+                this->gameBoard.setStyle(x, y, Regular);
+                Creature* creature = this->gameBoard.get(x, y).creature();
+                if (creature != nullptr)
+                    creature->resetEnergy();
+            }
+        }
+    }
+}
 
 //Calculates the tile that the mouse is over
 glm::ivec2 Game::mouseTile() {
@@ -1063,6 +1058,24 @@ glm::ivec2 Game::mouseTile() {
     tileIndexVec.y = tileIndex - (BOARD_WIDTH * tileIndexVec.x); //The y index in the 2D vector
     
     return tileIndexVec;
+}
+
+std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
+    //Set the selected tile as the one inputted
+    glm::ivec2 selectedTile = glm::ivec2(creatureTile.x(), creatureTile.y());
+    
+    //Go through all tiles and find if they are within range
+    std::vector<Tile> reachableTiles;
+    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            GLuint distanceBetweenTiles = gameBoard.tileDistances(selectedTile.x, selectedTile.y, x, y);
+            
+            if (distanceBetweenTiles <= 2/*this->gameBoard.get(mousePos.x, mousePos.y).creature()->energy()*/) {
+                reachableTiles.push_back(this->gameBoard.get(x, y));
+            }
+        }
+    }
+    return reachableTiles;
 }
 
 //A function GLFW can call when a key event occurs

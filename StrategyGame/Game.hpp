@@ -284,18 +284,16 @@ private:
     void moveCamera();
     
     /*!
-     * A function that gets all of the tiles that a creature can reach.
-     *
-     * @param creature The tile containing the specified creature that is going to be moving.
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
-     */
-    std::vector<Tile> getReachableTiles(Tile creatureTile);
-    
-    /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
     void updateSelected();
+    
+    /*!
+     * A function to deal with button clicks.
+     *
+     * @param action An std::string representing the button action to do.
+     */
+    void processButton(std::string action);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
@@ -305,6 +303,15 @@ private:
      * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
      */
     glm::ivec2 mouseTile();
+    
+    /*!
+     * A function that gets all of the tiles that a creature can reach.
+     *
+     * @param creature The tile containing the specified creature that is going to be moving.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
+     */
+    std::vector<Tile> getReachableTiles(Tile creatureTile);
     
     /*!
      * A function GLFW can call when a key event occurs.

@@ -70,6 +70,11 @@ public:
     void useAllEnergy();
     
     /*!
+     * Resets the creature's energy to its max energy value. To be used at the start of each turn.
+     */
+    void resetEnergy();
+    
+    /*!
      * Sets the direction of this creature, as long as the direction is valid. Includes NORTH, EAST, SOUTH, and WEST.
      */
     void setDirection(unsigned int direction);
