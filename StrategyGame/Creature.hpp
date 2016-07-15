@@ -23,23 +23,23 @@ enum Race {
     Undead,
     Vampire,
 };
-
-/*! 
- * A class representing a creature object.
- *
- * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
- * @param maxHealth An unsigned int representing the max health of the creature.
- * @param maxEnergy An unsigned int representing the max energy of the creature.
- * @param attack An unsigned int representing the damage value the creature.
- * @param speed An unsigned int representing the movement rate per turn of the creature.
- * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
- * @param range An unsigned int representing the distance the creature can attack.
- * @param cost An unsigned int representing the cost of the creature in mana.
- * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
- */
 class Creature {
 public:
     //Constructors
+    
+    /*!
+     * A class representing a creature object.
+     *
+     * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
+     * @param maxHealth An unsigned int representing the max health of the creature.
+     * @param maxEnergy An unsigned int representing the max energy of the creature.
+     * @param attack An unsigned int representing the damage value the creature.
+     * @param speed An unsigned int representing the movement rate per turn of the creature.
+     * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
+     * @param range An unsigned int representing the distance the creature can attack.
+     * @param cost An unsigned int representing the cost of the creature in mana.
+     * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
+     */
     Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
     
     //Destructor

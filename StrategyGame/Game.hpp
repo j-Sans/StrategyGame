@@ -54,21 +54,27 @@
 
 #define FULL_SCREEN
 
-
-
-/*!
- * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
- *
- * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
- * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
- * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
- * @param board A 2D vector of Tiles representing the game board.
- */
 class Game {
 public:
     //Constructors
+    
+    /*!
+     * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
+     *
+     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
+     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
+     * @param board A 2D vector of Tiles representing the game board.
+     */
     Game(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board);
     
+    /*!
+     * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
+     *
+     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
+     * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
+     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
+     * @param board A 2D vector of Tiles representing the game board.
+     */
     Game(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board);
     
     //Destructor

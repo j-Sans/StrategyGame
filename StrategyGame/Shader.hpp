@@ -25,14 +25,6 @@
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 
-
-/*!
- * A shader object that contains the compiled shader program. Can be used with a simple function and also can take different types of uniforms.
- *
- * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
- * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
- * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
- */
 class Shader {
 public:
     //The program ID
@@ -45,10 +37,23 @@ public:
     //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first.
     Shader();
     
-    //Constructor that reads in and builds the shader with no geometry shader
+    /*!
+     * A shader object that contains the compiled shader program. Can be used with a simple function and also can take different types of uniforms. This reads in and builds the shader with no geometry shader.
+     *
+     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
+     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
+     */
     Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
     
     //Constructor that reads in and builds the shader with a geometry shader
+    
+    /*!
+     * A shader object that contains the compiled shader program. Can be used with a simple function and also can take different types of uniforms. This reads in and builds the shader with a geometry shader.
+     *
+     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
+     * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
+     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
+     */
     Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath);
     
     /*!

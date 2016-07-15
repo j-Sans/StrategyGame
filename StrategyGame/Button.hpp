@@ -25,23 +25,24 @@
 //Local includes
 #include "Shader.hpp"
 
-/*!
- * A class representing a button on an interface block.
- *
- * @param shader A pointer to a compiled shader for rendering this button.
- * @param window A pointer to the current game window.
- * @param x A GLfloat representing the lower left x coordinate of the button in the current interface, from 0 to 1.
- * @param y A GLfloat representing the lower left y coordinate of the button in the current interface, from 0 to 1.
- * @param width A GLfloat representing the width of the button in the current interface, from 0 to 1.
- * @param height A GLfloat representing the height of the button in the current interface, from 0 to 1.
- * @param interfaceX A GLfloat representing the lower left x coordinate of the current interface, in screen coordinates.
- * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
- * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
- * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
- */
 class Button {
 public:
     //Constructors
+    
+    /*!
+     * A class representing a button on an interface block.
+     *
+     * @param shader A pointer to a compiled shader for rendering this button.
+     * @param window A pointer to the current game window.
+     * @param x A GLfloat representing the lower left x coordinate of the button in the current interface, from 0 to 1.
+     * @param y A GLfloat representing the lower left y coordinate of the button in the current interface, from 0 to 1.
+     * @param width A GLfloat representing the width of the button in the current interface, from 0 to 1.
+     * @param height A GLfloat representing the height of the button in the current interface, from 0 to 1.
+     * @param interfaceX A GLfloat representing the lower left x coordinate of the current interface, in screen coordinates.
+     * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
+     * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
+     * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
+     */
     Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string action);
     
     //Public member functions

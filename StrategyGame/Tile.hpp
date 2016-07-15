@@ -45,16 +45,18 @@ enum Style {
     Reachable,
 };
 
-/*!
- * A class representing a single tile on the board and, if present, the creature on that tile.
- *
- * @param terrain A macro representing the terrain type. Possible options include: OPEN_TERRAIN, MOUNTAIN_TERRAIN, WATER_TERRAIN, and more to be added.
- * @param x The x coordinate of this tile on the board.
- * @param y The y coordinate of this tile on the board.
- */
 class Tile {
 public:
     //Constructors
+    
+    /*!
+     * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
+     *
+     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
+     * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
+     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
+     * @param board A 2D vector of Tiles representing the game board.
+     */
     Tile(float terrain, unsigned int x, unsigned int y);
     
     //Destructor

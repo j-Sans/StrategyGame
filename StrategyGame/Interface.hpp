@@ -23,21 +23,22 @@
 #include "Shader.hpp"
 #include "Button.hpp"
 
-/*!
- * A class representing an interface box.
- *
- * @param shader A pointer to a compiled shader for the interface box to use for rendering.
- * @param shaderForButtons A pointer to another compiled shader that will be used for rendering the buttons on this interface.
- * @param window A pointer to the current window object.
- * @param x The lower left corner's x coordinate, for setting the interface box. Should be in terms of GLFW screen coordinates, where (0,0) is the lower left corner of the screen.
- * @param y The lower left corner's y coordinate, for setting the interface box. Similar settings and configurations as with x.
- * @param width The width of the interface box, in GLFW screen coordinates.
- * @param height The height of the interface box, in GLFW screen coordinates.
- * @param withButtons Whether buttons should be drawn on the interface.
- */
 class Interface {
 public:
     //Constructors
+    
+    /*!
+     * A class representing an interface box.
+     *
+     * @param shader A pointer to a compiled shader for the interface box to use for rendering.
+     * @param shaderForButtons A pointer to another compiled shader that will be used for rendering the buttons on this interface.
+     * @param window A pointer to the current window object.
+     * @param x The lower left corner's x coordinate, for setting the interface box. Should be in terms of GLFW screen coordinates, where (0,0) is the lower left corner of the screen.
+     * @param y The lower left corner's y coordinate, for setting the interface box. Similar settings and configurations as with x.
+     * @param width The width of the interface box, in GLFW screen coordinates.
+     * @param height The height of the interface box, in GLFW screen coordinates.
+     * @param withButtons Whether buttons should be drawn on the interface.
+     */
     Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons);
     
     //Public properties
