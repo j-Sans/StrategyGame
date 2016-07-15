@@ -31,11 +31,6 @@
 
 //Local includes
 #include "Game.hpp"
-#include "Player.hpp"
-
-
-#define NUMBER_OF_PLAYERS 2
-
 
 int main(int argc, const char * argv[]) {
 //Set up:
@@ -55,8 +50,6 @@ int main(int argc, const char * argv[]) {
     }
     
     Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
-    
-    Player players[NUMBER_OF_PLAYERS];
     
     G.gameBoard.setCreature(1, 1, Creature(Human, 1, 1, 1, 1, 1, 1, NORTH, 0));
     

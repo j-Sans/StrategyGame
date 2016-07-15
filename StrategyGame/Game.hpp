@@ -38,6 +38,7 @@
 #include "Texture.hpp"
 #include "Tile.hpp"
 #include "Board.hpp"
+#include "Player.hpp"
 
 #include "Interface.hpp"
 
@@ -46,6 +47,7 @@
 #define BOARD_WIDTH 12
 #define NUMBER_OF_TILES BOARD_WIDTH * BOARD_WIDTH
 #define INDICES_PER_TILES 2
+#define NUMBER_OF_PLAYERS 2
 
 #define NO_SELECTION glm::ivec2(-1, -1)
 #define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
@@ -107,11 +109,6 @@ public:
      * The game board, containing a 2D vector of Tile objects.
      */
     Board gameBoard;
-    
-    /*!
-     * The player who is currently taking his or her turn.
-     */
-    unsigned int activePlayer = 0;
     
     //Public member functions
     
@@ -196,13 +193,18 @@ private:
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
     
-    //Board data
-    glm::ivec2 selectedTile = glm::ivec2(-1, -1);
-    
     //Interfaces
     std::vector<Interface> interfaces;
     Shader interfaceShader;
     Shader buttonShader;
+    
+    //Board data
+    glm::ivec2 selectedTile = glm::ivec2(-1, -1);
+    
+    //Player and turn data
+    Player players[NUMBER_OF_PLAYERS];
+    GLuint activePlayer = 0;
+    GLuint turn = 1;
     
 
     //Private member functions
@@ -294,6 +296,11 @@ private:
      * @param action An std::string representing the button action to do.
      */
     void processButton(std::string action);
+    
+    /*!
+     * A function to move to the next player's turn.
+     */
+    void incrementActivePlayer();
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.

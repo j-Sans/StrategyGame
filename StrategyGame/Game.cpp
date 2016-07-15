@@ -492,7 +492,7 @@ void Game::setInterface() {
     this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 1.0 / 6.0, 0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0, false));
     
     //Right-Side Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight, true));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0, viewportWidth / 6.0, viewportHeight, false));
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -899,6 +899,7 @@ void Game::updateSelected() {
 void Game::processButton(std::string action) {
     //Process the button indicating to move to the next turn
     if (action == "next turn") {
+        
         //Iterate through the entire board and reset style and energy.
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
@@ -908,7 +909,20 @@ void Game::processButton(std::string action) {
                     creature->resetEnergy();
             }
         }
+        
+        this->incrementActivePlayer();
+        
+        //Increment the turn if a full player cycle has occurred
+        if (activePlayer == 0)
+            turn++;
     }
+}
+
+void Game::incrementActivePlayer() {
+    this->activePlayer++;
+    
+    if (this->activePlayer >= NUMBER_OF_PLAYERS)
+        this->activePlayer = 0;
 }
 
 //Calculates the tile that the mouse is over
