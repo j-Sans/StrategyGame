@@ -22,7 +22,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
      * However, currently there are not too many board spaces that will have creatures for testing purposes.
      
      Ways to fix this in the future:
-     * Make a sort functino to get the list sorted in a way that is easy to go through to find the right spot.
+     * Make a sort function to get the list sorted in a way that is easy to go through to find the right spot.
      * Use std::optional<Creature> instead of Creature* in Tile.hpp
      std::optional (or std::experimental::optional) may not have come out yet, which is a slight problem.
      There were issues getting it to work on 2013 MacBook Pro in Xcode 7, without much trying
@@ -37,8 +37,14 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
     
     if (direction == NORTH) {
         if (y > 0 && !this->gameBoard[x][y - 1].occupied()) {
+            //Add the creature to the new tile
             this->gameBoard[x][y - 1].setCreature(this->gameBoard[x][y].creature());
+            
+            //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Decrement the creature's energy by 1
+            this->gameBoard[x][y - 1].creature()->decrementEnergy(1);
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -53,8 +59,14 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         }
     } else if (direction == WEST) {
         if (x > 0 && !this->gameBoard[x - 1][y].occupied()) {
+            //Add the creature to the new tile
             this->gameBoard[x - 1][y].setCreature(this->gameBoard[x][y].creature());
+            
+            //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Decrement the creature's energy by 1
+            this->gameBoard[x - 1][y].creature()->decrementEnergy(1);
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -69,8 +81,14 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         }
     } else if (direction == SOUTH) {
         if (y < this->gameBoard[x].size() - 1 && !this->gameBoard[x][y + 1].occupied()) {
+            //Add the creature to the new tile
             this->gameBoard[x][y + 1].setCreature(this->gameBoard[x][y].creature());
+            
+            //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Decrement the creature's energy by 1
+            this->gameBoard[x][y + 1].creature()->decrementEnergy(1);
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -85,8 +103,14 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         }
     } else if (direction == EAST) {
         if (x < this->gameBoard.size() - 1 && !this->gameBoard[x + 1][y].occupied()) {
+            //Add the creature to the new tile
             this->gameBoard[x + 1][y].setCreature(this->gameBoard[x][y].creature());
+            
+            //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
+            
+            //Decrement the creature's energy by 1
+            this->gameBoard[x + 1][y].creature()->decrementEnergy(1);
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -113,25 +137,41 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     if (destinationY >= this->gameBoard[destinationX].size())
         throw std::range_error("Destination y out of range");
     
-    if (destinationX == x && destinationY == y) //If the creature is at the destinatino, no moving happens
+    Creature* creature = this->gameBoard[x][y].creature();
+    
+    if (creature == nullptr) //If there is no creature at the specified location, no moving happens
         return false;
     
-    if (!this->gameBoard[destinationX][destinationY].occupied()) {
-        this->gameBoard[destinationX][destinationY].setCreature(this->gameBoard[x][y].creature());
-        this->gameBoard[x][y].setCreature(nullptr);
-        
-        //Find the creature, and update its location on the board
-        for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-            if (listIter->x == x && listIter->y == y) {
-                //Moves the creature in the list to that spot
-                listIter->x = destinationX;
-                listIter->y = destinationY;
-                break;
-            }
-        }
-        
-    } else {
+    if (destinationX == x && destinationY == y) //If the creature is at the destination, no moving happens
         return false;
+    
+    if (this->gameBoard[destinationX][destinationY].occupied()) //If the destination is occupied, no moving happens
+        return false;
+    
+    unsigned int distance = this->tileDistances(x, y, destinationX, destinationY);
+    
+    if (this->tileDistances(x, y, destinationX, destinationY) > creature->energy()) //If the creature doesn't have enough energy to travel the indicated distance, no moving happens
+        return false;
+    
+    //If none of the above errors stop the creature from moving, move the creature
+    
+    //Add the creature to the new tile
+    this->gameBoard[destinationX][destinationY].setCreature(creature);
+    
+    //Remove the creature from the old tile
+    this->gameBoard[x][y].setCreature(nullptr);
+    
+    //Decrement the creature's energy by 1
+    creature->decrementEnergy(distance);
+    
+    //Find the creature, and update its location on the board
+    for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+        if (listIter->x == x && listIter->y == y) {
+            //Moves the creature in the list to that spot
+            listIter->x = destinationX;
+            listIter->y = destinationY;
+            break;
+        }
     }
     
     return true;
