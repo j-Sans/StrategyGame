@@ -1072,6 +1072,8 @@ void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int m
     glfwGetCursorPos(window, &xPos, &yPos);
     
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        std::cout << "Mouse: (" << xPos << ", " << yPos << ")" << std::endl;
+        
         activateTile = true;
     }
 }

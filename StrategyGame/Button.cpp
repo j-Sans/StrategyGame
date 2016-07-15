@@ -12,8 +12,15 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
 
     //why do you multiply by 2.0 and then subtract 1.0? why are you making lowerLeftX negative??!?!?!!!! WHY DO YOU OPPOSE TOP-LEFT ORIGIN!!!!!!!?!!?!?!?!?!?!?
     
+    //This way they are from -1 to 1. Then i directly send the numbers from -1 to 1 to OpenGL, and OpenGL draws them like that. OpenGL thinks the left side of the interface box is -1 and the right side is 1.
+    
     this->buttonWindow = window;
     this->buttonShader = shader;
+    
+    std::cout << "lowerLeftX: " << this->lowerLeftX << ", lowerLeftY: " << this->lowerLeftY << std::endl;
+    std::cout << "buttonWidth: " << this->buttonWidth << ", buttonHeight: " << this->buttonHeight << std::endl;
+    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxlowerLeftX << ", interfaceBoxLower: " << this->interfaceBoxlowerLeftY << std::endl;
+    std::cout << "interfaceBoxWidth: " << this->interfaceBoxWidth << ", interfaceBoxHeight: " << this->interfaceBoxHeight << std::endl << std::endl;
     
     GLfloat data[] = {
         //Rectangle is drawn by two triangles
@@ -82,7 +89,9 @@ void Button::updateMouse() {
     glfwGetFramebufferSize(this->buttonWindow, &frameBufferSize.x, &frameBufferSize.y);
     
     glm::ivec2 windowSize;
-    glfwGetFramebufferSize(this->buttonWindow, &windowSize.x, &windowSize.y);
+    glfwGetWindowSize(this->buttonWindow, &windowSize.x, &windowSize.y);
+    
+    mousePos.y = windowSize.y - mousePos.y;
     
     mousePos.x *= (double)frameBufferSize.x / (double)windowSize.x;
     mousePos.y *= (double)frameBufferSize.y / (double)windowSize.y;
@@ -90,14 +99,33 @@ void Button::updateMouse() {
     GLfloat actualButtonWidth = this->buttonWidth / 2.0; //From 0 to 1
     GLfloat actualButtonHeight = this->buttonHeight / 2.0; //From 0 to 1
     GLfloat actualButtonX = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
+<<<<<<< HEAD
     GLfloat actualButtonY = 1.0 - ((1.0 + this->lowerLeftX) / 2.0); //From 0 to 1. Reversed because mousePos is from upper left corner, not lower left.
+=======
+    GLfloat actualButtonY = (1.0 + this->lowerLeftX) / 2.0; //From 0 to 1
+>>>>>>> origin/master
     
+    //Scale the dimensions with the interface box size
+    actualButtonX *= this->interfaceBoxWidth;
+    actualButtonY *= this->interfaceBoxHeight;
     actualButtonWidth *= this->interfaceBoxWidth;
     actualButtonHeight *= this->interfaceBoxHeight;
     
+    actualButtonX += this->interfaceBoxlowerLeftX;
+    actualButtonY += this->interfaceBoxlowerLeftY;
+    
+    std::cout << "actualX: " << actualButtonX << ", actualY: " << actualButtonY << std::endl;
+    std::cout << "actualButtonWidth: " << actualButtonWidth << ", actualButtonHeight: " << actualButtonHeight << std::endl;
+    std::cout << "interfaceBoxLowerLeftX: " << this->interfaceBoxlowerLeftX << ", interfaceBoxLower: " << this->interfaceBoxlowerLeftY << std::endl;
+    std::cout << "interfaceBoxWidth: " << this->interfaceBoxWidth << ", interfaceBoxHeight: " << this->interfaceBoxHeight << std::endl << std::endl;
+    
+//    std::cout << "X: " << actualButtonX << ", Y: " << actualButtonY << std::endl;
+    
     GLfloat color[6];
     
-    if (mousePos.x >= actualButtonX + actualButtonWidth/4 && mousePos.x <= actualButtonX + actualButtonWidth*3/4  && mousePos.y >= actualButtonY + actualButtonHeight/4 && mousePos.y <= actualButtonY + actualButtonHeight*3/4) {
+    //if (mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + (actualButtonWidth * 3.0 / 4.0) && mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + (actualButtonHeight * 3.0 / 4.0)) {
+    
+    if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth)/* && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)*/) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         
