@@ -8,6 +8,8 @@
 
 #include "Button.hpp"
 
+//Public member functions
+
 Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight) {
     
     this->buttonWindow = window;
@@ -71,6 +73,17 @@ void Button::render(bool mouseDown) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
+
+bool Button::isPressed() {
+    if (this->pressed) { //If the button is pressed, reset pressed because it is being dealt with here
+        this->pressed = false;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//Private member functions
 
 void Button::updateMouse(bool mouseDown) {
     glm::dvec2 mousePos;

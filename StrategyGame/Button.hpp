@@ -50,6 +50,13 @@ public:
      */
     void render(bool mouseDown);
     
+    /*!
+     * A function that returns the pressed state of the button as a boolean. If that value is true, then pressed is internally changed to false.
+     *
+     * @return
+     */
+    bool isPressed();
+    
 private:
     //Button properties
     bool pressed = false;
