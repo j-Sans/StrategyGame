@@ -1062,15 +1062,15 @@ glm::ivec2 Game::mouseTile() {
 
 std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
     //Set the selected tile as the one inputted
-    glm::ivec2 selectedTile = glm::ivec2(creatureTile.x(), creatureTile.y());
+    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
     
     //Go through all tiles and find if they are within range
     std::vector<Tile> reachableTiles;
     for (GLuint x = 0; x < this->gameBoard.width(); x++) {
         for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            GLuint distanceBetweenTiles = gameBoard.tileDistances(selectedTile.x, selectedTile.y, x, y);
+            GLuint distanceBetweenTiles = gameBoard.tileDistances(currentTile.x, currentTile.y, x, y);
             
-            if (distanceBetweenTiles <= 2/*this->gameBoard.get(mousePos.x, mousePos.y).creature()->energy()*/) {
+            if (distanceBetweenTiles <= this->gameBoard.get(currentTile.x, currentTile.y).creature()->energy()) {
                 reachableTiles.push_back(this->gameBoard.get(x, y));
             }
         }
