@@ -291,6 +291,8 @@ private:
      */
     void moveCamera();
     
+    void moveAdjacent(int direction);
+    
     /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
