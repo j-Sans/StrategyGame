@@ -151,7 +151,7 @@ void Game::render() {
         this->updateSelected();
     }
     
-    //Update creature offset, so as to implement animation. Done before updating creature buffer so that updates are rendered
+    //Update creature offset, so as to implement animation
     this->updateCreatureOffset();
     
     //Update the creatures
@@ -609,6 +609,9 @@ void Game::updateDamageBuffer() {
 }
 
 void Game::updateCreatureOffset() {
+    //Update creature data array
+    this->setData(false, false, true, false, false, false);
+
     GLfloat displacement = this->creatureSpeed * deltaTime;
     
     //Goes through all tiles and continues moving any that are moving
@@ -650,7 +653,7 @@ void Game::updateCreatureOffset() {
                     this->offsetData[tile] += displacement;
                 }
                 
-                //At 0.4, it has reached the next tile
+                //At 0.0, it has reached the next tile
                 if (this->offsetData[tile] >= 0.0) {
                     this->offsetData[tile] = 0.0;
                     
