@@ -151,11 +151,8 @@ void Game::render() {
         this->updateSelected();
     }
     
-    //Update creature offset, so as to implement animation
-    this->updateCreatureOffset();
-    
-    //Update the creatures
-    this->updateCreatureBuffer();
+    //Update the creatures and their offsets
+    this->updateCreatures();
     
     //Update tile colors
     this->updateColorBuffer();
@@ -532,8 +529,83 @@ void Game::presetTransformations() {
 }
 
 //A function to update the creature VBO. Should be called every frame
-void Game::updateCreatureBuffer() {
+void Game::updateCreatures() {
+    //Set the offset VBO
+    
     //Update creature data array
+    this->setData(false, false, true, false, false, false);
+    
+    GLfloat displacement = this->creatureSpeed * deltaTime;
+    
+    //Goes through all tiles and continues moving any that are moving
+    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+        
+        GLuint direction = this->creatureData[(3 * tile) + 1];
+        
+        glm::ivec2 boardLoc;
+        boardLoc.x = tile / this->gameBoard.width();
+        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
+        
+        if (direction == NORTH || direction == WEST) {
+            //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
+            
+            if (this->offsetData[tile] > 0.0) {
+                this->offsetData[tile] += displacement;
+            }
+            
+            //At 0.4, it has reached the next tile
+            if (this->offsetData[tile] > 0.4) {
+                this->offsetData[tile] = 0.0;
+                
+                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
+            }
+        } else if (direction == SOUTH || direction == EAST) {
+            GLuint index = tile;
+            if (direction == SOUTH) {
+                index += this->gameBoard.width(); //One row below
+            } else if (direction == EAST) {
+                index += 1; //One tile further
+            }
+            
+            if (tile < NUMBER_OF_TILES) {
+                
+                //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
+                
+                //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
+                if (this->offsetData[tile] < 0.0) {
+                    this->offsetData[tile] += displacement;
+                }
+                
+                //At 0.0, it has reached the next tile
+                if (this->offsetData[tile] >= 0.0) {
+                    this->offsetData[tile] = 0.0;
+                    
+                    //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
+                }
+            }
+        }
+    }
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    //Position
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(5);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
+    
+    //Now set the creature VBO
+    
+    //Update creature data array. This is done again so that if the offset was adjusted and the creature moved, that is reflected in the creature VBO and rendered. Otherwise, the creature would momentarily blink and flash back to its previous location
     this->setData(false, false, true, false, false, false);
     
     //First we bind the VAO
@@ -608,78 +680,78 @@ void Game::updateDamageBuffer() {
     glBindVertexArray(0);
 }
 
-void Game::updateCreatureOffset() {
-    //Update creature data array
-    this->setData(false, false, true, false, false, false);
-
-    GLfloat displacement = this->creatureSpeed * deltaTime;
-    
-    //Goes through all tiles and continues moving any that are moving
-    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
-        
-        GLuint direction = this->creatureData[(3 * tile) + 1];
-        
-        glm::ivec2 boardLoc;
-        boardLoc.x = tile / this->gameBoard.width();
-        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
-        
-        if (direction == NORTH || direction == WEST) {
-            //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
-            
-            if (this->offsetData[tile] > 0.0) {
-                this->offsetData[tile] += displacement;
-            }
-            
-            //At 0.4, it has reached the next tile
-            if (this->offsetData[tile] > 0.4) {
-                this->offsetData[tile] = 0.0;
-                
-                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
-            }
-        } else if (direction == SOUTH || direction == EAST) {
-            GLuint index = tile;
-            if (direction == SOUTH) {
-                index += this->gameBoard.width(); //One row below
-            } else if (direction == EAST) {
-                index += 1; //One tile further
-            }
-            
-            if (tile < NUMBER_OF_TILES) {
-            
-                //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
-                
-                //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
-                if (this->offsetData[tile] < 0.0) {
-                    this->offsetData[tile] += displacement;
-                }
-                
-                //At 0.0, it has reached the next tile
-                if (this->offsetData[tile] >= 0.0) {
-                    this->offsetData[tile] = 0.0;
-                    
-                    //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
-                }
-            }
-        }
-    }
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    //Position
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(5);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-    glBindVertexArray(0);
-}
+//void Game::updateCreatureOffset() {
+//    //Update creature data array
+//    this->setData(false, false, true, false, false, false);
+//
+//    GLfloat displacement = this->creatureSpeed * deltaTime;
+//    
+//    //Goes through all tiles and continues moving any that are moving
+//    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+//        
+//        GLuint direction = this->creatureData[(3 * tile) + 1];
+//        
+//        glm::ivec2 boardLoc;
+//        boardLoc.x = tile / this->gameBoard.width();
+//        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
+//        
+//        if (direction == NORTH || direction == WEST) {
+//            //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
+//            
+//            if (this->offsetData[tile] > 0.0) {
+//                this->offsetData[tile] += displacement;
+//            }
+//            
+//            //At 0.4, it has reached the next tile
+//            if (this->offsetData[tile] > 0.4) {
+//                this->offsetData[tile] = 0.0;
+//                
+//                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
+//            }
+//        } else if (direction == SOUTH || direction == EAST) {
+//            GLuint index = tile;
+//            if (direction == SOUTH) {
+//                index += this->gameBoard.width(); //One row below
+//            } else if (direction == EAST) {
+//                index += 1; //One tile further
+//            }
+//            
+//            if (tile < NUMBER_OF_TILES) {
+//            
+//                //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
+//                
+//                //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
+//                if (this->offsetData[tile] < 0.0) {
+//                    this->offsetData[tile] += displacement;
+//                }
+//                
+//                //At 0.0, it has reached the next tile
+//                if (this->offsetData[tile] >= 0.0) {
+//                    this->offsetData[tile] = 0.0;
+//                    
+//                    //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
+//                }
+//            }
+//        }
+//    }
+//    
+//    //First we bind the VAO
+//    glBindVertexArray(this->VAO);
+//    
+//    //Bind the VBO with the data
+//    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
+//    
+//    //Next we tell OpenGL how to interpret the array
+//    //Position
+//    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+//    glEnableVertexAttribArray(5);
+//    
+//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+//    
+//    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+//    glBindVertexArray(0);
+//}
 
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
 void Game::moveCamera() {
@@ -988,7 +1060,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }
     }
-    this->updateCreatureOffset();
+//    this->updateCreatureOffset();
     
     return true;
 }

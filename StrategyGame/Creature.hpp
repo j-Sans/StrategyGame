@@ -9,6 +9,8 @@
 #ifndef Creature_hpp
 #define Creature_hpp
 
+#include <queue>
+
 #define NORTH 0
 #define EAST 1
 #define SOUTH 2
@@ -45,6 +47,12 @@ public:
     //Destructor
     
     //Public properties
+    
+    /*!
+     * An std::queue of the directions that this creature has to take.
+     * In the game class, the next direction will be popped off and the creature will go in that direction.
+     */
+    std::queue<int> directions;
     
     //Public member functions
     
