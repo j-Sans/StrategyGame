@@ -921,6 +921,7 @@ void Game::updateSelected() {
             direction = WEST;
         
         this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(direction);
+        this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
         
 //        this->moveAdjacent(this->selectedTile.x, this->selectedTile.y, direction);
         
