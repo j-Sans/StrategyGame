@@ -546,11 +546,22 @@ void Game::updateCreatures() {
         boardLoc.x = tile / this->gameBoard.width();
         boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
         
-        if (direction == NORTH || direction == WEST) {
+        if ((direction == NORTH || direction == WEST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
             //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
             
+            //If the creature is in the process of moving currently, continue to move it
             if (this->offsetData[tile] > 0.0) {
                 this->offsetData[tile] += displacement;
+            } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
+                //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
+                
+                //Get the new direction that the creature will be travelling in.
+                GLuint newDirection = this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.front();
+                
+                //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
+                this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
+                
+                this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
             }
             
             //At 0.4, it has reached the next tile
@@ -559,7 +570,7 @@ void Game::updateCreatures() {
                 
                 this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
             }
-        } else if (direction == SOUTH || direction == EAST) {
+        } else if ((direction == SOUTH || direction == EAST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
             GLuint index = tile;
             if (direction == SOUTH) {
                 index += this->gameBoard.width(); //One row below
@@ -574,6 +585,16 @@ void Game::updateCreatures() {
                 //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
                 if (this->offsetData[tile] < 0.0) {
                     this->offsetData[tile] += displacement;
+                } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
+                    //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
+                    
+                    //Get the new direction that the creature will be travelling in.
+                    GLuint newDirection = this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.front();
+                    
+                    //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
+                    this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
+                    
+                    this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
                 }
                 
                 //At 0.0, it has reached the next tile
@@ -899,7 +920,9 @@ void Game::updateSelected() {
         else if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y)
             direction = WEST;
         
-        this->moveAdjacent(this->selectedTile.x, this->selectedTile.y, direction);
+        this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(direction);
+        
+//        this->moveAdjacent(this->selectedTile.x, this->selectedTile.y, direction);
         
         /*
         
@@ -1060,7 +1083,6 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }
     }
-//    this->updateCreatureOffset();
     
     return true;
 }
