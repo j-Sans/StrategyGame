@@ -608,21 +608,18 @@ void Game::updateDamageBuffer() {
     glBindVertexArray(0);
 }
 
-void Game::moveAdjacent(int direction) {
-    glm::ivec2 mousePos;
-    
-    mousePos = mouseTile();
+void Game::moveAdjacent(int x, int y, int direction) {
 
-    if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1) {
+    if (x == this->selectedTile.x && y == this->selectedTile.y - 1) {
         direction = NORTH;
     }
-    if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y) {
+    if (x == this->selectedTile.x + 1 && y == this->selectedTile.y) {
         direction = EAST;
     }
-    if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1) {
+    if (x == this->selectedTile.x && y == this->selectedTile.y + 1) {
         direction = SOUTH;
     }
-    if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y) {
+    if (x == this->selectedTile.x - 1 && y == this->selectedTile.y) {
         direction = WEST;
     }
     
@@ -651,6 +648,7 @@ void Game::moveAdjacent(int direction) {
             this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
         }
     }
+    this->updateCreatureOffset();
 }
 
 void Game::updateCreatureOffset() {
@@ -861,9 +859,29 @@ void Game::updateSelected() {
     //Movement
     else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
         
-        std::vector<int> direction;
+        std::vector<int> netDirection;
+        netDirection.push_back(mousePos.x - selectedTile.x);
+        netDirection.push_back(mousePos.y - selectedTile.y);
         
+        for (int x = 0; x < abs(netDirection[0]); x++) {
+            if (netDirection[0] > 0) {
+                moveAdjacent(, int y, int direction);
+            }
+            else (int y = 0; y < abs(netDirection[0]); y++) {
+                moveAdjacent();
+            }
+        }
+        for (int y = 0; y < abs(netDirection[1]); y++) {
+            if (netDirection[1] > 0) {
+                moveAdjacent();
+            }
+            else {
+                moveAdjacent();
+            }
+        }
         
+        void moveAdjacent(int x, int y, int direction);
+            
         //Reset all tiles
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
