@@ -291,8 +291,6 @@ private:
      */
     void moveCamera();
     
-    void moveAdjacent(int x, int y, int direction);
-    
     /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
@@ -309,6 +307,17 @@ private:
      * A function to move to the next player's turn.
      */
     void incrementActivePlayer();
+    
+    /*!
+     * A function that moves the creature at the designated location in the designated direction.
+     *
+     * @param x The x location of the creature in the board.
+     * @param y The y location of the creature in the board.
+     * @direction The direction to move the creature in.
+     *
+     * @return Whether the creature was moved.
+     */
+    bool moveAdjacent(GLuint x, GLuint y, int direction);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.

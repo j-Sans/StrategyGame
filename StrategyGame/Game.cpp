@@ -608,49 +608,6 @@ void Game::updateDamageBuffer() {
     glBindVertexArray(0);
 }
 
-void Game::moveAdjacent(int x, int y, int direction) {
-
-    if (x == this->selectedTile.x && y == this->selectedTile.y - 1) {
-        direction = NORTH;
-    }
-    if (x == this->selectedTile.x + 1 && y == this->selectedTile.y) {
-        direction = EAST;
-    }
-    if (x == this->selectedTile.x && y == this->selectedTile.y + 1) {
-        direction = SOUTH;
-    }
-    if (x == this->selectedTile.x - 1 && y == this->selectedTile.y) {
-        direction = WEST;
-    }
-    
-    //Set the direction that was found at the selected creature
-    this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
-    
-    //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
-    //For these directions, the creature is moved after, in the function that updates the offset data
-    if (direction == NORTH || direction == WEST)
-        this->offsetData[(this->selectedTile.x * this->gameBoard.width()) + this->selectedTile.y] = (this->creatureSpeed * this->deltaTime);
-    
-    //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
-    //For these directions, the creature is moved here, and then the offset is slowly updated to follow
-    if (direction == SOUTH || direction == EAST) {
-        GLuint tile; //The location in the data array
-        
-        if (direction == SOUTH) {
-            tile = (this->selectedTile.x * this->gameBoard.width()) + (this->selectedTile.y + 1); //One row below
-        } else if (direction == EAST) {
-            tile = ((this->selectedTile.x + 1) * this->gameBoard.width()) + this->selectedTile.y; //One tile further
-        }
-        
-        if (tile < NUMBER_OF_TILES) {
-            this->offsetData[tile] = -0.4; //-= (this->creatureSpeed * this->deltaTime);
-            
-            this->gameBoard.moveCreatureByDirection(this->selectedTile.x, this->selectedTile.y, direction);
-        }
-    }
-    this->updateCreatureOffset();
-}
-
 void Game::updateCreatureOffset() {
     //Update creature data array
     this->setData(false, false, true, false, false, false);
@@ -859,6 +816,21 @@ void Game::updateSelected() {
     //Movement
     else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
         
+        int direction;
+        
+        if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1)
+            direction = NORTH;
+        else if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y)
+            direction = EAST;
+        else if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1)
+            direction = SOUTH;
+        else if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y)
+            direction = WEST;
+        
+        this->moveAdjacent(this->selectedTile.x, this->selectedTile.y, direction);
+        
+        /*
+        
         std::vector<int> netDirection;
         netDirection.push_back(mousePos.x - selectedTile.x);
         netDirection.push_back(mousePos.y - selectedTile.y);
@@ -881,7 +853,9 @@ void Game::updateSelected() {
         }
         
         void moveAdjacent(int x, int y, int direction);
-            
+        
+        */
+        
         //Reset all tiles
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
             for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
@@ -950,6 +924,73 @@ void Game::incrementActivePlayer() {
     
     if (this->activePlayer >= NUMBER_OF_PLAYERS)
         this->activePlayer = 0;
+}
+
+bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
+    //Return false if there is no creature at the designated spot to movel
+    if (this->gameBoard.get(x, y).creature() == nullptr)
+        return false;
+    
+    int newX, newY;
+    
+    if (direction == NORTH) {
+        newX = x;
+        newY = y - 1;
+        
+        if (newY < 0)
+            return false;
+    } else if (direction == EAST) {
+        newX = x + 1;
+        newY = y;
+        
+        if (newX >= this->gameBoard.width())
+            return false;
+    } else if (direction == SOUTH) {
+        newX = x;
+        newY = y + 1;
+        
+        if (newY >= this->gameBoard.height(x))
+            return false;
+    } else if (direction == WEST) {
+        newX = x - 1;
+        newY = y;
+        
+        if (newX < 0)
+            return false;
+    }
+    
+    if (!this->gameBoard.get(newX, newY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
+        return false;
+    }
+    
+    //Set the direction that was found at the selected creature
+    this->gameBoard.setDirection(x, y, direction);
+    
+    //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
+    //For these directions, the creature is moved after, in the function that updates the offset data
+    if (direction == NORTH || direction == WEST)
+        this->offsetData[(x * this->gameBoard.width()) + y] = (this->creatureSpeed * this->deltaTime);
+    
+    //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
+    //For these directions, the creature is moved here, and then the offset is slowly updated to follow
+    if (direction == SOUTH || direction == EAST) {
+        GLuint tile; //The location in the data array
+        
+        if (direction == SOUTH) {
+            tile = (x * this->gameBoard.width()) + (y + 1); //One row below
+        } else if (direction == EAST) {
+            tile = ((x + 1) * this->gameBoard.width()) + y; //One tile further
+        }
+        
+        if (tile < NUMBER_OF_TILES) {
+            this->offsetData[tile] = -0.4; //-= (this->creatureSpeed * this->deltaTime);
+            
+            this->gameBoard.moveCreatureByDirection(x, y, direction);
+        }
+    }
+    this->updateCreatureOffset();
+    
+    return true;
 }
 
 //Calculates the tile that the mouse is over
