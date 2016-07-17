@@ -1361,7 +1361,65 @@ glm::ivec2 Game::mouseTile() {
 
 std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
     //Set the selected tile as the one inputted
-    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
+//    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
+    
+    if (creatureTile.creature() == nullptr) {
+        std::vector<Tile> emptyTileVector;
+        return emptyTileVector;
+    } else {
+        Creature creature = *creatureTile.creature();
+        
+        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
+        
+        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile,creatureTile.creature()->energy()));
+        
+        bool newTilesFound = true;
+        
+        //Keep iterating through until no new tiles can be reached
+        while (newTilesFound) {
+            newTilesFound = false;
+            for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+                if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+                
+                    Tile tile = reachedTiles[tileIterator].first;
+                    
+                    //North
+                    if (tile.y() > 0 && this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                        newTilesFound = true;
+                    }
+                    
+                    //East
+                    if (tile.x() > 0 && this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                        newTilesFound = true;
+                    }
+                    
+                    //South
+                    if (tile.y() < this->gameBoard.height(tile.x()) - 1 && this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                        newTilesFound = true;
+                    }
+                    
+                    //West
+                    if (tile.y() < this->gameBoard.width() - 1 && this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                        newTilesFound = true;
+                    }
+                }
+            }
+        }
+        
+        //Now turn the reached tile vector of pairs into a vector of just tiles
+        std::vector<Tile> reachedTileReturnVector;
+        
+        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
+        }
+        return reachedTileReturnVector;
+    }
+    
+    /*
     
     //Go through all tiles and find if they are within range
     std::vector<Tile> reachableTiles;
@@ -1375,6 +1433,7 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
         }
     }
     return reachableTiles;
+     */
 }
 
 //A function GLFW can call when a key event occurs
