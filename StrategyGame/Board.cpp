@@ -57,7 +57,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         } else { //Can't move to the tile
             return false;
         }
-    } else if (direction == WEST) {
+    } else if (direction == EAST) {
         if (x > 0 && !this->gameBoard[x - 1][y].occupied()) {
             //Add the creature to the new tile
             this->gameBoard[x - 1][y].setCreature(this->gameBoard[x][y].creature());
@@ -101,7 +101,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
         } else {
             return false;
         }
-    } else if (direction == EAST) {
+    } else if (direction == WEST) {
         if (x < this->gameBoard.size() - 1 && !this->gameBoard[x + 1][y].occupied()) {
             //Add the creature to the new tile
             this->gameBoard[x + 1][y].setCreature(this->gameBoard[x][y].creature());

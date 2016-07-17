@@ -148,7 +148,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         for (int a = 0; a < 4; a++) {
             rect[a].y += creatureOffset[0];
         }
-    } else if (creatureDirection[0] == EAST) {
+    } else if (creatureDirection[0] == WEST) {
         for (int a = 0; a < 4; a++) {
             rect[a].x -= creatureOffset[0];
         }
@@ -156,7 +156,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         for (int a = 0; a < 4; a++) {
             rect[a].y -= creatureOffset[0];
         }
-    } else if (creatureDirection[0] == WEST) {
+    } else if (creatureDirection[0] == EAST) {
         for (int a = 0; a < 4; a++) {
             rect[a].x += creatureOffset[0];
         }
@@ -178,7 +178,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
             for (int a = 0; a < 4; a++) {
                 tileDiamond[a].y += creatureOffset[0];
             }
-        } else if (creatureDirection[0] == EAST) {
+        } else if (creatureDirection[0] == WEST) {
             for (int a = 0; a < 4; a++) {
                 tileDiamond[a].x -= creatureOffset[0];
             }
@@ -186,7 +186,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
             for (int a = 0; a < 4; a++) {
                 tileDiamond[a].y -= creatureOffset[0];
             }
-        } else if (creatureDirection[0] == WEST) {
+        } else if (creatureDirection[0] == EAST) {
             for (int a = 0; a < 4; a++) {
                 tileDiamond[a].x += creatureOffset[0];
             }
@@ -285,7 +285,7 @@ void drawCircle(vec4 position) {
         for (int a = 0; a < 4; a++) {
             rect[a].y += creatureOffset[0];
         }
-    } else if (creatureDirection[0] == EAST) {
+    } else if (creatureDirection[0] == WEST) {
         for (int a = 0; a < 4; a++) {
             rect[a].x -= creatureOffset[0];
         }
@@ -293,7 +293,7 @@ void drawCircle(vec4 position) {
         for (int a = 0; a < 4; a++) {
             rect[a].y -= creatureOffset[0];
         }
-    } else if (creatureDirection[0] == WEST) {
+    } else if (creatureDirection[0] == EAST) {
         for (int a = 0; a < 4; a++) {
             rect[a].x += creatureOffset[0];
         }

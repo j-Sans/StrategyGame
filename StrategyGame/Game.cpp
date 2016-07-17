@@ -546,7 +546,7 @@ void Game::updateCreatures() {
         boardLoc.x = tile / this->gameBoard.width();
         boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
         
-        if ((direction == NORTH || direction == WEST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
+        if ((direction == NORTH || direction == EAST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
             //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
             
             //If the creature is in the process of moving currently, continue to move it
@@ -570,11 +570,11 @@ void Game::updateCreatures() {
                 
                 this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
             }
-        } else if ((direction == SOUTH || direction == EAST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
+        } else if ((direction == SOUTH || direction == WEST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
             GLuint index = tile;
             if (direction == SOUTH) {
                 index += this->gameBoard.width(); //One row below
-            } else if (direction == EAST) {
+            } else if (direction == WEST) {
                 index += 1; //One tile further
             }
             
@@ -716,7 +716,7 @@ void Game::updateDamageBuffer() {
 //        boardLoc.x = tile / this->gameBoard.width();
 //        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
 //        
-//        if (direction == NORTH || direction == WEST) {
+//        if (direction == NORTH || direction == EAST) {
 //            //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
 //            
 //            if (this->offsetData[tile] > 0.0) {
@@ -729,11 +729,11 @@ void Game::updateDamageBuffer() {
 //                
 //                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
 //            }
-//        } else if (direction == SOUTH || direction == EAST) {
+//        } else if (direction == SOUTH || direction == WEST) {
 //            GLuint index = tile;
 //            if (direction == SOUTH) {
 //                index += this->gameBoard.width(); //One row below
-//            } else if (direction == EAST) {
+//            } else if (direction == WEST) {
 //                index += 1; //One tile further
 //            }
 //            
@@ -862,8 +862,8 @@ void Game::updateSelected() {
                 else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
                     this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
             }
-            
-            //West tile
+        
+            //East tile
             if (mousePos.x > 0) {
                 if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
                     this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
@@ -879,7 +879,7 @@ void Game::updateSelected() {
                     this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
             }
             
-            //East tile
+            //West tile
             if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
                 this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
             else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
@@ -924,11 +924,11 @@ void Game::updateSelected() {
         if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1)
             direction = NORTH;
         else if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y)
-            direction = EAST;
+            direction = WEST;
         else if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1)
             direction = SOUTH;
         else if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y)
-            direction = WEST;
+            direction = EAST;
         
         this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(direction);
         this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
@@ -950,13 +950,13 @@ void Game::updateSelected() {
                  4. We need the animation to not skip to the last tile movement animation when it reaches its destination.
                  5.
                 */
-                std::cout << "Called Travel East\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
+                std::cout << "Called Travel West\n";
+                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
                 selectedTile.x++;
             }
             else {
-                std::cout << "Called Travel West\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
+                std::cout << "Called Travel East\n";
+                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
                 selectedTile.x--;
             }
             
@@ -1032,7 +1032,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
         
         if (newY < 0)
             return false;
-    } else if (direction == EAST) {
+    } else if (direction == WEST) {
         newX = x + 1;
         newY = y;
         
@@ -1044,7 +1044,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
         
         if (newY >= this->gameBoard.height(x))
             return false;
-    } else if (direction == WEST) {
+    } else if (direction == EAST) {
         newX = x - 1;
         newY = y;
         
@@ -1062,17 +1062,17 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
     
     //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
     //For these directions, the creature is moved after, in the function that updates the offset data
-    if (direction == NORTH || direction == WEST)
+    if (direction == NORTH || direction == EAST)
         this->offsetData[(x * this->gameBoard.width()) + y] = (this->movementAnimationSpeed * this->deltaTime);
     
     //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
     //For these directions, the creature is moved here, and then the offset is slowly updated to follow
-    if (direction == SOUTH || direction == EAST) {
+    if (direction == SOUTH || direction == WEST) {
         GLuint tile; //The location in the data array
         
         if (direction == SOUTH) {
             tile = (x * this->gameBoard.width()) + (y + 1); //One row below
-        } else if (direction == EAST) {
+        } else if (direction == WEST) {
             tile = ((x + 1) * this->gameBoard.width()) + y; //One tile further
         }
         
