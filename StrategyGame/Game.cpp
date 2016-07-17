@@ -1032,9 +1032,9 @@ void Game::processButton(std::string action) {
              * This function goes through the string and extracts those values and constructs a creature based on them.
              */
             
-            Race race;
-            unsigned int values[6] = {0, 0, 0, 0, 0, 0};
-            unsigned int direction;
+            Race race = Human;
+            GLuint values[6] = {0, 0, 0, 0, 0, 0};
+            GLuint direction;
             
             action.erase(0, 9); //Gets rid of the "creature," from the string
             
@@ -1065,12 +1065,12 @@ void Game::processButton(std::string action) {
             
             //Extract the numerical values of the creature
             
-            for (int valueNum = 0; valueNum < 6; valueNum++) {
+            for (GLuint valueNum = 0; valueNum < 6; valueNum++) {
                 //Find the position of the next comma, which is the number of digits before that comma
-                unsigned int numDigits = (unsigned int)action.find(',');
+                GLuint numDigits = (GLuint)action.find(',');
                 
-                for (int place = numDigits - 1; place >= 0; place--) {
-                    values[valueNum] += ((int)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                for (GLint place = numDigits - 1; place >= 0; place--) {
+                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
                     action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
                 }
                 
@@ -1098,8 +1098,8 @@ void Game::processButton(std::string action) {
                     this->gameBoard.setCreature(this->selectedTile.x, this->selectedTile.y, newCreature);
                     
                     //Reset all tiles to be unselected now that the creature has been added
-                    for (unsigned int x = 0; x < this->gameBoard.width(); x++) {
-                        for (unsigned int y = 0; y < this->gameBoard.height(x); y++) {
+                    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+                        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
                             this->gameBoard.setStyle(x, y, Regular);
                         }
                     }
