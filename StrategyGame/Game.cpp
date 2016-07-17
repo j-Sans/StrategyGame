@@ -909,6 +909,15 @@ void Game::updateSelected() {
     //Movement
     else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
         
+        /*
+         * To add update:
+         *
+         * Allow clicking of any reachable tile.
+         * Find the path to that tile.
+         * Send that path to the creature.
+         * Update reachable tiles to only get tiles that are actually reachable.
+         */
+        
         int direction;
         
         if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1)
@@ -922,8 +931,6 @@ void Game::updateSelected() {
         
         this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(direction);
         this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
-        
-//        this->moveAdjacent(this->selectedTile.x, this->selectedTile.y, direction);
         
         /*
         
@@ -1012,6 +1019,77 @@ void Game::processButton(std::string action) {
         //Increment the turn if a full player cycle has occurred
         if (activePlayer == 0)
             turn++;
+    } else if (action.find("creature") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+        //Interpret the string to find out what kind of creature
+        
+        /* The contents of the button string are:
+         * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[cost],[start direction]
+         *
+         * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
+         *
+         * This function goes through the string and extracts those values and constructs a creature based on them.
+         */
+        
+        Race race;
+        unsigned int values[6];
+        unsigned int direction;
+        
+        action.erase(0, 9); //Gets rid of the "creature," from the string
+        
+        //Extract the race of the creature
+        
+        if (action.compare(0, 5, "Human") == 0) {
+            race = Human;
+            action.erase(0, 6); //Gets rid of "Human,". This is 1 more than the number of characters in "Human" to also get rid of the comma. Same is true with the other races.
+        } else if (action.compare(0, 3, "Elf") == 0) {
+            race = Elf;
+            action.erase(0, 4);
+        } else if (action.compare(0, 5, "Dwarf") == 0) {
+            race = Dwarf;
+            action.erase(0, 6);
+        } else if (action.compare(0, 3, "Orc") == 0) {
+            race = Orc;
+            action.erase(0, 4);
+        } else if (action.compare(0, 6, "Goblin") == 0) {
+            race = Goblin;
+            action.erase(0, 7);
+        } else if (action.compare(0, 6, "Undead") == 0) {
+            race = Undead;
+            action.erase(0, 7);
+        } else if (action.compare(0, 7, "Vampire") == 0) {
+            race = Vampire;
+            action.erase(0, 8);
+        }
+        
+        //Extract the numerical values of the creature
+        
+        for (int valueNum = 0; valueNum < 6; valueNum++) {
+            //Find the position of the next comma, and use that to figure out the number of digits
+            unsigned int nextCommaPos = (unsigned int)action.find(',');
+            unsigned int numDigits = (int)log(nextCommaPos);
+            
+            for (int place = pow(10, numDigits - 1); place >= 1; place /= 10) {
+                values[valueNum] += (int)(numDigits / place) * place; //This is the value of the digit, ie. in 27, the tens digit added is (int)(27 / 10) * 10 = 2 * 10 = 20
+            }
+            
+            action.erase(nextCommaPos + 1); //Get rid of all of the digits before the comma, plus the comma itself too
+        }
+        
+        if (action.compare(0, 5, "NORTH") == 0) {
+            direction = NORTH;
+            action.erase(0, 6); //Gets rid of "NORTH,". This is 1 more than the number of characters in "NORTH" to also get rid of the comma. Same is true with the other directions.
+        } else if (action.compare(0, 4, "EAST") == 0) {
+            direction = EAST;
+            action.erase(0, 5);
+        } else if (action.compare(0, 5, "SOUTH") == 0) {
+            direction = SOUTH;
+            action.erase(0, 6);
+        } else if (action.compare(0, 4, "WEST") == 0) {
+            direction = WEST;
+            action.erase(0, 5);
+        }
+
+        Creature(race, values[0], values[1], values[2], values[3], values[4], values[5], direction, this->activePlayer);
     }
 }
 
