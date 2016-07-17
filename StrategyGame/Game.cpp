@@ -889,12 +889,10 @@ void Game::updateSelected() {
           //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
       
         if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
-            std::vector<Tile> reachableTiles = getReachableTiles(gameBoard.get(mousePos.x, mousePos.y));
+            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
             
             Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
             for (GLuint a = 0; a < reachableTiles.size(); a++) {
-                
-                //THE FOLLOWING LINES ARE THE PROBLEM AREA
                 if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
                 } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
@@ -1373,43 +1371,34 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
         
         reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile,creatureTile.creature()->energy()));
         
-        bool newTilesFound = true;
-        
-        //Keep iterating through until no new tiles can be reached
-        while (newTilesFound) {
-            newTilesFound = false;
-            for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-                if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
+        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+            
+                Tile tile = reachedTiles[tileIterator].first;
                 
-                    Tile tile = reachedTiles[tileIterator].first;
-                    
-                    //North
-                    if (tile.y() > 0 && this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                        newTilesFound = true;
-                    }
-                    
-                    //East
-                    if (tile.x() > 0 && this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                        newTilesFound = true;
-                    }
-                    
-                    //South
-                    if (tile.y() < this->gameBoard.height(tile.x()) - 1 && this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                        newTilesFound = true;
-                    }
-                    
-                    //West
-                    if (tile.y() < this->gameBoard.width() - 1 && this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                        newTilesFound = true;
-                    }
+                //North
+                if (tile.y() > 0 && this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
+                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                }
+                
+                //East
+                if (tile.x() > 0 && this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
+                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                }
+                
+                //South
+                if (tile.y() < this->gameBoard.height(tile.x()) - 1 && this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
+                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                }
+                
+                //West
+                if (tile.y() < this->gameBoard.width() - 1 && this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
+                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                 }
             }
         }
-        
+    
         //Now turn the reached tile vector of pairs into a vector of just tiles
         std::vector<Tile> reachedTileReturnVector;
         
