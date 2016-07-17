@@ -1020,7 +1020,7 @@ void Game::processButton(std::string action) {
         if (activePlayer == 0)
             turn++;
     } else if (action.find("creature") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
-        if (this->selectedTile != NO_SELECTION && this->selectedTile != INTERFACE_BOX_SELECTION && this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).occupied()) {
+        if (this->selectedTile != NO_SELECTION && this->selectedTile != INTERFACE_BOX_SELECTION && !this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).occupied()) {
         
             //Interpret the string to find out what kind of creature
             
@@ -1101,6 +1101,11 @@ void Game::processButton(std::string action) {
                     std::cout << "Error adding creature" << std::endl;
                 }
             }
+            
+            if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature() != 0)
+                std::cout << "Creature added!" << std::endl;
+            else
+                std::cout << "No creature added." << std::endl;
         }
     }
 }
