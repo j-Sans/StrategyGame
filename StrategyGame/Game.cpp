@@ -1357,6 +1357,11 @@ glm::ivec2 Game::mouseTile() {
     return tileIndexVec;
 }
 
+/*
+ * TO ADD:
+ *
+ * CHECK IF THE OCCUPYING CREATURE ON REACHABLE SQUARES ARE ATTACKABLE SPECIFICALLY BY THE CREATURE.
+ */
 std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
     //Set the selected tile as the one inputted
 //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
@@ -1378,23 +1383,39 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
                 Tile tile = reachedTiles[tileIterator].first;
                 
                 //North
-                if (tile.y() > 0 && this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
-                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                if (tile.y() > 0) {
+                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    } else if (this->gameBoard.get(tile.x(), tile.y() - 1).occupied()) {
+                       reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
+                    }
                 }
                 
                 //East
-                if (tile.x() > 0 && this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
-                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                if (tile.x() > 0) {
+                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    } else if (this->gameBoard.get(tile.x() - 1, tile.y()).occupied()) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
+                    }
                 }
                 
                 //South
-                if (tile.y() < this->gameBoard.height(tile.x()) - 1 && this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
-                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
+                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    } else if (this->gameBoard.get(tile.x(), tile.y() + 1).occupied()) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
+                    }
                 }
                 
                 //West
-                if (tile.y() < this->gameBoard.width() - 1 && this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-                    reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                if (tile.y() < this->gameBoard.width() - 1) {
+                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    } else if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
+                    }
                 }
             }
         }
