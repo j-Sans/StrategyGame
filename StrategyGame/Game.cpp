@@ -1033,7 +1033,7 @@ void Game::processButton(std::string action) {
              */
             
             Race race;
-            unsigned int values[6];
+            unsigned int values[6] = {0, 0, 0, 0, 0, 0};
             unsigned int direction;
             
             action.erase(0, 9); //Gets rid of the "creature," from the string
@@ -1066,15 +1066,15 @@ void Game::processButton(std::string action) {
             //Extract the numerical values of the creature
             
             for (int valueNum = 0; valueNum < 6; valueNum++) {
-                //Find the position of the next comma, and use that to figure out the number of digits
-                unsigned int nextCommaPos = (unsigned int)action.find(',');
-                unsigned int numDigits = (int)log(nextCommaPos);
+                //Find the position of the next comma, which is the number of digits before that comma
+                unsigned int numDigits = (unsigned int)action.find(',');
                 
-                for (int place = pow(10, numDigits - 1); place >= 1; place /= 10) {
-                    values[valueNum] += (int)(numDigits / place) * place; //This is the value of the digit, ie. in 27, the tens digit added is (int)(27 / 10) * 10 = 2 * 10 = 20
+                for (int place = numDigits - 1; place >= 0; place--) {
+                    values[valueNum] += ((int)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
                 }
                 
-                action.erase(nextCommaPos + 1); //Get rid of all of the digits before the comma, plus the comma itself too
+                action.erase(0, 1); //Get rid of the comma
             }
             
             if (action.compare(0, 5, "NORTH") == 0) {
@@ -1096,16 +1096,21 @@ void Game::processButton(std::string action) {
             if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).passableByCreature(newCreature)) {
                 try {
                     this->gameBoard.setCreature(this->selectedTile.x, this->selectedTile.y, newCreature);
+                    
+                    //Reset all tiles to be unselected now that the creature has been added
+                    for (unsigned int x = 0; x < this->gameBoard.width(); x++) {
+                        for (unsigned int y = 0; y < this->gameBoard.height(x); y++) {
+                            this->gameBoard.setStyle(x, y, Regular);
+                        }
+                    }
+                    
+                    this->selectedTile = NO_SELECTION;
+                    
                 } catch (std::exception) {
                     //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
                     std::cout << "Error adding creature" << std::endl;
                 }
             }
-            
-            if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature() != 0)
-                std::cout << "Creature added!" << std::endl;
-            else
-                std::cout << "No creature added." << std::endl;
         }
     }
 }
