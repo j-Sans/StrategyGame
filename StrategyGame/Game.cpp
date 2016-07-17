@@ -561,7 +561,7 @@ void Game::updateCreatures() {
                 //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
                 this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
                 
-                this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
+                //this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
             }
             
             //At 0.4, it has reached the next tile
@@ -594,7 +594,7 @@ void Game::updateCreatures() {
                     //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
                     this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
                     
-                    this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
+                    //this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
                 }
                 
                 //At 0.0, it has reached the next tile
@@ -918,6 +918,7 @@ void Game::updateSelected() {
          * Update reachable tiles to only get tiles that are actually reachable.
          */
         
+        /*
         int direction;
         
         if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1)
@@ -931,8 +932,7 @@ void Game::updateSelected() {
         
         this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(direction);
         this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
-        
-        /*
+        */
         
         std::vector<int> netDirection;
         netDirection.push_back(mousePos.x - selectedTile.x);
@@ -940,24 +940,45 @@ void Game::updateSelected() {
         
         for (int x = 0; x < abs(netDirection[0]); x++) {
             if (netDirection[0] > 0) {
-                moveAdjacent(, int y, int direction);
+                /*
+                In this space, we need to move multiple tiles in one direction.
+                 To do this, we need to:
+                 1. Every time we finish moving a tile, to move to the next adjacent tile, we need to set the tile we use as the parameter for the moveAdjacent function to the tile we just moved to in order for the moveAdjacent function to keep working.
+                 2. We also need the creature to be at the tile in order for the moveAdjacent function to not return false.
+                 3. The creature's direction needs to be input as well.
+                 4. We need the animation to not skip to the last tile movement animation when it reaches its destination.
+                 5.
+                */
+                
+                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
+                bool moveAdjacentSuccessful = moveAdjacent(selectedTile.x, selectedTile.y, EAST);
+                std::cout << moveAdjacentSuccessful;
+                this->selectedTile.x += 1;
             }
-            else (int y = 0; y < abs(netDirection[0]); y++) {
-                moveAdjacent();
+            else {
+                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
+                bool moveAdjacentSuccessful = moveAdjacent(selectedTile.x, selectedTile.y, WEST);
+                std::cout << moveAdjacentSuccessful;
+                this->selectedTile.x -= 1;
             }
+            std::cout << "horizontal\n";
         }
         for (int y = 0; y < abs(netDirection[1]); y++) {
             if (netDirection[1] > 0) {
-                moveAdjacent();
+                moveAdjacent(selectedTile.x, selectedTile.y, SOUTH);
+                bool moveAdjacentSuccessful = moveAdjacent(selectedTile.x, selectedTile.y, SOUTH);
+                std::cout << moveAdjacentSuccessful;
+                this->selectedTile.y += 1;
             }
             else {
-                moveAdjacent();
+                moveAdjacent(selectedTile.x, selectedTile.y, NORTH);
+                bool moveAdjacentSuccessful = moveAdjacent(selectedTile.x, selectedTile.y, NORTH);
+                std::cout << moveAdjacentSuccessful;
+                this->selectedTile.y -= 1;
             }
+            std::cout << "vertical\n";
         }
         
-        void moveAdjacent(int x, int y, int direction);
-        
-        */
         
         //Reset all tiles
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
@@ -1123,7 +1144,7 @@ void Game::incrementActivePlayer() {
 }
 
 bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
-    //Return false if there is no creature at the designated spot to movel
+    //Return false if there is no creature at the designated spot to move
     if (this->gameBoard.get(x, y).creature() == nullptr)
         return false;
     
@@ -1154,6 +1175,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
         if (newX < 0)
             return false;
     }
+    std::cout << "moved\n";
     
     if (!this->gameBoard.get(newX, newY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
         return false;
