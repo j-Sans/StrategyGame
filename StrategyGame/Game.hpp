@@ -333,6 +333,18 @@ private:
     std::vector<Tile> getReachableTiles(Tile creatureTile);
     
     /*!
+     * A function to create a path from one tile to another tile in the fewest possible moves. An empty vector is returned if problems arise. See "return" for details.
+     *
+     * @param x The current x coordinate on the board of the creature to move.
+     * @param y The current y coordinate on the board of the creature to move.
+     * @param destinationX The x coordinate of the destination to which the creature will be moved.
+     * @param destinationY The y coordinate of the destination to which the creature will be moved.
+     *
+     * @return An std::vector of direction macros that say the order of directions for the creature to travel. If the vector is empty, there was no possible path with the alloted energy, the parameters were invalid, there was no creature to move, or the destination was not available
+     */
+    std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
+    
+    /*!
      * A function GLFW can call when a key event occurs.
      *
      * @param window The GLFWwindow object.

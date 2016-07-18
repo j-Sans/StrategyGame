@@ -916,6 +916,8 @@ void Game::updateSelected() {
          * Update reachable tiles to only get tiles that are actually reachable.
          */
         
+        
+        
         /*
         int direction;
         
@@ -1374,7 +1376,7 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
         
         std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
         
-        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile,creatureTile.creature()->energy()));
+        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->energy()));
         
         //Keep pushing the vector back with new tiles, that the for loop will eventually go through
         for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
@@ -1444,6 +1446,96 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
     }
     return reachableTiles;
      */
+}
+
+std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
+    if (x >= this->gameBoard.width()) {
+        std::vector<GLuint> emptyVector;
+        return emptyVector;
+    } else if (y >= this->gameBoard.height(x)) {
+        std::vector<GLuint> emptyVector;
+        return emptyVector;
+    } else if (destinationX >= this->gameBoard.width()) {
+        std::vector<GLuint> emptyVector;
+        return emptyVector;
+    } else if (destinationY >= this->gameBoard.height(destinationX)) {
+        std::vector<GLuint> emptyVector;
+        return emptyVector;
+    } else if (this->gameBoard.get(x, y).creature() == nullptr) {
+        std::vector<GLuint> emptyVector;
+        return emptyVector;
+    } else if (!this->gameBoard.get(destinationX, destinationY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
+        std::vector<GLuint> emptyVector;
+        return emptyVector;
+    }
+    
+    Creature creature = *this->gameBoard.get(x, y).creature();
+    
+    std::queue<std::vector<Tile> > possiblePaths;
+    
+    std::vector<Tile> firstTile { this->gameBoard.get(x, y) };
+    
+    possiblePaths.push(firstTile);
+    
+    std::vector<Tile> foundPath;
+    
+    while (possiblePaths.size() > 0) {
+        
+        std::vector<Tile> path = possiblePaths.front();
+        
+        if (path.back().x() == destinationX && path.back().y() == destinationY) {
+            foundPath = path;
+            break;
+        }
+        
+        if (possiblePaths.front().size() < creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+            
+            Tile tile = path.back();
+            
+            //North
+            if (tile.y() > 0) {
+                if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
+                    std::vector<Tile> nextPath = path;
+                    nextPath.push_back(this->gameBoard.get(tile.x(), tile.y() - 1));
+                }
+            }
+            
+            //East
+            if (tile.x() > 0) {
+                if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
+                    std::vector<Tile> nextPath = path;
+                    nextPath.push_back(this->gameBoard.get(tile.x() - 1, tile.y()));
+                }
+            }
+            
+            //South
+            if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
+                if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
+                    std::vector<Tile> nextPath = path;
+                    nextPath.push_back(this->gameBoard.get(tile.x(), tile.y() + 1));
+                }
+            }
+            
+            //West
+            if (tile.y() < this->gameBoard.width() - 1) {
+                if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
+                    std::vector<Tile> nextPath = path;
+                    nextPath.push_back(this->gameBoard.get(tile.x() + 1, tile.y()));
+                }
+            }
+        }
+        
+        possiblePaths.pop();
+    }
+    
+    std::vector<GLuint> directions;
+    
+    for (GLuint a = 0; a < foundPath.size(); a++) {
+        if (foundPath[a].x() == )
+    }
+    
+    foundPath;
+    
 }
 
 //A function GLFW can call when a key event occurs
