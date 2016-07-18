@@ -469,9 +469,6 @@ void Game::setBuffers() {
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
-    
-    //Uncomment for wireframe mode
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Game::setInterface() {
@@ -558,8 +555,6 @@ void Game::updateCreatures() {
             if (this->offsetData[tile] > 0.0) {
                 this->offsetData[tile] += displacement;
             } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
-                
-                std::cout << "Moving" << std::endl;
                 
                 //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
                 
@@ -714,79 +709,6 @@ void Game::updateDamageBuffer() {
     glBindVertexArray(0);
 }
 
-//void Game::updateCreatureOffset() {
-//    //Update creature data array
-//    this->setData(false, false, true, false, false, false);
-//
-//    GLfloat displacement = this->movementAnimationSpeed * deltaTime;
-//    
-//    //Goes through all tiles and continues moving any that are moving
-//    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
-//        
-//        GLuint direction = this->creatureData[(3 * tile) + 1];
-//        
-//        glm::ivec2 boardLoc;
-//        boardLoc.x = tile / this->gameBoard.width();
-//        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
-//        
-//        if (direction == NORTH || direction == EAST) {
-//            //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
-//            
-//            if (this->offsetData[tile] > 0.0) {
-//                this->offsetData[tile] += displacement;
-//            }
-//            
-//            //At 0.4, it has reached the next tile
-//            if (this->offsetData[tile] > 0.4) {
-//                this->offsetData[tile] = 0.0;
-//                
-//                this->gameBoard.moveCreatureByDirection(boardLoc.x, boardLoc.y, direction);
-//            }
-//        } else if (direction == SOUTH || direction == WEST) {
-//            GLuint index = tile;
-//            if (direction == SOUTH) {
-//                index += this->gameBoard.width(); //One row below
-//            } else if (direction == WEST) {
-//                index += 1; //One tile further
-//            }
-//            
-//            if (tile < NUMBER_OF_TILES) {
-//            
-//                //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
-//                
-//                //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
-//                if (this->offsetData[tile] < 0.0) {
-//                    this->offsetData[tile] += displacement;
-//                }
-//                
-//                //At 0.0, it has reached the next tile
-//                if (this->offsetData[tile] >= 0.0) {
-//                    this->offsetData[tile] = 0.0;
-//                    
-//                    //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
-//                }
-//            }
-//        }
-//    }
-//    
-//    //First we bind the VAO
-//    glBindVertexArray(this->VAO);
-//    
-//    //Bind the VBO with the data
-//    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
-//    
-//    //Next we tell OpenGL how to interpret the array
-//    //Position
-//    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-//    glEnableVertexAttribArray(5);
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    
-//    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-//    glBindVertexArray(0);
-//}
-
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
 void Game::moveCamera() {
     GLfloat displacement = this->deltaTime * this->camSpeed;
@@ -862,43 +784,6 @@ void Game::updateSelected() {
         //Select this new tile
         this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
         
-        /*
-        //If the selected tile is a creature, highlight adjacent tiles and update the creature's direction
-        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
-            
-            Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
-            
-            //North tile
-            if (mousePos.y > 0) {
-                if (this->gameBoard.get(mousePos.x, mousePos.y - 1).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x, mousePos.y - 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y - 1).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y - 1, AttackableAdj);
-            }
-        
-            //East tile
-            if (mousePos.x > 0) {
-                if (this->gameBoard.get(mousePos.x - 1, mousePos.y).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x - 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x - 1, mousePos.y).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x - 1, mousePos.y, AttackableAdj);
-            }
-            
-            //South tile
-            if (mousePos.y + 1 < this->gameBoard.height(mousePos.x)) {
-                if (this->gameBoard.get(mousePos.x, mousePos.y + 1).passableByCreature(creature))
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, OpenAdj);
-                else if (this->gameBoard.get(mousePos.x, mousePos.y + 1).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y + 1).creature()->controller() != this->activePlayer)
-                    this->gameBoard.setStyle(mousePos.x, mousePos.y + 1, AttackableAdj);
-            }
-            
-            //West tile
-            if (this->gameBoard.get(mousePos.x + 1, mousePos.y).passableByCreature(creature))
-                this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, OpenAdj);
-            else if (this->gameBoard.get(mousePos.x + 1, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x + 1, mousePos.y).creature()->controller() != this->activePlayer)
-                this->gameBoard.setStyle(mousePos.x + 1, mousePos.y, AttackableAdj);
-        }*/
-        
           //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
       
         if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
@@ -920,86 +805,13 @@ void Game::updateSelected() {
     //Movement
     else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
         
-        /*
-         * To add update:
-         *
-         * Allow clicking of any reachable tile.
-         * Find the path to that tile.
-         * Send that path to the creature.
-         * Update reachable tiles to only get tiles that are actually reachable.
-         */
-        
-        
-        
-        /*
-        int direction;
-        
-        if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y - 1)
-            direction = NORTH;
-        else if (mousePos.x == this->selectedTile.x + 1 && mousePos.y == this->selectedTile.y)
-            direction = WEST;
-        else if (mousePos.x == this->selectedTile.x && mousePos.y == this->selectedTile.y + 1)
-            direction = SOUTH;
-        else if (mousePos.x == this->selectedTile.x - 1 && mousePos.y == this->selectedTile.y)
-            direction = EAST;
-        
-        this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(direction);
-        this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
-        */
-        
         std::vector<GLuint> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
         
-        std::cout << "getPath func return vector size: " << directions.size() << std::endl;
-        
         for (GLuint a = 0; a < directions.size(); a++) {
-            std::cout << "Direction: " << directions[a] << std::endl;
             this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
             if (a == 0)
                 this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
         }
-        
-//        //this vector definition will be replaced with the return of Djikstra pathfinding function
-//        
-//        std::vector<int> netDirection;
-//        netDirection.push_back(mousePos.x - selectedTile.x);
-//        netDirection.push_back(mousePos.y - selectedTile.y);
-//        
-//        for (int x = 0; x < abs(netDirection[0]); x++) {
-//            if (netDirection[0] > 0) {
-//                /*
-//                In this space, we need to move multiple tiles in one direction.
-//                 To do this, we need to:
-//                 1. Every time we finish moving a tile, to move to the next adjacent tile, we need to set the tile we use as the parameter for the moveAdjacent function to the tile we just moved to in order for the moveAdjacent function to keep working.
-//                 2. We also need the creature to be at the tile in order for the moveAdjacent function to not return false.
-//                 3. The creature's direction needs to be input as well.
-//                 4. We need the animation to not skip to the last tile movement animation when it reaches its destination.
-//                 5.
-//                */
-//                std::cout << "Called Travel West\n";
-//                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
-//                selectedTile.x++;
-//            }
-//            else {
-//                std::cout << "Called Travel East\n";
-//                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
-//                selectedTile.x--;
-//            }
-//            
-//        }
-//        for (int y = 0; y < abs(netDirection[1]); y++) {
-//            if (netDirection[1] > 0) {
-//                std::cout << "Called Travel South\n";
-//                moveAdjacent(selectedTile.x, selectedTile.y, SOUTH);
-//                selectedTile.y++;
-//            }
-//            else {
-//                std::cout << "Called Travel North\n";
-//                moveAdjacent(selectedTile.x, selectedTile.y, NORTH);
-//                selectedTile.y++;
-//            }
-//            
-//        }
-        
         
         //Reset all tiles
         for (GLuint x = 0; x < this->gameBoard.width(); x++) {
@@ -1043,11 +855,9 @@ void Game::updateSelected() {
 }
 
 bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
-//    std::cout << "Approached Creature Check\n";
     //Return false if there is no creature at the designated spot to move
     if (this->gameBoard.get(x, y).creature() == nullptr)
         return false;
-//    std::cout << "Passed Creature Check\n";
     //Check if move goes beyond map
     int newX, newY;
     
@@ -1107,7 +917,6 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }
     }
-//    std::cout << "Reached End of MoveAdjacent Function\n";
     return true;
 }
 
@@ -1126,7 +935,7 @@ void Game::processButton(std::string action) {
         }
         
         this->incrementActivePlayer();
-        std::cout << "\n\nTurn Finished\n\n";
+        std::cout << std::endl << std::endl << "--------------------" << std::endl << "Player " << this->activePlayer + 1 << "'s turn" << std::endl << std::endl;
         //Increment the turn if a full player cycle has occurred
         if (activePlayer == 0)
             turn++;
@@ -1455,22 +1264,6 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
         }
         return reachedTileReturnVector;
     }
-    
-    /*
-    
-    //Go through all tiles and find if they are within range
-    std::vector<Tile> reachableTiles;
-    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            GLuint distanceBetweenTiles = gameBoard.tileDistances(currentTile.x, currentTile.y, x, y);
-            
-            if (distanceBetweenTiles <= this->gameBoard.get(currentTile.x, currentTile.y).creature()->energy()) {
-                reachableTiles.push_back(this->gameBoard.get(x, y));
-            }
-        }
-    }
-    return reachableTiles;
-     */
 }
 
 std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
