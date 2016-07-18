@@ -1501,7 +1501,7 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
             break;
         }
         
-        if (possiblePaths.front().size() < creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+        if (possiblePaths.front().size() <= creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
             
             std::pair<GLuint, GLuint> tile = path.back();
             
