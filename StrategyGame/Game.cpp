@@ -540,11 +540,16 @@ void Game::updateCreatures() {
     //Goes through all tiles and continues moving any that are moving
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
-        GLuint direction = this->creatureData[(3 * tile) + 1];
-        
         glm::ivec2 boardLoc;
         boardLoc.x = tile / this->gameBoard.width();
         boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
+        
+        GLuint direction;
+        
+        if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr)
+            direction = this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->direction();
+        else
+            direction = NORTH;
         
         if ((direction == NORTH || direction == EAST) && this->gameBoard.get(boardLoc.x, boardLoc.y).creature() != nullptr) {
             //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
@@ -553,6 +558,8 @@ void Game::updateCreatures() {
             if (this->offsetData[tile] > 0.0) {
                 this->offsetData[tile] += displacement;
             } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
+                
+                std::cout << "Moving" << std::endl;
                 
                 //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
                 
@@ -586,23 +593,25 @@ void Game::updateCreatures() {
                 //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
                 if (this->offsetData[tile] < 0.0) {
                     this->offsetData[tile] += displacement;
-                } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
-                    //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
-                    
-                    //Get the new direction that the creature will be travelling in.
-                    GLuint newDirection = this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.front();
-                    
-                    //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
-                    this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
-                    
-                    this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
                 }
                 
                 //At 0.0, it has reached the next tile
                 if (this->offsetData[tile] >= 0.0) {
-                    this->offsetData[tile] = 0.0;
                     
+                    this->offsetData[tile] = 0.0;
                     //The creature is not moved here. It should have already been moved in the function that deals with mouse clicks.
+                    
+                    if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
+                        //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
+                        
+                        //Get the new direction that the creature will be travelling in.
+                        GLuint newDirection = this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.front();
+                        
+                        //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
+                        this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
+                        
+                        this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
+                    }
                 }
             }
         }
@@ -646,6 +655,9 @@ void Game::updateCreatures() {
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
+    
+    //Update creature data array
+    this->setData(false, false, true, false, false, false);
 }
 
 //A function to update the color VBO. Should be called every frame
@@ -1090,7 +1102,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
         }
         
         if (tile < NUMBER_OF_TILES) {
-            this->offsetData[tile] = -0.4; //-= (this->movementAnimationSpeed * this->deltaTime);
+            this->offsetData[tile] = -0.4;
             
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }
