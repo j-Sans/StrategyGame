@@ -934,46 +934,53 @@ void Game::updateSelected() {
         this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, direction);
         */
         
-        //this vector definition will be replaced with the return of Djikstra pathfinding function
-        std::vector<int> netDirection;
-        netDirection.push_back(mousePos.x - selectedTile.x);
-        netDirection.push_back(mousePos.y - selectedTile.y);
+        std::vector<GLuint> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
         
-        for (int x = 0; x < abs(netDirection[0]); x++) {
-            if (netDirection[0] > 0) {
-                /*
-                In this space, we need to move multiple tiles in one direction.
-                 To do this, we need to:
-                 1. Every time we finish moving a tile, to move to the next adjacent tile, we need to set the tile we use as the parameter for the moveAdjacent function to the tile we just moved to in order for the moveAdjacent function to keep working.
-                 2. We also need the creature to be at the tile in order for the moveAdjacent function to not return false.
-                 3. The creature's direction needs to be input as well.
-                 4. We need the animation to not skip to the last tile movement animation when it reaches its destination.
-                 5.
-                */
-                std::cout << "Called Travel West\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
-                selectedTile.x++;
-            }
-            else {
-                std::cout << "Called Travel East\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
-                selectedTile.x--;
-            }
-            
+        for (GLuint a = 0; a < directions.size(); a++) {
+            this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
         }
-        for (int y = 0; y < abs(netDirection[1]); y++) {
-            if (netDirection[1] > 0) {
-                std::cout << "Called Travel South\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, SOUTH);
-                selectedTile.y++;
-            }
-            else {
-                std::cout << "Called Travel North\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, NORTH);
-                selectedTile.y++;
-            }
-            
-        }
+        
+//        //this vector definition will be replaced with the return of Djikstra pathfinding function
+//        
+//        std::vector<int> netDirection;
+//        netDirection.push_back(mousePos.x - selectedTile.x);
+//        netDirection.push_back(mousePos.y - selectedTile.y);
+//        
+//        for (int x = 0; x < abs(netDirection[0]); x++) {
+//            if (netDirection[0] > 0) {
+//                /*
+//                In this space, we need to move multiple tiles in one direction.
+//                 To do this, we need to:
+//                 1. Every time we finish moving a tile, to move to the next adjacent tile, we need to set the tile we use as the parameter for the moveAdjacent function to the tile we just moved to in order for the moveAdjacent function to keep working.
+//                 2. We also need the creature to be at the tile in order for the moveAdjacent function to not return false.
+//                 3. The creature's direction needs to be input as well.
+//                 4. We need the animation to not skip to the last tile movement animation when it reaches its destination.
+//                 5.
+//                */
+//                std::cout << "Called Travel West\n";
+//                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
+//                selectedTile.x++;
+//            }
+//            else {
+//                std::cout << "Called Travel East\n";
+//                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
+//                selectedTile.x--;
+//            }
+//            
+//        }
+//        for (int y = 0; y < abs(netDirection[1]); y++) {
+//            if (netDirection[1] > 0) {
+//                std::cout << "Called Travel South\n";
+//                moveAdjacent(selectedTile.x, selectedTile.y, SOUTH);
+//                selectedTile.y++;
+//            }
+//            else {
+//                std::cout << "Called Travel North\n";
+//                moveAdjacent(selectedTile.x, selectedTile.y, NORTH);
+//                selectedTile.y++;
+//            }
+//            
+//        }
         
         
         //Reset all tiles
@@ -1531,11 +1538,24 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
     std::vector<GLuint> directions;
     
     for (GLuint a = 0; a < foundPath.size(); a++) {
-        if (foundPath[a].x() == )
+        if (foundPath[a].x() == x && foundPath[a].y() == y) {
+            continue; //First spot is the original location
+        }
+        
+        Tile previousTile = a == 0 ? this->gameBoard.get(x, y) : foundPath[a - 1];
+        
+        if (foundPath[a].y() < previousTile.y() && foundPath[a].x() == previousTile.x()) {
+            directions.push_back(NORTH);
+        } else if (foundPath[a].x() < previousTile.x() && foundPath[a].y() == previousTile.y()) {
+            directions.push_back(EAST);
+        } else if (foundPath[a].y() > previousTile.y() && foundPath[a].x() == previousTile.x()) {
+            directions.push_back(SOUTH);
+        } else if (foundPath[a].x() > previousTile.x() && foundPath[a].y() == previousTile.y()) {
+            directions.push_back(WEST);
+        }
     }
     
-    foundPath;
-    
+    return directions;
 }
 
 //A function GLFW can call when a key event occurs
