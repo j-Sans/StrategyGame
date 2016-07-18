@@ -553,6 +553,8 @@ void Game::updateCreatures() {
             if (this->offsetData[tile] > 0.0) {
                 this->offsetData[tile] += displacement;
             } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
+                std::cout << "Directions to go" << std::endl;
+                
                 //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
                 
                 //Get the new direction that the creature will be travelling in.
@@ -561,7 +563,7 @@ void Game::updateCreatures() {
                 //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
                 this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
                 
-                //this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
+                this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
             }
             
             //At 0.4, it has reached the next tile
@@ -939,7 +941,10 @@ void Game::updateSelected() {
         std::cout << "getPath func return vector size: " << directions.size() << std::endl;
         
         for (GLuint a = 0; a < directions.size(); a++) {
+            std::cout << "Direction: " << directions[a] << std::endl;
             this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
+            if (a == 0)
+                this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
         }
         
 //        //this vector definition will be replaced with the return of Djikstra pathfinding function
@@ -1494,12 +1499,10 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
         
         if (path.back().first == destinationX && path.back().second == destinationY) {
             foundPath = path;
-            std::cout << "Path found" << std::endl;
             break;
         }
         
         if (possiblePaths.front().size() < creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
-            std::cout << "Looking for paths" << std::endl;
             
             std::pair<GLuint, GLuint> tile = path.back();
             
@@ -1540,7 +1543,6 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
             }
         }
         
-        std::cout << "Size before pop: " << possiblePaths.size() << std::endl;
         possiblePaths.pop();
     }
     
