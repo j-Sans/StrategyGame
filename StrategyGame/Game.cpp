@@ -936,6 +936,8 @@ void Game::updateSelected() {
         
         std::vector<GLuint> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
         
+        std::cout << "getPath func return vector size: " << directions.size() << std::endl;
+        
         for (GLuint a = 0; a < directions.size(); a++) {
             this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
         }
@@ -1492,10 +1494,12 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
         
         if (path.back().first == destinationX && path.back().second == destinationY) {
             foundPath = path;
+            std::cout << "Path found" << std::endl;
             break;
         }
         
         if (possiblePaths.front().size() < creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+            std::cout << "Looking for paths" << std::endl;
             
             std::pair<GLuint, GLuint> tile = path.back();
             
@@ -1504,6 +1508,7 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
                 if (this->gameBoard.get(tile.first, tile.second - 1).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second - 1));
+                    possiblePaths.push(nextPath);
                 }
             }
             
@@ -1512,6 +1517,7 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
                 if (this->gameBoard.get(tile.first - 1, tile.second).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first - 1, tile.second));
+                    possiblePaths.push(nextPath);
                 }
             }
             
@@ -1520,6 +1526,7 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
                 if (this->gameBoard.get(tile.first, tile.second + 1).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second + 1));
+                    possiblePaths.push(nextPath);
                 }
             }
             
@@ -1528,10 +1535,12 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
                 if (this->gameBoard.get(tile.first + 1, tile.second).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first + 1, tile.second));
+                    possiblePaths.push(nextPath);
                 }
             }
         }
         
+        std::cout << "Size before pop: " << possiblePaths.size() << std::endl;
         possiblePaths.pop();
     }
     
