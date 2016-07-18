@@ -206,7 +206,7 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
         unsigned int distanceBetweenTiles;
         distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY); //An error is only thrown if arguments are out of range, but that is checked above
         
-        if (distanceBetweenTiles > 1) {
+        if (distanceBetweenTiles > this->gameBoard[attackerX][attackerY].creature()->range()) {
             return false; //No combat occurs
         } else {
             
