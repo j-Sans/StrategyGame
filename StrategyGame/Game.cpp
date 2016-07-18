@@ -1478,56 +1478,56 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
     
     Creature creature = *this->gameBoard.get(x, y).creature();
     
-    std::queue<std::vector<Tile> > possiblePaths;
+    std::queue<std::vector<std::pair<GLuint, GLuint> > > possiblePaths;
     
-    std::vector<Tile> firstTile { this->gameBoard.get(x, y) };
+    std::vector<std::pair<GLuint, GLuint> > firstTile { std::pair<GLuint, GLuint>(x, y) };
     
     possiblePaths.push(firstTile);
     
-    std::vector<Tile> foundPath;
+    std::vector<std::pair<GLuint, GLuint> > foundPath;
     
     while (possiblePaths.size() > 0) {
         
-        std::vector<Tile> path = possiblePaths.front();
+        std::vector<std::pair<GLuint, GLuint> > path = possiblePaths.front();
         
-        if (path.back().x() == destinationX && path.back().y() == destinationY) {
+        if (path.back().first == destinationX && path.back().second == destinationY) {
             foundPath = path;
             break;
         }
         
         if (possiblePaths.front().size() < creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
             
-            Tile tile = path.back();
+            std::pair<GLuint, GLuint> tile = path.back();
             
             //North
-            if (tile.y() > 0) {
-                if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
-                    std::vector<Tile> nextPath = path;
-                    nextPath.push_back(this->gameBoard.get(tile.x(), tile.y() - 1));
+            if (tile.second > 0) {
+                if (this->gameBoard.get(tile.first, tile.second - 1).passableByCreature(creature)) {
+                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
+                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second - 1));
                 }
             }
             
             //East
-            if (tile.x() > 0) {
-                if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
-                    std::vector<Tile> nextPath = path;
-                    nextPath.push_back(this->gameBoard.get(tile.x() - 1, tile.y()));
+            if (tile.first > 0) {
+                if (this->gameBoard.get(tile.first - 1, tile.second).passableByCreature(creature)) {
+                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
+                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first - 1, tile.second));
                 }
             }
             
             //South
-            if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
-                    std::vector<Tile> nextPath = path;
-                    nextPath.push_back(this->gameBoard.get(tile.x(), tile.y() + 1));
+            if (tile.second < this->gameBoard.height(tile.first) - 1) {
+                if (this->gameBoard.get(tile.first, tile.second + 1).passableByCreature(creature)) {
+                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
+                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second + 1));
                 }
             }
             
             //West
-            if (tile.y() < this->gameBoard.width() - 1) {
-                if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-                    std::vector<Tile> nextPath = path;
-                    nextPath.push_back(this->gameBoard.get(tile.x() + 1, tile.y()));
+            if (tile.first < this->gameBoard.width() - 1) {
+                if (this->gameBoard.get(tile.first + 1, tile.second).passableByCreature(creature)) {
+                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
+                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first + 1, tile.second));
                 }
             }
         }
@@ -1538,19 +1538,19 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
     std::vector<GLuint> directions;
     
     for (GLuint a = 0; a < foundPath.size(); a++) {
-        if (foundPath[a].x() == x && foundPath[a].y() == y) {
+        if (foundPath[a].first == x && foundPath[a].second == y) {
             continue; //First spot is the original location
         }
         
-        Tile previousTile = a == 0 ? this->gameBoard.get(x, y) : foundPath[a - 1];
+        std::pair<GLuint, GLuint> previousTile = a == 0 ? std::pair<GLuint, GLuint>(x, y) : foundPath[a - 1];
         
-        if (foundPath[a].y() < previousTile.y() && foundPath[a].x() == previousTile.x()) {
+        if (foundPath[a].second < previousTile.second && foundPath[a].first == previousTile.first) {
             directions.push_back(NORTH);
-        } else if (foundPath[a].x() < previousTile.x() && foundPath[a].y() == previousTile.y()) {
+        } else if (foundPath[a].first < previousTile.first && foundPath[a].second == previousTile.second) {
             directions.push_back(EAST);
-        } else if (foundPath[a].y() > previousTile.y() && foundPath[a].x() == previousTile.x()) {
+        } else if (foundPath[a].second > previousTile.second && foundPath[a].first == previousTile.first) {
             directions.push_back(SOUTH);
-        } else if (foundPath[a].x() > previousTile.x() && foundPath[a].y() == previousTile.y()) {
+        } else if (foundPath[a].first > previousTile.first && foundPath[a].second == previousTile.second) {
             directions.push_back(WEST);
         }
     }
