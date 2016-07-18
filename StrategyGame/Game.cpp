@@ -553,7 +553,6 @@ void Game::updateCreatures() {
             if (this->offsetData[tile] > 0.0) {
                 this->offsetData[tile] += displacement;
             } else if (this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.size() > 0) {
-                std::cout << "Directions to go" << std::endl;
                 
                 //Otherwise if the creature isn't moving, if it has directions to travel in, start on that direction
                 
@@ -596,7 +595,7 @@ void Game::updateCreatures() {
                     //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
                     this->gameBoard.get(boardLoc.x, boardLoc.y).creature()->directions.pop();
                     
-                    //this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
+                    this->moveAdjacent(boardLoc.x, boardLoc.y, newDirection);
                 }
                 
                 //At 0.0, it has reached the next tile
@@ -1032,11 +1031,11 @@ void Game::updateSelected() {
 }
 
 bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
-    std::cout << "Approached Creature Check\n";
+//    std::cout << "Approached Creature Check\n";
     //Return false if there is no creature at the designated spot to move
     if (this->gameBoard.get(x, y).creature() == nullptr)
         return false;
-    std::cout << "Passed Creature Check\n";
+//    std::cout << "Passed Creature Check\n";
     //Check if move goes beyond map
     int newX, newY;
     
@@ -1096,7 +1095,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }
     }
-    std::cout << "Reached End of MoveAdjacent Function\n";
+//    std::cout << "Reached End of MoveAdjacent Function\n";
     return true;
 }
 
