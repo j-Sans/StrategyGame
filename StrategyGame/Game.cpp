@@ -810,32 +810,10 @@ void Game::updateSelected() {
         
         std::vector<GLuint> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
         
-        for (int x = 0; x < abs(netDirection[0]); x++) {
-            if (netDirection[0] > 0) {
-                /*
-                In this space, we need to move multiple tiles in one direction.
-                 To do this, we need to:
-                 1. Every time we finish moving a tile, to move to the next adjacent tile, we need to set the tile we use as the parameter for the moveAdjacent function to the tile we just moved to in order for the moveAdjacent function to keep working.
-                 2. We also need the creature to be at the tile in order for the moveAdjacent function to not return false, although the moveAdjacent function should have moved the creature to the tile. Since it doesn't seem to work for moving
-                 3. The creature's direction needs to be input as well.
-                 4. We need the animation to not skip to the last tile movement animation when it reaches its destination.
-                 5.
-                */
-                std::cout << "Called Travel West\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, WEST);
-                selectedTile.x++;
-            }
-            else {
-                std::cout << "Called Travel East\n";
-                moveAdjacent(selectedTile.x, selectedTile.y, EAST);
-                selectedTile.x--;
-            }
-
         for (GLuint a = 0; a < directions.size(); a++) {
             this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
             if (a == 0)
                 this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
-
         }
         
         //Reset all tiles
@@ -883,14 +861,10 @@ void Game::updateSelected() {
 }
 
 bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
-    std::cout << "Approached Creature Check\n";
-    //Exit if there is no creature at the designated spot to move
+    //Return false if there is no creature at the designated spot to move
     if (this->gameBoard.get(x, y).creature() == nullptr)
         return false;
-    std::cout << "Passed Creature Check\n";
-
-    //Exit if move goes beyond map
-
+    //Check if move goes beyond map
     int newX, newY;
     
     if (direction == NORTH) {
@@ -919,7 +893,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
             return false;
     }
     
-    //Exit if destination is impassable
+    //Passable Check
     if (!this->gameBoard.get(newX, newY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
         return false;
     }
@@ -1381,141 +1355,6 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
         
         possiblePaths.pop();
     }
-            
-                Tile tile = reachedTiles[tileIterator].first;
-                
-                //North
-                if (tile.y() > 0) {
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x(), tile.y() - 1).occupied()) {
-                       reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-                    }
-                }
-                
-                //East
-                if (tile.x() > 0) {
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x() - 1, tile.y()).occupied()) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-                    }
-                }
-                
-                //South
-                if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x(), tile.y() + 1).occupied()) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-                    }
-                }
-                
-                //West
-                if (tile.y() < this->gameBoard.width() - 1) {
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-                    }
-                }
-            }
-        }
-    
-        //Now turn the reached tile vector of pairs into a vector of just tiles
-        std::vector<Tile> reachedTileReturnVector;
-        
-        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-            reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
-        }
-        return reachedTileReturnVector;
-    }
-}
-
-std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
-    if (x >= this->gameBoard.width()) {
-        std::vector<GLuint> emptyVector;
-        return emptyVector;
-    } else if (y >= this->gameBoard.height(x)) {
-        std::vector<GLuint> emptyVector;
-        return emptyVector;
-    } else if (destinationX >= this->gameBoard.width()) {
-        std::vector<GLuint> emptyVector;
-        return emptyVector;
-    } else if (destinationY >= this->gameBoard.height(destinationX)) {
-        std::vector<GLuint> emptyVector;
-        return emptyVector;
-    } else if (this->gameBoard.get(x, y).creature() == nullptr) {
-        std::vector<GLuint> emptyVector;
-        return emptyVector;
-    } else if (!this->gameBoard.get(destinationX, destinationY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
-        std::vector<GLuint> emptyVector;
-        return emptyVector;
-    }
-    
-    Creature creature = *this->gameBoard.get(x, y).creature();
-    
-    std::queue<std::vector<std::pair<GLuint, GLuint> > > possiblePaths;
-    
-    std::vector<std::pair<GLuint, GLuint> > firstTile { std::pair<GLuint, GLuint>(x, y) };
-    
-    possiblePaths.push(firstTile);
-    
-    std::vector<std::pair<GLuint, GLuint> > foundPath;
-    
-    while (possiblePaths.size() > 0) {
-        
-        std::vector<std::pair<GLuint, GLuint> > path = possiblePaths.front();
-        
-        if (path.back().first == destinationX && path.back().second == destinationY) {
-            foundPath = path;
-            break;
-        }
-        
-        if (possiblePaths.front().size() <= creature.energy()) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
-            
-            std::pair<GLuint, GLuint> tile = path.back();
-            
-            //North
-            if (tile.second > 0) {
-                if (this->gameBoard.get(tile.first, tile.second - 1).passableByCreature(creature)) {
-                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
-                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second - 1));
-                    possiblePaths.push(nextPath);
-                }
-            }
-            
-            //East
-            if (tile.first > 0) {
-                if (this->gameBoard.get(tile.first - 1, tile.second).passableByCreature(creature)) {
-                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
-                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first - 1, tile.second));
-                    possiblePaths.push(nextPath);
-                }
-            }
-            
-            //South
-            if (tile.second < this->gameBoard.height(tile.first) - 1) {
-                if (this->gameBoard.get(tile.first, tile.second + 1).passableByCreature(creature)) {
-                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
-                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second + 1));
-                    possiblePaths.push(nextPath);
-                }
-            }
-            
-            //West
-            if (tile.first < this->gameBoard.width() - 1) {
-                if (this->gameBoard.get(tile.first + 1, tile.second).passableByCreature(creature)) {
-                    std::vector<std::pair<GLuint, GLuint> > nextPath = path;
-                    nextPath.push_back(std::pair<GLuint, GLuint>(tile.first + 1, tile.second));
-                    possiblePaths.push(nextPath);
-                }
-            }
-        }
-        
-        possiblePaths.pop();
-    }
->>>>>>> Stashed changes
     
     std::vector<GLuint> directions;
     
