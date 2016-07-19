@@ -10,6 +10,8 @@
 
 //Constructors
 
+//Note: The origin (0, 0) is the top-right corner of the map
+
 Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
