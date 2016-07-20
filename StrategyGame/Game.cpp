@@ -883,7 +883,7 @@ bool Game::moveAdjacent(GLuint x, GLuint y, int direction) {
         }
         
         if (tile < NUMBER_OF_TILES) {
-            this->gameBoard.get(x, y).creature()->incrementOffset(this->deltaTime);
+            this->gameBoard.get(x, y).creature()->initiateOffsetForMovingDown();
             
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }

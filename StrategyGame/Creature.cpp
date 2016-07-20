@@ -73,9 +73,7 @@ void Creature::incrementOffset(float deltaTime) {
         
         //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
         //It starts at -0.4 because because the creature is moved first, but it needs to appear as though it is on the previous tile, which is -0.4 away.
-        if (this->creatureOffset == 0.0) {
-            this->creatureOffset = -0.4;
-        } else if (this->creatureOffset < 0.0) {
+        if (this->creatureOffset < 0.0) {
             this->creatureOffset += displacement;
             
             if (this->creatureOffset > 0.0) {
@@ -90,6 +88,12 @@ void Creature::incrementOffset(float deltaTime) {
             
             //The creature is not moved here. It should have already been moved when the offset was initially changed. For that reason, shouldMove is not set to true
         }
+    }
+}
+
+void Creature::initiateOffsetForMovingDown() {
+    if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
+        this->creatureOffset = -0.4;
     }
 }
 

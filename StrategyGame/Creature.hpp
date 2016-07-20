@@ -93,6 +93,11 @@ public:
     void incrementOffset(float deltaTime);
     
     /*!
+     * Set the offset as -0.4. This function should be called when the creature is starting to move downward.
+     */
+    void initiateOffsetForMovingDown();
+    
+    /*!
      * Reset the offset to 0.
      */
     void resetOffset();
