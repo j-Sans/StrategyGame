@@ -193,7 +193,7 @@ private:
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
     int creatureDirection;
-    float creatureOffset;
+    float creatureOffset = 0.0;
     
     //The speed that the creature moves when it is animated.
     const float movementAnimationSpeed = 1.5f;
