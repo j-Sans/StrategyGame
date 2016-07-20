@@ -30,7 +30,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 //Local includes
-#include "Game.hpp"
+#include "Visualizer.hpp"
 
 int main(int argc, const char * argv[]) {
 //Set up:
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
         board.push_back(row);
     }
     
-    Game G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
+    Visualizer G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
     G.gameBoard.setCreature(4, 4, Creature(Human, 1, 3, 1, 1, 1, 1, NORTH, 0));
     
