@@ -89,13 +89,17 @@ public:
     
     /*!
      * Increment the offset properly, based on the creature's direction.
+     *
+     * @param deltaTime The time between frames, so it's speed can be constant on all machines at different working speeds.
      */
     void incrementOffset(float deltaTime);
     
     /*!
-     * Set the offset as -0.4. This function should be called when the creature is starting to move downward.
+     * Set the offset as -0.4 for moving down and increments it for moving up. This function should be called when the creature is starting to move.
+     *
+     * @param deltaTime The time between frames, so it's speed can be constant on all machines at different working speeds.
      */
-    void initiateOffsetForMovingDown();
+    void initiateMovementOffset(float deltaTime);
     
     /*!
      * Reset the offset to 0.

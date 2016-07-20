@@ -91,8 +91,10 @@ void Creature::incrementOffset(float deltaTime) {
     }
 }
 
-void Creature::initiateOffsetForMovingDown() {
-    if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
+void Creature::initiateMovementOffset(float deltaTime) {
+    if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
+        this->creatureOffset += deltaTime * this->movementAnimationSpeed;
+    } else if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
         this->creatureOffset = -0.4;
     }
 }

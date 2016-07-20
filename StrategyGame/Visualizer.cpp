@@ -869,7 +869,7 @@ bool Visualizer::moveAdjacent(GLuint x, GLuint y, int direction) {
     //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
     //For these directions, the creature is moved after, in the function that updates the offset data
     if (direction == NORTH || direction == EAST)
-        this->gameBoard.get(x, y).creature()->incrementOffset(this->deltaTime);
+        this->gameBoard.get(x, y).creature()->initiateMovementOffset(this->deltaTime);
     
     //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
     //For these directions, the creature is moved here, and then the offset is slowly updated to follow
@@ -883,7 +883,7 @@ bool Visualizer::moveAdjacent(GLuint x, GLuint y, int direction) {
         }
         
         if (tile < NUMBER_OF_TILES) {
-            this->gameBoard.get(x, y).creature()->initiateOffsetForMovingDown();
+            this->gameBoard.get(x, y).creature()->initiateMovementOffset(this->deltaTime);
             
             this->gameBoard.moveCreatureByDirection(x, y, direction);
         }
