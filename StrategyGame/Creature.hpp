@@ -87,6 +87,16 @@ public:
      */
     void setDirection(unsigned int direction);
     
+    /*!
+     * Increment the offset properly, based on the creature's direction.
+     */
+    void incrementOffset(float deltaTime);
+    
+    /*!
+     * Reset the offset to 0.
+     */
+    void resetOffset();
+    
     //Get methods
     
     /*!
@@ -145,6 +155,16 @@ public:
     int direction();
     
     /*!
+     * @return The offset of the creature from the center of its tile.
+     */
+    float offset();
+    
+    /*!
+     * @return Whether the creature should move in the next direction. If this is true, the next direction should be popped off of the queue and the creature should move in that direction. Then, the private bool shouldMove is made false. If this is false, the creature is not ready to be moved yet.
+     */
+    bool readyToMove();
+    
+    /*!
      * @return The controller of the creature.
      */
     const unsigned int controller();
@@ -164,6 +184,12 @@ private:
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
     int creatureDirection;
+    float creatureOffset;
+    
+    //The speed that the creature moves when it is animated.
+    const float movementAnimationSpeed = 1.5f;
+    
+    bool shouldMove = false;
     
     //Private member functions
 };

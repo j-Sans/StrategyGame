@@ -51,6 +51,52 @@ void Creature::setDirection(unsigned int direction) {
         this->creatureDirection = direction;
 }
 
+void Creature::incrementOffset(float deltaTime) {
+    float displacement = this->movementAnimationSpeed * deltaTime;
+    
+    if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
+        //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
+        
+        //If the creature is in the process of moving currently, continue to move it
+        if (this->creatureOffset > 0.0) {
+            this->creatureOffset += displacement;
+        }
+        
+        //At 0.4, it has reached the next tile
+        if (this->creatureOffset > 0.4) {
+            this->creatureOffset = 0.0;
+            
+            this->shouldMove = true;
+        }
+    } else if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
+        //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
+        
+        //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
+        //It starts at -0.4 because because the creature is moved first, but it needs to appear as though it is on the previous tile, which is -0.4 away.
+        if (this->creatureOffset == 0.0) {
+            this->creatureOffset = -0.4;
+        } else if (this->creatureOffset < 0.0) {
+            this->creatureOffset += displacement;
+            
+            if (this->creatureOffset > 0.0) {
+                this->creatureOffset = 0.0;
+            }
+        }
+        
+        //At 0.0, it has reached the next tile
+        if (this->creatureOffset > 0.0) {
+            
+            this->creatureOffset = 0.0;
+            
+            //The creature is not moved here. It should have already been moved when the offset was initially changed. For that reason, shouldMove is not set to true
+        }
+    }
+}
+
+void Creature::resetOffset() {
+    this->creatureOffset = 0.0;
+}
+
 const Race Creature::race() {
     return this->creatureRace;
 }
@@ -64,13 +110,8 @@ const unsigned int Creature::maxEnergy() {
 }
 
 const unsigned int Creature::attack() {
-    return this->creatureAttack; }
-
-//Do we need this? Isn't speed just based on the amount of movement points the unit has?
-
-//const unsigned int Creature::speed() {
-//    return this->creatureSpeed;
-//}
+    return this->creatureAttack;
+}
 
 const unsigned int Creature::vision() {
     return this->creatureVision;
@@ -98,6 +139,18 @@ unsigned int Creature::energy() {
 
 int Creature::direction() {
     return this->creatureDirection;
+}
+
+float Creature::offset() {
+    return this->creatureOffset;
+}
+
+bool Creature::readyToMove() {
+    if (this->shouldMove) {
+        this->shouldMove = false;
+        return true;
+    } else
+        return false;
 }
 
 const unsigned int Creature::controller() {

@@ -102,11 +102,6 @@ public:
     const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
     /*!
-     * The speed that the creature moves when it is animated.
-     */
-    const GLfloat movementAnimationSpeed = 1.5f;
-    
-    /*!
      * Time before deletion of damage boxes, in seconds.
      */
     const GLfloat damageBoxTime = 3.0f;
