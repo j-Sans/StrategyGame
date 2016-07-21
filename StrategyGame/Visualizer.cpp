@@ -8,15 +8,8 @@
 
 #include "Visualizer.hpp"
 
-//An array of booleans representing if, for each key, if that key is pressed
-//Declared here so it can work with static function keyCallback. That function needs to be static
-bool keys[1024];
-
-//A boolean representing if the active tile should be set. This boolean is set in the mouse button callback function
-bool mouseDown = false;
-
 //Constructor without geometry shader
-Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
+Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
     this->setData(true, true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
@@ -62,7 +55,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std
 }
 
 //Constructor with geometry shader
-Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : gameBoard(board) {
+Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
     this->setData(true, true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
@@ -287,7 +280,7 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     GLfloat pointDistance = 0.2f;
     
     GLfloat locationOfFirstPoint = 0.0f;
-    locationOfFirstPoint += (this->gameBoard.width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+    locationOfFirstPoint += (this->game.board().width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
     locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
     
     //Vertex data
@@ -298,8 +291,8 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     if (setVertexData) {
         GLfloat vertices[numberOfIndices];
         
-        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+        for (GLuint x = 0; x < this->game.board().width(); x++) {
+            for (GLuint y = 0; y < this->game.board().height(x); y++) {
                 if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
                     
                     //Sets the point location based on the location in the board and on the modifiers above.
@@ -328,21 +321,21 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     
     index = 0;
     
-    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+    for (GLuint x = 0; x < this->game.board().width(); x++) {
+        for (GLuint y = 0; y < this->game.board().height(x); y++) {
             if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
                 if (setTerrainData)
                     //Gets the terrain of the tile
-                    terrains[index] = this->gameBoard.get(x, y).terrain();
+                    terrains[index] = this->game.board().get(x, y).terrain();
                 
                 if (setCreatureData) {
                     //Gets the creature on the tile
-                    creatures[index] = this->gameBoard.get(x, y).creatureType();
+                    creatures[index] = this->game.board().get(x, y).creatureType();
                     
                     //Gets the direction if there is a creature there
-                    if (this->gameBoard.get(x, y).creature() != nullptr) {
-                        directions[index] = this->gameBoard.get(x, y).creature()->direction();
-                        controllers[index] = this->gameBoard.get(x, y).creature()->controller();
+                    if (this->game.board().get(x, y).creature() != nullptr) {
+                        directions[index] = this->game.board().get(x, y).creature()->direction();
+                        controllers[index] = this->game.board().get(x, y).creature()->controller();
                     } else {
                         directions[index] = NORTH;
                         controllers[index] = 0;
@@ -350,9 +343,9 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
                 }
                 if (setColorData) {
                     //Gets the color alteration of the tile
-                    colors[3 * index] = this->gameBoard.get(x, y).color().x;
-                    colors[(3 * index) + 1] = this->gameBoard.get(x, y).color().y;
-                    colors[(3 * index) + 2] = this->gameBoard.get(x, y).color().z;
+                    colors[3 * index] = this->game.board().get(x, y).color().x;
+                    colors[(3 * index) + 1] = this->game.board().get(x, y).color().y;
+                    colors[(3 * index) + 2] = this->game.board().get(x, y).color().z;
                 }
                 
                 //Increment
@@ -525,6 +518,12 @@ void Visualizer::presetTransformations() {
     this->gameShader.uniformMat4("ortho", this->projection);
 }
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//Review this function
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //A function to update the creature VBO. Should be called every frame
 void Visualizer::updateCreatures() {
     //Set the offset VBO
@@ -536,10 +535,10 @@ void Visualizer::updateCreatures() {
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
         glm::ivec2 boardLoc;
-        boardLoc.x = tile / this->gameBoard.width();
-        boardLoc.y = tile - (this->gameBoard.width() * boardLoc.x);
+        boardLoc.x = tile / this->game.board().width();
+        boardLoc.y = tile - (this->game.board().width() * boardLoc.x);
         
-        Creature* creature = this->gameBoard.get(boardLoc.x, boardLoc.y).creature();
+        Creature* creature = this->game.board().get(boardLoc.x, boardLoc.y).creature();
         
         if (creature != nullptr) {
             
@@ -716,6 +715,12 @@ void Visualizer::moveCamera() {
         this->cameraCenter.y = -this->camMaxDisplacement;
 }
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//Review this function
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Visualizer::updateSelected() {
     glm::ivec2 mousePos;
     
@@ -838,6 +843,12 @@ void Visualizer::updateSelected() {
         }
     }
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//Review this function
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Visualizer::moveAdjacent(GLuint x, GLuint y, int direction) {
     //Return false if there is no creature at the designated spot to move
@@ -1020,6 +1031,12 @@ void Visualizer::processButton(std::string action) {
         }
     }
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//Review this function
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Visualizer::incrementActivePlayer() {
     this->activePlayer++;

@@ -30,28 +30,14 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 //Local includes
-//#include "GLextensions/shader.hpp"
-//#include "GLextensions/texture.hpp"
-//#include <myGL/shader.h>
-//#include "texture.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include "Tile.hpp"
-#include "Board.hpp"
-#include "Player.hpp"
+#include "Game.hpp"
 
 #include "Interface.hpp"
 
 
 //Preprocessor directives
-#define BOARD_WIDTH 12
-#define NUMBER_OF_TILES BOARD_WIDTH * BOARD_WIDTH
-#define INDICES_PER_TILES 2
-#define NUMBER_OF_PLAYERS 2
-
-#define NO_SELECTION glm::ivec2(-1, -1)
-#define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
-
 #define FULL_SCREEN
 
 class Visualizer {
@@ -109,7 +95,7 @@ public:
     /*!
      * The game board, containing a 2D vector of Tile objects.
      */
-    Board gameBoard;
+    Game game;
     
     //Public member functions
     
@@ -198,14 +184,6 @@ private:
     std::vector<Interface> interfaces;
     Shader interfaceShader;
     Shader buttonShader;
-    
-    //Board data
-    glm::ivec2 selectedTile = glm::ivec2(-1, -1);
-    
-    //Player and turn data
-    Player players[NUMBER_OF_PLAYERS];
-    GLuint activePlayer = 0;
-    GLuint turn = 1;
     
     
     //Private member functions
