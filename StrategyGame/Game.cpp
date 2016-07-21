@@ -192,8 +192,8 @@ void Game::updateSelected() {
             
             
             //Reset all tiles
-            for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-                for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            for (int x = 0; x < this->gameBoard.width(); x++) {
+                for (int y = 0; y < this->gameBoard.height(x); y++) {
                     this->gameBoard.setStyle(x, y, Regular);
                 }
             }

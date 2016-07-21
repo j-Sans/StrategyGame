@@ -139,6 +139,17 @@ public:
      */
     bool setDirection(unsigned int x, unsigned int y, unsigned int direction);
     
+    /*!
+     * Indicates the damage value, dealt to the creature at this tile, to be displayed.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     * @param damage The amount of damage dealt.
+     * @param time The current time, gotten from glfwGetTime().
+     */
+    void setDamage(unsigned int x, unsigned int y, unsigned int damage, float time);
+    
     //Public get functions
     
     /*!

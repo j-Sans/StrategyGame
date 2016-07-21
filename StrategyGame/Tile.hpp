@@ -102,6 +102,14 @@ public:
      */
     void setDirection(unsigned int direction);
     
+    /*!
+     * Indicates the damage value, dealt to the creature at this tile, to be displayed.
+     *
+     * @param damage The amount of damage dealt.
+     * @param time The current time, gotten from glfwGetTime().
+     */
+    void setDamage(unsigned int damage, float time);
+    
     //Get methods
     
     /*!
@@ -154,6 +162,16 @@ public:
      */
     bool passableByCreature(Creature creature);
     
+    /*!
+     * @return The damage amount at this tile.
+     */
+    unsigned int damage();
+    
+    /*!
+     * @return The time the damage was added to this tile.
+     */
+    float timeOfDamage();
+    
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }
     //const bool rough() { return this->isRoughTerrain; }
@@ -166,6 +184,12 @@ private:
     int tileTerrain;
     Color tileColor = White;
     Style tileStyle = Regular;
+    
+    //The damage to be shown on the creature at this tile.
+    unsigned int tileDamage;
+    
+    //The time the damage was first shown, so that after 3 seconds the damage will no longer be displayed.
+    float damageHitTime;
     
     //const bool blocksVision;
     //const bool isRoughTerrain; //slows movement

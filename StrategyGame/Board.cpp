@@ -353,6 +353,17 @@ bool Board::setDirection(unsigned int x, unsigned int y, unsigned int direction)
     return true;
 }
 
+void Board::setDamage(unsigned int x, unsigned int y, unsigned int damage, float time) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    this->gameBoard[x][y].setDamage(damage, time);
+}
+
 Tile Board::get(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range");

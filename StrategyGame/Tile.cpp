@@ -44,6 +44,11 @@ void Tile::setDirection(unsigned int direction) {
     }
 }
 
+void Tile::setDamage(unsigned int damage, float time) {
+    this->tileDamage = damage;
+    this->damageHitTime = time;
+}
+
 const unsigned int Tile::x() {
     return this->tileX;
 }
@@ -123,4 +128,12 @@ bool Tile::passableByCreature(Creature creature) {
     
     //Everything else is passable
     return true;
+}
+
+unsigned int Tile::damage() {
+    return this->tileDamage;
+}
+
+float Tile::timeOfDamage() {
+    return this->damageHitTime;
 }
