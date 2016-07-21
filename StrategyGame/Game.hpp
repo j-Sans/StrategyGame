@@ -44,12 +44,22 @@ public:
      */
     static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
     
+    /*!
+     * A function to advance to the next turn.
+     */
+    void nextTurn();
+    
     //Public get functions
     
     /*!
      * @return A pointer to the Board object representing the game board.
      */
     Board* board();
+    
+    /*!
+     * @return The current active player.
+     */
+    unsigned int activePlayer();
     
 private:
     
@@ -61,15 +71,15 @@ private:
     
     //Player and turn data
     Player players[NUMBER_OF_PLAYERS];
-    unsigned int activePlayer = 0;
+    unsigned int currentActivePlayer = 0;
     unsigned int turn = 1;
     
     //Private member functions
     void updateCreatures(float deltaTime);
-    void updateSelected(bool *mouseDown);
+    void updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     void incrementActivePlayer();
-    glm::ivec2 mouseTile();
+    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
     std::vector<Tile> getReachableTiles (Tile creatureTile);
     std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
     

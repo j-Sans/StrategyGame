@@ -20,9 +20,34 @@ GLfloat Game::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
 }
 
+void Game::nextTurn() {
+    this->incrementActivePlayer();
+    
+    //Increment the turn if a full player cycle has occurred
+    if (this->currentActivePlayer == 0)
+        turn++;
+    
+    //Iterate through the entire board and reset style and energy.
+    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
+        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
+            this->gameBoard.setStyle(x, y, Regular);
+            Creature* creature = this->gameBoard.get(x, y).creature();
+            if (creature != nullptr)
+                creature->resetEnergy();
+        }
+    }
+    
+    std::cout << std::endl << std::endl << "--------------------" << std::endl << "Player " << this->currentActivePlayer + 1 << "'s turn" << std::endl << std::endl;
+}
+
 //Public get functions
+
 Board* Game::board() {
     return &this->gameBoard;
+}
+
+unsigned int Game::activePlayer() {
+    return this->currentActivePlayer;
 }
 
 //Private member functions
@@ -77,10 +102,10 @@ void Game::updateCreatures(float deltaTime) {
     }
 }
 
-void Game::updateSelected(bool *mouseDown) {
+void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]) {
     glm::ivec2 mousePos;
     
-    mousePos = mouseTile();
+    mousePos = mouseTile(cursorPos, windowSize, tileCenters);
     
     if (mousePos == INTERFACE_BOX_SELECTION) {
         //Don't alter the selected tile if the interface box has been clicked
@@ -126,14 +151,14 @@ void Game::updateSelected(bool *mouseDown) {
         
         //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
         
-        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
+        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == currentActivePlayer) {
             std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
             
             Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
             for (int a = 0; a < reachableTiles.size(); a++) {
                 if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
+                } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->currentActivePlayer) {
                     
                     //Only set the tile to be attackable if it is within the creature's range
                     if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
@@ -265,10 +290,145 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
 }
 
 void Game::incrementActivePlayer() {
-    this->activePlayer++;
+    this->currentActivePlayer++;
     
-    if (this->activePlayer >= NUMBER_OF_PLAYERS)
-        this->activePlayer = 0;
+    if (this->currentActivePlayer >= NUMBER_OF_PLAYERS)
+        this->currentActivePlayer = 0;
+}
+
+glm::ivec2 Game::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]) {
+    GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
+    
+    
+    
+    //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
+    if (mousePos.x > (windowSize.x * 5.0 / 6.0) || mousePos.x < (windowSize.x / 6.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Only the middle 2/3 of the screen is the board, so make the start of that section 0
+    mousePos.x -= (windowSize.x / 6.0);
+    
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    mousePos.x *= (3.0 / 2.0);
+    
+    //Do the same for y, except that only the bottom 1/4 of the screen is not part of the board
+    if (mousePos.y > (windowSize.y * 3.0 / 4.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    mousePos.y *= (4.0 / 3.0);
+    
+    //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
+    mousePos.x /= windowSize.x;
+    mousePos.y /= windowSize.y;
+    
+    //Now make it 0 to 2 by doubling it
+    mousePos.x *= 2.0f;
+    mousePos.y *= 2.0f;
+    
+    //Now subtract 1 to get it between -1 and 1
+    mousePos.x -= 1.0f;
+    mousePos.y -= 1.0f;
+    
+    //So that -1 is the bottom of the screen, not the top
+    mousePos.y = -mousePos.y;
+    
+    /*for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+        tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+    }*/
+    
+    //The distance from one point to the horizontal point and the vertical point:
+    
+    //The points diagonally above and below each vertex become horizontal and vertical after rotation. To find them, find the point below the vertex and add one and subtract one.
+    
+    if (BOARD_WIDTH * BOARD_WIDTH < BOARD_WIDTH + 1) { //In case finding the distances (just below) would cause a bad access
+        throw std::length_error("Board too small");
+    }
+    
+    GLfloat distance1 = Game::getDistance(tileCenters[0], tileCenters[0 + BOARD_WIDTH + 1]); //Diagonal down and to the right
+    GLfloat distance2 = Game::getDistance(tileCenters[1], tileCenters[1 + BOARD_WIDTH - 1]); //Diagonal down and to the left
+    
+    //Distance horizontally is double the distance of the vertical one because it was compressed vertically.
+    //The horizontal distance is the max of the above distances, and the vertical distance the minimum
+    
+    GLfloat verticalDistance = fminf(distance1, distance2);
+    GLfloat horizontalDistance = fmaxf(distance1, distance2);
+    
+    //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
+    
+    GLfloat slope = verticalDistance / horizontalDistance; // = rise / run
+    
+    //Using line equation:
+    // y = slope ( x - h ) + k
+    //Where (h,k) is a point on the line
+    
+    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        glm::vec2 center = glm::vec2(tileCenters[index].x, tileCenters[index].y);
+        
+        bool pointInIndex = true;
+        
+        //Lower left inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y > ( -slope ) ( x - h ) + k
+        // (h,k) is the point below the center
+        
+        GLfloat h = center.x;
+        GLfloat k = center.y - (verticalDistance / 2.0);
+        
+        if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
+            pointInIndex = false;
+            continue;
+        }
+        
+        //Lower right inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y > ( slope ) ( x - h ) + k
+        // (h,k) is the point below the center, the same as previously
+        
+        if (mousePos.y < ( slope ) * ( mousePos.x - h ) + k) { //If it's below this line
+            pointInIndex = false;
+            continue;
+        }
+        
+        //Upper left inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y < ( slope ) ( x - h ) + k
+        // (h,k) is the point above the center
+        
+        h = center.x; //h stays the same
+        k = center.y + (verticalDistance / 2.0);
+        
+        if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
+            pointInIndex = false;
+            continue;
+        }
+        //Upper right inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y < ( -slope ) ( x - h ) + k
+        // (h,k) is the point above the center, the same as previously
+        
+        if (mousePos.y > ( -slope ) * ( mousePos.x - h ) + k) { //If it's above this line
+            pointInIndex = false;
+            continue;
+        }
+        
+        if (pointInIndex) { //The point was in bounds
+            tileIndex = index;
+            break; //Point found, no need to search more
+        }
+    }
+    
+    //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
+    //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
+    
+    //Return negative coordinates if the click is outside of all tiles
+    if (tileIndex == -1)
+        return NO_SELECTION;
+    
+    glm::ivec2 tileIndexVec;
+    
+    tileIndexVec.x = (int)(tileIndex / BOARD_WIDTH); //The x index in the 2D vector
+    
+    tileIndexVec.y = tileIndex - (BOARD_WIDTH * tileIndexVec.x); //The y index in the 2D vector
+    
+    return tileIndexVec;
 }
 
 /*

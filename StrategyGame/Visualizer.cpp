@@ -724,7 +724,7 @@ void Visualizer::moveCamera() {
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Visualizer::updateSelected() {
+/*void Visualizer::updateSelected() {
     glm::ivec2 mousePos;
     
     mousePos = mouseTile();
@@ -845,7 +845,7 @@ void Visualizer::updateSelected() {
             this->selectedTile = NO_SELECTION;
         }
     }
-}
+}*/
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -924,21 +924,8 @@ void Visualizer::processButton(std::string action) {
     //Process the button indicating to move to the next turn
     if (action == "next turn") {
         
-        //Iterate through the entire board and reset style and energy.
-        for (GLuint x = 0; x < this->game.board()->width(); x++) {
-            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-                this->game.board()->setStyle(x, y, Regular);
-                Creature* creature = this->game.board()->get(x, y).creature();
-                if (creature != nullptr)
-                    creature->resetEnergy();
-            }
-        }
+        this->game.nextTurn();
         
-        this->incrementActivePlayer();
-        std::cout << std::endl << std::endl << "--------------------" << std::endl << "Player " << this->activePlayer + 1 << "'s turn" << std::endl << std::endl;
-        //Increment the turn if a full player cycle has occurred
-        if (activePlayer == 0)
-            turn++;
     } else if (action.find("creature") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
         if (this->selectedTile != NO_SELECTION && this->selectedTile != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->selectedTile.x, this->selectedTile.y).occupied()) {
             
@@ -1048,10 +1035,14 @@ void Visualizer::incrementActivePlayer() {
         this->activePlayer = 0;
 }
 
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//Review this function
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //Calculates the tile that the mouse is over
-glm::ivec2 Visualizer::mouseTile() {
+/*glm::ivec2 Visualizer::mouseTile() {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
     int width, height;
@@ -1197,7 +1188,7 @@ glm::ivec2 Visualizer::mouseTile() {
     tileIndexVec.y = tileIndex - (BOARD_WIDTH * tileIndexVec.x); //The y index in the 2D vector
     
     return tileIndexVec;
-}
+}*/
 
 /*
  * TO ADD:
