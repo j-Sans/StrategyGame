@@ -100,11 +100,6 @@ public:
     //Public member functions
     
     /*!
-     * Distance formula using Pythagorean Theorem
-     */
-    static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
-    
-    /*!
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
      */
     void render();

@@ -8,6 +8,13 @@
 
 #include "Visualizer.hpp"
 
+//An array of booleans representing if, for each key, if that key is pressed
+//Declared here so it can work with static function keyCallback. That function needs to be static
+bool keys[1024];
+
+//A boolean representing if the active tile should be set. This boolean is set in the mouse button callback function
+bool mouseDown = false;
+
 //Constructor without geometry shader
 Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
@@ -103,10 +110,6 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
 }
 
 //Public member functions
-
-GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
-    return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
-}
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 void Visualizer::render() {
@@ -280,7 +283,7 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     GLfloat pointDistance = 0.2f;
     
     GLfloat locationOfFirstPoint = 0.0f;
-    locationOfFirstPoint += (this->game.board().width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+    locationOfFirstPoint += (this->game.board()->width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
     locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
     
     //Vertex data
@@ -291,8 +294,8 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     if (setVertexData) {
         GLfloat vertices[numberOfIndices];
         
-        for (GLuint x = 0; x < this->game.board().width(); x++) {
-            for (GLuint y = 0; y < this->game.board().height(x); y++) {
+        for (GLuint x = 0; x < this->game.board()->width(); x++) {
+            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
                 if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
                     
                     //Sets the point location based on the location in the board and on the modifiers above.
@@ -321,21 +324,21 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     
     index = 0;
     
-    for (GLuint x = 0; x < this->game.board().width(); x++) {
-        for (GLuint y = 0; y < this->game.board().height(x); y++) {
+    for (GLuint x = 0; x < this->game.board()->width(); x++) {
+        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
             if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
                 if (setTerrainData)
                     //Gets the terrain of the tile
-                    terrains[index] = this->game.board().get(x, y).terrain();
+                    terrains[index] = this->game.board()->get(x, y).terrain();
                 
                 if (setCreatureData) {
                     //Gets the creature on the tile
-                    creatures[index] = this->game.board().get(x, y).creatureType();
+                    creatures[index] = this->game.board()->get(x, y).creatureType();
                     
                     //Gets the direction if there is a creature there
-                    if (this->game.board().get(x, y).creature() != nullptr) {
-                        directions[index] = this->game.board().get(x, y).creature()->direction();
-                        controllers[index] = this->game.board().get(x, y).creature()->controller();
+                    if (this->game.board()->get(x, y).creature() != nullptr) {
+                        directions[index] = this->game.board()->get(x, y).creature()->direction();
+                        controllers[index] = this->game.board()->get(x, y).creature()->controller();
                     } else {
                         directions[index] = NORTH;
                         controllers[index] = 0;
@@ -343,9 +346,9 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
                 }
                 if (setColorData) {
                     //Gets the color alteration of the tile
-                    colors[3 * index] = this->game.board().get(x, y).color().x;
-                    colors[(3 * index) + 1] = this->game.board().get(x, y).color().y;
-                    colors[(3 * index) + 2] = this->game.board().get(x, y).color().z;
+                    colors[3 * index] = this->game.board()->get(x, y).color().x;
+                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
+                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
                 }
                 
                 //Increment
@@ -535,10 +538,10 @@ void Visualizer::updateCreatures() {
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
         glm::ivec2 boardLoc;
-        boardLoc.x = tile / this->game.board().width();
-        boardLoc.y = tile - (this->game.board().width() * boardLoc.x);
+        boardLoc.x = tile / this->game.board()->width();
+        boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
         
-        Creature* creature = this->game.board().get(boardLoc.x, boardLoc.y).creature();
+        Creature* creature = this->game.board()->get(boardLoc.x, boardLoc.y).creature();
         
         if (creature != nullptr) {
             
@@ -557,11 +560,11 @@ void Visualizer::updateCreatures() {
                 
                 if (creature->readyToMove()) {
                     if (direction == NORTH) {
-                        if (this->gameBoard.moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                        if (this->game.board()->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
                             creatureLoc.y -= 1;
                         }
                     } else if (direction == EAST) {
-                        if (this->gameBoard.moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                        if (this->game.board()->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
                             creatureLoc.x -= 1;
                         }
                     }
@@ -734,9 +737,9 @@ void Visualizer::updateSelected() {
         
     } else if (mousePos == NO_SELECTION) {
         //Reset all tiles if the mouse clicked out of the screen
-        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        for (GLuint x = 0; x < this->game.board()->width(); x++) {
+            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+                this->game.board()->setStyle(x, y, Regular);
             }
         }
     }
@@ -745,9 +748,9 @@ void Visualizer::updateSelected() {
     else if (mousePos == this->selectedTile) {
         
         //Goes through all tiles and sets them to regular
-        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        for (GLuint x = 0; x < this->game.board()->width(); x++) {
+            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+                this->game.board()->setStyle(x, y, Regular);
             }
         }
         
@@ -756,32 +759,32 @@ void Visualizer::updateSelected() {
     }
     
     //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
-    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Regular) {
+    else if (this->game.board()->get(mousePos.x, mousePos.y).style() == Regular) {
         
         //Reset all tiles (this one is highlighted after)
-        for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-            for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        for (GLuint x = 0; x < this->game.board()->width(); x++) {
+            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+                this->game.board()->setStyle(x, y, Regular);
             }
         }
         
         //Select this new tile
-        this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
+        this->game.board()->setStyle(mousePos.x, mousePos.y, Selected);
         
         //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
         
-        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
-            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
+        if (this->game.board()->get(mousePos.x, mousePos.y).creature() != nullptr && this->game.board()->get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
+            std::vector<Tile> reachableTiles = getReachableTiles(this->game.board()->get(mousePos.x, mousePos.y));
             
-            Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
+            Creature creature = *this->game.board()->get(mousePos.x, mousePos.y).creature();
             for (GLuint a = 0; a < reachableTiles.size(); a++) {
-                if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                    this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
+                if (this->game.board()->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
+                    this->game.board()->setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
+                } else if (this->game.board()->get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->game.board()->get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->activePlayer) {
                     
                     //Only set the tile to be attackable if it is within the creature's range
-                    if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
-                        this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
+                    if (this->game.board()->tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
+                        this->game.board()->setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
                 }
             }
         }
@@ -790,14 +793,14 @@ void Visualizer::updateSelected() {
     }
     
     //Movement
-    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
+    else if (this->game.board()->get(mousePos.x, mousePos.y).style() == Reachable) {
         
         std::vector<GLuint> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
         
         for (GLuint a = 0; a < directions.size(); a++) {
-            this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
+            this->game.board()->get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
             if (a == 0)
-                this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
+                this->game.board()->setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
         }
         
         //Reset all tiles

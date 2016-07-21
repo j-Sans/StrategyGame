@@ -49,18 +49,18 @@ int main(int argc, const char * argv[]) {
         board.push_back(row);
     }
     
-    Visualizer G("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
+    Visualizer V("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
-    G.gameBoard.setCreature(4, 4, Creature(Human, 1, 3, 1, 1, 1, 1, NORTH, 0));
+    V.game.board()->setCreature(4, 4, Creature(Human, 1, 3, 1, 1, 1, 1, NORTH, 0));
     
-    G.gameBoard.setCreature(2, 2, Creature(Human, 1, 3, 1, 1, 3, 1, NORTH, 1));
+    V.game.board()->setCreature(2, 2, Creature(Human, 1, 3, 1, 1, 3, 1, NORTH, 1));
     
     //Game loop
-    while(!glfwWindowShouldClose(G.window())) {
-        G.render();
+    while(!glfwWindowShouldClose(V.window())) {
+        V.render();
     }
     
-    G.terminate();
+    V.terminate();
 
     return 0;
 }

@@ -9,6 +9,9 @@
 #ifndef Game_hpp
 #define Game_hpp
 
+//GLFW: Window functionality
+#include <GLFW/glfw3.h>
+
 //GLM: OpenGL mathematics for rotations, translations, dilations
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -36,12 +39,17 @@ public:
     
     //Public member functions
     
+    /*!
+     * Distance formula using Pythagorean Theorem
+     */
+    static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
+    
     //Public get functions
     
     /*!
-     * @return The Board object representing the game board.
+     * @return A pointer to the Board object representing the game board.
      */
-    Board board();
+    Board* board();
     
 private:
     
@@ -58,7 +66,7 @@ private:
     
     //Private member functions
     void updateCreatures(float deltaTime);
-    void updateSelected();
+    void updateSelected(bool *mouseDown);
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     void incrementActivePlayer();
     glm::ivec2 mouseTile();
