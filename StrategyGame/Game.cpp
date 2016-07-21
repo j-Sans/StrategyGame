@@ -268,7 +268,9 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
         }
     }
     return true;
-}void Visualizer::incrementActivePlayer() {
+}
+
+void Game::incrementActivePlayer() {
     this->activePlayer++;
     
     if (this->activePlayer >= NUMBER_OF_PLAYERS)

@@ -56,6 +56,15 @@ private:
     unsigned int activePlayer = 0;
     unsigned int turn = 1;
     
+    //Private member functions
+    void updateCreatures(float deltaTime);
+    void updateSelected();
+    bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
+    void incrementActivePlayer();
+    glm::ivec2 mouseTile();
+    std::vector<Tile> getReachableTiles (Tile creatureTile);
+    std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
+    
 };
 
 #endif /* Game_hpp */
