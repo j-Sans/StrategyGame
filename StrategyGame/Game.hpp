@@ -49,6 +49,16 @@ public:
      */
     void nextTurn();
     
+    /*!
+     * A function to update the selected tile based on mouse clicks.
+     *
+     * @param mouseDown A pointer to the boolean representing if the mouse is down. Note: This function may alter that bool based on if the mouse click has been dealt with.
+     * @param cursorPos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.
+     * @param windowSize A glm::ivec2 representing the window size, in screen coordinates. Can be obtained from glfwGetWindowSize.
+     * @param tileCenters An array of glm::vec4 of length NUMBER_OF_TILES representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
+     */
+    void updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
+    
     //Public get functions
     
     /*!
@@ -60,6 +70,11 @@ public:
      * @return The current active player.
      */
     unsigned int activePlayer();
+    
+    /*!
+     * @return The current selected tile, in the form of a glm::ivec2. The coordinates are in terms of board coordinates.
+     */
+    glm::ivec2 tileSelected();
     
 private:
     
@@ -76,7 +91,6 @@ private:
     
     //Private member functions
     void updateCreatures(float deltaTime);
-    void updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     void incrementActivePlayer();
     glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);

@@ -50,6 +50,10 @@ unsigned int Game::activePlayer() {
     return this->currentActivePlayer;
 }
 
+glm::ivec2 Game::tileSelected() {
+    return this->selectedTile;
+}
+
 //Private member functions
 
 void Game::updateCreatures(float deltaTime) {

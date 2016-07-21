@@ -143,8 +143,21 @@ void Visualizer::render() {
         //Set mouseDown to false because this next function deals with the mouse and updates accordingly.
         mouseDown = false;
         
+        glm::dvec2 cursorPos;
+        glm::ivec2 windowSize;
+        
+        glfwGetCursorPos(this->gameWindow, &cursorPos.x, &cursorPos.y);
+        glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+        
+        glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+        
+        for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+            //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+            tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+        }
+        
         //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click
-        this->updateSelected();
+        this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
     }
     
     //Update the creatures and their offsets
@@ -927,7 +940,9 @@ void Visualizer::processButton(std::string action) {
         this->game.nextTurn();
         
     } else if (action.find("creature") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
-        if (this->selectedTile != NO_SELECTION && this->selectedTile != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->selectedTile.x, this->selectedTile.y).occupied()) {
+        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
+            
+            glm::ivec2 selectedTile = this->game.tileSelected();
             
             //Interpret the string to find out what kind of creature
             
@@ -998,11 +1013,11 @@ void Visualizer::processButton(std::string action) {
                 action.erase(0, 5);
             }
             
-            Creature newCreature(race, values[0], values[1], values[2], values[3], values[4], values[5], direction, this->activePlayer);
+            Creature newCreature(race, values[0], values[1], values[2], values[3], values[4], values[5], direction, this->game.activePlayer());
             
-            if (this->game.board()->get(this->selectedTile.x, this->selectedTile.y).passableByCreature(newCreature)) {
+            if (this->game.board()->get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
                 try {
-                    this->game.board()->setCreature(this->selectedTile.x, this->selectedTile.y, newCreature);
+                    this->game.board()->setCreature(selectedTile.x, selectedTile.y, newCreature);
                     
                     //Reset all tiles to be unselected now that the creature has been added
                     for (GLuint x = 0; x < this->game.board()->width(); x++) {
@@ -1011,7 +1026,7 @@ void Visualizer::processButton(std::string action) {
                         }
                     }
                     
-                    this->selectedTile = NO_SELECTION;
+                    selectedTile = NO_SELECTION;
                     
                 } catch (std::exception) {
                     //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
@@ -1021,20 +1036,6 @@ void Visualizer::processButton(std::string action) {
         }
     }
 }
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-//Review this function
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Visualizer::incrementActivePlayer() {
-    this->activePlayer++;
-    
-    if (this->activePlayer >= NUMBER_OF_PLAYERS)
-        this->activePlayer = 0;
-}
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 //Review this function

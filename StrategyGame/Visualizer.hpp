@@ -257,7 +257,7 @@ private:
     /*!
      * A function that alters the style and colors of tiles based on mouse clicks.
      */
-    void updateSelected();
+//    void updateSelected();
     
     /*!
      * A function to deal with button clicks.
