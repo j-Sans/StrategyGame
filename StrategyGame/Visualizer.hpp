@@ -228,19 +228,11 @@ private:
     void presetTransformations();
     
     /*!
-     * A function to update both the creature VBO and the offset VBO. Should be called every frame.
+     * A function to update all of the buffers that need to be updated. Should be called every frame.
      */
-    void updateCreatures();
+    void updateBuffers();
     
-    /*!
-     * A function to update the color VBO. Should be called every frame.
-     */
-    void updateColorBuffer();
     
-    /*!
-     * A function to update the damage VBO. Should be called every frame.
-     */
-    void updateDamageBuffer();
     
     /*!
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.

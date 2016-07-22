@@ -160,14 +160,8 @@ void Visualizer::render() {
         this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
     }
     
-    //Update the creatures and their offsets
-    this->updateCreatures();
-    
-    //Update tile colors
-    this->updateColorBuffer();
-    
-    //Update damage boxes
-    this->updateDamageBuffer();
+    //Update the buffers that need updating.
+    this->updateBuffers();
     
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
@@ -533,8 +527,8 @@ void Visualizer::presetTransformations() {
     this->gameShader.uniformMat4("ortho", this->projection);
 }
 
-//A function to update the creature VBO. Should be called every frame
-void Visualizer::updateCreatures() {
+//A function to update all of the buffers that need to be updated. Should be called every frame.
+void Visualizer::updateBuffers() {
     //Set the offset VBO
     
     //Update creature data array
@@ -640,10 +634,7 @@ void Visualizer::updateCreatures() {
     
     //Update creature data array
     this->setData(false, false, true, false, false, false);
-}
-
-//A function to update the color VBO. Should be called every frame
-void Visualizer::updateColorBuffer() {
+    
     //Update creature data array
     this->setData(false, false, false, true, false, false);
     
@@ -663,10 +654,8 @@ void Visualizer::updateColorBuffer() {
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
-}
 
-//A function to update the damage VBO. Should be called every frame
-void Visualizer::updateDamageBuffer() {
+    
     //Goes through existence times and updates them based on glfwGetTime()
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         if (this->damageData[tile] != 0) {
