@@ -81,7 +81,7 @@ public:
     /*!
      * Time before deletion of damage boxes, in seconds.
      */
-    static const GLfloat damageBoxTime = 3.0f;
+    constexpr static const float damageBoxTime = 3.0f;
     
     //Public member functions
     

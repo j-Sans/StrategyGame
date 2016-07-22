@@ -385,7 +385,6 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
         }
         if (setDamageData) {
             this->damageData[a] = 0;
-            this->existenceTimeForDamageData[a] = 0;
         }
         if (setOffsetData) {
             this->offsetData[a] = 0;
