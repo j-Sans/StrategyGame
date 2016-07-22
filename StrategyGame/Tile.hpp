@@ -78,6 +78,11 @@ public:
      */
     static const Color attackableAdjTileColor = Red;
     
+    /*!
+     * Time before deletion of damage boxes, in seconds.
+     */
+    static const GLfloat damageBoxTime = 3.0f;
+    
     //Public member functions
     
     /*! 

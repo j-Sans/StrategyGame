@@ -671,10 +671,17 @@ void Visualizer::updateDamageBuffer() {
     //Goes through existence times and updates them based on glfwGetTime()
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         if (this->damageData[tile] != 0) {
-            if (glfwGetTime() - this->existenceTimeForDamageData[tile] > this->damageBoxTime) {
-                //If the damage box has existed for long enough
+            
+            glm::ivec2 boardLoc;
+            boardLoc.x = tile / this->game.board()->width();
+            boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
+            
+            Tile currentTile = this->game.board()->get(boardLoc.x, boardLoc.y);
+            
+            if (glfwGetTime() - currentTile.timeOfDamage() > Tile::damageBoxTime) { //Don't show the damage if it is not new
                 this->damageData[tile] = 0;
-                this->existenceTimeForDamageData[tile] = 0;
+            } else {
+                this->damageData[tile] = currentTile.damage();
             }
         }
     }

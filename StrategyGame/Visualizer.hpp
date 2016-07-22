@@ -88,11 +88,6 @@ public:
     const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
     /*!
-     * Time before deletion of damage boxes, in seconds.
-     */
-    const GLfloat damageBoxTime = 3.0f;
-    
-    /*!
      * The game board, containing a 2D vector of Tile objects.
      */
     Game game;
@@ -155,10 +150,8 @@ private:
     GLint terrainData[NUMBER_OF_TILES];
     GLint creatureData[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
-    GLint damageData[NUMBER_OF_TILES];
+    GLint damageData[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
     GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
-    
-    GLint existenceTimeForDamageData[NUMBER_OF_TILES]; //For each damage data, represents the amount of time that box has existed for
     
     //Textures
     std::vector<Texture> textures;
