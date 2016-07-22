@@ -303,8 +303,6 @@ void Game::incrementActivePlayer() {
 glm::ivec2 Game::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]) {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
-    
-    
     //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
     if (mousePos.x > (windowSize.x * 5.0 / 6.0) || mousePos.x < (windowSize.x / 6.0))
         return INTERFACE_BOX_SELECTION;

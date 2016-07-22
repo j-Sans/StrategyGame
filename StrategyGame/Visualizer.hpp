@@ -278,15 +278,6 @@ private:
     bool moveAdjacent(GLuint x, GLuint y, int direction);
     
     /*!
-     * A function to calculate the tile closest to the mouse location at any given point in time.
-     * (-1, -1) is returned if the selection was outside of the board.
-     * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
-     *
-     * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
-     */
-//    glm::ivec2 mouseTile();
-    
-    /*!
      * A function that gets all of the tiles that a creature can reach.
      *
      * @param creature The tile containing the specified creature that is going to be moving.
