@@ -255,11 +255,6 @@ private:
     void moveCamera();
     
     /*!
-     * A function that alters the style and colors of tiles based on mouse clicks.
-     */
-//    void updateSelected();
-    
-    /*!
      * A function to deal with button clicks.
      *
      * @param action An std::string representing the button action to do.
@@ -289,7 +284,7 @@ private:
      *
      * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
      */
-    glm::ivec2 mouseTile();
+//    glm::ivec2 mouseTile();
     
     /*!
      * A function that gets all of the tiles that a creature can reach.
