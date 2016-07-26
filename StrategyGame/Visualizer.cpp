@@ -774,14 +774,16 @@ bool Visualizer::moveAdjacent(GLuint x, GLuint y, int direction) {
         
         if (direction == SOUTH) {
             tile = (x * this->game.board()->width()) + (y + 1); //One row below
+            this->game.board()->get(x, y).creature()->initiateMovementOffset(this->deltaTime);
         } else if (direction == WEST) {
             tile = ((x + 1) * this->game.board()->width()) + y; //One tile further
+            this->game.board()->get(x, y).creature()->initiateMovementOffset(this->deltaTime);
         }
         
         if (tile < NUMBER_OF_TILES) {
-            this->game.board()->get(x, y).creature()->initiateMovementOffset(this->deltaTime);
             
             this->game.board()->moveCreatureByDirection(x, y, direction);
+
         }
     }
     return true;
