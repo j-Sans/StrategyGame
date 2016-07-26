@@ -9,6 +9,8 @@
 #ifndef Button_hpp
 #define Button_hpp
 
+#include "Macros.h"
+
 //Standard library includes
 #include <string>
 

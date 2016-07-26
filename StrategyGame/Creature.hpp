@@ -9,6 +9,8 @@
 #ifndef Creature_hpp
 #define Creature_hpp
 
+#include "Macros.h"
+
 #include <queue>
 
 #define NORTH 0

@@ -9,6 +9,8 @@
 #ifndef Visualizer_hpp
 #define Visualizer_hpp
 
+#include "Macros.h"
+
 //Standard library includes
 #include <math.h>
 #include <vector>
@@ -36,9 +38,6 @@
 
 #include "Interface.hpp"
 
-
-//Preprocessor directives
-#define FULL_SCREEN
 
 class Visualizer {
 public:

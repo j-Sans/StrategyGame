@@ -9,6 +9,8 @@
 #ifndef Tile_hpp
 #define Tile_hpp
 
+#include "Macros.h"
+
 #include "Creature.hpp"
 #include <iostream>
 

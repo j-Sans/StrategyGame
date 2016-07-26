@@ -9,6 +9,8 @@
 #ifndef Interface_hpp
 #define Interface_hpp
 
+#include "Macros.h"
+
 //Standard library includes
 #include <vector>
 

@@ -9,6 +9,8 @@
 #ifndef Player_hpp
 #define Player_hpp
 
+#include "Macros.h"
+
 #include <string>
 
 class Player {

@@ -9,9 +9,8 @@
 #ifndef Building_hpp
 #define Building_hpp
 
-/*!
- * A class representing a creature object/
- */
+#include "Macros.h"
+
 class Building {
 public:
     //Constructor

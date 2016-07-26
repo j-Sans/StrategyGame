@@ -9,6 +9,8 @@
 #ifndef Board_hpp
 #define Board_hpp
 
+#include "Macros.h"
+
 #include <math.h>
 #include <vector>
 #include <list>

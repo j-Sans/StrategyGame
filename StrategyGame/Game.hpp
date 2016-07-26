@@ -9,6 +9,8 @@
 #ifndef Game_hpp
 #define Game_hpp
 
+#include "Macros.h"
+
 //GLFW: Window functionality
 #include <GLFW/glfw3.h>
 
@@ -29,6 +31,8 @@
 
 #define NO_SELECTION glm::ivec2(-1, -1)
 #define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
+
+#define MOVEMENT_CONSOLE_OUTPUT
 
 class Game {
 public:
