@@ -546,57 +546,7 @@ void Visualizer::updateBuffers() {
         Creature* creature = this->game.board()->get(boardLoc.x, boardLoc.y).creature();
         
         if (creature != nullptr) {
-            
             this->offsetData[tile] = creature->offset();
-            
-            /*
-            
-            glm::ivec2 creatureLoc = boardLoc;
-            
-            GLuint direction = creature->direction();
-            
-            if (direction == NORTH || direction == EAST) {
-                //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
-                
-                //If the creature is in the process of moving currently, continue to move it
-                creature->incrementOffset(this->deltaTime);
-                
-                //Correctly set this tile's offset data
-                this->offsetData[tile] = creature->offset();
-                
-                if (creature->readyToMove()) {
-                    if (direction == NORTH) {
-                        if (this->game.board()->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
-                            creatureLoc.y -= 1;
-                        }
-                    } else if (direction == EAST) {
-                        if (this->game.board()->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
-                            creatureLoc.x -= 1;
-                        }
-                    }
-                    
-                }
-            } else if (direction == SOUTH || direction == WEST) {
-                
-                creature->incrementOffset(this->deltaTime);
-                
-                //Correctly set this tile's offset data
-                this->offsetData[tile] = creature->offset();
-            }
-            
-            if (creature->directions.size() > 0 && creature->offset() == 0.0) {
-                
-                //Get the new direction that the creature will be travelling in.
-                GLuint newDirection = creature->directions.front();
-                
-                //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
-                creature->directions.pop();
-                
-                this->moveAdjacent(creatureLoc.x, creatureLoc.y, newDirection);
-            }
-             
-             */
-            
         } else {
             this->offsetData[tile] = 0.0;
         }
