@@ -119,7 +119,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
                 if (listIter->x == x && listIter->y == y) {
-                    //listIter->x += 1; //Moves the creature south a tile. x can't be the maximum because that is checked above
+                    listIter->x += 1; //Moves the creature south a tile. x can't be the maximum because that is checked above
                     break;
                 }
             }
