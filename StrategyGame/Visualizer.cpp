@@ -160,6 +160,8 @@ void Visualizer::render() {
         this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
     }
     
+    this->game.updateCreatures(this->deltaTime);
+    
     //Update the buffers that need updating.
     this->updateBuffers();
     
@@ -545,6 +547,10 @@ void Visualizer::updateBuffers() {
         
         if (creature != nullptr) {
             
+            this->offsetData[tile] = creature->offset();
+            
+            /*
+            
             glm::ivec2 creatureLoc = boardLoc;
             
             GLuint direction = creature->direction();
@@ -588,6 +594,9 @@ void Visualizer::updateBuffers() {
                 
                 this->moveAdjacent(creatureLoc.x, creatureLoc.y, newDirection);
             }
+             
+             */
+            
         } else {
             this->offsetData[tile] = 0.0;
         }

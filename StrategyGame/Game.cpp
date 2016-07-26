@@ -54,13 +54,52 @@ glm::ivec2 Game::tileSelected() {
     return this->selectedTile;
 }
 
-//Private member functions
-
 void Game::updateCreatures(float deltaTime) {
     for (int x = 0; x < this->gameBoard.width(); x++) {
         for (int y = 0; y < this->gameBoard.height(x); y++) {
             
             Creature* creature = this->gameBoard.get(x, y).creature();
+            
+            /*if (creature != nullptr) {
+                
+                GLuint direction = creature->direction();
+                
+                glm::ivec2 creatureLoc;
+                
+                if (direction == NORTH || direction == EAST) {
+                    //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
+                    
+                    //If the creature is in the process of moving currently, continue to move it
+                    creature->incrementOffset(deltaTime);
+                    
+                    if (creature->readyToMove()) {
+                        if (direction == NORTH) {
+                            if (board()->moveCreatureByDirection(x, y, direction)) {
+                                creatureLoc.y -= 1;
+                            }
+                        } else if (direction == EAST) {
+                            if (board()->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                                creatureLoc.x -= 1;
+                            }
+                        }
+                        
+                    }
+                } else if (direction == SOUTH || direction == WEST) {
+                    
+                    creature->incrementOffset(deltaTime);
+                }
+                
+                if (creature->directions.size() > 0 && creature->offset() == 0.0) {
+                    
+                    //Get the new direction that the creature will be travelling in.
+                    GLuint newDirection = creature->directions.front();
+                    
+                    //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
+                    creature->directions.pop();
+                    
+                    this->moveAdjacent(creatureLoc.x, creatureLoc.y, newDirection);
+                }
+            }*/
             
             if (creature != nullptr) {
                 
@@ -225,6 +264,8 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         }
     }
 }
+
+//Private member functions
 
 bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime) {
     //Return false if there is no creature at the designated spot to move

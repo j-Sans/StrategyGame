@@ -50,6 +50,13 @@ public:
     void nextTurn();
     
     /*!
+     * A function that updates the offset of each creature to cause movement animation. This should be called once every frame.
+     *
+     * @param deltaTime The time since the last fram, to multiply by the velocity to get a constant distance. This keeps animation speed constant on different machines.
+     */
+    void updateCreatures(float deltaTime);
+    
+    /*!
      * A function to update the selected tile based on mouse clicks.
      *
      * @param mouseDown A pointer to the boolean representing if the mouse is down. Note: This function may alter that bool based on if the mouse click has been dealt with.
@@ -90,13 +97,6 @@ private:
     unsigned int turn = 1;
     
     //Private member functions
-    
-    /*!
-     * A function that updates the offset of each creature to cause movement animation.
-     *
-     * @param deltaTime The time since the last fram, to multiply by the velocity to get a constant distance. This keeps animation speed constant on different machines.
-     */
-    void updateCreatures(float deltaTime);
     
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     

@@ -66,7 +66,7 @@ void Creature::incrementOffset(float deltaTime) {
         //At 0.4, it has reached the next tile
         if (this->creatureOffset > 0.4) {
             this->creatureOffset = 0.0;
-            std::cout << "Visual: snapped creature to tile after moving either North or East\n";
+            std::cout << "Visual: arrived at next tile after moving either North or East\n";
             
             this->shouldMove = true;
         }
@@ -80,7 +80,7 @@ void Creature::incrementOffset(float deltaTime) {
             
             if (this->creatureOffset > 0.0) {
                 this->creatureOffset = 0.0;
-                std::cout << "Visual: snapped creature to tile after moving either South or West\n";
+                std::cout << "Visual: arrived at next tile after moving either South or West\n";
                  //The creature is not moved here. It should have already been moved when the offset was initially changed. For that reason, shouldMove is not set to true
             }
         }
