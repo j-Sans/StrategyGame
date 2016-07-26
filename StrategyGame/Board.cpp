@@ -42,7 +42,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-            std::cout << "Internal:" << x << ", " << y << ' ' << "relocated North to " << x << ", " << y - 1 << '\n';
+            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated North to " << x << ", " << y - 1 << '\n';
             
             //Decrement the creature's energy by 1
             this->gameBoard[x][y - 1].creature()->decrementEnergy(1);
@@ -65,7 +65,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-            std::cout << "Internal:" << x << ", " << y << ' ' << "relocated East to " << x - 1 << ", " << y << '\n';
+            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated East to " << x - 1 << ", " << y << '\n';
             
             //Decrement the creature's energy by 1
             this->gameBoard[x - 1][y].creature()->decrementEnergy(1);
@@ -88,7 +88,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-            std::cout << "Internal:" << x << ", " << y << ' ' << "relocated South to " << x << ", " << y + 1 << '\n';
+            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated South to " << x << ", " << y + 1 << '\n';
             
             //Decrement the creature's energy by 1
             this->gameBoard[x][y + 1].creature()->decrementEnergy(1);
@@ -111,7 +111,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-            std::cout << "Internal:" << x << ", " << y << ' ' << "relocated West to " << x + 1 << ", " << y << '\n';
+            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated West to " << x + 1 << ", " << y << '\n';
             
             //Decrement the creature's energy by 1
             this->gameBoard[x + 1][y].creature()->decrementEnergy(1);

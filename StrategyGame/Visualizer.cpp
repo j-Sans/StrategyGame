@@ -766,6 +766,7 @@ bool Visualizer::moveAdjacent(GLuint x, GLuint y, int direction) {
     //For these directions, the creature is moved after, in the function that updates the offset data
     if (direction == NORTH || direction == EAST)
         this->game.board()->get(x, y).creature()->initiateMovementOffset(this->deltaTime);
+    std::cout << "Visual: initiated movement offset for North or East \n";
     
     //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
     //For these directions, the creature is moved here, and then the offset is slowly updated to follow
@@ -775,9 +776,11 @@ bool Visualizer::moveAdjacent(GLuint x, GLuint y, int direction) {
         if (direction == SOUTH) {
             tile = (x * this->game.board()->width()) + (y + 1); //One row below
             this->game.board()->get(x, y).creature()->initiateMovementOffset(this->deltaTime);
+            std::cout << "Visual: initiated movement offset for South or West \n";
         } else if (direction == WEST) {
             tile = ((x + 1) * this->game.board()->width()) + y; //One tile further
             this->game.board()->get(x, y).creature()->initiateMovementOffset(this->deltaTime);
+            std::cout << "Visual: initiated movement offset for South or West \n";
         }
         
         if (tile < NUMBER_OF_TILES) {
