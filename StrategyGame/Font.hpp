@@ -14,6 +14,7 @@
 
 //Standard library includes
 #include <map>
+#include <string>
 #include <iostream>
 
 //GLEW: A function that gets OpenGL functionality

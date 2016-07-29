@@ -88,3 +88,7 @@ Font::Font(const char* fontPath) {
     //Set the shader
     this->shader = Shader("Shaders/font.vert", "Shaders/font.frag");
 }
+
+void Font::render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, glm::mat4 projection) {
+    
+}
