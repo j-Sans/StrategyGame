@@ -12,10 +12,25 @@
 #ifndef Font_hpp
 #define Font_hpp
 
+#include <map>
+
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+//GLM: OpenGL vectors
+#include <GLM/glm.hpp>
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include <iostream>
+
+struct Character {
+    GLuint textureID; //ID handle of the glyph texture
+    glm::ivec2 size; //Size of glyph
+    glm::ivec2 bearing; //Offset from baseline to left/top of glyph
+    GLuint advance; //Offset to advance to next glyph
+};
 
 class Font {
 public:
@@ -31,6 +46,13 @@ public:
     
 private:
     //Private properties
+    
+    //A map of chars to the corresponding character
+    std::map<GLchar, Character> characters;
+    
+    //OpenGL buffers
+    GLuint VAO;
+    GLuint VBO;
     
     //Private member functions
 };
