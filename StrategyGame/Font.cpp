@@ -83,6 +83,8 @@ Font::Font(const char* fontPath) {
     
     //Unbind the buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);      
-
+    glBindVertexArray(0);
+    
+    //Set the shader
+    this->shader = Shader("Shaders/font.vert", "Shaders/font.frag");
 }

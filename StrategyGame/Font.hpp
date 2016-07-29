@@ -12,18 +12,24 @@
 #ifndef Font_hpp
 #define Font_hpp
 
+//Standard library includes
 #include <map>
+#include <iostream>
 
+//GLEW: A function that gets OpenGL functionality
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-//GLM: OpenGL vectors
+//GLM: OpenGL vectors and matrix transformations
 #include <GLM/glm.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
 
+//FreeType font library
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <iostream>
+//Local includes
+#include "Shader.hpp"
 
 struct Character {
     GLuint textureID; //ID handle of the glyph texture
@@ -41,6 +47,7 @@ public:
     //Public properties
     
     //Public member functions
+    void render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, glm::mat4 projection);
     
     //Public get functions
     
@@ -53,6 +60,9 @@ private:
     //OpenGL buffers
     GLuint VAO;
     GLuint VBO;
+    
+    //Shader to use when rendering
+    Shader shader;
     
     //Private member functions
 };
