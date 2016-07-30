@@ -11,6 +11,9 @@
 
 #include "Font.hpp"
 
+//Only so that Visualizer.hpp can have a font property without declaring it initially. No other purpose.
+Font::Font() {}
+
 Font::Font(const char* fontPath) {
     
     //Load the library

@@ -34,6 +34,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Texture.hpp"
+#include "Font.hpp"
 #include "Game.hpp"
 
 #include "Interface.hpp"
@@ -154,6 +155,9 @@ private:
     
     //Textures
     std::vector<Texture> textures;
+    
+    //Font
+    Font font;
     
     //Transformations
     glm::mat4 model; //Makes model isometric

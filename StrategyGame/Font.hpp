@@ -42,7 +42,9 @@ struct Character {
 class Font {
 public:
     
-    //Constructor
+    //Constructors
+    Font();
+    
     Font(const char* fontPath);
     
     //Public properties

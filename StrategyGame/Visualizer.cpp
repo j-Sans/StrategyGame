@@ -23,6 +23,8 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std
     
     this->gameShader = Shader(vertexPath, fragmentPath);
     
+    this->font = Font(FONT_PATH);
+    
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -68,6 +70,8 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
+    
+    this->font = Font(FONT_PATH);
     
     this->setInterface();
     
@@ -179,6 +183,8 @@ void Visualizer::render() {
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
+    
+    this->font.render("Game", 0, 0, 100, glm::vec3(1.0f, 1.0f, 1.0f), this->projection);
     
     //Go through the interfaces and render them
     for (GLuint a = 0; a < interfaces.size(); a++) {
