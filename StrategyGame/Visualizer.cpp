@@ -12,8 +12,11 @@
 //Declared here so it can work with static function keyCallback. That function needs to be static
 bool keys[1024];
 
-//A boolean representing if the active tile should be set. This boolean is set in the mouse button callback function
+//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
 bool mouseDown = false;
+
+//A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
+bool mouseUp = false;
 
 //Constructor without geometry shader
 Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
@@ -186,7 +189,7 @@ void Visualizer::render() {
     
     //Go through the interfaces and render them
     for (GLuint a = 0; a < interfaces.size(); a++) {
-        this->interfaces[a].render(mouseDown); //This renders the interface and its buttons
+        this->interfaces[a].render(mouseDown, mouseUp); //This renders the interface and its buttons
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = this->interfaces[a].buttons.begin(); button != interfaces[a].buttons.end(); button++) {
@@ -1067,4 +1070,9 @@ void Visualizer::mouseButtonCallback(GLFWwindow *window, int button, int action,
     
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         mouseDown = true;
+    
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+        mouseUp = true;
+    else
+        mouseUp = false;
 }

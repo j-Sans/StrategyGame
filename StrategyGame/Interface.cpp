@@ -55,7 +55,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
     glBindVertexArray(0);
 }
 
-void Interface::render(bool mouseDown) {
+void Interface::render(bool mouseDown, bool mouseUp) {
     //Get updated information about the viewport
     this->updateViewport();
     
@@ -72,7 +72,7 @@ void Interface::render(bool mouseDown) {
     glBindVertexArray(0);
     
     for (GLuint a = 0; a < this->buttons.size(); a++) {
-        this->buttons[a].render(mouseDown);
+        this->buttons[a].render(mouseDown, mouseUp);
     }
     
     //Reset window information for game rendering

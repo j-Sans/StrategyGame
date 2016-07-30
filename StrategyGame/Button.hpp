@@ -50,14 +50,18 @@ public:
      */
     Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string action, std::string text);
     
+    //Public properties
+    const GLfloat buttonDownTime = 0.25f;
+    
     //Public member functions
     
     /*!
      * A function to render the button. Should be called within the interface's rendering function.
      *
      * @param mouseDown A boolean representing if the mouse is currently pressed. This can set the button to being pressed.
+     * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
      */
-    void render(bool mouseDown);
+    void render(bool mouseDown, bool mouseUp);
     
     //Public get functions
     
@@ -108,8 +112,9 @@ private:
      * A function to locate the mouse and update the color of the button if it should be highlighted.
      *
      * @param mouseDown A boolean representing if the mouse is currently pressed. This can set the button to being pressed.
+     * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
      */
-    void updateMouse(bool mouseDown);
+    void updateMouse(bool mouseDown, bool mouseUp);
     
 };
 

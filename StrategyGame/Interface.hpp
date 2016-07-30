@@ -53,8 +53,9 @@ public:
      * A function to render the interface. Should be called within the game loop's render function. This also renders the buttons on this interface.
      *
      * @param mouseDown A boolean representing if the mouse is down, for the buttons to figure out whether to become pressed.
+     * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
      */
-    void render(bool mouseDown);
+    void render(bool mouseDown, bool mouseUp);
     
 private:
     //OpenGL and GLFW properties

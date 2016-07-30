@@ -65,8 +65,8 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     glBindVertexArray(0);
 }
 
-void Button::render(bool mouseDown){
-    this->updateMouse(mouseDown);
+void Button::render(bool mouseDown, bool mouseUp) {
+    this->updateMouse(mouseDown, mouseUp);
     
     //Bind the VAO and draw shapes
     this->buttonShader->use();
@@ -80,12 +80,17 @@ void Button::render(bool mouseDown){
 }
 
 bool Button::isPressed() {
-    if (this->pressed) { //If the button is pressed, reset pressed because it is being dealt with here
+    if (this->pressed) {
+        
+        //If the button is pressed, reset pressed because it is being dealt with here
         this->pressed = false;
-        return true;
-    } else {
-        return false;
+        
+        //Only count it as pressed if the button is not dark from being recently pressed
+        if (!this->hasBeenPressed)
+            return true;
+        
     }
+    return false;
 }
 
 std::string Button::action() {
@@ -94,7 +99,7 @@ std::string Button::action() {
 
 //Private member functions
 
-void Button::updateMouse(bool mouseDown) {
+void Button::updateMouse(bool mouseDown, bool mouseUp) {
     glm::dvec2 mousePos;
     
     //Get the mouse position and set it to mousePos. It is relative to the upper left corner of the screen
@@ -136,12 +141,9 @@ void Button::updateMouse(bool mouseDown) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         
-        for (int a = 0; a < 6; a++) {
+        for (GLuint a = 0; a < 6; a++) {
             color[a] = 0.17f;
         }
-        
-        this->hasBeenPressed = true;
-        this->timePressed = glfwGetTime();
         
         //Color VBO
         glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
@@ -159,28 +161,43 @@ void Button::updateMouse(bool mouseDown) {
         if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) {
         
             //If the mouse is down at this button, make the button pressed
-            if (mouseDown)
+            if (mouseDown) {
                 this->pressed = true;
-            
-            for (int a = 0; a < 6; a++) {
+                
+                this->hasBeenPressed = true;
+                this->timePressed = glfwGetTime();
+            }
+        
+            for (GLuint a = 0; a < 6; a++) {
                 color[a] = 0.67f;
             }
         } else {
             
-            for (int a = 0; a < 6; a++) {
+            for (GLuint a = 0; a < 6; a++) {
                 color[a] = 0.33f;
             }
         }
         
         //Make the color darker if the button has been pressed recently
         if (this->hasBeenPressed) {
-            if (this->timePressed < glfwGetTime() - 0.5f) {
+            
+            if (mouseUp) {
                 this->hasBeenPressed = false;
             } else {
-                for (int a = 0; a < 6; a++) {
+                for (GLuint a = 0; a < 6; a++) {
                     color[a] = 0.17f;
                 }
             }
+            
+            /*
+            if (this->timePressed < glfwGetTime() - this->buttonDownTime) {
+                this->hasBeenPressed = false;
+            } else {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = 0.17f;
+                }
+            }
+             */
         }
         
         //First we bind the VAO
