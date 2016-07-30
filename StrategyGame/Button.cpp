@@ -163,9 +163,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
             //If the mouse is down at this button, make the button pressed
             if (mouseDown) {
                 this->pressed = true;
-                
                 this->hasBeenPressed = true;
-                this->timePressed = glfwGetTime();
             }
         
             for (GLuint a = 0; a < 6; a++) {
@@ -180,24 +178,12 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         
         //Make the color darker if the button has been pressed recently
         if (this->hasBeenPressed) {
-            
-            if (mouseUp) {
-                this->hasBeenPressed = false;
-            } else {
-                for (GLuint a = 0; a < 6; a++) {
-                    color[a] = 0.17f;
-                }
+            for (GLuint a = 0; a < 6; a++) {
+                color[a] = 0.17f;
             }
             
-            /*
-            if (this->timePressed < glfwGetTime() - this->buttonDownTime) {
+            if (mouseUp)
                 this->hasBeenPressed = false;
-            } else {
-                for (GLuint a = 0; a < 6; a++) {
-                    color[a] = 0.17f;
-                }
-            }
-             */
         }
         
         //First we bind the VAO
