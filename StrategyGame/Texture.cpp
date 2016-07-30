@@ -10,8 +10,8 @@
 
 //Constructor
 Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName) {
-    if (texNumber >= 32) {
-        texNumber = 31; //Stops bad access from accessing greater than element 31 in the because OpenGL might only be able to use 32 textures.
+    if (texNumber >= 31) {
+        texNumber = 30; //Stops bad access from accessing greater than element 30 in the because OpenGL might only be able to use 32 textures, and the last is reserved for fonts
     }
     
     this->id = GL_TEXTURE0 + texNumber;

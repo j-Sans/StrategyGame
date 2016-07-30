@@ -33,7 +33,7 @@ Font::Font(const char* fontPath) {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //Disable byte-alignment restriction
     
     //Go through the characters and create each one and store it.
-    for (GLuint a = 0; a < 128; a++) {
+    for (GLubyte a = 0; a < 128; a++) {
         //Load character glyph
         if (FT_Load_Char(face, a, FT_LOAD_RENDER)) {
             std::cout << "Error loading font glyph" << std::endl;
@@ -95,12 +95,12 @@ void Font::render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::ve
     
     this->shader.uniform3f("textColor", glm::vec3(color.x, color.y, color.z));
     
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE31);
     glBindVertexArray(VAO);
     
     //Iterate through all characters
-    for (std::string::const_iterator c = text.begin(); c != text.end(); c++) {
-        Character ch = characters[*c];
+    for (std::string::const_iterator a = text.begin(); a != text.end(); a++) {
+        Character ch = characters[*a];
         
         GLfloat xPos = x + ch.bearing.x * scale;
         GLfloat yPos = y - (ch.size.y - ch.bearing.y) * scale;
