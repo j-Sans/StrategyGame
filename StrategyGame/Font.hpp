@@ -50,6 +50,9 @@ public:
     //Public properties
     
     //Public member functions
+    
+    glm::vec2 getSize(std::string text, GLfloat scale);
+    
     void render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, GLfloat windowWidth, GLfloat windowHeight);
     
     //Public get functions

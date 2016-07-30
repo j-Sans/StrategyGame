@@ -92,6 +92,45 @@ Font::Font(const char* fontPath) {
     this->shader = Shader("Shaders/font.vert", "Shaders/font.frag");
 }
 
+glm::vec2 Font::getSize(std::string text, GLfloat scale) {
+    
+    glm::vec2 origin = glm::vec2(0, 0);
+    
+    GLfloat length = 0; //The total length of all of the letters
+    GLfloat maxHeight = 0; //The highest character
+    
+    //Iterate through all characters
+    for (std::string::const_iterator a = text.begin(); a != text.end(); a++) {
+        Character ch = characters[*a];
+        
+        GLfloat xPos = origin.x + ch.bearing.x * scale;
+        GLfloat yPos = origin.y - (ch.size.y - ch.bearing.y) * scale;
+        
+        GLfloat w = ch.size.x * scale;
+        GLfloat h = ch.size.y * scale;
+        
+        //Update VBO for each character
+        GLfloat vertices[6][4] = {
+            {xPos, yPos + h, 0.0, 0.0},
+            {xPos, yPos, 0.0, 1.0},
+            {xPos + w, yPos, 1.0, 1.0},
+            
+            {xPos, yPos + h, 0.0, 0.0},
+            {xPos + w, yPos, 1.0, 1.0},
+            {xPos + w, yPos + h, 1.0, 0.0}
+        };
+        
+        //Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        origin.x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+        length += origin.x;
+        
+        if (ch.size.y > maxHeight) {
+            maxHeight = ch.size.y * scale;
+        }
+    }
+    return glm::vec2(length, maxHeight);
+}
+
 void Font::render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, GLfloat windowWidth, GLfloat windowHeight) {
     
     glm::mat4 projection = glm::ortho(0.0f, windowWidth, 0.0f, windowHeight);
@@ -99,6 +138,7 @@ void Font::render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::ve
     //Activate corresponding render state
     this->shader.use();
     
+    //Send uniforms to the shader
     this->shader.uniform3f("textColor", glm::vec3(color.x, color.y, color.z));
     this->shader.uniformMat4("projection", projection);
     

@@ -88,10 +88,8 @@ bool Button::isPressed() {
         //Only count it as pressed if the button is not dark from being recently pressed
         if (!this->hasBeenPressed) {
             this->hasBeenPressed = true;
-            
             return true;
-        } else
-            std::cout << " but it didn't count" << std::endl;
+        }
         
     }
     return false;
