@@ -50,7 +50,7 @@ public:
     //Public properties
     
     //Public member functions
-    void render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, glm::mat4 projection);
+    void render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, GLfloat windowWidth, GLfloat windowHeight);
     
     //Public get functions
     

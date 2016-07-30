@@ -15,6 +15,8 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     this->buttonWindow = window;
     this->buttonShader = shader;
     
+    this->font = Font(FONT_PATH);
+    
     GLfloat data[] = {
         //Rectangle is drawn by two triangles
         this->lowerLeftX, this->lowerLeftY,
@@ -63,7 +65,7 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     glBindVertexArray(0);
 }
 
-void Button::render(bool mouseDown) {
+void Button::render(bool mouseDown){
     this->updateMouse(mouseDown);
     
     //Bind the VAO and draw shapes
@@ -72,6 +74,11 @@ void Button::render(bool mouseDown) {
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    
+    
+    this->font.render("Button", (this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight, 1, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+    
+    std::cout << "(this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth: " << (this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth << std::endl;
 }
 
 bool Button::isPressed() {

@@ -23,6 +23,7 @@
 
 //Local includes
 #include "Shader.hpp"
+#include "Font.hpp"
 #include "Button.hpp"
 
 class Interface {

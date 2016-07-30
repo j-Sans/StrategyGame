@@ -26,6 +26,7 @@
 
 //Local includes
 #include "Shader.hpp"
+#include "Font.hpp"
 
 class Button {
 public:
@@ -82,6 +83,8 @@ private:
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint buttonVBO;
     GLuint colorVBO;
+    
+    Font font;
     
     //Viewport information
     const GLfloat lowerLeftX;
