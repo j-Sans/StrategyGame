@@ -86,8 +86,12 @@ bool Button::isPressed() {
         this->pressed = false;
         
         //Only count it as pressed if the button is not dark from being recently pressed
-        if (!this->hasBeenPressed)
+        if (!this->hasBeenPressed) {
+            this->hasBeenPressed = true;
+            
             return true;
+        } else
+            std::cout << " but it didn't count" << std::endl;
         
     }
     return false;
@@ -163,7 +167,6 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
             //If the mouse is down at this button, make the button pressed
             if (mouseDown) {
                 this->pressed = true;
-                this->hasBeenPressed = true;
             }
         
             for (GLuint a = 0; a < 6; a++) {
@@ -176,7 +179,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
             }
         }
         
-        //Make the color darker if the button has been pressed recently
+        //Make the color darker if the button has been pressed recently. This has also been done if this->pressed is true
         if (this->hasBeenPressed) {
             for (GLuint a = 0; a < 6; a++) {
                 color[a] = 0.17f;
