@@ -97,6 +97,7 @@ void Font::render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::ve
     this->shader.use();
     
     this->shader.uniform3f("textColor", glm::vec3(color.x, color.y, color.z));
+    this->shader.uniformMat4("projection", projection);
     
     glActiveTexture(GL_TEXTURE31);
     glBindVertexArray(VAO);
