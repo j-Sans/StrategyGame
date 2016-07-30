@@ -127,6 +127,8 @@ void Font::render(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::ve
         
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
         
+        this->shader.uniformTex("text", 31);
+    
         //Update content of VBO memory
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
