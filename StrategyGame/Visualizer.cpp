@@ -184,8 +184,6 @@ void Visualizer::render() {
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
-    this->font.render("Game", 0, 0, 1, glm::vec3(1.0f, 1.0f, 1.0f), (float)this->windowWidth, (float)this->windowHeight);
-    
     //Go through the interfaces and render them
     for (GLuint a = 0; a < interfaces.size(); a++) {
         this->interfaces[a].render(mouseDown); //This renders the interface and its buttons

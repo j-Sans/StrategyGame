@@ -76,6 +76,8 @@ public:
 private:
     //Button properties
     bool pressed = false;
+    bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
+    double timePressed; //The time the button was clicked, so that shortly after the button color can be changed back to normal
     std::string buttonAction; //A string to represent the actions that this button does.
     std::string buttonText; //A string to have as the title of the button, what will be displayed.
     

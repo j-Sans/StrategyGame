@@ -75,8 +75,6 @@ void Button::render(bool mouseDown){
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     
-    std::cout << this->buttonText << std::endl;
-    
     //Render the text on the button
     this->font.render(this->buttonText, (this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight, 1, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
 }
@@ -142,29 +140,8 @@ void Button::updateMouse(bool mouseDown) {
             color[a] = 0.17f;
         }
         
-        //Color VBO
-        glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
-        
-        //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(1);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    } else if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) { //Otherwise, highlight if it is being hovered
-        
-        //If the mouse is down at this button, make the button pressed
-        if (mouseDown)
-            this->pressed = true;
-        
-        //If the mouse is highlighting over the button
-        //First we bind the VAO
-        glBindVertexArray(this->VAO);
-        
-        for (int a = 0; a < 6; a++) {
-            color[a] = 0.67f;
-        }
+        this->hasBeenPressed = true;
+        this->timePressed = glfwGetTime();
         
         //Color VBO
         glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
@@ -177,12 +154,37 @@ void Button::updateMouse(bool mouseDown) {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     } else {
+        
+        //If the mouse is hovering over the button
+        if ((mousePos.x >= actualButtonX && mousePos.x <= actualButtonX + actualButtonWidth) && (mousePos.y >= actualButtonY && mousePos.y <= actualButtonY + actualButtonHeight)) {
+        
+            //If the mouse is down at this button, make the button pressed
+            if (mouseDown)
+                this->pressed = true;
+            
+            for (int a = 0; a < 6; a++) {
+                color[a] = 0.67f;
+            }
+        } else {
+            
+            for (int a = 0; a < 6; a++) {
+                color[a] = 0.33f;
+            }
+        }
+        
+        //Make the color darker if the button has been pressed recently
+        if (this->hasBeenPressed) {
+            if (this->timePressed < glfwGetTime() - 0.5f) {
+                this->hasBeenPressed = false;
+            } else {
+                for (int a = 0; a < 6; a++) {
+                    color[a] = 0.17f;
+                }
+            }
+        }
+        
         //First we bind the VAO
         glBindVertexArray(this->VAO);
-        
-        for (int a = 0; a < 6; a++) {
-            color[a] = 0.33f;
-        }
         
         //Color VBO
         glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
