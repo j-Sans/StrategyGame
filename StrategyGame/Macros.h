@@ -12,6 +12,6 @@
 #define FULL_SCREEN
 #define MOVEMENT_CONSOLE_OUTPUT
 
-#define FONT_PATH "Resources/Luminari.ttf"
+#define FONT_PATH "Resources/Palatino.ttc"
 
 #endif /* Macros_h */
