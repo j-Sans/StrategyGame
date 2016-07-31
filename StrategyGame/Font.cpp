@@ -94,8 +94,6 @@ Font::Font(const char* fontPath) {
 
 glm::vec2 Font::getSize(std::string text, GLfloat scale) {
     
-    glm::vec2 origin = glm::vec2(0, 0);
-    
     GLfloat length = 0; //The total length of all of the letters
     GLfloat maxHeight = 0; //The highest character
     
@@ -103,26 +101,8 @@ glm::vec2 Font::getSize(std::string text, GLfloat scale) {
     for (std::string::const_iterator a = text.begin(); a != text.end(); a++) {
         Character ch = characters[*a];
         
-        GLfloat xPos = origin.x + ch.bearing.x * scale;
-        GLfloat yPos = origin.y - (ch.size.y - ch.bearing.y) * scale;
-        
-        GLfloat w = ch.size.x * scale;
-        GLfloat h = ch.size.y * scale;
-        
-        //Update VBO for each character
-        GLfloat vertices[6][4] = {
-            {xPos, yPos + h, 0.0, 0.0},
-            {xPos, yPos, 0.0, 1.0},
-            {xPos + w, yPos, 1.0, 1.0},
-            
-            {xPos, yPos + h, 0.0, 0.0},
-            {xPos + w, yPos, 1.0, 1.0},
-            {xPos + w, yPos + h, 1.0, 0.0}
-        };
-        
         //Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        origin.x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
-        length += origin.x;
+        length += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
         
         if (ch.size.y > maxHeight) {
             maxHeight = ch.size.y * scale;

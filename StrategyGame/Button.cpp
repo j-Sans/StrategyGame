@@ -75,8 +75,20 @@ void Button::render(bool mouseDown, bool mouseUp) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     
+    //Get the text size
+    glm::vec2 textSize = this->font.getSize(this->buttonText, 1.0);
+    
+    //Initialized with the lower left corner position of the button
+    //The arithmatic done on the lower left corner converts it from -1 to 1 into 0 to 1
+    glm::vec2 textPos = glm::vec2((this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight);
+    
+    //Lower the text so its center is at the button's center
+    textPos.y += (this->buttonHeight * this->interfaceBoxHeight * 0.25) - (textSize.y / 2.0);
+    
     //Render the text on the button
-    this->font.render(this->buttonText, (this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight, 1, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+    this->font.render(this->buttonText, textPos.x, textPos.y, 1.0, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+
+    //CURRENTLY— TEXT IS AT WRONG BUTTONS BUT KIND OF WORKS
 }
 
 bool Button::isPressed() {

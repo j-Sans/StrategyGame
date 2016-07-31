@@ -72,6 +72,14 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
     this->setData(true, true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
+    glm::ivec2 windowSize;
+    glm::ivec2 framebufferSize;
+    
+    glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+    glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
+    
+    std::cout << (float)windowSize.y / (float)framebufferSize.y << std::endl;
+    
     this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
     
     this->font = Font(FONT_PATH);
