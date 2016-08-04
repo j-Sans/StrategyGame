@@ -52,9 +52,7 @@ void main() {
         
     } else if (TexType.x == DAMAGE) {
         //Draw the damage box
-        float digitOffset = 1.0f / 9.0f; //This is the width of one digit in the texture containing all of the digits
-        
-        color = TileColor + texture(numbersTex, TexCoords);
+        color = TileColor;
         
     } else if (TexType.x == CIRCLE) {
         //Draw the circle under the creature

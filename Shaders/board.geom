@@ -76,9 +76,6 @@ void main() {
     //Draw present creature
     drawCreature(position, creature[0], rect);
     
-//    if (creature[0] != NO_CREATURE)
-//        drawCircle(position);
-    
     //Draw damage box
     if (creatureDamage[0] != 0)
         drawDamageBox(position, creatureDamage[0], rect);
@@ -253,25 +250,25 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
     float digitOffset = 1.0f / 10.0f; //This is the width of one digit in the texture containing all of the digits
     
-    gl_Position = ortho * view * model * (position + (0.125f * rect[0])); //Bottom
+    gl_Position = ortho * view * model * (position + (0.25f * rect[0])); //Bottom
     TexCoords = vec2(digitOffset + (digitOffset * damage), 0.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (0.125f * rect[1])); //Right
+    gl_Position = ortho * view * model * (position + (0.25f * rect[1])); //Right
     TexCoords = vec2(digitOffset + (digitOffset * damage), 1.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (0.125f * rect[2])); //Left
+    gl_Position = ortho * view * model * (position + (0.25f * rect[2])); //Left
     TexCoords = vec2(digitOffset * damage, 0.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (0.125f * rect[3])); //Top
+    gl_Position = ortho * view * model * (position + (0.25f * rect[3])); //Top
     TexCoords = vec2(digitOffset * damage, 1.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
@@ -279,25 +276,3 @@ void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
     
     EndPrimitive();
 }
-/*
-void drawCircle(vec4 position) {
-    if (creatureDirection[0] == NORTH) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].y += creatureOffset[0];
-        }
-    } else if (creatureDirection[0] == WEST) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].x -= creatureOffset[0];
-        }
-    } else if (creatureDirection[0] == SOUTH) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].y -= creatureOffset[0];
-        }
-    } else if (creatureDirection[0] == EAST) {
-        for (int a = 0; a < 4; a++) {
-            rect[a].x += creatureOffset[0];
-        }
-    }
-    
-    
-}*/

@@ -68,6 +68,8 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
 void Button::render(bool mouseDown, bool mouseUp) {
     this->updateMouse(mouseDown, mouseUp);
     
+    std::string text = ' ' + this->buttonText + ' ';
+    
     //Bind the VAO and draw shapes
     this->buttonShader->use();
     
@@ -76,7 +78,7 @@ void Button::render(bool mouseDown, bool mouseUp) {
     glBindVertexArray(0);
     
     //Get the text size
-    glm::vec2 textSize = this->font.getSize(this->buttonText, 1.0);
+    glm::vec2 textSize = this->font.getSize(text, 1.0);
     
     //Initialized with the lower left corner position of the button
     //The arithmatic done on the lower left corner converts it from -1 to 1 into 0 to 1
@@ -86,9 +88,7 @@ void Button::render(bool mouseDown, bool mouseUp) {
     textPos.y += (this->buttonHeight * this->interfaceBoxHeight * 0.25) - (textSize.y / 2.0);
     
     //Render the text on the button
-    this->font.render(this->buttonText, textPos.x, textPos.y, 1.0, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
-
-    //CURRENTLY— TEXT IS AT WRONG BUTTONS BUT KIND OF WORKS
+    this->font.render(text, textPos.x, textPos.y, 1.0, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
 }
 
 bool Button::isPressed() {

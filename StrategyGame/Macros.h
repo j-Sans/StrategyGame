@@ -10,7 +10,8 @@
 #define Macros_h
 
 #define FULL_SCREEN
-#define MOVEMENT_CONSOLE_OUTPUT
+//#define MOVEMENT_CONSOLE_OUTPUT
+//#define TURN_CONSOLE_OUTPUT
 
 #define FONT_PATH "Resources/Palatino.ttc"
 

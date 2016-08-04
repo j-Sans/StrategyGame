@@ -78,8 +78,6 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
     glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
     glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
     
-    std::cout << (float)windowSize.y / (float)framebufferSize.y << std::endl;
-    
     this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
     
     this->font = Font(FONT_PATH);
@@ -632,19 +630,16 @@ void Visualizer::updateBuffers() {
     
     //Goes through existence times and updates them based on glfwGetTime()
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
-        if (this->damageData[tile] != 0) {
-            
-            glm::ivec2 boardLoc;
-            boardLoc.x = tile / this->game.board()->width();
-            boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
-            
-            Tile currentTile = this->game.board()->get(boardLoc.x, boardLoc.y);
-            
-            if (glfwGetTime() - currentTile.timeOfDamage() > Tile::damageBoxTime) { //Don't show the damage if it is not new
-                this->damageData[tile] = 0;
-            } else {
-                this->damageData[tile] = currentTile.damage();
-            }
+        glm::ivec2 boardLoc;
+        boardLoc.x = tile / this->game.board()->width();
+        boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
+        
+        Tile currentTile = this->game.board()->get(boardLoc.x, boardLoc.y);
+        
+        if (glfwGetTime() - currentTile.timeOfDamage() > Tile::damageBoxTime) { //Don't show the damage if it is not new
+            this->damageData[tile] = 0;
+        } else {
+            this->damageData[tile] = currentTile.damage();
         }
     }
     

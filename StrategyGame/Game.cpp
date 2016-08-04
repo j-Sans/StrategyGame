@@ -37,7 +37,9 @@ void Game::nextTurn() {
         }
     }
     
+#ifdef TURN_CONSOLE_OUTPUT
     std::cout << std::endl << std::endl << "--------------------" << std::endl << "Player " << this->currentActivePlayer + 1 << "'s turn" << std::endl << std::endl;
+#endif
 }
 
 //Public get functions
