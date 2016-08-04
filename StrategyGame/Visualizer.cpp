@@ -193,6 +193,9 @@ void Visualizer::render() {
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
+    //This doesn't work yet
+//    this->renderDamageText();
+    
     //Go through the interfaces and render them
     for (GLuint a = 0; a < interfaces.size(); a++) {
         this->interfaces[a].render(mouseDown, mouseUp); //This renders the interface and its buttons
@@ -291,6 +294,8 @@ void Visualizer::initWindow() {
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    
+    this->viewportSize = glm::ivec2(viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
@@ -626,7 +631,6 @@ void Visualizer::updateBuffers() {
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
-
     
     //Goes through existence times and updates them based on glfwGetTime()
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
@@ -660,6 +664,54 @@ void Visualizer::updateBuffers() {
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
 }
+
+//DOES NOT WORK AT THE MOMENT
+
+/*void Visualizer::renderDamageText() {
+    glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+    
+    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+        tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+    }
+    
+    //Goes through existence times and updates them based on glfwGetTime()
+    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+        
+        if (this->damageData[tile] != 0) { //Don't show the damage if it is not new
+            glm::ivec2 windowSize;
+            glm::ivec2 framebufferSize;
+            glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+            glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
+            
+            glm::ivec2 damageTile;
+            
+            damageTile.x = tile / this->game.board()->width();
+            damageTile.y = tile - damageTile.x;
+            
+            if (damageTile.x >= 0 && damageTile.x < this->game.board()->width()) {
+                if (damageTile.y >= 0 && damageTile.y < this->game.board()->height(damageTile.x)) {
+                    
+                    glm::vec2 damageTileCoords = glm::vec2(tileCenters[damageTile.x * this->game.board()->width() + damageTile.y]);
+                    
+                    damageTileCoords.x += 1;
+                    damageTileCoords.x /= 2;
+                    
+                    damageTileCoords.y += 1;
+                    damageTileCoords.y /= 2;
+                    
+                    std::cout << "(" << damageTileCoords.x << ", " << damageTileCoords.y << ")" << std::endl;
+                    
+                    //Render the damage box
+                    this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x, damageTileCoords.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
+                    
+                    //Now use the shader so that the proper shader is used to render the game
+                    this->gameShader.use();
+                }
+            }
+        }
+    }
+}*/
 
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
 void Visualizer::moveCamera() {

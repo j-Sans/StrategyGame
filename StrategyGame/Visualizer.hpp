@@ -170,6 +170,8 @@ private:
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::ivec2 viewportSize;
+    
     
     //Interfaces
     std::vector<Interface> interfaces;
@@ -234,6 +236,13 @@ private:
      * A function to update all of the buffers that need to be updated. Should be called every frame.
      */
     void updateBuffers();
+    
+    
+    //At the moment this function is not completed
+    /*!
+     * A function to render the damage text. Should be called every frame after displaying the board.
+     */
+//    void renderDamageText();
     
     
     
