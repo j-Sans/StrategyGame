@@ -12,6 +12,7 @@
 #include "Macros.h"
 
 #include "Creature.hpp"
+#include "Building.hpp"
 #include <iostream>
 
 //GLM: OpenGL mathematics for rotations, translations, dilations
@@ -26,6 +27,9 @@
 
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
+
+#define NO_BUILDING 0
+#define TOWER_BUILDING 1 //Simple test building type using a tower image
 
 enum Color {
     White,
@@ -89,11 +93,19 @@ public:
     
     /*! 
      * Sets a creature as the creature located in this tile.
-     *  Warning: Does not deletes the old creature!
+     * Warning: Does not deletes the old creature!
      *
      * @param creature A pointer to the new creature. If nullptr, then the spot becomes empty.
      */
     void setCreature(Creature *creature);
+    
+    /*!
+     * Sets a building as the building located in this tile.
+     * Warning: Does not deletes the old building!
+     *
+     * @param building A pointer to the new building. If nullptr, then the spot becomes empty.
+     */
+    void setBuilding(Building *building);
     
     /*!
      * Sets a style to alter the hue of this tile.
@@ -110,7 +122,7 @@ public:
     void setDirection(unsigned int direction);
     
     /*!
-     * Indicates the damage value, dealt to the creature at this tile, to be displayed.
+     * Indicates the damage value, dealt to the creature or building at this tile, to be displayed.
      *
      * @param damage The amount of damage dealt.
      * @param time The current time, gotten from glfwGetTime().
@@ -135,6 +147,11 @@ public:
     Creature* creature();
     
     /*!
+     * @return A pointer to the building at this tile.
+     */
+    Building* building();
+    
+    /*!
      * @return The terrain type of this tile.
      */
     float terrain();
@@ -148,6 +165,11 @@ public:
      * @return The type of the creature, indicating which texture to use to the openGL VBO. Currently returns the basic creature if there is any creature.
      */
     unsigned int creatureType();
+    
+    /*!
+     * @return The type of the building, indicating which texture to use to the openGL VBO. Currently returns the basic building if there is any creature.
+     */
+    unsigned int buildingType();
     
     /*!
      * @return The name of the color of this tile, of type Color enum. Possible values include White, Grey, Red, Yellow, Green, Cyan, and Blue.
@@ -185,9 +207,16 @@ public:
     
 private:
     //Private properties
+    
+    //Location info
     const unsigned int tileX;
     const unsigned int tileY;
+    
+    //Creatures and buildings
     Creature* tileCreature = nullptr;
+    Building* tileBuilding = nullptr;
+    
+    //Tile info
     int tileTerrain;
     Color tileColor = White;
     Style tileStyle = Regular;
@@ -197,9 +226,6 @@ private:
     
     //The time the damage was first shown, so that after 3 seconds the damage will no longer be displayed.
     float damageHitTime;
-    
-    //const bool blocksVision;
-    //const bool isRoughTerrain; //slows movement
     
     //Private member functions
 };

@@ -103,6 +103,18 @@ void Creature::resetOffset() {
     this->creatureOffset = 0.0;
 }
 
+void Creature::move(int direction) {
+    if (direction == NORTH) {
+        this->creatureY--;
+    } else if (direction == EAST) {
+        this->creatureX--;
+    } else if (direction == SOUTH) {
+        this->creatureY++;
+    } else if (direction == WEST) {
+        this->creatureX++;
+    }
+}
+
 const Race Creature::race() {
     return this->creatureRace;
 }
@@ -161,4 +173,12 @@ bool Creature::readyToMove() {
 
 const unsigned int Creature::controller() {
     return this->creatureController;
+}
+
+unsigned int Creature::x() {
+    return this->creatureX;
+}
+
+unsigned int Creature::y() {
+    return this->creatureY;
 }

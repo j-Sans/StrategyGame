@@ -22,15 +22,6 @@
 //How creatures are stored:
 //Creatures will be put into a std::list and then tiles will have pointers to the list elements. Each creature will have a unique position on the board, so the x and y coordinates are a unique combination for each creature, and can be used as a identifier for finding and deleting that creature.
 
-//A simple struct to represent the creature within the list of creatures. Creatures
-struct CreatureInList {
-    unsigned int x;
-    unsigned int y;
-    Creature creature;
-    
-    CreatureInList(unsigned int setX, unsigned int setY, Creature setCreature) : x(setX), y(setY), creature(setCreature) {}
-};
-
 class Board {
 public:
     //Constructor
@@ -180,7 +171,8 @@ public:
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;
-    std::list<CreatureInList> creatures; //List of creatures on the game board, for board tiles to have pointers to
+    std::list<Creature> creatures; //List of creatures on the game board, for board tiles to have pointers to
+    std::list<BuildingInList> buildings; //List of buildings on the game board, for board tiles to have pointers to
     
     //Private member functions
 };

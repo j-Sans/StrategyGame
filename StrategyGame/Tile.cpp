@@ -17,10 +17,14 @@ Tile::Tile(float terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
 
 //Public member functions
 
-//Sets a creature as the creature located in this tile. Warning: Does not deletes the old creature!
+//Sets a creature as the creature located in this tile. Warning: Does not delete the old creature!
 void Tile::setCreature(Creature *creature) {
-    
     this->tileCreature = creature; //Set the creature at this tile as the inputted creature
+}
+
+//Sets a building as the building located in this tile. Warning: Does not delete the old building!
+void Tile::setBuilding(Building *building) {
+    this->tileBuilding = building;
 }
 
 void Tile::setStyle(Style style) {
@@ -61,6 +65,10 @@ Creature* Tile::creature() {
     return this->tileCreature;
 }
 
+Building* Tile::building() {
+    return this->tileBuilding;
+}
+
 float Tile::terrain() {
     return this->tileTerrain;
 }
@@ -75,6 +83,15 @@ unsigned int Tile::creatureType() {
         return NO_CREATURE;
     } else {
         return STICK_FIGURE_CREATURE;
+    }
+}
+
+//Currently this returns the basic tower building whenever there is any creature.
+unsigned int Tile::buildingType() {
+    if (this->tileBuilding == nullptr) {
+        return NO_BUILDING;
+    } else {
+        return TOWER_BUILDING;
     }
 }
 

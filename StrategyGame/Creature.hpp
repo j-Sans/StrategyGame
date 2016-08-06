@@ -108,6 +108,21 @@ public:
      */
     void resetOffset();
     
+    /*!
+     * Update the x and y coordinates based on the direction.
+     *
+     * @param direction The direction in which to move.
+     */
+    void move(unsigned int direction);
+    
+    /*!
+     * A function to update x and y.
+     *
+     * @param x The new x coordinate.
+     * @param y The new y coordinate. //WRITE THIS FUNC
+     */
+    void setLocation(unsigned int x, unsigned int y);
+    
     //Get methods
     
     /*!
@@ -171,6 +186,16 @@ public:
     float offset();
     
     /*!
+     * @return The x location of this creature on the board.
+     */
+    unsigned int x();
+    
+    /*!
+     * @return The y location of this creature on the board.
+     */
+    unsigned int y();
+    
+    /*!
      * @return Whether the creature should move in the next direction. If this is true, the next direction should be popped off of the queue and the creature should move in that direction. Then, the private bool shouldMove is made false. If this is false, the creature is not ready to be moved yet.
      */
     bool readyToMove();
@@ -184,6 +209,7 @@ private:
     //Private properties
     const unsigned int creatureController;
     
+    //Stats
     const Race creatureRace;
     const unsigned int creatureMaxHealth;
     const unsigned int creatureMaxEnergy;
@@ -196,6 +222,10 @@ private:
     unsigned int creatureEnergy;
     int creatureDirection;
     float creatureOffset = 0.0;
+    
+    //Location
+    unsigned int creatureX;
+    unsigned int creatureY;
     
     //The speed that the creature moves when it is animated.
     const float movementAnimationSpeed = 1.5f;

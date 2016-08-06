@@ -52,8 +52,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-                if (listIter->x == x && listIter->y == y) {
-                    listIter->y -= 1; //Moves the creature north a tile. y can't be 0 because that is checked above
+                if (listIter->x() == x && listIter->y() == y) {
+                    listIter->move(NORTH); //Moves the creature north a tile. y can't be 0 because that is checked above
                     break;
                 }
             }
@@ -77,8 +77,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-                if (listIter->x == x && listIter->y == y) {
-                    listIter->x -= 1; //Moves the creature west a tile. x can't be 0 because that is checked above
+                if (listIter->x() == x && listIter->y() == y) {
+                    listIter->move(EAST); //Moves the creature west a tile. x can't be 0 because that is checked above
                     break;
                 }
             }
@@ -102,8 +102,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-                if (listIter->x == x && listIter->y == y) {
-                    listIter->y += 1; //Moves the creature south a tile. y can't be the maximum because that is checked above
+                if (listIter->x() == x && listIter->y() == y) {
+                    listIter->move(SOUTH); //Moves the creature south a tile. y can't be the maximum because that is checked above
                     break;
                 }
             }
@@ -127,8 +127,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-                if (listIter->x == x && listIter->y == y) {
-                    listIter->x += 1; //Moves the creature south a tile. x can't be the maximum because that is checked above
+                if (listIter->x() == x && listIter->y() == y) {
+                    listIter->move(WEST); //Moves the creature south a tile. x can't be the maximum because that is checked above
                     break;
                 }
             }
@@ -140,6 +140,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
     return true;
 }
 
+/*
 bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("Initial x out of range");
@@ -188,7 +189,7 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     }
     
     return true;
-}
+}*/
 
 /*
  * TO ADD:
