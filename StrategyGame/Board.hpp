@@ -111,6 +111,25 @@ public:
     void deleteCreature(unsigned int x, unsigned int y);
     
     /*!
+     * Set a building in the designated spot on the board.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     * @param creature A creature object to be set in the board at the designated spot.
+     */
+    void setBuilding(unsigned int x, unsigned int y, Building building);
+    
+    /*!
+     * Delete the building in the designated spot on the board.
+     * Possible errors include if the coordinates are outside of the range of the board.
+     *
+     * @param x The x index of the coordinate in the board.
+     * @param y The y index of the coordinate in the board.
+     */
+    void deleteBuilding(unsigned int x, unsigned int y);
+    
+    /*!
      * Set a color in the designated spot on the board.
      * Possible errors include if the coordinates are outside of the range of the board.
      *

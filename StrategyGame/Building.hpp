@@ -14,6 +14,7 @@
 class Building {
 public:
     //Constructor
+    Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost);
     
     //Destructor
     
@@ -36,10 +37,24 @@ public:
      */
     const unsigned int cost();
     
+    /*!
+     * @return The x location of this creature on the board.
+     */
+    const unsigned int x();
+    
+    /*!
+     * @return The y location of this creature on the board.
+     */
+    const unsigned int y();
+    
 private:
     //Private properties
     const unsigned int buildingMaxHealth;
     const unsigned int buildingCost;
+    
+    //Location
+    const unsigned int buildingX;
+    const unsigned int buildingY;
     
     unsigned int buildingHealth;
 };

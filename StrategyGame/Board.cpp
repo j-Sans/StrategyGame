@@ -318,7 +318,7 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
      * However, currently there are not too many board spaces that will have creatures for testing purposes.
      
      Ways to fix this in the future:
-     * Make a sort functino to get the list sorted in a way that is easy to go through to find the right spot.
+     * Make a sort function to get the list sorted in a way that is easy to go through to find the right spot.
      * Use std::optional<Creature> instead of Creature* in Tile.hpp
         std::optional (or std::experimental::optional) may not have come out yet, which is a slight problem.
         There were issues getting it to work on 2013 MacBook Pro in Xcode 7, without much trying
@@ -334,6 +334,51 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
     }
     
     //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
+}
+
+void Board::setBuilding(unsigned int x, unsigned int y, Building building) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    this->buildings.push_back(building);
+    
+    this->gameBoard[x][y].setBuilding(&this->buildings.back());
+}
+
+void Board::deleteBuilding(unsigned int x, unsigned int y) {
+    if (x >= this->gameBoard.size()) {
+        throw std::range_error("X out of range");
+    }
+    if (y >= this->gameBoard[x].size()) {
+        throw std::range_error("Y out of range");
+    }
+    
+    /* Note:
+     * The following for loop iterates through the list of board tiles with buildings until it finds the designated one, and it deletes it.
+     * It is known that this is incredibly inefficient.
+     * However, currently there are not too many board spaces that will have buildings for testing purposes.
+     
+     Ways to fix this in the future:
+     * Make a sort function to get the list sorted in a way that is easy to go through to find the right spot.
+     * Use std::optional<Building> instead of Building* in Tile.hpp
+     std::optional (or std::experimental::optional) may not have come out yet, which is a slight problem.
+     There were issues getting it to work on 2013 MacBook Pro in Xcode 7, without much trying
+     * Download and add the boost library optional functionality
+     */
+    
+    for (auto listIter = this->buildings.begin(); listIter != this->buildings.end(); listIter++) {
+        if (listIter->x() == x && listIter->y() == y) {
+            this->gameBoard[x][y].setBuilding(nullptr);
+            this->creatures.erase(listIter); //Delete the creature from the list if it is the specified creature.
+            break;
+        }
+    }
+    
+    //If no building is deleted in the loop, then there was no creature at that location, which is also fine.
 }
 
 void Board::setStyle(unsigned int x, unsigned int y, Style style) {
