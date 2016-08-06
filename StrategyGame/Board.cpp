@@ -373,7 +373,7 @@ void Board::deleteBuilding(unsigned int x, unsigned int y) {
     for (auto listIter = this->buildings.begin(); listIter != this->buildings.end(); listIter++) {
         if (listIter->x() == x && listIter->y() == y) {
             this->gameBoard[x][y].setBuilding(nullptr);
-            this->creatures.erase(listIter); //Delete the creature from the list if it is the specified creature.
+            this->buildings.erase(listIter); //Delete the building from the list if it is the specified creature.
             break;
         }
     }
