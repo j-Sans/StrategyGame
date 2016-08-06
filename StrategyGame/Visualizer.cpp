@@ -53,7 +53,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std
         std::cout << "Error loading stick figure texture: " << e.what();
     }
     try {
-        this->loadTexture("Resources/numbers.png", "numbersTex");
+        this->loadTexture("Resources/tower.png", "towerTex");
     } catch (std::exception e) {
         std::cout << "Error loading numbers texture: " << e.what();
     }
@@ -109,7 +109,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
         std::cout << "Error loading stick figure texture: " << e.what();
     }
     try {
-        this->loadTexture("Resources/numbers.png", "numbersTex");
+        this->loadTexture("Resources/tower.png", "towerTex");
     } catch (std::exception e) {
         std::cout << "Error loading numbers texture: " << e.what();
     }

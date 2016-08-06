@@ -6,6 +6,7 @@
 #define CREATURE 1
 #define DAMAGE 2
 #define CIRCLE 3
+#define BUILDING 4
 
 //Direction
 #define NORTH 0
