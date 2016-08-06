@@ -11,7 +11,7 @@
 
 //Constructors
 
-Creature::Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller) : creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureVision(vision), creatureRange(range), creatureCost(cost), creatureController(controller) {
+Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller) : creatureX(x), creatureY(y), creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureVision(vision), creatureRange(range), creatureCost(cost), creatureController(controller) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
     
@@ -103,7 +103,7 @@ void Creature::resetOffset() {
     this->creatureOffset = 0.0;
 }
 
-void Creature::move(int direction) {
+void Creature::move(unsigned int direction) {
     if (direction == NORTH) {
         this->creatureY--;
     } else if (direction == EAST) {
@@ -113,6 +113,11 @@ void Creature::move(int direction) {
     } else if (direction == WEST) {
         this->creatureX++;
     }
+}
+
+void Creature::setLocation(unsigned int x, unsigned int y) {
+    this->creatureX = x;
+    this->creatureY = y;
 }
 
 const Race Creature::race() {

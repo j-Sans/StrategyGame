@@ -34,6 +34,8 @@ public:
     /*!
      * A class representing a creature object.
      *
+     * @param unsigned int x An unsigned int representing the x location of the creature on the board.
+     * @param unsigned int y An unsigned int representing the y location of the creature on the board.
      * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
      * @param maxHealth An unsigned int representing the max health of the creature.
      * @param maxEnergy An unsigned int representing the max energy of the creature.
@@ -44,7 +46,7 @@ public:
      * @param cost An unsigned int representing the cost of the creature in mana.
      * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
      */
-    Creature(Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
+    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
     
     //Destructor
     
@@ -116,10 +118,10 @@ public:
     void move(unsigned int direction);
     
     /*!
-     * A function to update x and y.
+     * A function to update x and y based on parameters.
      *
      * @param x The new x coordinate.
-     * @param y The new y coordinate. //WRITE THIS FUNC
+     * @param y The new y coordinate.
      */
     void setLocation(unsigned int x, unsigned int y);
     

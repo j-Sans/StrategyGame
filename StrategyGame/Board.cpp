@@ -140,7 +140,6 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
     return true;
 }
 
-/*
 bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY) {
     if (x >= this->gameBoard.size()) //is this protection really necessary?
         throw std::range_error("Initial x out of range");
@@ -180,16 +179,15 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     
     //Find the creature, and update its location on the board
     for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-        if (listIter->x == x && listIter->y == y) {
+        if (listIter->x() == x && listIter->y() == y) {
             //Moves the creature in the list to that spot
-            listIter->x = destinationX;
-            listIter->y = destinationY;
+            listIter->setLocation(destinationX, destinationY);
             break;
         }
     }
     
     return true;
-}*/
+}
 
 /*
  * TO ADD:
@@ -301,9 +299,9 @@ void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
         throw std::range_error("Y out of range");
     }
     
-    this->creatures.push_back(CreatureInList(x, y, creature));
+    this->creatures.push_back(creature);
     
-    this->gameBoard[x][y].setCreature(&this->creatures.back().creature);
+    this->gameBoard[x][y].setCreature(&this->creatures.back());
 }
 
 void Board::deleteCreature(unsigned int x, unsigned int y) {
@@ -328,7 +326,7 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
      */
     
     for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-        if (listIter->x == x && listIter->y == y) {
+        if (listIter->x() == x && listIter->y() == y) {
             this->gameBoard[x][y].setCreature(nullptr);
             this->creatures.erase(listIter); //Delete the creature from the list if it is the specified creature.
             break;

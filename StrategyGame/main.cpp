@@ -51,9 +51,9 @@ int main(int argc, const char * argv[]) {
     
     Visualizer V("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
-    V.game.board()->setCreature(3, 3, Creature(Human, 1, 3, 1, 1, 1, 1, NORTH, 0));
+    V.game.board()->setCreature(3, 3, Creature(3, 3, Human, 1, 3, 1, 1, 1, 1, NORTH, 0));
     
-    V.game.board()->setCreature(2, 2, Creature(Human, 1, 3, 1, 1, 3, 1, NORTH, 1));
+    V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 1, 3, 1, 1, 3, 1, NORTH, 1));
     
     //Game loop
     while(!glfwWindowShouldClose(V.window())) {

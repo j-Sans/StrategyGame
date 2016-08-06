@@ -172,7 +172,7 @@ private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;
     std::list<Creature> creatures; //List of creatures on the game board, for board tiles to have pointers to
-    std::list<BuildingInList> buildings; //List of buildings on the game board, for board tiles to have pointers to
+    std::list<Building> buildings; //List of buildings on the game board, for board tiles to have pointers to
     
     //Private member functions
 };

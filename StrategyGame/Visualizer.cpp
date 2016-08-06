@@ -821,7 +821,7 @@ void Visualizer::processButton(std::string action) {
                 action.erase(0, 5);
             }
             
-            Creature newCreature(race, values[0], values[1], values[2], values[3], values[4], values[5], direction, this->game.activePlayer());
+            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], values[3], values[4], values[5], direction, this->game.activePlayer());
             
             if (this->game.board()->get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
                 try {
