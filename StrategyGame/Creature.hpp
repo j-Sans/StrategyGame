@@ -34,8 +34,8 @@ public:
     /*!
      * A class representing a creature object.
      *
-     * @param unsigned int x An unsigned int representing the x location of the creature on the board.
-     * @param unsigned int y An unsigned int representing the y location of the creature on the board.
+     * @param x int x An unsigned int representing the x location of the creature on the board.
+     * @param y int y An unsigned int representing the y location of the creature on the board.
      * @param race A Race enum type respresenting the creature's race. Includes: Human, Elf, Dwarf, Orc, Goblin, Undead, and Vampire.
      * @param maxHealth An unsigned int representing the max health of the creature.
      * @param maxEnergy An unsigned int representing the max energy of the creature.

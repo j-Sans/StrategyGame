@@ -23,18 +23,28 @@
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
 
+//Building
+#define NO_BUILDING 0
+#define TOWER_BUILDING 1 //Simple test building using a tower image
+
 layout (points) in;
 layout (triangle_strip, max_vertices = 16) out;
 
 //4 vertices for tile, 4 vertices for creature, 4 vertices for the damage box, and 4 for the circle
 
+//Tile
 in int terrain[];
+in vec4 tileColor[];
+
+//Creature
 in int creature[];
 in int creatureDirection[];
 in int creatureController[];
 in int creatureDamage[];
-in vec4 tileColor[];
 in float creatureOffset[];
+
+//Building
+in int building[];
 
 out vec2 TexCoords;
 out vec4 TileColor;
@@ -52,18 +62,26 @@ uniform mat4 creatureMat;
 void makeOpen(vec4 position);
 void makeMountain(vec4 position);
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]);
+void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]);
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]);
 //void drawCircle(vec4 position);
 
 void main() {
     vec4 position = gl_in[0].gl_Position;
     
-    //Rectangle coordinates with these transformations
+    //1x2 Rectangle coordinates with these transformations
     vec4 rect[] = vec4[](
         vec4( 0.45f,  0.35f, 0.0f, 0.0f),
         vec4( 0.05f, -0.05f, 0.0f, 0.0f),
         vec4( 0.35f,  0.45f, 0.0f, 0.0f),
-        vec4(-0.05f,  0.05f, 0.0f, 0.0f)
+        vec4(-0.05f,  0.05f, 0.0f, 0.0f),
+    );
+    
+    vec4 square[] = vec4[](
+       vec4( 0.30f,  0.10f, 0.0f, 0.0f),
+       vec4( 0.10f, -0.10f, 0.0f, 0.0f),
+       vec4( 0.10f,  0.30f, 0.0f, 0.0f),
+       vec4(-0.10f,  0.10f, 0.0f, 0.0f),
     );
     
     //Draw the ground
@@ -168,7 +186,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
             vec4(-0.1f, -0.1f, 0.0f, 0.0f),
             vec4( 0.1f, -0.1f, 0.0f, 0.0f),
             vec4(-0.1f,  0.1f, 0.0f, 0.0f),
-            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+            vec4( 0.1f,  0.1f, 0.0f, 0.0f),
         );
         
         if (creatureDirection[0] == NORTH) {
@@ -189,6 +207,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
             }
         }
         
+        //Draw the circle
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
         TexCoords = vec2(0.0f, 0.0f);
@@ -241,6 +260,80 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
+        EmitVertex();
+        
+        EndPrimitive();
+    }
+}
+
+void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
+    if (buildingTypeToDraw != NO_BUILDING) {
+        
+        //Draw the circle for the creature
+        
+        //The positions of a diamond in the shape of the tile
+        vec4 tileDiamond[] = vec4[](
+            vec4(-0.1f, -0.1f, 0.0f, 0.0f),
+            vec4( 0.1f, -0.1f, 0.0f, 0.0f),
+            vec4(-0.1f,  0.1f, 0.0f, 0.0f),
+            vec4( 0.1f,  0.1f, 0.0f, 0.0f),
+        );
+        
+        /* Commented out drawing the circle because buildings may want some controller-indicator, but none implementedd or decided on yet
+        
+        //Draw the circle
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
+        TexCoords = vec2(0.0f, 0.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
+        TexCoords = vec2(0.0f, 1.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
+        TexCoords = vec2(1.0f, 0.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
+        TexCoords = vec2(1.0f, 1.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(CIRCLE, creatureController[0]);
+        EmitVertex();
+        
+        EndPrimitive();
+         */
+        
+        //Draw the creature after
+        
+        gl_Position = ortho * view * model * (position + (0.5f * square[0])); //Top right
+        TexCoords = vec2(0.0f, 0.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(BUILDING, buildingTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * square[1])); //Bottom right
+        TexCoords = vec2(0.0f, 1.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(BUILDING, buildingTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * square[2])); //Top left
+        TexCoords = vec2(1.0f, 0.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(BUILDING, buildingTypeToDraw);
+        EmitVertex();
+        
+        gl_Position = ortho * view * model * (position + (0.5f * square[3])); //Bottom left
+        TexCoords = vec2(1.0f, 1.0f);
+        TileColor = tileColor[0];
+        TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
         EndPrimitive();
