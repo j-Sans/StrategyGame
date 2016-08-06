@@ -75,14 +75,14 @@ void main() {
         vec4( 0.45f,  0.35f, 0.0f, 0.0f),
         vec4( 0.05f, -0.05f, 0.0f, 0.0f),
         vec4( 0.35f,  0.45f, 0.0f, 0.0f),
-        vec4(-0.05f,  0.05f, 0.0f, 0.0f),
+        vec4(-0.05f,  0.05f, 0.0f, 0.0f)
     );
     
     vec4 square[] = vec4[](
        vec4( 0.30f,  0.10f, 0.0f, 0.0f),
        vec4( 0.10f, -0.10f, 0.0f, 0.0f),
        vec4( 0.10f,  0.30f, 0.0f, 0.0f),
-       vec4(-0.10f,  0.10f, 0.0f, 0.0f),
+       vec4(-0.10f,  0.10f, 0.0f, 0.0f)
     );
     
     //Draw the ground
@@ -187,7 +187,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
             vec4(-0.1f, -0.1f, 0.0f, 0.0f),
             vec4( 0.1f, -0.1f, 0.0f, 0.0f),
             vec4(-0.1f,  0.1f, 0.0f, 0.0f),
-            vec4( 0.1f,  0.1f, 0.0f, 0.0f),
+            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
         );
         
         if (creatureDirection[0] == NORTH) {
@@ -277,7 +277,7 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
             vec4(-0.1f, -0.1f, 0.0f, 0.0f),
             vec4( 0.1f, -0.1f, 0.0f, 0.0f),
             vec4(-0.1f,  0.1f, 0.0f, 0.0f),
-            vec4( 0.1f,  0.1f, 0.0f, 0.0f),
+            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
         );
         
         /* Commented out drawing the circle because buildings may want some controller-indicator, but none implementedd or decided on yet

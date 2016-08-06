@@ -80,7 +80,7 @@ void main() {
     } else if (TexType.y == BUILDING) {
         //Draw the building
         if (TexType.y == TOWER_BUILDING) {
-            color = texture(buildingTex, TexCoords);
+            color = texture(towerTex, TexCoords);
         }
         
     }
