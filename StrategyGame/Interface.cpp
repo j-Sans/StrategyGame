@@ -47,7 +47,6 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     

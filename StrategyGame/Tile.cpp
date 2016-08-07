@@ -86,7 +86,7 @@ unsigned int Tile::creatureType() {
     }
 }
 
-//Currently this returns the basic tower building whenever there is any creature.
+//Currently this returns the basic tower building whenever there is any building.
 unsigned int Tile::buildingType() {
     if (this->tileBuilding == nullptr) {
         return NO_BUILDING;

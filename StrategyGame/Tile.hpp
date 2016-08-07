@@ -167,7 +167,7 @@ public:
     unsigned int creatureType();
     
     /*!
-     * @return The type of the building, indicating which texture to use to the openGL VBO. Currently returns the basic building if there is any creature.
+     * @return The type of the building, indicating which texture to use to the openGL VBO. Currently returns the basic building if there is any building.
      */
     unsigned int buildingType();
     

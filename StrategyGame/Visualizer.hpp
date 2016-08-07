@@ -144,6 +144,7 @@ private:
     GLuint colorVBO;
     GLuint damageVBO;
     GLuint offsetVBO;
+    GLuint buildingVBO;
     
     //Array data to be sent to respective VBO's
     GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
@@ -152,6 +153,7 @@ private:
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
     GLint damageData[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
     GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
+    GLint buildingData[NUMBER_OF_TILES];
     
     //Textures
     std::vector<Texture> textures;
@@ -189,14 +191,15 @@ private:
     /*!
      * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
      *
-     * @param setVertexData A boolean indicating whether to update the vertex data array
-     * @param setTerrainData A boolean indicating whether to update the terrain data array
-     * @param setCreatureData A boolean indicating whether to update the creature data array
-     * @param setColorData A boolean indicating whether to update the color data array
-     * @param setDamageData A boolean indicating whether to update the damage data array
-     * @param setOffsetData A boolean indicating whether to update the offset data array
+     * @param setVertexData A boolean indicating whether to update the vertex data array.
+     * @param setTerrainData A boolean indicating whether to update the terrain data array.
+     * @param setCreatureData A boolean indicating whether to update the creature data array.
+     * @param setColorData A boolean indicating whether to update the color data array.
+     * @param setDamageData A boolean indicating whether to update the damage data array.
+     * @param setOffsetData A boolean indicating whether to update the offset data array.
+     * @param setBuildingData A boolean indicating whether to update the building data array.
      */
-    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData);
+    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData);
     
     /*!
      * Initialize OpenGL buffers with the object's vertex data.

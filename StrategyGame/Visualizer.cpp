@@ -21,7 +21,7 @@ bool mouseUp = false;
 //Constructor without geometry shader
 Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true, true, true); //Set all of the data arrays with information from the board
+    this->setData(true, true, true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     this->gameShader = Shader(vertexPath, fragmentPath);
@@ -69,7 +69,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std
 //Constructor with geometry shader
 Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true, true, true); //Set the data arrays with information from the board
+    this->setData(true, true, true, true, true, true, true); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     glm::ivec2 windowSize;
@@ -230,6 +230,7 @@ void Visualizer::terminate() {
     glDeleteBuffers(1, &this->colorVBO);
     glDeleteBuffers(1, &this->damageVBO);
     glDeleteBuffers(1, &this->offsetVBO);
+    glDeleteBuffers(1, &this->buildingVBO);
     
     glfwTerminate();
 }
@@ -305,7 +306,7 @@ void Visualizer::initWindow() {
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData) {
+void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData) {
     //Distance between each seed point
     GLfloat pointDistance = 0.2f;
     
@@ -348,6 +349,7 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     GLint directions[numberOfIndices];
     GLint controllers[numberOfIndices];
     GLfloat colors[3 * numberOfIndices];
+    GLint buildings[numberOfIndices];
     
     index = 0;
     
@@ -377,6 +379,10 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
                     colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
                     colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
                 }
+                if (setBuildingData) {
+                    //Gets the building of the tile
+                    buildings[index] = this->game.board()->get(x, y).buildingType();
+                }
                 
                 //Increment
                 index++;
@@ -403,6 +409,9 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
         if (setOffsetData) {
             this->offsetData[a] = 0;
         }
+        if (setBuildingData) {
+            this->buildingData[a] = buildings[a];
+        }
     }
 }
 
@@ -417,6 +426,7 @@ void Visualizer::setBuffers() {
     glGenBuffers(1, &this->colorVBO);
     glGenBuffers(1, &this->damageVBO);
     glGenBuffers(1, &this->offsetVBO);
+    glGenBuffers(1, &this->offsetVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -428,7 +438,6 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData), this->vertexData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, INDICES_PER_TILES * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     
@@ -439,7 +448,6 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData), this->terrainData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
@@ -450,7 +458,6 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
@@ -461,7 +468,6 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(3);
     
@@ -472,7 +478,6 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(4);
     
@@ -483,9 +488,18 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(5);
+    
+    //Building VBO:
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(6);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
@@ -551,8 +565,8 @@ void Visualizer::presetTransformations() {
 void Visualizer::updateBuffers() {
     //Set the offset VBO
     
-    //Update creature data array
-    this->setData(false, false, true, false, false, false);
+    //Update creature data array (ad buildings)
+    this->setData(false, false, true, false, false, false, true);
     
     //Goes through all tiles and continues moving any that are moving
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
@@ -578,7 +592,6 @@ void Visualizer::updateBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(5);
     
@@ -590,7 +603,7 @@ void Visualizer::updateBuffers() {
     //Now set the creature VBO
     
     //Update creature data array. This is done again so that if the offset was adjusted and the creature moved, that is reflected in the creature VBO and rendered. Otherwise, the creature would momentarily blink and flash back to its previous location
-    this->setData(false, false, true, false, false, false);
+    this->setData(false, false, true, false, false, false, false);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -600,7 +613,6 @@ void Visualizer::updateBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
@@ -610,10 +622,10 @@ void Visualizer::updateBuffers() {
     glBindVertexArray(0);
     
     //Update creature data array
-    this->setData(false, false, true, false, false, false);
+    this->setData(false, false, true, false, false, false, true);
     
     //Update creature data array
-    this->setData(false, false, false, true, false, false);
+    this->setData(false, false, false, true, false, false, true);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -623,7 +635,6 @@ void Visualizer::updateBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(3);
     
@@ -655,7 +666,6 @@ void Visualizer::updateBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    //Position
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(4);
     
