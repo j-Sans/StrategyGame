@@ -426,7 +426,7 @@ void Visualizer::setBuffers() {
     glGenBuffers(1, &this->colorVBO);
     glGenBuffers(1, &this->damageVBO);
     glGenBuffers(1, &this->offsetVBO);
-    glGenBuffers(1, &this->offsetVBO);
+    glGenBuffers(1, &this->buildingVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
