@@ -20,6 +20,15 @@ public:
     
     //Public member functions
     
+    /*!
+     * Reduces the creature's health by the damage argument, and if the creature dies, returns true.
+     *
+     * @param damage An unsigned int representing damage this creature takes.
+     *
+     * @return True if the creature dies, otherwise false.
+     */
+    bool takeDamage(unsigned int damage);
+    
     //Public get functions
     
     /*!

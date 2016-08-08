@@ -14,6 +14,15 @@ Building::Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsig
     this->buildingHealth = this->buildingMaxHealth;
 }
 
+bool Building::takeDamage(unsigned int damage) {
+    if (damage >= this->buildingHealth)
+        return true; //The creature has died
+    else
+        this->buildingHealth -= damage;
+    
+    return false; //The creature is still alive
+}
+
 //Get functions
 
 const unsigned int Building::maxHealth() {

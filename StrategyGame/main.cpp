@@ -55,7 +55,9 @@ int main(int argc, const char * argv[]) {
     
     V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 1, 3, 1, 1, 3, 1, NORTH, 1));
     
-    V.game.board()->setBuilding(5, 5, Building(5, 5, 3, 1, 0));
+    V.game.board()->setBuilding(3, 5, Building(3, 5, 3, 1, 0));
+    
+    V.game.board()->setBuilding(5, 3, Building(5, 3, 3, 1, 1));
     
 //Game loop:
     while(!glfwWindowShouldClose(V.window())) {
