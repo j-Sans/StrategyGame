@@ -565,7 +565,7 @@ void Visualizer::presetTransformations() {
 void Visualizer::updateBuffers() {
     //Set the offset VBO
     
-    //Update creature data array (ad buildings)
+    //Update creature data array and buildings
     this->setData(false, false, true, false, false, false, true);
     
     //Goes through all tiles and continues moving any that are moving
@@ -608,13 +608,21 @@ void Visualizer::updateBuffers() {
     //First we bind the VAO
     glBindVertexArray(this->VAO);
     
-    //Bind the VBO with the data
+    //Bind the creature VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
+    
+    //Bind the building VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(6);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     

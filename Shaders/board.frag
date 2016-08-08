@@ -55,6 +55,12 @@ void main() {
             color = texture(stickFigureTex, TexCoords);
         }
         
+    } else if (TexType.x == BUILDING) {
+        //Draw the building
+        if (TexType.y == TOWER_BUILDING) {
+            color = texture(towerTex, TexCoords);
+        }
+    
     } else if (TexType.x == DAMAGE) {
         //Draw the damage box
         color = TileColor;
@@ -76,12 +82,6 @@ void main() {
         vec4 colorVec = texture(circleTex, TexCoords) * controllerColor;
         
         color = vec4(colorVec.xyz, 0.33f * colorVec.w);
-        
-    } else if (TexType.y == BUILDING) {
-        //Draw the building
-        if (TexType.y == TOWER_BUILDING) {
-            color = texture(towerTex, TexCoords);
-        }
         
     }
 }

@@ -24,7 +24,7 @@ void Tile::setCreature(Creature *creature) {
 
 //Sets a building as the building located in this tile. Warning: Does not delete the old building!
 void Tile::setBuilding(Building *building) {
-    this->tileBuilding = building;
+    this->tileBuilding = building; //Set the building at this tile as the inputted creature
 }
 
 void Tile::setStyle(Style style) {

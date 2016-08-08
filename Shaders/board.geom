@@ -92,6 +92,9 @@ void main() {
         makeMountain(position);
     }
     
+    //Draw present building
+    drawBuilding(position, building[0], square);
+    
     //Draw present creature
     drawCreature(position, creature[0], rect);
     
@@ -280,8 +283,6 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
             vec4( 0.1f,  0.1f, 0.0f, 0.0f)
         );
         
-        /* Commented out drawing the circle because buildings may want some controller-indicator, but none implementedd or decided on yet
-        
         //Draw the circle
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
@@ -309,7 +310,7 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         EmitVertex();
         
         EndPrimitive();
-         */
+        
         
         //Draw the creature after
         
@@ -340,6 +341,80 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         EndPrimitive();
     }
 }
+
+//void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
+//    if (buildingTypeToDraw != NO_BUILDING) {
+//        
+//        //Draw the circle for the creature
+//        
+//        /* Commented out drawing the circle because buildings may want some controller-indicator, but none implemented or decided on yet
+//        
+//        //The positions of a diamond in the shape of the tile
+//        vec4 tileDiamond[] = vec4[](
+//            vec4(-0.1f, -0.1f, 0.0f, 0.0f),
+//            vec4( 0.1f, -0.1f, 0.0f, 0.0f),
+//            vec4(-0.1f,  0.1f, 0.0f, 0.0f),
+//            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+//        );
+//        
+//        //Draw the circle
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
+//        TexCoords = vec2(0.0f, 0.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(CIRCLE, creatureController[0]);
+//        EmitVertex();
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
+//        TexCoords = vec2(0.0f, 1.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(CIRCLE, creatureController[0]);
+//        EmitVertex();
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
+//        TexCoords = vec2(1.0f, 0.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(CIRCLE, creatureController[0]);
+//        EmitVertex();
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
+//        TexCoords = vec2(1.0f, 1.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(CIRCLE, creatureController[0]);
+//        EmitVertex();
+//        
+//        EndPrimitive();
+//         */
+//        
+//        //Draw the nuilding after
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * square[0])); //Top right
+//        TexCoords = vec2(0.0f, 0.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(BUILDING, buildingTypeToDraw);
+//        EmitVertex();
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * square[1])); //Bottom right
+//        TexCoords = vec2(0.0f, 1.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(BUILDING, buildingTypeToDraw);
+//        EmitVertex();
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * square[2])); //Top left
+//        TexCoords = vec2(1.0f, 0.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(BUILDING, buildingTypeToDraw);
+//        EmitVertex();
+//        
+//        gl_Position = ortho * view * model * (position + (0.5f * square[3])); //Bottom left
+//        TexCoords = vec2(1.0f, 1.0f);
+//        TileColor = tileColor[0];
+//        TexType = ivec2(BUILDING, buildingTypeToDraw);
+//        EmitVertex();
+//        
+//        EndPrimitive();
+//    }
+//}
 
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
     float digitOffset = 1.0f / 10.0f; //This is the width of one digit in the texture containing all of the digits
