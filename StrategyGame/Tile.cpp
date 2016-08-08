@@ -74,7 +74,7 @@ float Tile::terrain() {
 }
 
 bool Tile::occupied() {
-    return this->tileCreature != nullptr ? true : false;
+    return this->tileCreature != nullptr ? true : this->tileBuilding ? true : false;
 }
 
 //Currently this returns the basic stick figure creature whenever there is any creature.

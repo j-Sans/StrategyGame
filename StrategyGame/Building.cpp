@@ -10,7 +10,7 @@
 
 //Constructor
 
-Building::Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost) : buildingX(x), buildingY(y), buildingMaxHealth(maxHealth), buildingCost(cost) {
+Building::Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost, unsigned int controller) : buildingX(x), buildingY(y), buildingMaxHealth(maxHealth), buildingCost(cost), buildingController(controller) {
     this->buildingHealth = this->buildingMaxHealth;
 }
 
@@ -34,4 +34,8 @@ const unsigned int Building::x() {
 
 const unsigned int Building::y() {
     return this->buildingY;
+}
+
+const unsigned int Building::controller() {
+    return this->buildingController;
 }

@@ -203,7 +203,7 @@ public:
     bool readyToMove();
     
     /*!
-     * @return The controller of the creature.
+     * @return An unsigned int representing the controller of the creature.
      */
     const unsigned int controller();
     

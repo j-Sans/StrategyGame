@@ -203,11 +203,20 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             for (int a = 0; a < reachableTiles.size(); a++) {
                 if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                } else if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->currentActivePlayer) {
+                } else {
+                    if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->currentActivePlayer) {
                     
-                    //Only set the tile to be attackable if it is within the creature's range
-                    if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
-                        this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
+                        //Only set the tile to be attackable if it is within the creature's range
+                        if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
+                            this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
+                    }
+                    
+                    if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).building() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).building()->controller() != this->currentActivePlayer) {
+                    
+                        //Only set the tile to be attackable if it is within the creature's range
+                        if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
+                            this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
+                    }
                 }
             }
         }

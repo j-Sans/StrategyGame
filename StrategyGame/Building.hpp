@@ -14,7 +14,7 @@
 class Building {
 public:
     //Constructor
-    Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost);
+    Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost, unsigned int controller);
     
     //Destructor
     
@@ -47,10 +47,16 @@ public:
      */
     const unsigned int y();
     
+    /*!
+     * @return An unsigned int representing the controller of the building.
+     */
+    const unsigned int controller();
+    
 private:
     //Private properties
     const unsigned int buildingMaxHealth;
     const unsigned int buildingCost;
+    const unsigned int buildingController;
     
     //Location
     const unsigned int buildingX;
