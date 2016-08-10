@@ -347,9 +347,10 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
     GLint terrains[numberOfIndices];
     GLint creatures[numberOfIndices];
     GLint directions[numberOfIndices];
-    GLint controllers[numberOfIndices];
+    GLint creatureControllers[numberOfIndices];
     GLfloat colors[3 * numberOfIndices];
     GLint buildings[numberOfIndices];
+    GLint buildingControllers[numberOfIndices];
     
     index = 0;
     
@@ -367,10 +368,10 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
                     //Gets the direction if there is a creature there
                     if (this->game.board()->get(x, y).creature() != nullptr) {
                         directions[index] = this->game.board()->get(x, y).creature()->direction();
-                        controllers[index] = this->game.board()->get(x, y).creature()->controller();
+                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
                     } else {
                         directions[index] = NORTH;
-                        controllers[index] = 0;
+                        creatureControllers[index] = 0;
                     }
                 }
                 if (setColorData) {
@@ -382,6 +383,13 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
                 if (setBuildingData) {
                     //Gets the building of the tile
                     buildings[index] = this->game.board()->get(x, y).buildingType();
+                    
+                    //Gets the direction if there is a creature there
+                    if (this->game.board()->get(x, y).building() != nullptr) {
+                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
+                    } else {
+                        buildingControllers[index] = 0;
+                    }
                 }
                 
                 //Increment
@@ -396,7 +404,7 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
         if (setCreatureData) {
             this->creatureData[3 * a] = creatures[a];
             this->creatureData[(3 * a) + 1] = directions[a];
-            this->creatureData[(3 * a) + 2] = controllers[a];
+            this->creatureData[(3 * a) + 2] = creatureControllers[a];
         }
         if (setColorData) {
             this->colorData[3 * a] = colors[3 * a];
@@ -410,7 +418,8 @@ void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatu
             this->offsetData[a] = 0;
         }
         if (setBuildingData) {
-            this->buildingData[a] = buildings[a];
+            this->buildingData[2 * a] = buildings[a];
+            this->buildingData[(2 * a) + 1] = buildingControllers[a];
         }
     }
 }
@@ -498,7 +507,7 @@ void Visualizer::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(6);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -621,7 +630,7 @@ void Visualizer::updateBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(6);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -153,7 +153,7 @@ private:
     GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
     GLint damageData[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
     GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
-    GLint buildingData[NUMBER_OF_TILES];
+    GLint buildingData[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
     
     //Textures
     std::vector<Texture> textures;

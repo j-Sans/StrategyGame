@@ -46,6 +46,7 @@ in float creatureOffset[];
 
 //Building
 in int building[];
+in int buildingController[];
 
 out vec2 TexCoords;
 out vec4 TileColor;
@@ -288,25 +289,25 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, creatureController[0]);
+        TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, creatureController[0]);
+        TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, creatureController[0]);
+        TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
         gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
-        TexType = ivec2(CIRCLE, creatureController[0]);
+        TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
         EndPrimitive();
