@@ -281,10 +281,11 @@ private:
      * A function that gets all of the tiles that a creature can reach.
      *
      * @param creature The tile containing the specified creature that is going to be moving.
+     * @param reachableTiles A boolean indicating whether or not to get the tiles that are reachable and within moving distance (represented by true) or the tiles that are within attacking range (represented by false).
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be reached.
      */
-    std::vector<Tile> getReachableTiles(Tile creatureTile);
+//    std::vector<Tile> getReachableTiles(Tile creatureTile, bool reachableTiles);
     
     /*!
      * A function to create a path from one tile to another tile in the fewest possible moves. An empty vector is returned if problems arise. See "return" for details.

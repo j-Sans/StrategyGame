@@ -119,7 +119,15 @@ private:
     
     void incrementActivePlayer();
     
-    std::vector<Tile> getReachableTiles (Tile creatureTile);
+    /*!
+     * A function that gets all of the tiles that a creature can reach.
+     *
+     * @param creature The tile containing the specified creature that is going to be moving.
+     * @param reachableTiles A boolean indicating whether or not to get the tiles that are reachable and within moving distance (represented by true) or the tiles that are within attacking range (represented by false).
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
+     */
+    std::vector<Tile> getReachableTiles(Tile creatureTile, bool reachableTiles);
     
     std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
     

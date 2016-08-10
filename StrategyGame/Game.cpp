@@ -197,13 +197,13 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
         
         if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == currentActivePlayer) {
-            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
+            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y), true);
             
             Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
             for (int a = 0; a < reachableTiles.size(); a++) {
                 if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                } else {
+                } /*else {
                     if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->currentActivePlayer) {
                     
                         //Only set the tile to be attackable if it is within the creature's range
@@ -217,7 +217,25 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
                         if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
                             this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
                     }
-                }
+                }*/
+            }
+            
+            std::vector<Tile> attackableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y), false);
+            
+            for (int a = 0; a < attackableTiles.size(); a++) {
+                
+                //If there is a creature on the tile, controlled by an opponent, make it attackable
+                if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
+                    
+                    if (creature.energy() > 0)
+                        this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+                
+                //If there is a building on the tile, controlled by an opponent, make it attackable
+                if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
+                    
+                    if (creature.energy() > 0)
+                        this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+                    
             }
         }
         
@@ -490,7 +508,7 @@ glm::ivec2 Game::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 
  *
  * CHECK IF THE OCCUPYING CREATURE ON REACHABLE SQUARES ARE ATTACKABLE SPECIFICALLY BY THE CREATURE.
  */
-std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
+std::vector<Tile> Game::getReachableTiles (Tile creatureTile, bool reachableTiles) {
     //Set the selected tile as the one inputted
     //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
     
@@ -502,7 +520,10 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile) {
         
         std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
         
-        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->energy()));
+        if (reachableTiles) //Gets the tiles that are reachable by the creature
+            reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->energy()));
+        else //Gets the tiles that are within attacking distance of the creature
+            reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->range()));
         
         //Keep pushing the vector back with new tiles, that the for loop will eventually go through
         for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
