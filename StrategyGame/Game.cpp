@@ -559,7 +559,7 @@ std::vector<Tile> Game::getReachableTiles (Tile creatureTile, bool reachableTile
                 }
                 
                 //West
-                if (tile.y() < this->gameBoard.width() - 1) {
+                if (tile.x() < this->gameBoard.width() - 1) {
                     if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
                         reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     } else if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
