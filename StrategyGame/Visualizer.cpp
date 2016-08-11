@@ -194,7 +194,7 @@ void Visualizer::render() {
     glBindVertexArray(0);
     
     //This doesn't work yet
-//    this->renderDamageText();
+    this->renderDamageText();
     
     //Go through the interfaces and render them
     for (GLuint a = 0; a < interfaces.size(); a++) {
@@ -694,7 +694,7 @@ void Visualizer::updateBuffers() {
 
 //DOES NOT WORK AT THE MOMENT
 
-/*void Visualizer::renderDamageText() {
+void Visualizer::renderDamageText() {
     glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
     
     for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
@@ -706,39 +706,48 @@ void Visualizer::updateBuffers() {
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
         if (this->damageData[tile] != 0) { //Don't show the damage if it is not new
+            
             glm::ivec2 windowSize;
             glm::ivec2 framebufferSize;
             glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
             glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
-            
+
             glm::ivec2 damageTile;
             
             damageTile.x = tile / this->game.board()->width();
             damageTile.y = tile - damageTile.x;
+
+            glm::vec2 damageTileCoords = glm::vec2(tileCenters[tile]);
             
-            if (damageTile.x >= 0 && damageTile.x < this->game.board()->width()) {
-                if (damageTile.y >= 0 && damageTile.y < this->game.board()->height(damageTile.x)) {
-                    
-                    glm::vec2 damageTileCoords = glm::vec2(tileCenters[damageTile.x * this->game.board()->width() + damageTile.y]);
-                    
-                    damageTileCoords.x += 1;
-                    damageTileCoords.x /= 2;
-                    
-                    damageTileCoords.y += 1;
-                    damageTileCoords.y /= 2;
-                    
-                    std::cout << "(" << damageTileCoords.x << ", " << damageTileCoords.y << ")" << std::endl;
-                    
-                    //Render the damage box
-                    this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x, damageTileCoords.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
-                    
-                    //Now use the shader so that the proper shader is used to render the game
-                    this->gameShader.use();
-                }
-            }
+            damageTileCoords *= this->
+            
+            
+            
+            this->font.render(std::to_string(this->damageData[tile]), 0, 0, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
+//
+//            if (damageTile.x >= 0 && damageTile.x < this->game.board()->width()) {
+//                if (damageTile.y >= 0 && damageTile.y < this->game.board()->height(damageTile.x)) {
+//                    
+//                    glm::vec2 damageTileCoords = glm::vec2(tileCenters[damageTile.x * this->game.board()->width() + damageTile.y]);
+//                    
+//                    damageTileCoords.x += 1;
+//                    damageTileCoords.x /= 2;
+//                    
+//                    damageTileCoords.y += 1;
+//                    damageTileCoords.y /= 2;
+//                    
+//                    std::cout << "(" << damageTileCoords.x << ", " << damageTileCoords.y << ")" << std::endl;
+//                    
+//                    //Render the damage box
+//                    this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x, damageTileCoords.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
+//                    
+//                    //Now use the shader so that the proper shader is used to render the game
+//                    this->gameShader.use();
+//                }
+//            }
         }
     }
-}*/
+}
 
 //A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
 void Visualizer::moveCamera() {
@@ -871,82 +880,6 @@ void Visualizer::processButton(std::string action) {
         }
     }
 }
-
-///*
-// * TO ADD:
-// *
-// * CHECK IF THE OCCUPYING CREATURE ON REACHABLE SQUARES ARE ATTACKABLE SPECIFICALLY BY THE CREATURE.
-// */
-//std::vector<Tile> Visualizer::getReachableTiles (Tile creatureTile, bool reachableTiles) {
-//    //Set the selected tile as the one inputted
-//    //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
-//    
-//    if (creatureTile.creature() == nullptr) {
-//        std::vector<Tile> emptyTileVector;
-//        return emptyTileVector;
-//    } else {
-//        Creature creature = *creatureTile.creature();
-//        
-//        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
-//        
-//        if (reachableTiles) //Gets the tiles that are reachable by the creature
-//            reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->energy()));
-//        else //Gets the tiles that are within attacking distance of the creature
-//            reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->range()));
-//        
-//        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
-//        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-//            if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
-//                
-//                Tile tile = reachedTiles[tileIterator].first;
-//                
-//                //North
-//                if (tile.y() > 0) {
-//                    if (this->game.board()->get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-//                    } else if (this->game.board()->get(tile.x(), tile.y() - 1).occupied()) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x(), tile.y() - 1), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-//                    }
-//                }
-//                
-//                //East
-//                if (tile.x() > 0) {
-//                    if (this->game.board()->get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-//                    } else if (this->game.board()->get(tile.x() - 1, tile.y()).occupied()) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x() - 1, tile.y()), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-//                    }
-//                }
-//                
-//                //South
-//                if (tile.y() < this->game.board()->height(tile.x()) - 1) {
-//                    if (this->game.board()->get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-//                    } else if (this->game.board()->get(tile.x(), tile.y() + 1).occupied()) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x(), tile.y() + 1), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-//                    }
-//                }
-//                
-//                //West
-//                if (tile.y() < this->game.board()->width() - 1) {
-//                    if (this->game.board()->get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-//                    } else if (this->game.board()->get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
-//                        reachedTiles.push_back(std::pair<Tile, GLint>(this->game.board()->get(tile.x() + 1, tile.y()), 0)); //Add the found tile to the reached tiles, along with the value of the energy the creature would have after attacking, which is 0.
-//                    }
-//                }
-//            }
-//        }
-//        
-//        //Now turn the reached tile vector of pairs into a vector of just tiles
-//        std::vector<Tile> reachedTileReturnVector;
-//        
-//        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-//            reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
-//        }
-//        return reachedTileReturnVector;
-//    }
-//}
 
 std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
     if (x >= this->game.board()->width()) {

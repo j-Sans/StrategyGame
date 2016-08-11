@@ -245,7 +245,7 @@ private:
     /*!
      * A function to render the damage text. Should be called every frame after displaying the board.
      */
-//    void renderDamageText();
+    void renderDamageText();
     
     
     
@@ -265,27 +265,6 @@ private:
      * A function to move to the next player's turn.
      */
     void incrementActivePlayer();
-    
-    /*!
-     * A function that moves the creature at the designated location in the designated direction.
-     *
-     * @param x The x location of the creature in the board.
-     * @param y The y location of the creature in the board.
-     * @direction The direction to move the creature in.
-     *
-     * @return Whether the creature was moved.
-     */
-    bool moveAdjacent(GLuint x, GLuint y, int direction);
-    
-    /*!
-     * A function that gets all of the tiles that a creature can reach.
-     *
-     * @param creature The tile containing the specified creature that is going to be moving.
-     * @param reachableTiles A boolean indicating whether or not to get the tiles that are reachable and within moving distance (represented by true) or the tiles that are within attacking range (represented by false).
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
-     */
-//    std::vector<Tile> getReachableTiles(Tile creatureTile, bool reachableTiles);
     
     /*!
      * A function to create a path from one tile to another tile in the fewest possible moves. An empty vector is returned if problems arise. See "return" for details.
