@@ -706,7 +706,7 @@ void Visualizer::renderDamageText() {
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
         
         if (this->damageData[tile] != 0) { //Don't show the damage if it is not new
-            
+        
             glm::ivec2 windowSize;
             glm::ivec2 framebufferSize;
             glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
@@ -717,16 +717,16 @@ void Visualizer::renderDamageText() {
 //            damageTile.x = tile / this->game.board()->width();
 //            damageTile.y = tile - damageTile.x;
 
-            glm::vec2 damageTileCoords = this->model * tileCenters[tile];
+            glm::vec2 damageTileCoords = tileCenters[tile];
             
             damageTileCoords.x += 1.0;
             damageTileCoords.x /= 2.0;
             damageTileCoords.y += 1.0;
             damageTileCoords.y /= 2.0;
             
-            std::cout << "(" << damageTileCoords.x << ", " << damageTileCoords.y << ")" << std::endl;
+            glm::vec2 fontSize = this->font.getSize(std::to_string(this->damageData[tile]), 1.0);
             
-            this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * framebufferSize.x, damageTileCoords.y * framebufferSize.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
+            this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * this->viewportSize.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
 //
 //            if (damageTile.x >= 0 && damageTile.x < this->game.board()->width()) {
 //                if (damageTile.y >= 0 && damageTile.y < this->game.board()->height(damageTile.x)) {
