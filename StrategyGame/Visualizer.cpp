@@ -726,7 +726,7 @@ void Visualizer::renderDamageText() {
             
             glm::vec2 fontSize = this->font.getSize(std::to_string(this->damageData[tile]), 1.0);
             
-            this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * this->viewportSize.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
+            this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * this->viewportSize.y - (fontSize.y / 2), 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
 //
 //            if (damageTile.x >= 0 && damageTile.x < this->game.board()->width()) {
 //                if (damageTile.y >= 0 && damageTile.y < this->game.board()->height(damageTile.x)) {

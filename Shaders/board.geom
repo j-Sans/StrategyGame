@@ -343,29 +343,52 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
     }
 }
 
-void drawDamageBox(vec4 position, int damage, vec4 rect[4]) {
-    float digitOffset = 1.0f / 10.0f; //This is the width of one digit in the texture containing all of the digits
+void drawDamageBox(vec4 position, int damage, vec4 squre[4]) {
     
-    gl_Position = ortho * view * model * (position + (0.25f * rect[0])); //Bottom
-    TexCoords = vec2(digitOffset + (digitOffset * damage), 0.0f);
+    //The positions of a diamond in the shape of the tile
+    vec4 tileDiamond[] = vec4[](
+        vec4(-0.1f, -0.1f, 0.0f, 0.0f),
+        vec4( 0.1f, -0.1f, 0.0f, 0.0f),
+        vec4(-0.1f,  0.1f, 0.0f, 0.0f),
+        vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+    );
+    
+    vec4 boxCenter = position;
+    
+    int numberOfDigits = 0;
+    
+    //Get the number of digits in the damage number
+    while ((damage / pow(10, numberOfDigits)) >= 1) {
+        numberOfDigits++;
+         //The number of digits keeps increasing until the divisor, 10^(num digits), is greater than the damage. This is the number of digits. For example, if the damage is 30, numberOfDigits will keep increasing until 2, where 30 / (10^2) is less than 1. Thus 2 must be the number of digits
+    }
+    
+    //Make the circle stretch if there are more digits
+    float horizontalStretch = 0.25f;
+    
+    if (numberOfDigits > 0)
+        horizontalStretch *= numberOfDigits;
+    
+    gl_Position = ortho * view * model * (boxCenter + (1.0f * tileDiamond[0])); //Bottom
+    TexCoords = vec2(0.0f, 0.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (0.25f * rect[1])); //Right
-    TexCoords = vec2(digitOffset + (digitOffset * damage), 1.0f);
+    gl_Position = ortho * view * model * (boxCenter + (horizontalStretch * tileDiamond[1])); //Right
+    TexCoords = vec2(0.0f, 1.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (0.25f * rect[2])); //Left
-    TexCoords = vec2(digitOffset * damage, 0.0f);
+    gl_Position = ortho * view * model * (boxCenter + (horizontalStretch * tileDiamond[2])); //Left
+    TexCoords = vec2(1.0f, 0.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + (0.25f * rect[3])); //Top
-    TexCoords = vec2(digitOffset * damage, 1.0f);
+    gl_Position = ortho * view * model * (boxCenter + (1.0f * tileDiamond[3])); //Top
+    TexCoords = vec2(1.0f, 1.0f);
     TileColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     TexType = ivec2(DAMAGE, damage);
     EmitVertex();
