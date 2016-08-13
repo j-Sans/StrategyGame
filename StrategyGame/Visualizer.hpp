@@ -39,6 +39,22 @@
 
 #include "Interface.hpp"
 
+//A simple struct to hold the data of interfaces
+struct interfaceStat {
+    GLuint x;
+    GLuint y;
+    GLuint width;
+    GLuint height;
+    
+    interfaceStat(); //So that it can be constructed at a later point within the visualizer class
+    
+    interfaceStat(GLuint interfaceX, GLuint interfaceY, GLuint interfaceWidth, GLuint interfaceHeight) {
+        this->x = interfaceX;
+        this->y = interfaceY;
+        this->width = interfaceWidth;
+        this->height = interfaceHeight;
+    }
+};
 
 class Visualizer {
 public:
@@ -179,6 +195,10 @@ private:
     std::vector<Interface> interfaces;
     Shader interfaceShader;
     Shader buttonShader;
+    
+    interfaceStat left;// = glm::ivec4(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    interfaceStat bottom;// = glm::ivec4(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
+    interfaceStat right;// = glm::ivec4(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
     
     
     //Private member functions

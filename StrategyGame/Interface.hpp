@@ -45,7 +45,16 @@ public:
     Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons);
     
     //Public properties
+    
+    /*!
+     * An std::vector of the buttons contained in this interface.
+     */
     std::vector<Button> buttons; //So that the buttons can be accessed by the game
+    
+    /*!
+     * A boolean representing if this interface should be active or not. It won't render if this is false.
+     */
+    bool active = true;
     
     //Public member functions
     

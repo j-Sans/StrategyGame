@@ -55,28 +55,30 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
 }
 
 void Interface::render(bool mouseDown, bool mouseUp) {
-    //Get updated information about the viewport
-    this->updateViewport();
-    
-    glViewport(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
-    
-    //Set the box where OpenGL can draw
-    glScissor(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
-    
-    //Bind the VAO and draw shapes
-    this->interfaceShader->use();
-    
-    glBindVertexArray(this->VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-    
-    for (GLuint a = 0; a < this->buttons.size(); a++) {
-        this->buttons[a].render(mouseDown, mouseUp);
+    if (active) {
+        //Get updated information about the viewport
+        this->updateViewport();
+        
+        glViewport(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
+        
+        //Set the box where OpenGL can draw
+        glScissor(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
+        
+        //Bind the VAO and draw shapes
+        this->interfaceShader->use();
+        
+        glBindVertexArray(this->VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+        
+        for (GLuint a = 0; a < this->buttons.size(); a++) {
+            this->buttons[a].render(mouseDown, mouseUp);
+        }
+        
+        //Reset window information for game rendering
+        glScissor(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);
+        glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfaces
     }
-    
-    //Reset window information for game rendering
-    glScissor(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);
-    glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfaces
 }
 
 void Interface::updateViewport() {

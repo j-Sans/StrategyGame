@@ -296,7 +296,7 @@ void Visualizer::initWindow() {
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
-    this->viewportSize = glm::ivec2(viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);
+    this->viewportSize = glm::ivec2(viewportWidth - this->leftInterfaceStats.x, viewportHeight * 3.0 / 4.0);
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
@@ -520,18 +520,24 @@ void Visualizer::setInterface() {
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     
+    this->left = interfaceStat(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    this->bottom = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
+    this->right = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    
     this->interfaceShader = Shader("Shaders/interface.vert", "Shaders/interface.frag");
     
     this->buttonShader = Shader("Shaders/button.vert", "Shaders/button.frag");
     
     //Left-Side Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, 0.0, 0.0, viewportWidth / 6.0, viewportHeight, true));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->left.x, this->left.y, this->left.width, this->left.height, true));
     
     //Bottom Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0, false));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->bottom.x, this->bottom.y, this->bottom.width, this->bottom.height, false));
     
     //Right-Side Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight, false));
+    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->right.x, this->right.y, this->right.width, this->right.height, false));
+    
+    
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
