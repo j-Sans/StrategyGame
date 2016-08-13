@@ -294,9 +294,9 @@ void Visualizer::initWindow() {
     //Tell OpenGL window information
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
-    glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    glViewport(this->left.width, this->bottom.height, viewportWidth - this->left.width - this->right.width, viewportHeight - this->bottom.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
-    this->viewportSize = glm::ivec2(viewportWidth - this->leftInterfaceStats.x, viewportHeight * 3.0 / 4.0);
+    this->viewportSize = glm::ivec2(viewportWidth - this->left.width - this->right.width, viewportHeight - this->bottom.height);
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);

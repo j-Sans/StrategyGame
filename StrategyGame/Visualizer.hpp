@@ -46,7 +46,7 @@ struct interfaceStat {
     GLuint width;
     GLuint height;
     
-    interfaceStat(); //So that it can be constructed at a later point within the visualizer class
+    interfaceStat() {} //So that it can be constructed at a later point within the visualizer class
     
     interfaceStat(GLuint interfaceX, GLuint interfaceY, GLuint interfaceWidth, GLuint interfaceHeight) {
         this->x = interfaceX;
