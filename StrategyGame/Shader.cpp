@@ -11,7 +11,7 @@
 
 #include "Shader.hpp"
 
-//Only so that Visualizer.hpp can have a shader property without declaring it initially. No other purpose.
+//Only so that Visualizer.hpp can have a shader property without declaring it initially. No other purpose
 Shader::Shader() {}
 
 //Constructor without the geometry shader

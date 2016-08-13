@@ -8,6 +8,9 @@
 
 #include "Interface.hpp"
 
+//Only so that Visualizer.hpp can have properly initialize interfaces. No other purpose.
+Interface::Interface() {}
+
 Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons) {
     this->interfaceWindow = window;
     this->interfaceShader = shader;

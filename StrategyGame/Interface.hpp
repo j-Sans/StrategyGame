@@ -30,6 +30,9 @@ class Interface {
 public:
     //Constructors
     
+    //Default constructor. Don't use this, it is only to allow interface objects to be declared without causing an error with memory.cpp
+    Interface();
+    
     /*!
      * A class representing an interface box.
      *

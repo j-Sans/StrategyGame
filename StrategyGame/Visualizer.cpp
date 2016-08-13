@@ -28,6 +28,9 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std
     
     this->font = Font(FONT_PATH);
     
+    this->setInterface();
+    this->updateInterfaces();
+    
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -83,6 +86,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
     this->font = Font(FONT_PATH);
     
     this->setInterface();
+    this->updateInterfaces();
     
     //Allow for transparency
     glEnable(GL_BLEND);
@@ -171,6 +175,8 @@ void Visualizer::render() {
         
         //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click
         this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
+        
+        this->updateInterfaces();
     }
     
     this->game.updateCreatures(this->deltaTime);
@@ -196,12 +202,22 @@ void Visualizer::render() {
     //This doesn't work yet
     this->renderDamageText();
     
-    //Go through the interfaces and render them
-    for (GLuint a = 0; a < interfaces.size(); a++) {
-        this->interfaces[a].render(mouseDown, mouseUp); //This renders the interface and its buttons
+    //Render the left, bottom, and right interfaces
+    
+    for (int a = 0; a < 3; a++) {
+        Interface *interface;
+        
+        if (a == 0)
+            interface = this->leftInterface;
+        else if (a == 1)
+            interface = this->bottomInterface;
+        else if (a == 2)
+            interface = this->rightInterface;
+        
+        interface->render(mouseDown, mouseUp); //This renders the interface and its buttons. Second because the map is likely stored as an std::pair with the interface being the second in the pair
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
-        for (auto button = this->interfaces[a].buttons.begin(); button != interfaces[a].buttons.end(); button++) {
+        for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
             if (button->isPressed()) {
                 this->processButton(button->action());
             }
@@ -294,9 +310,9 @@ void Visualizer::initWindow() {
     //Tell OpenGL window information
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
-    glViewport(this->left.width, this->bottom.height, viewportWidth - this->left.width - this->right.width, viewportHeight - this->bottom.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    glViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, viewportWidth - this->leftInterfaceStats.width - this->rightInterfaceStats.width, viewportHeight - this->bottomInterfaceStats.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
-    this->viewportSize = glm::ivec2(viewportWidth - this->left.width - this->right.width, viewportHeight - this->bottom.height);
+    this->viewportSize = glm::ivec2(viewportWidth - this->leftInterfaceStats.width - this->rightInterfaceStats.width, viewportHeight - this->bottomInterfaceStats.height);
     
     //Set key callback function
     glfwSetKeyCallback(this->gameWindow, this->keyCallback);
@@ -520,24 +536,22 @@ void Visualizer::setInterface() {
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
     
-    this->left = interfaceStat(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
-    this->bottom = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
-    this->right = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    this->leftInterfaceStats = interfaceStat(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    this->bottomInterfaceStats = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
+    this->rightInterfaceStats = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
     
     this->interfaceShader = Shader("Shaders/interface.vert", "Shaders/interface.frag");
     
     this->buttonShader = Shader("Shaders/button.vert", "Shaders/button.frag");
     
     //Left-Side Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->left.x, this->left.y, this->left.width, this->left.height, true));
+    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, true);
     
     //Bottom Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->bottom.x, this->bottom.y, this->bottom.width, this->bottom.height, false));
+    this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, false);
     
     //Right-Side Game UI (brown rectangle)
-    this->interfaces.push_back(Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->right.x, this->right.y, this->right.width, this->right.height, false));
-    
-    
+    this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, false);
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -698,7 +712,25 @@ void Visualizer::updateBuffers() {
     glBindVertexArray(0);
 }
 
-//DOES NOT WORK AT THE MOMENT
+void Visualizer::updateInterfaces() {
+    glm::ivec2 selectedTile = this->game.tileSelected();
+    
+    this->leftInterface = &this->interfaces[default_left];
+    this->bottomInterface = &this->interfaces[default_bottom];
+    this->rightInterface = &this->interfaces[default_right];
+    
+    //If the selected tile is on the board
+    if (selectedTile.x >= 0 && selectedTile.x < this->game.board()->width() && selectedTile.y >= 0 && selectedTile.y < this->game.board()->height(selectedTile.x)) {
+        
+        if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
+            //Make the right interface a creature interface
+        }
+        
+        if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
+            //Make the right interface a building interface
+        }
+    }
+}
 
 void Visualizer::renderDamageText() {
     glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares

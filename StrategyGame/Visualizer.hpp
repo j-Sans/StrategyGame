@@ -14,6 +14,7 @@
 //Standard library includes
 #include <math.h>
 #include <vector>
+#include <map>
 #include <exception>
 
 //GLEW: Locates memory location of OpenGL functions
@@ -38,6 +39,16 @@
 #include "Game.hpp"
 
 #include "Interface.hpp"
+
+//A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
+enum interfaceType {
+    default_left, //The default left interface
+    default_bottom, //The default bottom interface
+    default_right, //The default right interface
+    
+    creature, //The default creature interface
+    building, //The default building interface
+};
 
 //A simple struct to hold the data of interfaces
 struct interfaceStat {
@@ -192,13 +203,17 @@ private:
     
     
     //Interfaces
-    std::vector<Interface> interfaces;
+    std::map<interfaceType, Interface> interfaces;
     Shader interfaceShader;
     Shader buttonShader;
     
-    interfaceStat left;// = glm::ivec4(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
-    interfaceStat bottom;// = glm::ivec4(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
-    interfaceStat right;// = glm::ivec4(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    Interface *leftInterface;
+    Interface *bottomInterface;
+    Interface *rightInterface;
+    
+    interfaceStat leftInterfaceStats;
+    interfaceStat bottomInterfaceStats;
+    interfaceStat rightInterfaceStats;
     
     
     //Private member functions
@@ -259,6 +274,11 @@ private:
      * A function to update all of the buffers that need to be updated. Should be called every frame.
      */
     void updateBuffers();
+    
+    /*!
+     * Set the correct interfaces to render based on the selected tile.
+     */
+    void updateInterfaces();
     
     
     //At the moment this function is not completed

@@ -34,7 +34,7 @@ public:
      */
     GLuint program;
     
-    //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first.
+    //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first
     Shader();
     
     /*!
