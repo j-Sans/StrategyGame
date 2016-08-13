@@ -712,11 +712,6 @@ void Visualizer::renderDamageText() {
             glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
             glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
 
-//            glm::ivec2 damageTile;
-//            
-//            damageTile.x = tile / this->game.board()->width();
-//            damageTile.y = tile - damageTile.x;
-
             glm::vec2 damageTileCoords = tileCenters[tile];
             
             damageTileCoords.x += 1.0;
@@ -727,27 +722,6 @@ void Visualizer::renderDamageText() {
             glm::vec2 fontSize = this->font.getSize(std::to_string(this->damageData[tile]), 1.0);
             
             this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * this->viewportSize.y - (fontSize.y / 2), 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
-//
-//            if (damageTile.x >= 0 && damageTile.x < this->game.board()->width()) {
-//                if (damageTile.y >= 0 && damageTile.y < this->game.board()->height(damageTile.x)) {
-//                    
-//                    glm::vec2 damageTileCoords = glm::vec2(tileCenters[damageTile.x * this->game.board()->width() + damageTile.y]);
-//                    
-//                    damageTileCoords.x += 1;
-//                    damageTileCoords.x /= 2;
-//                    
-//                    damageTileCoords.y += 1;
-//                    damageTileCoords.y /= 2;
-//                    
-//                    std::cout << "(" << damageTileCoords.x << ", " << damageTileCoords.y << ")" << std::endl;
-//                    
-//                    //Render the damage box
-//                    this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x, damageTileCoords.y, 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
-//                    
-//                    //Now use the shader so that the proper shader is used to render the game
-//                    this->gameShader.use();
-//                }
-//            }
         }
     }
 }
