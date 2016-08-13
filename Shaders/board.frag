@@ -65,7 +65,7 @@ void main() {
         //Draw the damage box
         vec4 colorVec = texture(circleTex, TexCoords) * TileColor;
         
-        color = vec4(colorVec.xyz, 0.33f * colorVec.w);
+        color = colorVec;
         
     } else if (TexType.x == CIRCLE) {
         //Draw the circle under the creature
