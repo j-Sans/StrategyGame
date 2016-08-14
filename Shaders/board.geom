@@ -274,7 +274,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
 void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
     if (buildingTypeToDraw != NO_BUILDING) {
         
-        //Draw the circle for the creature
+        //Draw the circle for the building
         
         //The positions of a diamond in the shape of the tile
         vec4 tileDiamond[] = vec4[](
@@ -313,27 +313,27 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         EndPrimitive();
         
         
-        //Draw the creature after
+        //Draw the building after
         
-        gl_Position = ortho * view * model * (position + (0.5f * square[0])); //Top right
+        gl_Position = ortho * view * model * (position + (0.6f * square[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * square[1])); //Bottom right
+        gl_Position = ortho * view * model * (position + (0.6f * square[1])); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * square[2])); //Top left
+        gl_Position = ortho * view * model * (position + (0.6f * square[2])); //Top left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * square[3])); //Bottom left
+        gl_Position = ortho * view * model * (position + (0.6f * square[3])); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);

@@ -40,7 +40,6 @@ public:
      * @param maxHealth An unsigned int representing the max health of the creature.
      * @param maxEnergy An unsigned int representing the max energy of the creature.
      * @param attack An unsigned int representing the damage value the creature.
-     * @param speed An unsigned int representing the movement rate per turn of the creature.
      * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
      * @param range An unsigned int representing the distance the creature can attack.
      * @param cost An unsigned int representing the cost of the creature in mana.
