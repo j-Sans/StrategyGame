@@ -147,6 +147,35 @@ bool Tile::passableByCreature(Creature creature) {
     return true;
 }
 
+bool Tile::passableByAttackStyle(Creature creature) {
+    //Mountains are not passable (except by terrain ignoring spells)
+    if (this->tileTerrain == MOUNTAIN_TERRAIN) {
+        if (creature.attackStyle() != TerrainIgnoring) {
+        return false;
+        }
+    }
+    
+    //Water is never passable
+    if (this->tileTerrain == WATER_TERRAIN) {
+        if (creature.attackStyle() != TerrainIgnoring) {
+        return false;
+        }
+    }
+    
+    /*
+    //Tiles with large creatures are never passable
+    if (this->creature.creatureCharacteristics {includes blocking}  ()) {
+        return false;
+    }
+     
+     //not sure here whether to have creature characteristics as a string or array or to have booleans of isFlying, isBlocking, isAmphibious, etc.
+     
+    */
+    
+    //Everything else is passable
+    return true;
+}
+
 unsigned int Tile::damage() {
     return this->tileDamage;
 }

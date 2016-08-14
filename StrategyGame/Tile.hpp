@@ -192,6 +192,11 @@ public:
     bool passableByCreature(Creature creature);
     
     /*!
+     * @return A boolean representing whether an attack style would be able to go through this tile. (arrows, fireballs, terrain-ignoring projectiles etc.)
+     */
+    bool passableByAttackStyle(Creature creature);
+    
+    /*!
      * @return The damage amount at this tile.
      */
     unsigned int damage();

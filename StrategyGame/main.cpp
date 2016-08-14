@@ -51,11 +51,11 @@ int main(int argc, const char * argv[]) {
     
     Visualizer V("Shaders/board.vert", "Shaders/board.geom", "Shaders/board.frag", board);
     
-    //Reminder x, y, Race, maxHealth, maxEnergy, attack, vision, range, cost, startDirection, controller
+    //Reminder x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
 
-    V.game.board()->setCreature(3, 3, Creature(3, 3, Human, 1, 3, 1, 1, 1, 1, NORTH, 0));
+    V.game.board()->setCreature(3, 3, Creature(3, 3, Human, 1, 3, 1, NimbleMelee, 1, 1, 1, NORTH, 0));
 
-    V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 1, 3, 1, 1, 3, 1, NORTH, 1));
+    V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 1, 3, 1, Projectile, 1, 3, 1, NORTH, 1));
     
     V.game.board()->setBuilding(3, 5, Building(3, 5, 3, 1, 0));
     

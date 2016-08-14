@@ -27,6 +27,16 @@ enum Race {
     Undead,
     Vampire,
 };
+
+enum AttackStyle {
+    Projectile,      //cannot shoot through forest, mountain, hill
+    GreatMelee, //traditional large weapon melee (battleaxes, broadswords, etc.) can't be used in forests
+    NimbleMelee, //usable in confined spaces (knives, machetes, etc.)
+    TerrainPenetrating, //can travel through 1 forest by destroying it. Otherwise same as arrow
+    TerrainIgnoring, //ignores terrain (perhaps telepathic abilities)
+};
+
+
 class Creature {
 public:
     //Constructors
@@ -45,7 +55,7 @@ public:
      * @param cost An unsigned int representing the cost of the creature in mana.
      * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
      */
-    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
+    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
     
     //Destructor
     
@@ -145,6 +155,12 @@ public:
      * @return The attack stat of this creature.
      */
     const unsigned int attack();
+    
+    /*!
+     * @return The attack style of this creature.
+     */
+    const AttackStyle attackStyle();
+
 
     /*!
      * @return The vision radius of this creature.
@@ -212,6 +228,7 @@ private:
     
     //Stats
     const Race creatureRace;
+    const AttackStyle creatureAttackStyle;
     const unsigned int creatureMaxHealth;
     const unsigned int creatureMaxEnergy;
     const unsigned int creatureAttack;

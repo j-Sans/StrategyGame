@@ -203,26 +203,10 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             for (int a = 0; a < reachableTiles.size(); a++) {
                 if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
                     this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                } /*else {
-                    if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).creature()->controller() != this->currentActivePlayer) {
-                    
-                        //Only set the tile to be attackable if it is within the creature's range
-                        if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
-                            this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
-                    }
-                    
-                    if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).building() != nullptr && this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).building()->controller() != this->currentActivePlayer) {
-                    
-                        //Only set the tile to be attackable if it is within the creature's range
-                        if (this->gameBoard.tileDistances(mousePos.x, mousePos.y, reachableTiles[a].x(), reachableTiles[a].y()) <= creature.range())
-                            this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), AttackableAdj);
-                    }
-                }*/
-            }
+                }             }
             
             std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
             
-            //move this later
             for (int a = 0; a < attackableTiles.size(); a++) {
                 
                 //If there is a creature on the tile, controlled by an opponent, make it attackable
@@ -593,9 +577,11 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature)) {
+                    std::cout << this->gameBoard.get(tile.x(), tile.y() - 1).passableByAttackStyle(creature) << '\n';
+                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
                         reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x(), tile.y() - 1).occupied()) {
+                    }
+                    if (this->gameBoard.get(tile.x(), tile.y() - 1).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
                         std::cout << "added North tile\n";
                     }
@@ -603,9 +589,10 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature)) {
+                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
                         reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x() - 1, tile.y()).occupied()) {
+                    }
+                    if (this->gameBoard.get(tile.x() - 1, tile.y()).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
                         std::cout << "added East tile\n";
                     }
@@ -613,9 +600,10 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 
                 //South
                 if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature)) {
+                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
                         reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x(), tile.y() + 1).occupied()) {
+                    }
+                    if (this->gameBoard.get(tile.x(), tile.y() + 1).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
                         std::cout << "added South tile\n";
                     }
@@ -623,9 +611,10 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 
                 //West
                 if (tile.x() < this->gameBoard.width() - 1) {
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature)) {
+                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
                         reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    } else if (this->gameBoard.get(tile.x() + 1, tile.y()).occupied()) {
+                    }
+                    if (this->gameBoard.get(tile.x() + 1, tile.y()).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
                         std::cout << "added West tile\n";
                     }
