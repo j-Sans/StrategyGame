@@ -33,10 +33,6 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
         color[a] = 0.33f;
     }
     
-//    We should have a constructor for circular buttons as well.
-    
-//    We could, but that can be difficult. I'm not sure how to do them exactly, and while it would probably say on google, I don't think we need it yet
-    
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->buttonVBO);
