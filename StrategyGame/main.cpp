@@ -53,7 +53,7 @@ int main(int argc, const char * argv[]) {
     
     //Reminder x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
 
-    V.game.board()->setCreature(3, 3, Creature(3, 3, Human, 1, 3, 1, NimbleMelee, 1, 1, 1, NORTH, 0));
+    V.game.board()->setCreature(3, 3, Creature(3, 3, Human, 1, 3, 1, LightMelee, 1, 1, 1, NORTH, 0));
 
     V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 1, 3, 1, LightRanged, 1, 3, 1, NORTH, 1));
     

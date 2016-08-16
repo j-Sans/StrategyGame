@@ -528,6 +528,72 @@ float getTerrainMovementCost (Tile origin, Tile destination) {
     return 1;
 }
 
+/*
+ Terrain Attack Pathing
+ LIGHT RANGED:
+ If on hill, can shoot into forest and jungle.
+ If on plains or water, can only shoot into first layer of forest and jungle
+ If on mountain, can shoot into forest and jungle with +1 range but -25% combat strength.
+ If in forest and jungle, can only shoot into first layer of forest and jungle
+ 
+ HEAVY RANGED:
+ Same as Light Ranged except can shooting through forest and jungle takes less.
+
+ LIGHT MELEE vs. GREAT MELEE
+ Same.
+ 
+ TERRAIN IGNORING
+ Ignores terrain - like telepathic spells and stuff
+ 
+ 
+ 
+ Terrain Attack Modifiers:
+ 
+ LIGHT RANGED and HEAVY RANGED:
+ No difference in attack damage.
+ 
+ LIGHT MELEE vs. GREAT MELEE
+ GreatMelee has combat bonus on hills
+ 
+ TERRAIN IGNORING
+ No combat modifier
+ */
+
+
+
+//The cost is in range, it deducts cost from range.
+float getTerrainAttackCost (Tile origin, Tile destination) {
+    
+    if (destination.terrain() == OPEN_TERRAIN) {
+
+        return 1;
+        
+    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        
+        return 999;
+
+    } else if (destination.terrain() == WATER_TERRAIN) {
+        
+        return 1;
+
+    } else if (destination.terrain() == FOREST_TERRAIN) {
+        
+        return 999; //need to figure out how to make this return (remaining energy when it hits the forest - 1)
+
+    } else if (destination.terrain() == HILL_TERRAIN) {
+        
+        return 2;
+
+    } else if (destination.terrain() == SWAMP_TERRAIN) {
+
+    } else if (destination.terrain() == ROAD_TERRAIN) {
+
+    }
+    
+    return 1;
+}
+
+
 std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
     //Set the selected tile as the one inputted
     //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
