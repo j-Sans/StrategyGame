@@ -160,7 +160,7 @@ unsigned int Creature::health() {
     return this->creatureHealth;
 }
 
-unsigned int Creature::energy() {
+float Creature::energy() {
     return this->creatureEnergy;
 }
 

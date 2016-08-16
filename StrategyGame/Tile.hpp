@@ -20,10 +20,15 @@
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 
-#define OPEN_TERRAIN 0
+#define OPEN_TERRAIN 0 //terrainMovementEnergyCosts[OPEN_TERRAIN] 1 
 #define MOUNTAIN_TERRAIN 1
 #define WATER_TERRAIN 2
-#define CARROT_FARM_TERRAIN 3 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
+#define FOREST_TERRAIN 3
+#define HILL_TERRAIN 4
+#define SWAMP_TERRAIN 5
+#define ROAD_TERRAIN 6
+//to add creature movement modifiers in terrain it needs to be set up as a creature stat.
+//#define CARROT_TREE_TERRAIN 7 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image

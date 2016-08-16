@@ -29,10 +29,10 @@ enum Race {
 };
 
 enum AttackStyle {
-    Projectile,      //cannot shoot through forest, mountain, hill
+    LightRanged,      //cannot shoot through forest, mountain, hill
     GreatMelee, //traditional large weapon melee (battleaxes, broadswords, etc.) can't be used in forests
     NimbleMelee, //usable in confined spaces (knives, machetes, etc.)
-    TerrainPenetrating, //can travel through 1 forest by destroying it. Otherwise same as arrow
+    HeavyRanged, //can travel through 1 forest by destroying it. Otherwise same as arrow
     TerrainIgnoring, //ignores terrain (perhaps telepathic abilities)
 };
 
@@ -50,6 +50,7 @@ public:
      * @param maxHealth An unsigned int representing the max health of the creature.
      * @param maxEnergy An unsigned int representing the max energy of the creature.
      * @param attack An unsigned int representing the damage value the creature.
+     * @param attackStyle an attackStyle enum type representing attack Style (projectile).
      * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
      * @param range An unsigned int representing the distance the creature can attack.
      * @param cost An unsigned int representing the cost of the creature in mana.
@@ -190,7 +191,7 @@ public:
     /*!
      * @return The remaining action points of this creature.
      */
-    unsigned int energy();
+    float energy();
     
     /*!
      * @return The direction the creature is facing, as a macro (int). Includes: NORTH, EAST, SOUTH, and WEST.
