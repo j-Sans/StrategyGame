@@ -557,6 +557,10 @@ float getTerrainMovementCost (Tile origin, Tile destination) {
  
  TERRAIN IGNORING
  No combat modifier
+ 
+ General Combat Modifiers:
+ Half of missing hp % is deducted as a combat debuff.
+ Flanking Bonus grants 10% combat bonus per flanking unit.
  */
 
 
@@ -661,6 +665,11 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
  *
  * CHECK IF THE OCCUPYING CREATURE ON REACHABLE SQUARES ARE ATTACKABLE SPECIFICALLY BY THE CREATURE.
  */
+
+
+//This function needs to be reworked for longer ranges. Perhaps, for each tile, check if there is a blocking obstacle in the way. Draw a line from origin to attack point, if it intersects with the boundaries of an obstacle the attack is not possible. Currently, projectiles can navigate around obstacles.
+
+
 std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
     if (creatureTile.creature() == nullptr) {
         std::vector<Tile> emptyTileVector;
