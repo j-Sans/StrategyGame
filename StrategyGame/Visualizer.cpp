@@ -545,17 +545,13 @@ void Visualizer::setInterface() {
     this->buttonShader = Shader("Shaders/button.vert", "Shaders/button.frag");
     
     //Left-Side Game UI (brown rectangle)
-    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
+    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, true);
     
     //Bottom Game UI (brown rectangle)
-    this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
+    this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, false);
     
     //Right-Side Game UI (brown rectangle)
-    this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
-    
-    this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
-    
-    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
+    this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, false);
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -727,11 +723,11 @@ void Visualizer::updateInterfaces() {
     if (selectedTile.x >= 0 && selectedTile.x < this->game.board()->width() && selectedTile.y >= 0 && selectedTile.y < this->game.board()->height(selectedTile.x)) {
         
         if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
-            this->bottomInterface = &this->interfaces[creature];
+            //Make the right interface a creature interface
         }
         
         if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
-            this->bottomInterface = &this->interfaces[building];
+            //Make the right interface a building interface
         }
     }
 }
@@ -818,7 +814,7 @@ void Visualizer::processButton(std::string action) {
              */
             
             Race race = Human;
-            AttackStyle attackStyle = LightMelee;
+            AttackStyle attackStyle = NimbleMelee;
             GLuint values[6] = {0, 0, 0, 0, 0, 0};
             GLuint direction;
             

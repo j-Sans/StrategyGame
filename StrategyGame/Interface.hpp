@@ -26,16 +26,6 @@
 #include "Font.hpp"
 #include "Button.hpp"
 
-//A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
-enum interfaceType {
-    default_left, //The default left interface
-    default_bottom, //The default bottom interface
-    default_right, //The default right interface
-    
-    creature, //The default creature interface
-    building, //The default building interface
-};
-
 class Interface {
 public:
     //Constructors
@@ -53,9 +43,9 @@ public:
      * @param y The lower left corner's y coordinate, for setting the interface box. Similar settings and configurations as with x.
      * @param width The width of the interface box, in GLFW screen coordinates.
      * @param height The height of the interface box, in GLFW screen coordinates.
-     * @param type What type of interface should be created, using an interfaceType enum. (See Interface.hpp)
+     * @param withButtons Whether buttons should be drawn on the interface.
      */
-    Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type);
+    Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons);
     
     //Public properties
     
