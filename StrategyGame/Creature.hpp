@@ -30,8 +30,8 @@ enum Race {
 
 enum AttackStyle {
     LightRanged,      //cannot shoot through forest, mountain, hill
-    GreatMelee, //traditional large weapon melee (battleaxes, broadswords, etc.) can't be used in forests
-    NimbleMelee, //usable in confined spaces (knives, machetes, etc.)
+    HeavyMelee, //traditional large weapon melee (battleaxes, broadswords, etc.) can't be used in forests
+    LightMelee, //usable in confined spaces (knives, machetes, etc.)
     HeavyRanged, //can travel through 1 forest by destroying it. Otherwise same as arrow
     TerrainIgnoring, //ignores terrain (perhaps telepathic abilities)
 };
