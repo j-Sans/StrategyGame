@@ -19,13 +19,13 @@
 #define WEST 3
 
 enum Race {
-    Human, //Researching new units costs 33% less.
-    Elf, //Can travel through forest without movement penalty and gain a combat bonus while in forest.
-    Dwarf, //Can enter mountains and has the mine ability while in mountain.
-    Orc, //Units fight at full strength when damaged and gain half of missing health % as a combat bonus.
-    Goblin, //Units cost 33% less.
-    Undead, //Has a 50% change to convert defeated units into equal-strength undead
-    Vampire, //Gains 50% of damage dealt as life.
+    Human,
+    Elf,
+    Dwarf,
+    Orc,
+    Goblin,
+    Undead,
+    Vampire,
 };
 
 enum AttackStyle {
