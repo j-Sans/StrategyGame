@@ -40,16 +40,6 @@
 
 #include "Interface.hpp"
 
-//A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
-enum interfaceType {
-    default_left, //The default left interface
-    default_bottom, //The default bottom interface
-    default_right, //The default right interface
-    
-    creature, //The default creature interface
-    building, //The default building interface
-};
-
 //A simple struct to hold the data of interfaces
 struct interfaceStat {
     GLuint x;

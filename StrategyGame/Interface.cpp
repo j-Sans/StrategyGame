@@ -11,7 +11,7 @@
 //Only so that Visualizer.hpp can have properly initialize interfaces. No other purpose.
 Interface::Interface() {}
 
-Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, bool withButtons) {
+Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
     this->interfaceWindow = window;
     this->interfaceShader = shader;
     this->buttonShader = shaderForButtons;
@@ -33,12 +33,27 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
          1.0,  1.0,
     };
     
-    if (withButtons) {
-        this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
+    switch (type) {
+        case default_left:
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
+            
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
+            
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+            
+            break;
         
-        this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
-        
-        this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+        case creature:
+            
+            break;
+            
+        case building:
+            
+            break;
+            
+        default: //For now includes the default bottom and default right interfaces
+            
+            break;
     }
     
     //Draw with OpenGL
