@@ -25,6 +25,7 @@
 #include "Shader.hpp"
 #include "Font.hpp"
 #include "Button.hpp"
+#include "DisplayBar.hpp"
 
 //A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
 enum interfaceType {
@@ -65,6 +66,11 @@ public:
     std::vector<Button> buttons; //So that the buttons can be accessed by the game
     
     /*!
+     * An std::vector of the display bars contained in this interface.
+     */
+    std::vector<DisplayBar> displayBars; //So that the display bars can be accessed by the game
+    
+    /*!
      * A boolean representing if this interface should be active or not. It won't render if this is false.
      */
     bool active = true;
@@ -84,6 +90,7 @@ private:
     GLFWwindow* interfaceWindow;
     Shader *interfaceShader; //Compiled shader
     Shader *buttonShader; //Shader for the buttons
+    Shader *displayBarShader; //Shader for the display bars
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;

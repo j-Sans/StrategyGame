@@ -3,7 +3,7 @@
 layout (points) in;
 layout (triangle_strip, max_vertices = 12) out;
 
-in float portionFilled; //A float representing the amount the bar is full, as a decimal from 0 to 1
+in float portionFilled[]; //A float representing the amount the bar is full, as a decimal from 0 to 1
 
 out vec3 Color;
 
@@ -78,11 +78,11 @@ void main() {
     Color = remainingColor;
     EmitVertex();
     
-    gl_Position = vec4(bottom - heightInset, (left + widthInset) + (portionFilled * fillWidth), 0.0f, 0.0f); //Bottom left, translated the amount filled
+    gl_Position = vec4(bottom - heightInset, (left + widthInset) + (portionFilled[0] * fillWidth), 0.0f, 0.0f); //Bottom left, translated the amount filled
     Color = remainingColor;
     EmitVertex();
     
-    gl_Position = vec4(top + heightInset, (left + widthInset) + (portionFilled * fillWidth), 0.0f, 0.0f); //Top left, translated the amount filled
+    gl_Position = vec4(top + heightInset, (left + widthInset) + (portionFilled[0] * fillWidth), 0.0f, 0.0f); //Top left, translated the amount filled
     Color = remainingColor;
     EmitVertex();
     

@@ -544,6 +544,8 @@ void Visualizer::setInterface() {
     
     this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
     
+    this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
+    
     //Left-Side Game UI (brown rectangle)
     this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
     
@@ -727,11 +729,11 @@ void Visualizer::updateInterfaces() {
     if (selectedTile.x >= 0 && selectedTile.x < this->game.board()->width() && selectedTile.y >= 0 && selectedTile.y < this->game.board()->height(selectedTile.x)) {
         
         if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
-            this->bottomInterface = &this->interfaces[creature];
+            this->rightInterface = &this->interfaces[creature];
         }
         
         if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
-            this->bottomInterface = &this->interfaces[building];
+            this->rightInterface = &this->interfaces[building];
         }
     }
 }
