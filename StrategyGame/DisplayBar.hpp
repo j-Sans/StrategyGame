@@ -59,16 +59,16 @@ public:
     //Public member functions
     
     /*!
+     * A function to render the display bar. Should be called within the interface's rendering function.
+     */
+    void render();
+    
+    /*!
      * A function to set the value of the display bar. If the value is greater than the max value or less than 0, it is not changed.
      *
      * @param value A float representing the value to set, as long as it is within range.
      */
     void setValue(GLfloat value);
-    
-    /*!
-     * A function to render the display bar. Should be called within the interface's rendering function.
-     */
-    void render();
     
     //Public get functions
     

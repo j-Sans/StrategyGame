@@ -66,8 +66,24 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
 }
 
 void DisplayBar::render() {
-    
     std::string text = ' ' + this->barText + ' ';
+    
+    //Update the portionFilled data in the shader in case it been changed
+    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Filled portion VBO
+    glBindBuffer(GL_ARRAY_BUFFER, this->filledVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(portionFilled), portionFilled, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
     
     //Bind the VAO and draw shapes
     this->barShader->use();
@@ -117,4 +133,17 @@ void DisplayBar::render() {
     
     //Render the text on the button
     this->font.render(text, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+}
+
+void DisplayBar::setValue(GLfloat value) {
+    if (value >= 0 && value <= this->maxValue) //Check to make sure the inputted value is valid, being at most the max and at least 0.
+        this->currentValue = value;
+}
+
+GLfloat DisplayBar::value() {
+    return this->currentValue;
+}
+
+std::string DisplayBar::text() {
+    return this->barText;
 }
