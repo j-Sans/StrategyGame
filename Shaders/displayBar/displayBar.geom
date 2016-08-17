@@ -17,10 +17,10 @@ uniform vec3 outsideColor;
 void main() {
     vec4 position = gl_in[0].gl_Position;
     
-    float top = position - (height / 2.0);
-    float bottom = position + (height / 2.0);
-    float left = position - (width / 2.0);
-    float right = position + (width / 2.0);
+    float top = position.y - (height / 2.0);
+    float bottom = position.y + (height / 2.0);
+    float left = position.x - (width / 2.0);
+    float right = position.x + (width / 2.0);
     
     //Create the outside box so it is drawn first
     
