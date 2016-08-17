@@ -89,7 +89,7 @@ Font::Font(const char* fontPath) {
     glBindVertexArray(0);
     
     //Set the shader
-    this->shader = Shader("Shaders/font.vert", "Shaders/font.frag");
+    this->shader = Shader("Shaders/font/font.vert", "Shaders/font/font.frag");
 }
 
 glm::vec2 Font::getSize(std::string text, GLfloat scale) {

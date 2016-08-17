@@ -540,9 +540,9 @@ void Visualizer::setInterface() {
     this->bottomInterfaceStats = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
     this->rightInterfaceStats = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
     
-    this->interfaceShader = Shader("Shaders/interface.vert", "Shaders/interface.frag");
+    this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     
-    this->buttonShader = Shader("Shaders/button.vert", "Shaders/button.frag");
+    this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
     
     //Left-Side Game UI (brown rectangle)
     this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);

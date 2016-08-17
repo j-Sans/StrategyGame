@@ -1,7 +1,12 @@
-Bugs:
+	Bugs:
+Damage circle appears behind other units, but text appears in front of it all
+- Fix: make damage circle use its own shader and be sent to GPU separately
 
 Cannot Attack West
-Attack Range is limited by remaining Energy
+- Note: Is this still a bug?
 
-Todo:
+Attack Range is limited by remaining Energy
+- Note: Is this still a bug?
+
+	Todo:
 Next: Unit Info Panel, Ranged Attacking

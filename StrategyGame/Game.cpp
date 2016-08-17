@@ -613,7 +613,9 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
         //Gets the tiles that are reachable by the creature
         reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->energy()));
         
+#ifdef PATHFINDING_CONSOLE_OUTPUT
         std::cout << "pathfind";
+#endif
         
         //Keep pushing the vector back with new tiles, that the for loop will eventually go through
         for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
@@ -658,7 +660,9 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
             reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
         }
         
+#ifdef PATHFINDING_CONSOLE_OUTPUT
         std::cout << "return success";
+#endif
         return reachedTileReturnVector;
     }
 }
