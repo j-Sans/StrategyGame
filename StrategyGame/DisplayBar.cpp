@@ -15,32 +15,40 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     this->font = Font(FONT_PATH);
     
+    //We only need to send the center to the shader in the VBO. The shader figures out the rest using width and height uniforms
+    
+    GLfloat xCenter = this->lowerLeftX + (width / 2.0);
+    GLfloat yCenter = this->lowerLeftY + (height / 2.0);
+    
     //Create the rectangle data
     GLfloat data[] = {
-        //Rectangle is drawn by two triangles
-        this->lowerLeftX, this->lowerLeftY,
-        this->lowerLeftX + this->barWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->barHeight,
-        
-        this->lowerLeftX + this->barWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->barHeight,
-        this->lowerLeftX + this->barWidth, this->lowerLeftY + this->barHeight,
+        xCenter, yCenter
     };
+    
+    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
     
     //Initiate the OpenGL buffers
     glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &this->VBO);
+    glGenBuffers(1, &this->locationVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
     
-    //Position VBO
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    //Location VBO
+    glBindBuffer(GL_ARRAY_BUFFER, this->locationVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+    
+    //Filled portion VBO
+    glBindBuffer(GL_ARRAY_BUFFER, this->filledVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(portionFilled), portionFilled, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
