@@ -49,6 +49,9 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     this->barShader->use();
     
+    this->barShader->uniform1f("width", this->barWidth);
+    this->barShader->uniform1f("height", this->barWidth);
+    
     this->barShader->uniform3f("remainingColor", this->remainingValueColor);
     this->barShader->uniform3f("lostColor", this->lostValueColor);
     this->barShader->uniform3f("outsideColor", this->outsideColor);
