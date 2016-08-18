@@ -56,7 +56,7 @@ public:
      * @param height The height of the interface box, in GLFW screen coordinates.
      * @param type What type of interface should be created, using an interfaceType enum. (See Interface.hpp)
      */
-    Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type);
+    Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type);
     
     //Public properties
     

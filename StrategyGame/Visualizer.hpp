@@ -195,8 +195,8 @@ private:
     //Interfaces
     std::map<interfaceType, Interface> interfaces;
     Shader interfaceShader;
-    Shader buttonShader;
     Shader displayBarShader;
+    Shader buttonShader;
     
     Interface *leftInterface;
     Interface *bottomInterface;

@@ -41,7 +41,7 @@ void main() {
     EmitVertex();
     
     EndPrimitive();
-    
+    /*
     //Create the background box for lost amount
     
     float widthInset = width / 5.0;
@@ -86,5 +86,5 @@ void main() {
     Color = remainingColor;
     EmitVertex();
     
-    EndPrimitive();
+    EndPrimitive();*/
 }

@@ -16,20 +16,37 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     this->font = Font(FONT_PATH);
     
     //We only need to send the center to the shader in the VBO. The shader figures out the rest using width and height uniforms
+//    
+//    GLfloat xCenter = this->lowerLeftX + (width / 2.0);
+//    GLfloat yCenter = this->lowerLeftY + (height / 2.0);
+//    
+//    //Create the rectangle data
+//    GLfloat data[] = {
+//        xCenter, yCenter
+//    };
     
-    GLfloat xCenter = this->lowerLeftX + (width / 2.0);
-    GLfloat yCenter = this->lowerLeftY + (height / 2.0);
-    
-    //Create the rectangle data
     GLfloat data[] = {
-        xCenter, yCenter
+        //Rectangle is drawn by two triangles
+        this->lowerLeftX, this->lowerLeftY,
+        this->lowerLeftX + this->barWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->barHeight,
+        
+        this->lowerLeftX + this->barWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->barHeight,
+        this->lowerLeftX + this->barWidth, this->lowerLeftY + this->barHeight,
     };
     
-    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
+    GLfloat portionFilled[] = { 0.33f };//this->value() / (GLfloat)this->maxValue };
+    
+    GLfloat color[6];
+    for (int a = 0; a < 6; a++) {
+        color[a] = 0.33f;
+    }
     
     //Initiate the OpenGL buffers
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->locationVBO);
+    glGenBuffers(1, &this->filledVBO);
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -44,7 +61,7 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     //Filled portion VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->filledVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(portionFilled), portionFilled, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
@@ -53,37 +70,39 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
-    //Send the colors as uniforms to the shader
     
-    this->barShader->use();
     
-    this->barShader->uniform1f("width", this->barWidth);
-    this->barShader->uniform1f("height", this->barWidth);
-    
-    this->barShader->uniform3f("remainingColor", this->remainingValueColor);
-    this->barShader->uniform3f("lostColor", this->lostValueColor);
-    this->barShader->uniform3f("outsideColor", this->outsideColor);
+//    //Send the colors as uniforms to the shader
+//    
+//    this->barShader->use();
+//    
+//    this->barShader->uniform1f("width", this->barWidth);
+//    this->barShader->uniform1f("height", this->barWidth);
+//    
+//    this->barShader->uniform3f("remainingColor", this->remainingValueColor);
+//    this->barShader->uniform3f("lostColor", this->lostValueColor);
+//    this->barShader->uniform3f("outsideColor", this->outsideColor);
 }
 
 void DisplayBar::render() {
     std::string text = ' ' + this->barText + ' ';
     
-    //Update the portionFilled data in the shader in case it been changed
-    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Filled portion VBO
-    glBindBuffer(GL_ARRAY_BUFFER, this->filledVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(portionFilled), portionFilled, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+//    //Update the portionFilled data in the shader in case it been changed
+//    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
+//    
+//    //First we bind the VAO
+//    glBindVertexArray(this->VAO);
+//    
+//    //Filled portion VBO
+//    glBindBuffer(GL_ARRAY_BUFFER, this->filledVBO);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(portionFilled), portionFilled, GL_STATIC_DRAW);
+//    
+//    //Next we tell OpenGL how to interpret the array
+//    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+//    glEnableVertexAttribArray(1);
+//    
+//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+//    glBindVertexArray(0);
     
     //Bind the VAO and draw shapes
     this->barShader->use();

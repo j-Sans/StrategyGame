@@ -11,10 +11,11 @@
 //Only so that Visualizer.hpp can have properly initialize interfaces. No other purpose.
 Interface::Interface() {}
 
-Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
+Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
     this->interfaceWindow = window;
     this->interfaceShader = shader;
     this->buttonShader = shaderForButtons;
+    this->displayBarShader = shaderForDisplayBars;
     
     //Set viewport specifics
     this->lowerLeftX = x;
@@ -39,12 +40,16 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, GLFWwindow* windo
             
             this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
             
-            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+            this->buttons.push_back(Button(this->displayBarShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
             
             break;
         
         case creature:
-            this->displayBars.push_back(DisplayBar(this->displayBarShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 10, "Test", glm::vec3(0.0, 1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5)));
+//            this->displayBars.push_back(DisplayBar(this->displayBarShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 10, "Test", glm::vec3(0.0, 1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5)));
+            
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "", "Test Button"));
+            
+            this->displayBars.push_back(DisplayBar(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 1, "Test DisplayBar", glm::vec3(0.0, 1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5)));
             
             break;
             
