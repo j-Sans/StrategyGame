@@ -13,7 +13,7 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     this->currentValue = this->currentMaxValue;
     
     this->barWindow = window;
-    this->barShader = shader;
+    this->barShader = *shader;
     
     this->font = Font(FONT_PATH);
     
@@ -58,14 +58,14 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     //Send the colors as uniforms to the shader
     
-    this->barShader->use();
+    this->barShader.use();
     
-    this->barShader->uniform1f("width", this->barWidth);
-    this->barShader->uniform1f("height", this->barHeight);
+    this->barShader.uniform1f("width", this->barWidth);
+    this->barShader.uniform1f("height", this->barHeight);
     
-    this->barShader->uniform3f("remainingColor", this->remainingValueColor);
-    this->barShader->uniform3f("lostColor", this->lostValueColor);
-    this->barShader->uniform3f("outsideColor", this->outsideColor);
+    this->barShader.uniform3f("remainingColor", this->remainingValueColor);
+    this->barShader.uniform3f("lostColor", this->lostValueColor);
+    this->barShader.uniform3f("outsideColor", this->outsideColor);
 }
 
 void DisplayBar::render() {
@@ -89,7 +89,7 @@ void DisplayBar::render() {
     glBindVertexArray(0);
     
     //Bind the VAO and draw shapes
-    this->barShader->use();
+    this->barShader.use();
     
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_POINTS, 0, 1);

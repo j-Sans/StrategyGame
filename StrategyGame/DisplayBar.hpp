@@ -100,7 +100,7 @@ private:
     
     //OpenGL and GLFW properties
     GLFWwindow* barWindow;
-    Shader* barShader; //Pointer to a compiled shader
+    Shader barShader; //A compiled shader to render this display bar
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint locationVBO;
