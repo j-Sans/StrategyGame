@@ -8,7 +8,9 @@
 
 #include "DisplayBar.hpp"
 
-DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string text, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), maxValue(maxVal), barText(text), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
+DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string text, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), currentMaxValue(maxVal), barText(text), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
+    
+    this->currentValue = this->currentMaxValue;
     
     this->barWindow = window;
     this->barShader = shader;
@@ -25,7 +27,7 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
         xCenter, yCenter,
     };
 
-    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
+    GLfloat portionFilled[] = { this->currentValue / (GLfloat)this->currentMaxValue };
     
     //Initiate the OpenGL buffers
     glGenVertexArrays(1, &this->VAO);
@@ -70,7 +72,7 @@ void DisplayBar::render() {
     std::string text = ' ' + this->barText + ' ';
     
     //Update the portionFilled data in the shader in case it been changed
-    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
+    GLfloat portionFilled[] = { this->currentValue / (GLfloat)this->currentMaxValue };
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
@@ -137,12 +139,21 @@ void DisplayBar::render() {
 }
 
 void DisplayBar::setValue(GLfloat value) {
-    if (value >= 0 && value <= this->maxValue) //Check to make sure the inputted value is valid, being at most the max and at least 0.
+    if (value >= 0 && value <= this->currentMaxValue) //Check to make sure the inputted value is valid, being at most the max and at least 0.
         this->currentValue = value;
+}
+
+void DisplayBar::setMaxValue(GLfloat maxValue) {
+    if (maxValue >= 0)
+        this->currentMaxValue = maxValue;
 }
 
 GLfloat DisplayBar::value() {
     return this->currentValue;
+}
+
+GLfloat DisplayBar::maxValue() {
+    return this->currentMaxValue;
 }
 
 std::string DisplayBar::text() {

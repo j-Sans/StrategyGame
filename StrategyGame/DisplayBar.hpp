@@ -54,8 +54,6 @@ public:
     
     //Public properties
     
-    GLfloat maxValue;
-    
     //Public member functions
     
     /*!
@@ -71,7 +69,7 @@ public:
     void setValue(GLfloat value);
     
     /*!
-     * A function to set the maximum value of the display bar. If the value is greater than the max value or less than 0, it is not changed.
+     * A function to set the maximum value of the display bar. If the value is 0 or less, it is not changed.
      *
      * @param value A float representing the value to set, as long as it is within range.
      */
@@ -85,6 +83,11 @@ public:
     GLfloat value();
     
     /*!
+     * @return The current maximum value of the display bar.
+     */
+    GLfloat maxValue();
+    
+    /*!
      * @return An std::string that is rendered on the bar.
      */
     std::string text();
@@ -92,6 +95,7 @@ public:
 private:
     //Button properties
     GLfloat currentValue;
+    GLfloat currentMaxValue;
     std::string barText; //A string to have as the title of the bar, what will be displayed.
     
     //OpenGL and GLFW properties
