@@ -743,7 +743,7 @@ void Visualizer::updateInterfaces() {
             }
         }
         
-        if (tile.creature() != nullptr) {
+        if (tile.building() != nullptr) {
             //Do the same for buildings
             this->rightInterface = &this->interfaces[building];
         }

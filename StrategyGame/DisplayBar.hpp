@@ -73,7 +73,7 @@ public:
      *
      * @param value A float representing the value to set, as long as it is within range.
      */
-    void setMaxValue(GLfloat value);
+    void setMaxValue(GLfloat maxValue);
     
     //Public get functions
     
