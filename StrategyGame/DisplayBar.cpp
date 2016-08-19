@@ -8,7 +8,7 @@
 
 #include "DisplayBar.hpp"
 
-DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string text, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), currentMaxValue(maxVal), barText(text), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
+DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), currentMaxValue(maxVal), text(barText), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
     
     this->currentValue = this->currentMaxValue;
     
@@ -69,7 +69,7 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
 }
 
 void DisplayBar::render() {
-    std::string text = ' ' + this->barText + ' ';
+    std::string barText = ' ' + this->text + ' ';
     
     //Update the portionFilled data in the shader in case it been changed
     GLfloat portionFilled[] = { this->currentValue / (GLfloat)this->currentMaxValue };
@@ -107,7 +107,7 @@ void DisplayBar::render() {
     GLfloat scale = 1.0f;
     
     //Get the text size
-    glm::vec2 textSize = this->font.getSize(text, scale);
+    glm::vec2 textSize = this->font.getSize(barText, scale);
     
     //Initialized with the lower left corner position of the button
     
@@ -131,7 +131,7 @@ void DisplayBar::render() {
         //Redo the size calculations with the new text size
         
         //Get the text size
-        textSize = this->font.getSize(text, scale);
+        textSize = this->font.getSize(barText, scale);
         
         textPos = glm::vec2((this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight);
         
@@ -147,7 +147,7 @@ void DisplayBar::render() {
     textPos.y += heightInset * this->interfaceBoxHeight / 2.0;
     
     //Render the text on the button
-    this->font.render(text, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+    this->font.render(barText, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
 }
 
 void DisplayBar::setValue(GLfloat value) {
@@ -168,8 +168,4 @@ GLfloat DisplayBar::value() {
 
 GLfloat DisplayBar::maxValue() {
     return this->currentMaxValue;
-}
-
-std::string DisplayBar::text() {
-    return this->barText;
 }

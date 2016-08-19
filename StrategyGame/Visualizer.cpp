@@ -740,6 +740,7 @@ void Visualizer::updateInterfaces() {
             if (this->rightInterface->displayBars.size() > 0) {
                 this->rightInterface->displayBars[0].setValue(tile.creature()->health());
                 this->rightInterface->displayBars[0].setMaxValue(tile.creature()->maxHealth());
+                this->rightInterface->displayBars[0].text = "Health: " + std::to_string(tile.creature()->health()) + "/" + std::to_string(tile.creature()->maxHealth());
             }
         }
         

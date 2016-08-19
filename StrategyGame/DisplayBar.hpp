@@ -45,14 +45,16 @@ public:
      * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
      * @param maxVal A float representing the max value that this bar can hold.
-     * @param text An std::string representing the text to display on the button as its name.
+     * @param barText An std::string representing the text to display on the button as its name.
      * @param remainingColor The color of the active section of the bar, that represents the remaining value, in the form of a glm::vec3.
      * @param remainingColor The color of the inactive section of the bar, that represents the lost value, in the form of a glm::vec3.
      * @param remainingColor The color of the outside section of the bar in the form of a glm::vec3.
      */
-    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string text, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
+    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
     
     //Public properties
+    
+    std::string text;
     
     //Public member functions
     
@@ -87,16 +89,10 @@ public:
      */
     GLfloat maxValue();
     
-    /*!
-     * @return An std::string that is rendered on the bar.
-     */
-    std::string text();
-    
 private:
     //Button properties
     GLfloat currentValue;
     GLfloat currentMaxValue;
-    std::string barText; //A string to have as the title of the bar, what will be displayed.
     
     //OpenGL and GLFW properties
     GLFWwindow* barWindow;
