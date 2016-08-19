@@ -184,7 +184,7 @@ void Visualizer::render() {
     //Update the buffers that need updating.
     this->updateBuffers();
     
-    this->updateDisplayBoxes();
+    this->updateInterfaces();
     
     //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
@@ -734,6 +734,7 @@ void Visualizer::updateInterfaces() {
         Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
         
         if (tile.creature() != nullptr) {
+            //Set teh right interface to be the creature if there is a creature at the selected tile
             this->rightInterface = &this->interfaces[creature];
             
             if (this->rightInterface->displayBars.size() > 0) {
@@ -743,7 +744,22 @@ void Visualizer::updateInterfaces() {
         }
         
         if (tile.creature() != nullptr) {
+            //Do the same for buildings
             this->rightInterface = &this->interfaces[building];
+        }
+    }
+    
+    //Update the display boxes
+    glm::vec2 selectedTileVec = this->game.tileSelected();
+    
+    if (selectedTileVec.x >= 0 && selectedTileVec.x < this->game.board()->width() && selectedTileVec.y >= 0 && selectedTileVec.y < this->game.board()->height(selectedTileVec.x)) {
+        
+        Tile selectedTile = this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y);
+        
+        if (selectedTile.creature() != nullptr) {
+            if (this->interfaces[creature].displayBars.size() > 0) {
+                this->interfaces[creature].displayBars[0].setValue(selectedTile.creature()->health());
+            }
         }
     }
 }
@@ -776,22 +792,6 @@ void Visualizer::renderDamageText() {
             glm::vec2 fontSize = this->font.getSize(std::to_string(this->damageData[tile]), 1.0);
             
             this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * this->viewportSize.y - (fontSize.y / 2), 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
-        }
-    }
-}
-
-void Visualizer::updateDisplayBoxes() {
-    glm::vec2 selectedTileVec = this->game.tileSelected();
-    
-    if (selectedTileVec.x >= 0 && selectedTileVec.x < this->game.board()->width() && selectedTileVec.y >= 0 && selectedTileVec.y < this->game.board()->height(selectedTileVec.x)) {
-    
-        Tile selectedTile = this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y);
-        
-        if (selectedTile.creature() != nullptr) {
-            if (this->interfaces[creature].displayBars.size() > 0) {
-                this->interfaces[creature].displayBars[0].setValue(selectedTile.creature()->health());
-                std::cout << "Ratio: " << this->interfaces[creature].displayBars[0].value() << " / " << this->interfaces[creature].displayBars[0].maxValue() << std::endl;
-            }
         }
     }
 }

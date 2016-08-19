@@ -267,7 +267,7 @@ private:
     void updateBuffers();
     
     /*!
-     * Set the correct interfaces to render based on the selected tile.
+     * Set the correct interfaces to render based on the selected tile. Should be called every frame.
      */
     void updateInterfaces();
     
@@ -275,11 +275,6 @@ private:
      * A function to render the damage text. Should be called every frame after displaying the board.
      */
     void renderDamageText();
-    
-    /*!
-     * A function to update interface display boxes correctly. Should be called every frame. 
-     */
-    void updateDisplayBoxes();
     
     /*!
      * A function that should be called every frame and alters the global cameraCenter vector to move the camera based on arrowkey inputs.
