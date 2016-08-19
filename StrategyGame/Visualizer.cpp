@@ -544,7 +544,7 @@ void Visualizer::setInterface() {
     
     this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
     
-    this->displayBarShader = Shader("Shaders/displayBar/button.vert", "Shaders/displayBar/button.geom", "Shaders/displayBar/button.frag");
+    this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     //this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
     //Left-Side Game UI (brown rectangle)
