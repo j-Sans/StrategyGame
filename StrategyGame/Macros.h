@@ -9,7 +9,14 @@
 #ifndef Macros_h
 #define Macros_h
 
+//To make the window fill the entire screen
 #define FULL_SCREEN
+
+//To make the selected tile reset after movement
+//#ifdef RESET_SELECTED_TILE_AFTER_MOVEMENT
+
+//Various console outputs
+
 //#define MOVEMENT_CONSOLE_OUTPUT
 //#define TURN_CONSOLE_OUTPUT
 //#define PATHFINDING_CONSOLE_OUTPUT

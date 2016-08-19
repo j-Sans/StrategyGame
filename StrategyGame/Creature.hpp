@@ -105,8 +105,10 @@ public:
      * Increment the offset properly, based on the creature's direction.
      *
      * @param deltaTime The time between frames, so it's speed can be constant on all machines at different working speeds.
+     *
+     * @return Whether the creature reached the end destination.
      */
-    void incrementOffset(float deltaTime);
+    bool incrementOffset(float deltaTime);
     
     /*!
      * Set the offset as -0.4 for moving down and increments it for moving up. This function should be called when the creature is starting to move.
@@ -214,11 +216,6 @@ public:
     unsigned int y();
     
     /*!
-     * @return Whether the creature should move in the next direction. If this is true, the next direction should be popped off of the queue and the creature should move in that direction. Then, the private bool shouldMove is made false. If this is false, the creature is not ready to be moved yet.
-     */
-    bool readyToMove();
-    
-    /*!
      * @return An unsigned int representing the controller of the creature.
      */
     const unsigned int controller();
@@ -248,8 +245,6 @@ private:
     
     //The speed that the creature moves when it is animated.
     const float movementAnimationSpeed = 1.5f;
-    
-    bool shouldMove = false;
     
     //Private member functions
 };

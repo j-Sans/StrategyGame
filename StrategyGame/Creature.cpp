@@ -52,7 +52,7 @@ void Creature::setDirection(unsigned int direction) {
         this->creatureDirection = direction;
 }
 
-void Creature::incrementOffset(float deltaTime) {
+bool Creature::incrementOffset(float deltaTime) {
     float displacement = this->movementAnimationSpeed * deltaTime;
     
     if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
@@ -70,7 +70,7 @@ void Creature::incrementOffset(float deltaTime) {
             std::cout << "Visual: arrived at next tile after moving either North or East\n";
 #endif
             
-            this->shouldMove = true;
+            return true;
         }
     } else if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
         //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
@@ -85,10 +85,15 @@ void Creature::incrementOffset(float deltaTime) {
 #ifdef MOVEMENT_CONSOLE_OUTPUT
                 std::cout << "Visual: arrived at next tile after moving either South or West\n";
 #endif
-                 //The creature is not moved here. It should have already been moved when the offset was initially changed. For that reason, shouldMove is not set to true
+                
+                return true;
+                
+                 //The creature is not moved here. It should have already been moved when the offset was initially changed
             }
         }
     }
+    
+    return false;
 }
 
 void Creature::initiateMovementOffset(float deltaTime) {
@@ -170,14 +175,6 @@ int Creature::direction() {
 
 float Creature::offset() {
     return this->creatureOffset;
-}
-
-bool Creature::readyToMove() {
-    if (this->shouldMove) {
-        this->shouldMove = false;
-        return true;
-    } else
-        return false;
 }
 
 const unsigned int Creature::controller() {
