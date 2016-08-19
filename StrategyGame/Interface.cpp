@@ -40,7 +40,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
             
-            this->buttons.push_back(Button(this->displayBarShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
             
             break;
         
@@ -49,7 +49,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "", "Test Button"));
             
-            this->displayBars.push_back(DisplayBar(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 1, "Test DisplayBar", glm::vec3(0.0, 1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5)));
+            this->displayBars.push_back(DisplayBar(this->displayBarShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 1, "Test DisplayBar", glm::vec3(0.0, 1.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5)));
             
             break;
             

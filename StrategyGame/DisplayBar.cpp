@@ -16,27 +16,27 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     this->font = Font(FONT_PATH);
     
     //We only need to send the center to the shader in the VBO. The shader figures out the rest using width and height uniforms
-//    
-//    GLfloat xCenter = this->lowerLeftX + (width / 2.0);
-//    GLfloat yCenter = this->lowerLeftY + (height / 2.0);
-//    
-//    //Create the rectangle data
-//    GLfloat data[] = {
-//        xCenter, yCenter
-//    };
     
+    GLfloat xCenter = this->lowerLeftX + width;
+    GLfloat yCenter = this->lowerLeftY + height;
+    
+    //Create the rectangle data
     GLfloat data[] = {
-        //Rectangle is drawn by two triangles
-        this->lowerLeftX, this->lowerLeftY,
-        this->lowerLeftX + this->barWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->barHeight,
-        
-        this->lowerLeftX + this->barWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->barHeight,
-        this->lowerLeftX + this->barWidth, this->lowerLeftY + this->barHeight,
+        xCenter, yCenter,
     };
-    
-    GLfloat portionFilled[] = { 0.33f };//this->value() / (GLfloat)this->maxValue };
+
+//    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
+//    
+//    GLfloat data[] = {
+//        //Rectangle is drawn by two triangles
+//        this->lowerLeftX, this->lowerLeftY,
+//        this->lowerLeftX + this->barWidth, this->lowerLeftY,
+//        this->lowerLeftX, this->lowerLeftY + this->barHeight,
+//        
+//        this->lowerLeftX + this->barWidth, this->lowerLeftY,
+//        this->lowerLeftX, this->lowerLeftY + this->barHeight,
+//        this->lowerLeftX + this->barWidth, this->lowerLeftY + this->barHeight,
+//    };
     
     GLfloat color[6];
     for (int a = 0; a < 6; a++) {
@@ -70,18 +70,16 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
+    //Send the colors as uniforms to the shader
     
+    this->barShader->use();
     
-//    //Send the colors as uniforms to the shader
-//    
-//    this->barShader->use();
-//    
-//    this->barShader->uniform1f("width", this->barWidth);
-//    this->barShader->uniform1f("height", this->barWidth);
-//    
-//    this->barShader->uniform3f("remainingColor", this->remainingValueColor);
-//    this->barShader->uniform3f("lostColor", this->lostValueColor);
-//    this->barShader->uniform3f("outsideColor", this->outsideColor);
+    this->barShader->uniform1f("width", this->barWidth);
+    this->barShader->uniform1f("height", this->barHeight);
+    
+    this->barShader->uniform3f("remainingColor", this->remainingValueColor);
+    this->barShader->uniform3f("lostColor", this->lostValueColor);
+    this->barShader->uniform3f("outsideColor", this->outsideColor);
 }
 
 void DisplayBar::render() {
@@ -108,7 +106,7 @@ void DisplayBar::render() {
     this->barShader->use();
     
     glBindVertexArray(this->VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_POINTS, 0, 1);
     glBindVertexArray(0);
     
     //Set the scale for the text

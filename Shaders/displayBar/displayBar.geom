@@ -36,6 +36,16 @@ void main() {
     Color = outsideColor;
     EmitVertex();
     
+    EndPrimitive();
+    
+    gl_Position = vec4(top, left, 0.0f, 0.0f); //Top left
+    Color = outsideColor;
+    EmitVertex();
+    
+    gl_Position = vec4(bottom, right, 0.0f, 0.0f); //Bottom right
+    Color = outsideColor;
+    EmitVertex();
+    
     gl_Position = vec4(top, right, 0.0f, 0.0f); //Top right
     Color = outsideColor;
     EmitVertex();
