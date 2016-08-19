@@ -788,8 +788,10 @@ void Visualizer::updateDisplayBoxes() {
         Tile selectedTile = this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y);
         
         if (selectedTile.creature() != nullptr) {
-            if (this->interfaces[creature].displayBars.size() > 0)
+            if (this->interfaces[creature].displayBars.size() > 0) {
                 this->interfaces[creature].displayBars[0].setValue(selectedTile.creature()->health());
+                std::cout << "Ratio: " << this->interfaces[creature].displayBars[0].value() << " / " << this->interfaces[creature].displayBars[0].maxValue() << std::endl;
+            }
         }
     }
 }
