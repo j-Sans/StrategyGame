@@ -74,6 +74,9 @@ void DisplayBar::render() {
     //Update the portionFilled data in the shader in case it been changed
     GLfloat portionFilled[] = { this->currentValue / (GLfloat)this->currentMaxValue };
     
+    std::cout << "Ratio: " << this->currentValue << " / " << this->currentMaxValue << std::endl;
+    std::cout << "Portion filled: " << portionFilled[0] << std::endl;
+    
     //First we bind the VAO
     glBindVertexArray(this->VAO);
     

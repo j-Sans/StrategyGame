@@ -748,20 +748,6 @@ void Visualizer::updateInterfaces() {
             this->rightInterface = &this->interfaces[building];
         }
     }
-    
-    //Update the display boxes
-    glm::vec2 selectedTileVec = this->game.tileSelected();
-    
-    if (selectedTileVec.x >= 0 && selectedTileVec.x < this->game.board()->width() && selectedTileVec.y >= 0 && selectedTileVec.y < this->game.board()->height(selectedTileVec.x)) {
-        
-        Tile selectedTile = this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y);
-        
-        if (selectedTile.creature() != nullptr) {
-            if (this->interfaces[creature].displayBars.size() > 0) {
-                this->interfaces[creature].displayBars[0].setValue(selectedTile.creature()->health());
-            }
-        }
-    }
 }
 
 void Visualizer::renderDamageText() {
