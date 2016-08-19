@@ -95,6 +95,14 @@ void DisplayBar::render() {
     glDrawArrays(GL_POINTS, 0, 1);
     glBindVertexArray(0);
     
+    //The inset of the inner bar from the outer bar
+    GLfloat widthInset = (GLfloat)this->barWidth / 10.0;
+    GLfloat heightInset = (GLfloat)this->barHeight / 10.0;
+    
+    //Width and height variables representing the width or height of the inner bar, so text is sized for the inner bar rather than the outer one
+    GLfloat width = this->barWidth - (2.0 * widthInset);
+    GLfloat height = this->barHeight - (2.0 * heightInset);
+    
     //Set the scale for the text
     GLfloat scale = 1.0f;
     
@@ -110,12 +118,12 @@ void DisplayBar::render() {
     //The second .5 represents moving half of the button width/height rather than the full width/height
     
     //Horizontally center the text so its center is at the button's center
-    textPos.x += ((this->barWidth * 0.5) * this->interfaceBoxWidth) * 0.5 - (textSize.x / 2.0);
+    textPos.x += ((width * 0.5) * this->interfaceBoxWidth) * 0.5 - (textSize.x / 2.0);
     
     //Vertically center the text so its center is at the button's center
-    textPos.y += ((this->barHeight * 0.5) * this->interfaceBoxHeight) * 0.5 - (textSize.y / 2.0);
+    textPos.y += ((height * 0.5) * this->interfaceBoxHeight) * 0.5 - (textSize.y / 2.0);
     
-    GLfloat sizeFraction = textSize.x / ((this->barWidth * 0.5) * this->interfaceBoxWidth); //This represents what fraction of the button the text will take up
+    GLfloat sizeFraction = textSize.x / ((width * 0.5) * this->interfaceBoxWidth); //This represents what fraction of the button the text will take up
     
     if (sizeFraction > 1) { //If the width of the text is greater than the button size, scale down the text proportionally
         scale = 1.0 / sizeFraction;
@@ -128,11 +136,15 @@ void DisplayBar::render() {
         textPos = glm::vec2((this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight);
         
         //Horizontally center the text so its center is at the button's center
-        textPos.x += ((this->barWidth * 0.5) * this->interfaceBoxWidth) * 0.5 - (textSize.x / 2.0);
+        textPos.x += ((width * 0.5) * this->interfaceBoxWidth) * 0.5 - (textSize.x / 2.0);
         
         //Vertically center the text so its center is at the button's center
-        textPos.y += ((this->barHeight * 0.5) * this->interfaceBoxHeight) * 0.5 - (textSize.y / 2.0);
+        textPos.y += ((height * 0.5) * this->interfaceBoxHeight) * 0.5 - (textSize.y / 2.0);
     }
+    
+    //Translate the text so it is correctly placed within the smaller inner bar
+    textPos.x += widthInset * this->interfaceBoxWidth / 2.0;
+    textPos.y += heightInset * this->interfaceBoxHeight / 2.0;
     
     //Render the text on the button
     this->font.render(text, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
