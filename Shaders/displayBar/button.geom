@@ -16,21 +16,28 @@ out vec3 Color;
 
 void main() {
     
+    vec4 position = gl_in[0].gl_Position;
+    
+    float top = position.y + (height / 2.0);
+    float bottom = position.y - (height / 2.0);
+    float left = position.x - (width / 2.0);
+    float right = position.x + (width / 2.0);
+    
     //The outer box of the bar
     
-    gl_Position = gl_in[0].gl_Position + vec4((width / 2.0), (height / 2.0), 0.0f, 0.0f);
+    gl_Position = vec4(left, top, position.z, position.w);
     Color = outsideColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((width / 2.0), (-height / 2.0), 0.0f, 0.0f);
+    gl_Position = vec4(left, bottom, position.z, position.w);
     Color = outsideColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0), (height / 2.0), 0.0f, 0.0f);
+    gl_Position = vec4(right, top, position.z, position.w);
     Color = outsideColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0), (-height / 2.0), 0.0f, 0.0f);
+    gl_Position = vec4(right, bottom, position.z, position.w);
     Color = outsideColor;
     EmitVertex();
     
@@ -41,19 +48,19 @@ void main() {
     float widthInset = width / 10.0;
     float heightInset = height / 10.0;
     
-    gl_Position = gl_in[0].gl_Position + vec4((width / 2.0) - widthInset, (height / 2.0) - heightInset, 0.0f, 0.0f);
+    gl_Position = vec4(left + widthInset, top - heightInset, position.z, position.w);
     Color = lostColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((width / 2.0) - widthInset, (-height / 2.0) + heightInset, 0.0f, 0.0f);
+    gl_Position = vec4(left + widthInset, bottom + heightInset, position.z, position.w);
     Color = lostColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0) + widthInset, (height / 2.0) - heightInset, 0.0f, 0.0f);
+    gl_Position = vec4(right - widthInset, top - heightInset, position.z, position.w);
     Color = lostColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0) + widthInset, (-height / 2.0) + heightInset, 0.0f, 0.0f);
+    gl_Position = vec4(right - widthInset, bottom + heightInset, position.z, position.w);
     Color = lostColor;
     EmitVertex();
     
@@ -61,23 +68,23 @@ void main() {
     
     //The inner box representing the remaining value. This box is stretched an amount proportional to its size
     
-    float widthLength = width - (width * 2 / 10.0);
-    float heightLength = height - (height * 2 / 10.0);
+    float widthLength = width - (2 * widthInset);
+    float heightLength = height - (2 * heightInset);
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0) + widthInset + (widthLength * portionFilled[0]), (height / 2.0) - heightInset, 0.0f, 0.0f);
-    Color = lostColor;
+    gl_Position = vec4(left + widthInset, bottom + heightInset + (heightLength /* portionFilled[0]*/), position.z, position.w);
+    Color = remainingColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0) + widthInset + (widthLength * portionFilled[0]), (-height / 2.0) + heightInset, 0.0f, 0.0f);
-    Color = lostColor;
+    gl_Position = vec4(left + widthInset, bottom + heightInset, position.z, position.w);
+    Color = remainingColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0) + widthInset, (height / 2.0) - heightInset, 0.0f, 0.0f);
-    Color = lostColor;
+    gl_Position = vec4(left + widthInset + (widthLength /* portionFilled[0]*/), bottom + heightInset + (heightLength /* portionFilled[0]*/), position.z, position.w);
+    Color = remainingColor;
     EmitVertex();
     
-    gl_Position = gl_in[0].gl_Position + vec4((- width / 2.0) + widthInset, (-height / 2.0) + heightInset, 0.0f, 0.0f);
-    Color = lostColor;
+    gl_Position = vec4(left + widthInset + (widthLength /* portionFilled[0]*/), bottom + heightInset, position.z, position.w);
+    Color = remainingColor;
     EmitVertex();
     
     EndPrimitive();
