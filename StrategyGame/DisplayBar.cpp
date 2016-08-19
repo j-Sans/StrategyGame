@@ -25,23 +25,7 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
         xCenter, yCenter,
     };
 
-//    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
-//    
-//    GLfloat data[] = {
-//        //Rectangle is drawn by two triangles
-//        this->lowerLeftX, this->lowerLeftY,
-//        this->lowerLeftX + this->barWidth, this->lowerLeftY,
-//        this->lowerLeftX, this->lowerLeftY + this->barHeight,
-//        
-//        this->lowerLeftX + this->barWidth, this->lowerLeftY,
-//        this->lowerLeftX, this->lowerLeftY + this->barHeight,
-//        this->lowerLeftX + this->barWidth, this->lowerLeftY + this->barHeight,
-//    };
-    
-    GLfloat color[6];
-    for (int a = 0; a < 6; a++) {
-        color[a] = 0.33f;
-    }
+    GLfloat portionFilled[] = { this->value() / (GLfloat)this->maxValue };
     
     //Initiate the OpenGL buffers
     glGenVertexArrays(1, &this->VAO);
@@ -61,7 +45,7 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     //Filled portion VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->filledVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(portionFilled), portionFilled, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);

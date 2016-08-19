@@ -2,8 +2,8 @@
 
 out vec4 color;
 
-in float Color;
+in vec3 Color;
 
 void main() {
-    color = vec4(Color, Color, Color, 1.0f);
+    color = vec4(Color.x, Color.y, Color.z, 1.0f);
 }
