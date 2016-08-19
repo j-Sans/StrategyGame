@@ -729,11 +729,18 @@ void Visualizer::updateInterfaces() {
     //If the selected tile is on the board
     if (selectedTile.x >= 0 && selectedTile.x < this->game.board()->width() && selectedTile.y >= 0 && selectedTile.y < this->game.board()->height(selectedTile.x)) {
         
-        if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
+        Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
+        
+        if (tile.creature() != nullptr) {
             this->rightInterface = &this->interfaces[creature];
+            
+            if (this->rightInterface->displayBars.size() > 0) {
+                this->rightInterface->displayBars[0].setValue(tile.creature()->health());
+                this->rightInterface->displayBars[0].setMaxValue(tile.creature()->maxHealth());
+            }
         }
         
-        if (this->game.board()->get(selectedTile.x, selectedTile.y).creature() != nullptr) {
+        if (tile.creature() != nullptr) {
             this->rightInterface = &this->interfaces[building];
         }
     }

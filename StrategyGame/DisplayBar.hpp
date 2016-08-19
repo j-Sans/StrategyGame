@@ -54,7 +54,7 @@ public:
     
     //Public properties
     
-    const GLfloat maxValue;
+    GLfloat maxValue;
     
     //Public member functions
     
@@ -69,6 +69,13 @@ public:
      * @param value A float representing the value to set, as long as it is within range.
      */
     void setValue(GLfloat value);
+    
+    /*!
+     * A function to set the maximum value of the display bar. If the value is greater than the max value or less than 0, it is not changed.
+     *
+     * @param value A float representing the value to set, as long as it is within range.
+     */
+    void setMaxValue(GLfloat value);
     
     //Public get functions
     
