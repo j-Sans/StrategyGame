@@ -560,7 +560,7 @@ void Visualizer::setInterface() {
     
     this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
     
-    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
+    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
