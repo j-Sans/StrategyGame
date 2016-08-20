@@ -13,6 +13,7 @@
 
 //Standard library includes
 #include <vector>
+#include <map>
 
 //GLEW: Locates memory location of OpenGL functions
 #define GLEW_STATIC
@@ -68,7 +69,7 @@ public:
     /*!
      * An std::vector of the display bars contained in this interface.
      */
-    std::vector<DisplayBar> displayBars; //So that the display bars can be accessed by the game
+    std::map<displayBarType, DisplayBar> displayBars; //So that the display bars can be accessed by the game
     
     /*!
      * A boolean representing if this interface should be active or not. It won't render if this is false.

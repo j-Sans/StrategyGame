@@ -27,6 +27,10 @@
 #include "Shader.hpp"
 #include "Font.hpp"
 
+enum displayBarType {
+    health,
+};
+
 class DisplayBar {
 public:
     //Constructors
@@ -46,11 +50,12 @@ public:
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
      * @param maxVal A float representing the max value that this bar can hold.
      * @param barText An std::string representing the text to display on the button as its name.
+     * @param type A displayBarType representing the type of the display bar
      * @param remainingColor The color of the active section of the bar, that represents the remaining value, in the form of a glm::vec3.
      * @param remainingColor The color of the inactive section of the bar, that represents the lost value, in the form of a glm::vec3.
      * @param remainingColor The color of the outside section of the bar in the form of a glm::vec3.
      */
-    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
+    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, displayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
     
     //Public properties
     
@@ -89,6 +94,11 @@ public:
      */
     GLfloat maxValue();
     
+    /*!
+     * @return The displayBartype of this display bar.
+     */
+    displayBarType type;
+    
 private:
     //Button properties
     GLfloat currentValue;
@@ -105,6 +115,8 @@ private:
     glm::vec3 remainingValueColor;
     glm::vec3 lostValueColor;
     glm::vec3 outsideColor;
+    
+    displayBarType type;
     
     Font font;
     
