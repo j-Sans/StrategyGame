@@ -45,13 +45,17 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             break;
         
         } case creature: {
-            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "", "Test Button"));
-            
             //Create the displayBar for health that will be added to the map
-            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: 1/1", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: 1/1", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Inserts a display bar into the map with the key health
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
+            
+            //Create the displayBar for health that will be added to the map
+            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: 1/1", energy_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            
+            //Inserts a display bar into the map with the key health
+            this->displayBars.insert(std::pair<displayBarType, DisplayBar>(energy_bar, energyBar));
             
             break;
             

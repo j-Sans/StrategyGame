@@ -29,6 +29,7 @@
 
 enum displayBarType {
     health_bar,
+    energy_bar,
 };
 
 class DisplayBar {
