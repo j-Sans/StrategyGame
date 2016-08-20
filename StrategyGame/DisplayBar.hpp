@@ -28,12 +28,15 @@
 #include "Font.hpp"
 
 enum displayBarType {
-    health,
+    health_bar,
 };
 
 class DisplayBar {
 public:
     //Constructors
+    
+    //Default constructor. Don't use this, it is only to allow DisplayBar objects to be declared without causing an error with memory.cpp
+    DisplayBar();
     
     /*!
      * A class representing a display bar on an interface block.
@@ -97,7 +100,7 @@ public:
     /*!
      * @return The displayBartype of this display bar.
      */
-    displayBarType type;
+    displayBarType type();
     
 private:
     //Button properties
@@ -116,20 +119,20 @@ private:
     glm::vec3 lostValueColor;
     glm::vec3 outsideColor;
     
-    displayBarType type;
+    displayBarType barType;
     
     Font font;
     
     //Viewport information
-    const GLfloat lowerLeftX;
-    const GLfloat lowerLeftY;
-    const GLfloat barWidth;
-    const GLfloat barHeight;
+    GLfloat lowerLeftX;
+    GLfloat lowerLeftY;
+    GLfloat barWidth;
+    GLfloat barHeight;
     
-    const GLfloat interfaceBoxLowerLeftX;
-    const GLfloat interfaceBoxLowerLeftY;
-    const GLfloat interfaceBoxWidth;
-    const GLfloat interfaceBoxHeight;
+    GLfloat interfaceBoxLowerLeftX;
+    GLfloat interfaceBoxLowerLeftY;
+    GLfloat interfaceBoxWidth;
+    GLfloat interfaceBoxHeight;
     
     //Private member functions
     

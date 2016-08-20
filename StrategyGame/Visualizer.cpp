@@ -738,9 +738,9 @@ void Visualizer::updateInterfaces() {
             this->rightInterface = &this->interfaces[creature];
             
             if (this->rightInterface->displayBars.size() > 0) {
-                this->rightInterface->displayBars[0].setValue(tile.creature()->health());
-                this->rightInterface->displayBars[0].setMaxValue(tile.creature()->maxHealth());
-                this->rightInterface->displayBars[0].text = "Health: " + std::to_string(tile.creature()->health()) + "/" + std::to_string(tile.creature()->maxHealth());
+                this->rightInterface->displayBars[health_bar].setValue(tile.creature()->health());
+                this->rightInterface->displayBars[health_bar].setMaxValue(tile.creature()->maxHealth());
+                this->rightInterface->displayBars[health_bar].text = "Health: " + std::to_string(tile.creature()->health()) + "/" + std::to_string(tile.creature()->maxHealth());
             }
         }
         

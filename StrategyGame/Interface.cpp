@@ -8,7 +8,7 @@
 
 #include "Interface.hpp"
 
-//Only so that Visualizer.hpp can have properly initialize interfaces. No other purpose.
+//Only so that Visualizer.hpp can have properly initialized interfaces. No other purpose.
 Interface::Interface() {}
 
 Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
@@ -35,7 +35,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     };
     
     switch (type) {
-        case default_left:
+        case default_left: {
             this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
             
             this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
@@ -44,18 +44,22 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             break;
         
-        case creature:
+        } case creature: {
             this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "", "Test Button"));
             
-            this->displayBars.push_back(DisplayBar(this->displayBarShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: 1/1", glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5)));
+            //Create the displayBar for health that will be added to the map
+            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: 1/1", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            
+            //Inserts a display bar into the map with the key health
+            this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
             
             break;
             
-        case building:
+        } case building: {
             
             break;
             
-        default: //For now includes the default bottom and default right interfaces
+        } default: //For now includes the default bottom and default right interfaces
             
             break;
     }
@@ -99,8 +103,8 @@ void Interface::render(bool mouseDown, bool mouseUp) {
             this->buttons[a].render(mouseDown, mouseUp);
         }
         
-        for (GLuint a = 0; a < this->displayBars.size(); a++) {
-            this->displayBars[a].render();
+        for (auto displayBar = this->displayBars.begin(); displayBar != this->displayBars.end(); displayBar++) {
+            displayBar->second.render();
         }
         
         //Reset window information for game rendering

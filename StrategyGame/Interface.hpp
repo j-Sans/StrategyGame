@@ -67,7 +67,7 @@ public:
     std::vector<Button> buttons; //So that the buttons can be accessed by the game
     
     /*!
-     * An std::vector of the display bars contained in this interface.
+     * An std::map of the display bars contained in this interface.
      */
     std::map<displayBarType, DisplayBar> displayBars; //So that the display bars can be accessed by the game
     
