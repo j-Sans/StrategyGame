@@ -78,37 +78,7 @@ void Game::updateCreatures(float deltaTime) {
                                 creatureLoc.y -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                if (creature->directions.size() == 0) {
-                                    this->selectedTile = glm::vec2(x, y - 1); //Set the selected tile to this location
-                                    
-                                    this->gameBoard.setStyle(x, y - 1, Selected);
-                                    
-                                    std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(x, y - 1));
-                                    
-                                    Creature creature = *this->gameBoard.get(x, y - 1).creature();
-                                    for (int a = 0; a < reachableTiles.size(); a++) {
-                                        if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                                            this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                                        }
-                                    }
-                                    
-                                    std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(x, y - 1));
-                                    
-                                    for (int a = 0; a < attackableTiles.size(); a++) {
-                                        
-                                        //If there is a creature on the tile, controlled by an opponent, make it attackable
-                                        if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
-                                            
-                                            if (creature.energy() > 0)
-                                                this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
-                                        
-                                        //If there is a building on the tile, controlled by an opponent, make it attackable
-                                        if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
-                                            
-                                            if (creature.energy() > 0)
-                                                this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
-                                    }
-                                }
+                                this->selectCreature(x, y - 1);
 #endif
                             }
                         } else if (direction == EAST) {
@@ -116,37 +86,7 @@ void Game::updateCreatures(float deltaTime) {
                                 creatureLoc.x -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                if (creature->directions.size() == 0) {
-                                    this->selectedTile = glm::vec2(x - 1, y); //Set the selected tile to this location
-                                    
-                                    this->gameBoard.setStyle(x - 1, y, Selected);
-                                    
-                                    std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(x - 1, y));
-                                    
-                                    Creature creature = *this->gameBoard.get(x - 1, y).creature();
-                                    for (int a = 0; a < reachableTiles.size(); a++) {
-                                        if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                                            this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                                        }
-                                    }
-                                    
-                                    std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(x - 1, y));
-                                    
-                                    for (int a = 0; a < attackableTiles.size(); a++) {
-                                        
-                                        //If there is a creature on the tile, controlled by an opponent, make it attackable
-                                        if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
-                                            
-                                            if (creature.energy() > 0)
-                                                this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
-                                        
-                                        //If there is a building on the tile, controlled by an opponent, make it attackable
-                                        if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
-                                            
-                                            if (creature.energy() > 0)
-                                                this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
-                                    }
-                                }
+                                this->selectCreature(x - 1, y);
 #endif
                             }
                         }
@@ -157,37 +97,7 @@ void Game::updateCreatures(float deltaTime) {
                     if (creature->incrementOffset(deltaTime)) {
                         
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                        if (creature->directions.size() == 0) {
-                            this->selectedTile = glm::vec2(x, y); //Set the selected tile to this location
-                            
-                            this->gameBoard.setStyle(x, y, Selected);
-                            
-                            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(x, y));
-                            
-                            Creature creature = *this->gameBoard.get(x, y).creature();
-                            for (int a = 0; a < reachableTiles.size(); a++) {
-                                if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                                    this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                                }
-                            }
-                            
-                            std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(x, y));
-                            
-                            for (int a = 0; a < attackableTiles.size(); a++) {
-                                
-                                //If there is a creature on the tile, controlled by an opponent, make it attackable
-                                if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
-                                    
-                                    if (creature.energy() > 0)
-                                        this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
-                                
-                                //If there is a building on the tile, controlled by an opponent, make it attackable
-                                if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
-                                    
-                                    if (creature.energy() > 0)
-                                        this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
-                            }
-                        }
+                        this->selectCreature(x, y);
 #endif
                     }
                 }
@@ -334,6 +244,11 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             }
             
             this->selectedTile = NO_SELECTION;
+            
+#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+            //If the attacker died, nothing will happen and the function will return false
+            this->selectCreature(attacker.x, attacker.y);
+#endif
         }
     }
 }
@@ -412,6 +327,53 @@ void Game::incrementActivePlayer() {
     
     if (this->currentActivePlayer >= NUMBER_OF_PLAYERS)
         this->currentActivePlayer = 0;
+}
+
+bool Game::selectCreature(unsigned int x, unsigned int y) {
+    if (x >= this->gameBoard.width()) //No selecting happens if the x is out of range
+        return false;
+    
+    if (y >= this->gameBoard.height(x)) //No selecting happens if the y is out of range
+        return false;
+    
+    if (this->gameBoard.get(x, y).creature() == nullptr) //No selecting happens if there is no creature at the selected location
+        return false;
+    
+    Creature* creature = this->gameBoard.get(x, y).creature();
+    
+    if (creature->directions.size() == 0) {
+        this->selectedTile = glm::vec2(x, y); //Set the selected tile to this location
+        
+        this->gameBoard.setStyle(x, y, Selected);
+        
+        std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(x, y));
+        
+        Creature creature = *this->gameBoard.get(x, y).creature();
+        for (int a = 0; a < reachableTiles.size(); a++) {
+            if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
+                this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
+            }
+        }
+        
+        std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(x, y));
+        
+        for (int a = 0; a < attackableTiles.size(); a++) {
+            
+            //If there is a creature on the tile, controlled by an opponent, make it attackable
+            if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
+                
+                if (creature.energy() > 0)
+                    this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+            
+            //If there is a building on the tile, controlled by an opponent, make it attackable
+            if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
+                
+                if (creature.energy() > 0)
+                    this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+        }
+    }
+    
+    return true;
 }
 
 glm::ivec2 Game::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]) {

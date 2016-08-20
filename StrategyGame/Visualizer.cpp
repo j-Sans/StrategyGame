@@ -734,7 +734,7 @@ void Visualizer::updateInterfaces() {
         Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
         
         if (tile.creature() != nullptr) {
-            //Set teh right interface to be the creature if there is a creature at the selected tile
+            //Set the right interface to be the creature if there is a creature at the selected tile
             this->rightInterface = &this->interfaces[creature];
             
             if (this->rightInterface->displayBars.size() > 0) {
