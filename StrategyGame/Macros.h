@@ -12,6 +12,9 @@
 //To make the window fill the entire screen
 #define FULL_SCREEN
 
+//To make the inset of the inner box for display bars the same on both x and y axes
+#define EQUAL_BORDERED_DISPLAY_BARS
+
 //To make the selected tile reset after movement
 //#ifdef RESET_SELECTED_TILE_AFTER_MOVEMENT
 

@@ -63,6 +63,10 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     this->barShader.use();
     
+#ifdef EQUAL_BORDERED_DISPLAY_BARS
+    this->barShader.uniform1f("framebufferWidthToHeightRatio", this->interfaceBoxWidth / this->interfaceBoxHeight);
+#endif
+    
     this->barShader.uniform1f("width", this->barWidth);
     this->barShader.uniform1f("height", this->barHeight);
     

@@ -5,6 +5,8 @@ layout (triangle_strip, max_vertices = 12) out;
 
 in float portionFilled[];
 
+uniform float framebufferWidthToHeightRatio = 0;
+
 uniform float width;
 uniform float height;
 
@@ -47,6 +49,11 @@ void main() {
     
     float widthInset = width / 10.0;
     float heightInset = height / 10.0;
+    
+    //If a uniform was sent in for the ratio, then set the width inset to be the same as the height based on the ratio of the framebuffer height to width.
+    if (framebufferWidthToHeightRatio != 0) {
+        widthInset *= framebufferWidthToHeightRatio;
+    }
     
     gl_Position = vec4(left + widthInset, top - heightInset, position.z, position.w);
     Color = lostColor;
