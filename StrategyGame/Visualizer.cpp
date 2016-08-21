@@ -740,6 +740,9 @@ void Visualizer::updateInterfaces() {
             //Update the boxes to display creature stats
             if (this->interfaces[creature].boxes.size() > 0) {
                 this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
+                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
+                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
+                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
             }
             
             //Update the display bars to display the creature quantities, like health and energy, which change

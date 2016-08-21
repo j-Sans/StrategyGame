@@ -11,6 +11,7 @@
 
 #include "Macros.h"
 
+#include <string>
 #include <queue>
 
 #define NORTH 0
@@ -143,6 +144,11 @@ public:
      * @return The race of this creature.
      */
     const Race race();
+    
+    /*!
+     * @return The race of this creature, in the form of an std::string.
+     */
+    std::string raceString();
     
     /*!
      * @return The maximum health of this creature.
