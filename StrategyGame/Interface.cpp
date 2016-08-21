@@ -36,25 +36,53 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     
     switch (type) {
         case default_left: {
-            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.9f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25, 0.9, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
             
-            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.8f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
             
-            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25f, 0.7f, 0.5f, 0.067f, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+            this->buttons.push_back(Button(this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
             
             break;
         
         } case creature: {
+            
+            //Create the box for attack info that will be added to the map
+            Box attackBox(this->buttonShader, this->interfaceWindow, 0.05, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack);
+            
+            //Insert the box into with the key creature_
+            this->boxes.insert(std::pair<displayBoxType, Box>(creature_attack, attackBox));
+            
+            //Create the box for range info that will be added to the map
+            Box rangeBox(this->buttonShader, this->interfaceWindow, 0.525, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range);
+            
+            //Insert the box into with the key creature_range
+            this->boxes.insert(std::pair<displayBoxType, Box>(creature_range, rangeBox));
+            
+            
+            //Create the box for vision info that will be added to the map
+            Box visionBox(this->buttonShader, this->interfaceWindow, 0.05, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
+            
+            //Insert the box into with the key creature_vision
+            this->boxes.insert(std::pair<displayBoxType, Box>(creature_vision, attackBox));
+            
+            //Create the box for race info that will be added to the map
+            Box raceBox(this->buttonShader, this->interfaceWindow, 0.525, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
+            
+            //Insert the box into with the key creature_race
+            this->boxes.insert(std::pair<displayBoxType, Box>(creature_race, raceBox));
+            
+            
             //Create the displayBar for health that will be added to the map
-            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: 1/1", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Inserts a display bar into the map with the key health
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
             
-            //Create the displayBar for health that will be added to the map
-            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: 1/1", energy_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
-            //Inserts a display bar into the map with the key health
+            //Create the displayBar for health that will be added to the map
+            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", energy_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            
+            //Insert the display bar into the map with the key health
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(energy_bar, energyBar));
             
             break;
@@ -103,8 +131,12 @@ void Interface::render(bool mouseDown, bool mouseUp) {
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         
-        for (GLuint a = 0; a < this->buttons.size(); a++) {
-            this->buttons[a].render(mouseDown, mouseUp);
+        for (auto box = this->boxes.begin(); box != this->boxes.end(); box++) {
+            box->second.render();
+        }
+        
+        for (auto button = this->buttons.begin(); button != this->buttons.end(); button++) {
+            button->render(mouseDown, mouseUp);
         }
         
         for (auto displayBar = this->displayBars.begin(); displayBar != this->displayBars.end(); displayBar++) {

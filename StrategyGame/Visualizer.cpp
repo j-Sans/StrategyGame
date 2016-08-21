@@ -737,15 +737,21 @@ void Visualizer::updateInterfaces() {
             //Set the right interface to be the creature if there is a creature at the selected tile
             this->rightInterface = &this->interfaces[creature];
             
-            if (this->rightInterface->displayBars.size() > 0) {
+            //Update the boxes to display creature stats
+            if (this->interfaces[creature].boxes.size() > 0) {
+                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
+            }
+            
+            //Update the display bars to display the creature quantities, like health and energy, which change
+            if (this->interfaces[creature].displayBars.size() > 0) {
                 
-                this->rightInterface->displayBars[health_bar].setValue(tile.creature()->health());
-                this->rightInterface->displayBars[health_bar].setMaxValue(tile.creature()->maxHealth());
-                this->rightInterface->displayBars[health_bar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
+                this->interfaces[creature].displayBars[health_bar].setValue(tile.creature()->health());
+                this->interfaces[creature].displayBars[health_bar].setMaxValue(tile.creature()->maxHealth());
+                this->interfaces[creature].displayBars[health_bar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
                 
-                this->rightInterface->displayBars[energy_bar].setValue(tile.creature()->energy());
-                this->rightInterface->displayBars[energy_bar].setMaxValue(tile.creature()->maxEnergy());
-                this->rightInterface->displayBars[energy_bar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+                this->interfaces[creature].displayBars[energy_bar].setValue(tile.creature()->energy());
+                this->interfaces[creature].displayBars[energy_bar].setMaxValue(tile.creature()->maxEnergy());
+                this->interfaces[creature].displayBars[energy_bar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
                 
                 
             }

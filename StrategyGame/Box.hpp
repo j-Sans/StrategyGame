@@ -28,9 +28,23 @@
 #include "Shader.hpp"
 #include "Font.hpp"
 
+enum displayBoxType {
+    //Creature info boxes
+    creature_attack,
+    creature_range,
+    creature_vision,
+    creature_race,
+    
+    //Other
+    other,
+};
+
 class Box {
 public:
     //Constructors
+    
+    //Default constructor. Don't use this, it is only to allow box objects to be declared without causing an error with memory.cpp
+    Box();
     
     /*!
      * A class representing a box on an interface block.
@@ -45,11 +59,14 @@ public:
      * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
      * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
-     * @param text An std::string representing the text to display on the box as its name.
+     * @param boxText An std::string representing the text to display on the box as its name.
+     * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
-    Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string text);
+    Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type);
     
     //Public properties
+    
+    std::string text; //A string to have as the title of the box, what will be displayed.
     
     //Public member functions
     
@@ -61,15 +78,13 @@ public:
     //Public get functions
     
     /*!
-     * A function that returns the pressed state of the box as a boolean. If that value is true, then pressed is internally changed to false.
-     *
-     * @return Whether the box is pressed or not.
+     * @return The type of the box, for updating the box text.
      */
-    bool isPressed();
+    displayBoxType type();
     
 private:
     //Box properties
-    std::string boxText; //A string to have as the title of the box, what will be displayed.
+    displayBoxType boxType; //A displayBoxType to represent the type of the box, so that its can be updated
     
     //OpenGL and GLFW properties
     GLFWwindow* boxWindow;
@@ -82,15 +97,15 @@ private:
     Font font;
     
     //Viewport information
-    const GLfloat lowerLeftX;
-    const GLfloat lowerLeftY;
-    const GLfloat boxWidth;
-    const GLfloat boxHeight;
+    GLfloat lowerLeftX;
+    GLfloat lowerLeftY;
+    GLfloat boxWidth;
+    GLfloat boxHeight;
     
-    const GLfloat interfaceBoxLowerLeftX;
-    const GLfloat interfaceBoxLowerLeftY;
-    const GLfloat interfaceBoxWidth;
-    const GLfloat interfaceBoxHeight;
+    GLfloat interfaceBoxLowerLeftX;
+    GLfloat interfaceBoxLowerLeftY;
+    GLfloat interfaceBoxWidth;
+    GLfloat interfaceBoxHeight;
     
     //Private member functions
     

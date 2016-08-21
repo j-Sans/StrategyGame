@@ -25,6 +25,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Box.hpp"
 #include "Button.hpp"
 #include "DisplayBar.hpp"
 
@@ -62,12 +63,17 @@ public:
     //Public properties
     
     /*!
+     * An std::map of the boses contained in this interface, with key values of type displayBoxType (see Box.hpp)
+     */
+    std::map<displayBoxType, Box> boxes; //So that the boxes can be accessed by the game
+    
+    /*!
      * An std::vector of the buttons contained in this interface.
      */
     std::vector<Button> buttons; //So that the buttons can be accessed by the game
     
     /*!
-     * An std::map of the display bars contained in this interface.
+     * An std::map of the display bars contained in this interface, with key values of type displayBarType (see DisplayBar.hpp)
      */
     std::map<displayBarType, DisplayBar> displayBars; //So that the display bars can be accessed by the game
     

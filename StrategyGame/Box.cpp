@@ -10,7 +10,10 @@
 
 //Public member functions
 
-Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string text) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxText(text) {
+//Only so that Interface.hpp can have properly initialized boxes. No other purpose.
+Box::Box() {}
+
+Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), text(boxText), boxType(type) {
     
     this->boxWindow = window;
     this->boxShader = *shader;
@@ -62,7 +65,7 @@ Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width
 }
 
 void Box::render() {
-    std::string text = ' ' + this->boxText + ' ';
+    std::string boxText = ' ' + this->text + ' ';
     
     //Bind the VAO and draw shapes
     this->boxShader.use();
@@ -75,7 +78,7 @@ void Box::render() {
     GLfloat scale = 1.0f;
     
     //Get the text size
-    glm::vec2 textSize = this->font.getSize(text, scale);
+    glm::vec2 textSize = this->font.getSize(boxText, scale);
     
     //Initialized with the lower left corner position of the Box
     
@@ -99,7 +102,7 @@ void Box::render() {
         //Redo the size calculations with the new text size
         
         //Get the text size
-        textSize = this->font.getSize(text, scale);
+        textSize = this->font.getSize(boxText, scale);
         
         textPos = glm::vec2((this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight);
         
@@ -111,5 +114,9 @@ void Box::render() {
     }
     
     //Render the text on the Box
-    this->font.render(text, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+    this->font.render(boxText, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+}
+
+displayBoxType Box::type() {
+    return this->boxType;
 }
