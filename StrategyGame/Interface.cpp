@@ -63,7 +63,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             Box visionBox(this->buttonShader, this->interfaceWindow, 0.05, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
             
             //Insert the box into with the key creature_vision
-            this->boxes.insert(std::pair<displayBoxType, Box>(creature_vision, attackBox));
+            this->boxes.insert(std::pair<displayBoxType, Box>(creature_vision, visionBox));
             
             //Create the box for race info that will be added to the map
             Box raceBox(this->buttonShader, this->interfaceWindow, 0.525, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
