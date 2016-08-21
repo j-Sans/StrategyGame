@@ -13,7 +13,7 @@
 //Only so that Interface.hpp can have properly initialized boxes. No other purpose.
 Box::Box() {}
 
-Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), text(boxText), boxType(type) {
+Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec4(Box::defaultColor, Box::defaultColor, Box::defaultColor, 1.0)), text(boxText), boxType(type) {
     
     this->boxWindow = window;
     this->boxShader = *shader;
@@ -31,9 +31,9 @@ Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width
         this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
     };
     
-    GLfloat color[6];
+    glm::vec4 colorData[6];
     for (int a = 0; a < 6; a++) {
-        color[a] = 0.33f;
+        colorData[a] = this->boxColor;
     }
     
     //Draw with OpenGL
@@ -54,10 +54,61 @@ Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width
     
     //Color VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+Box::Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, displayBoxType type) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(color), text(boxText), boxType(type) {
+    
+    this->boxWindow = window;
+    this->boxShader = *shader;
+    
+    this->font = Font(FONT_PATH);
+    
+    GLfloat data[] = {
+        //Rectangle is drawn by two triangles
+        this->lowerLeftX, this->lowerLeftY,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
+        
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
+    };
+    
+    glm::vec4 colorData[6];
+    for (int a = 0; a < 6; a++) {
+        colorData[a] = this->boxColor;
+    }
+    
+    //Draw with OpenGL
+    glGenVertexArrays(1, &this->VAO);
+    glGenBuffers(1, &this->boxVBO);
+    glGenBuffers(1, &this->colorVBO);
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Position VBO
+    glBindBuffer(GL_ARRAY_BUFFER, this->boxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    
+    //Color VBO
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -119,4 +170,8 @@ void Box::render() {
 
 displayBoxType Box::type() {
     return this->boxType;
+}
+
+glm::vec4 Box::color() {
+    return this->boxColor;
 }

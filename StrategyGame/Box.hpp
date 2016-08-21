@@ -47,7 +47,7 @@ public:
     Box();
     
     /*!
-     * A class representing a box on an interface block.
+     * A class representing a box on an interface block. This creates a box with the default button color.
      *
      * @param shader A pointer to a compiled shader for rendering this box.
      * @param window A pointer to the current game window.
@@ -63,6 +63,28 @@ public:
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
     Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type);
+    
+    /*!
+     * A class representing a box on an interface block. This creates a box with the given button color
+     *
+     * @param shader A pointer to a compiled shader for rendering this box.
+     * @param window A pointer to the current game window.
+     * @param x A GLfloat representing the lower left x coordinate of the box in the current interface, from 0 to 1.
+     * @param y A GLfloat representing the lower left y coordinate of the box in the current interface, from 0 to 1.
+     * @param width A GLfloat representing the width of the box in the current interface, from 0 to 1.
+     * @param height A GLfloat representing the height of the box in the current interface, from 0 to 1.
+     * @param interfaceX A GLfloat representing the lower left x coordinate of the current interface, in screen coordinates.
+     * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
+     * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
+     * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
+     * @param color An optional glm::vec4 representing the color to set as the box color.
+     * @param boxText An std::string representing the text to display on the box as its name.
+     * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
+     */
+    Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, displayBoxType type);
+    
+    //Static properties
+    constexpr const static float defaultColor = 0.33;
     
     //Public properties
     
@@ -82,9 +104,15 @@ public:
      */
     displayBoxType type();
     
+    /*!
+     * @return The color of the box.
+     */
+    glm::vec4 color();
+    
 private:
     //Box properties
     displayBoxType boxType; //A displayBoxType to represent the type of the box, so that its can be updated
+    glm::vec4 boxColor;
     
     //OpenGL and GLFW properties
     GLFWwindow* boxWindow;

@@ -206,6 +206,9 @@ private:
     interfaceStat bottomInterfaceStats;
     interfaceStat rightInterfaceStats;
     
+    //Settings menu
+    Box darkenBox; //A box to render to darken the entire screen
+    
     
     //Private member functions
     
@@ -292,6 +295,11 @@ private:
      * A function to move to the next player's turn.
      */
     void incrementActivePlayer();
+    
+    /*!
+     * A function to render a display menu interface in the center of the screen. This can be useful as an "esc" settings menu (when escape is clicked). This also darkens the rest of the screen.
+     */
+    void renderSettingsMenu();
     
     /*!
      * A function to create a path from one tile to another tile in the fewest possible moves. An empty vector is returned if problems arise. See "return" for details.

@@ -938,6 +938,11 @@ void Visualizer::processButton(std::string action) {
     }
 }
 
+void Visualizer::renderSettingsMenu() {
+    glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
+    
+}
+
 std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
     if (x >= this->game.board()->width()) {
         std::vector<GLuint> emptyVector;

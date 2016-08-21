@@ -28,9 +28,9 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
         this->lowerLeftX + this->buttonWidth, this->lowerLeftY + this->buttonHeight,
     };
     
-    GLfloat color[6];
+    glm::vec4 color[6];
     for (int a = 0; a < 6; a++) {
-        color[a] = 0.33f;
+        color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
     }
     
     //Draw with OpenGL
@@ -54,7 +54,7 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -173,7 +173,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
     actualButtonX += this->interfaceBoxLowerLeftX;
     actualButtonY += this->interfaceBoxLowerLeftY;
     
-    GLfloat color[6];
+    glm::vec4 color[6];
     
     //Make the button darker if it is pressed.
     if (this->pressed) {
@@ -181,7 +181,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBindVertexArray(this->VAO);
         
         for (GLuint a = 0; a < 6; a++) {
-            color[a] = 0.17f;
+            color[a] = glm::vec4(0.17, 0.17, 0.17, 1.0);
         }
         
         //Color VBO
@@ -189,7 +189,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -205,19 +205,19 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
             }
         
             for (GLuint a = 0; a < 6; a++) {
-                color[a] = 0.67f;
+                color[a] = glm::vec4(0.67, 0.67, 0.67, 1.0);
             }
         } else {
             
             for (GLuint a = 0; a < 6; a++) {
-                color[a] = 0.33f;
+                color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
             }
         }
         
         //Make the color darker if the button has been pressed recently. This has also been done if this->pressed is true
         if (this->hasBeenPressed) {
             for (GLuint a = 0; a < 6; a++) {
-                color[a] = 0.17f;
+                color[a] = glm::vec4(0.17, 0.17, 0.17, 1.0);
             }
             
             if (mouseUp)
@@ -232,7 +232,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
