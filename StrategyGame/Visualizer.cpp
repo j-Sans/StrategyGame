@@ -763,6 +763,12 @@ void Visualizer::updateInterfaces() {
         if (tile.building() != nullptr) {
             //Do the same for buildings
             this->rightInterface = &this->interfaces[building];
+            
+            if (this->interfaces[building].displayBars.size() > 0) {
+                this->interfaces[building].displayBars[health_bar].setValue(tile.building()->health());
+                this->interfaces[building].displayBars[health_bar].setMaxValue(tile.building()->maxHealth());
+                this->interfaces[building].displayBars[health_bar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
+            }
         }
     }
 }
