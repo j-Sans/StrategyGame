@@ -45,13 +45,16 @@ public:
      * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
      * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
-     * @param action An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
+     * @param buttonAction An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
      * @param text An std::string representing the text to display on the button as its name.
      */
-    Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string action, std::string text);
+    Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string text);
     
     //Public properties
+    
     const GLfloat buttonDownTime = 0.25f;
+    
+    std::string action; //A string to represent the actions that this button does
     
     //Public member functions
     
@@ -73,17 +76,11 @@ public:
      */
     bool isPressed();
     
-    /*!
-     * @return An std::string representing the action that should be done when this button is pressed. The string should be interpreted in the Game class.
-     */
-    std::string action();
-    
 private:
     //Button properties
     bool pressed = false;
     bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
-    std::string buttonAction; //A string to represent the actions that this button does.
-    std::string buttonText; //A string to have as the title of the button, what will be displayed.
+    std::string buttonText; //A string to have as the title of the button, what will be displayed
     
     //OpenGL and GLFW properties
     GLFWwindow* buttonWindow;

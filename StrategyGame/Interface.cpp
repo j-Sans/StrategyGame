@@ -97,6 +97,8 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             //Inserts a display bar into the map with the key health
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
             
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building", "Make creature"));
+            
             break;
             
         } case settings: {
