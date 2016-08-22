@@ -49,7 +49,7 @@ public:
     /*!
      * A class representing a box on an interface block. This creates a box with the default button color.
      *
-     * @param shader A pointer to a compiled shader for rendering this box.
+     * @param shader A compiled shader for rendering this box.
      * @param window A pointer to the current game window.
      * @param x A GLfloat representing the lower left x coordinate of the box in the current interface, from 0 to 1.
      * @param y A GLfloat representing the lower left y coordinate of the box in the current interface, from 0 to 1.
@@ -62,12 +62,12 @@ public:
      * @param boxText An std::string representing the text to display on the box as its name.
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
-    Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type);
+    Box(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, displayBoxType type);
     
     /*!
      * A class representing a box on an interface block. This creates a box with the given button color
      *
-     * @param shader A pointer to a compiled shader for rendering this box.
+     * @param shader A compiled shader for rendering this box.
      * @param window A pointer to the current game window.
      * @param x A GLfloat representing the lower left x coordinate of the box in the current interface, from 0 to 1.
      * @param y A GLfloat representing the lower left y coordinate of the box in the current interface, from 0 to 1.
@@ -81,7 +81,7 @@ public:
      * @param boxText An std::string representing the text to display on the box as its name.
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
-    Box(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, displayBoxType type);
+    Box(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, displayBoxType type);
     
     //Static properties
     constexpr const static float defaultColor = 0.33;

@@ -560,7 +560,9 @@ void Visualizer::setInterface() {
     
     this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
     
-    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building );
+    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
+    
+    this->darkenBox = Box(this->buttonShader, this->gameWindow, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -940,6 +942,8 @@ void Visualizer::processButton(std::string action) {
 
 void Visualizer::renderSettingsMenu() {
     glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
+    
+    this->darkenBox.render();
     
 }
 
