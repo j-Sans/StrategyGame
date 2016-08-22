@@ -226,6 +226,15 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             if (this->gameBoard.get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
                 this->gameBoard.setCreature(mousePos.x, mousePos.y, newCreature);
             }
+            
+            //Reset all tiles
+            for (int x = 0; x < this->gameBoard.width(); x++) {
+                for (int y = 0; y < this->gameBoard.height(x); y++) {
+                    this->gameBoard.setStyle(x, y, Regular);
+                }
+            }
+            
+            this->selectedTile = NO_SELECTION;
         }
     }
     
