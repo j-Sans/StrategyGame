@@ -60,8 +60,9 @@ public:
      *
      * @param mouseDown A boolean representing if the mouse is currently pressed. This can set the button to being pressed.
      * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
+     * @param butttonInteraction Whether the button should change color based on mouse position and clicks. This can be used for when settings menu is up.
      */
-    void render(bool mouseDown, bool mouseUp);
+    void render(bool mouseDown, bool mouseUp, bool buttonInteraction);
     
     //Public get functions
     

@@ -126,7 +126,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     glBindVertexArray(0);
 }
 
-void Interface::render(bool mouseDown, bool mouseUp) {
+void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     if (active) {
         //Get updated information about the viewport
         this->updateViewport();
@@ -148,7 +148,7 @@ void Interface::render(bool mouseDown, bool mouseUp) {
         }
         
         for (auto button = this->buttons.begin(); button != this->buttons.end(); button++) {
-            button->render(mouseDown, mouseUp);
+            button->render(mouseDown, mouseUp, buttonInteraction);
         }
         
         for (auto displayBar = this->displayBars.begin(); displayBar != this->displayBars.end(); displayBar++) {

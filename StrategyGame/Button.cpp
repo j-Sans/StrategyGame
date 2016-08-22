@@ -61,8 +61,9 @@ Button::Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat 
     glBindVertexArray(0);
 }
 
-void Button::render(bool mouseDown, bool mouseUp) {
-    this->updateMouse(mouseDown, mouseUp);
+void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
+    if (buttonInteraction)
+        this->updateMouse(mouseDown, mouseUp);
     
     std::string text = ' ' + this->buttonText + ' ';
     

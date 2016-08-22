@@ -91,8 +91,9 @@ public:
      *
      * @param mouseDown A boolean representing if the mouse is down, for the buttons to figure out whether to become pressed.
      * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
+     * @param buttonInteraction A boolean representing whether or not buttons should change color or jsut stay at default. This can be for when the settings menu is up, so button interaction outside of the menu doesn't occur.
      */
-    void render(bool mouseDown, bool mouseUp);
+    void render(bool mouseDown, bool mouseUp, bool buttonInteraction);
     
 private:
     //OpenGL and GLFW properties

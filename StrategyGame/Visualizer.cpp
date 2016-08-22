@@ -219,7 +219,8 @@ void Visualizer::render() {
         else if (a == 2)
             interface = this->rightInterface;
         
-        interface->render(mouseDown, mouseUp); //This renders the interface and its buttons. Second because the map is likely stored as an std::pair with the interface being the second in the pair
+        //This renders the interface and its buttons
+        interface->render(mouseDown, mouseUp, !this->showSettings);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
@@ -965,7 +966,7 @@ void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
     
     this->darkenBox.render();
     
-    this->interfaces[settings].render(mouseUp, mouseDown);
+    this->interfaces[settings].render(mouseUp, mouseDown, true);
 }
 
 std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
