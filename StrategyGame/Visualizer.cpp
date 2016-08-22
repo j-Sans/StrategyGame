@@ -968,46 +968,45 @@ void Visualizer::processButton(std::string action) {
                     std::cout << "Error adding creature" << std::endl;
                 }
             }
-        } else if (action.find("building") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
+        }
+    } else if (action.find("building") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
+        
+        //For now, just create a creature
+        
+        action.erase(0, 9); //Delete "building,(" from the action string
+        
+        glm::ivec2 buildingPos = glm::ivec2(0, 0);
+        
+        //Extract the building position
+        
+        GLuint numDigits = (GLuint)action.find(',');
+        
+        for (GLint place = numDigits - 1; place >= 0; place--) {
+            buildingPos.x += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+        }
+        
+        action.erase(0, 1); //Get rid of the comma
+        
+        numDigits = (GLuint)action.find(')');
+        
+        for (GLint place = numDigits - 1; place >= 0; place--) {
+            buildingPos.y += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+        }
+        
+        action.erase(0, 1); //Get rid of the parenthasis
+        
+        //If the position is within the board
+        if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
             
-            //This if clause isn't being started for some reason
+            glm::ivec2 creatureTile(buildingPos.x, buildingPos.y + 1);
             
-            //For now, just create a creature
-            
-            action.erase(0, 10); //Delete "building,(" from the action string
-            
-            glm::ivec2 buildingPos = glm::ivec2(0, 0);
-            
-            //Extract the building position
-            
-            GLuint numDigits = (GLuint)action.find(',');
-            
-            for (GLint place = numDigits - 1; place >= 0; place--) {
-                buildingPos.x += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-                action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-            }
-            
-            action.erase(0, 1); //Get rid of the comma
-            
-            numDigits = (GLuint)action.find(')');
-            
-            for (GLint place = numDigits - 1; place >= 0; place--) {
-                buildingPos.y += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-                action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-            }
-            
-            action.erase(0, 1); //Get rid of the parenthasis
-            
-            std::cout << "BuildingPos: (" << buildingPos.x << ", " << buildingPos.y << ")" << std::endl;
-            
-            //If the position is within the board
-            if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
-                if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) { //If the spot south of the building is on the board
-                    Creature newCreature(buildingPos.x, buildingPos.y + 1, Human, 1, 3, 1, LightMelee, 1, 1, 1, NORTH, 1);
-                    
-                    if (this->game.board()->get(buildingPos.x, buildingPos.y).passableByCreature(newCreature)) { //Set the new creature at the south spot if that spot is available to it
-                        this->game.board()->setCreature(buildingPos.x, buildingPos.y, newCreature);
-                    }
+            if (creatureTile.y < this->game.board()->height(creatureTile.x) - 1) { //If the spot south of the building is on the board
+                Creature newCreature(creatureTile.x, creatureTile.y, Human, 1, 3, 1, LightMelee, 1, 1, 1, NORTH, this->game.activePlayer());
+                
+                if (this->game.board()->get(creatureTile.x, creatureTile.y).passableByCreature(newCreature)) { //Set the new creature at the south spot if that spot is available to it
+                    this->game.board()->setCreature(creatureTile.x, creatureTile.y, newCreature);
                 }
             }
         }
