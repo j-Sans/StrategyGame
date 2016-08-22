@@ -798,7 +798,7 @@ void Visualizer::updateInterfaces() {
             }
             
             if (this->interfaces[building].buttons.size() > 0) {
-                this->interfaces[building].buttons[0].action = "Building(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")";
+                this->interfaces[building].buttons[0].action = "building(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")";
             }
         }
     }
@@ -969,6 +969,9 @@ void Visualizer::processButton(std::string action) {
                 }
             }
         } else if (action.find("building") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
+            
+            //This if clause isn't being started for some reason
+            
             //For now, just create a creature
             
             action.erase(0, 10); //Delete "building,(" from the action string
@@ -994,6 +997,8 @@ void Visualizer::processButton(std::string action) {
             }
             
             action.erase(0, 1); //Get rid of the parenthasis
+            
+            std::cout << "BuildingPos: (" << buildingPos.x << ", " << buildingPos.y << ")" << std::endl;
             
             //If the position is within the board
             if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
