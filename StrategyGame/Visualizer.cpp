@@ -18,6 +18,9 @@ bool mouseDown = false;
 //A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
 bool mouseUp = false;
 
+//A boolean representing if the escape button has been clicked, for use with the settings menu. This boolean is set in the key callback function and is reset when used.
+bool escClicked = false;
+
 //Constructor without geometry shader
 Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
@@ -226,7 +229,13 @@ void Visualizer::render() {
         }
     }
     
-    this->renderSettingsMenu(mouseUp, mouseDown);
+    if (escClicked) { //When escape is clicked change whether the settings menu is shown or not
+        this->showSettings = !this->showSettings;
+        escClicked = false;
+    }
+    
+    if (this->showSettings)
+        this->renderSettingsMenu(mouseUp, mouseDown);
     
     //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
     if (mouseDown)
@@ -843,8 +852,11 @@ void Visualizer::moveCamera() {
 }
 
 void Visualizer::processButton(std::string action) {
-    //Process the button indicating to move to the next turn
-    if (action == "next turn") {
+    if (action == "settings") {
+        
+        this->showSettings = true;
+        
+    } else if (action == "next turn") { //Process the button indicating to move to the next turn
         
         this->game.nextTurn();
         
@@ -1065,9 +1077,15 @@ std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX,
 
 //A function GLFW can call when a key event occurs
 void Visualizer::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    
     if (key == GLFW_KEY_W && action == GLFW_PRESS && mods == GLFW_MOD_SUPER) { //Command-W: close the application
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
+    
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { //Escape: open settings menu
+        escClicked = true;
+    }
+    
     if (key >= 0 && key < 1024) {
         if (action == GLFW_PRESS) {
             keys[key] = true;
