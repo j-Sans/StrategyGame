@@ -196,25 +196,37 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         this->selectedTile = mousePos;
     }
     
-    //Movement
+    //Selecting selectable tiles
     else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
         
-        std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
-        
-        for (int a = 0; a < directions.size(); a++) {
-            this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
-            if (a == 0)
-                this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
+        //Move the creature to the selected tile
+        if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) {
+            std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+            
+            for (int a = 0; a < directions.size(); a++) {
+                this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
+                if (a == 0)
+                    this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
+            }
+            
+            //Reset all tiles
+            for (int x = 0; x < this->gameBoard.width(); x++) {
+                for (int y = 0; y < this->gameBoard.height(x); y++) {
+                    this->gameBoard.setStyle(x, y, Regular);
+                }
+            }
+            
+            this->selectedTile = NO_SELECTION;
         }
         
-        //Reset all tiles
-        for (int x = 0; x < this->gameBoard.width(); x++) {
-            for (int y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        //Create the creature from the building
+        else if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) {
+            Creature newCreature(mousePos.x, mousePos.y, Human, 1, 3, 1, LightMelee, 1, 1, 1, NORTH, this->currentActivePlayer);
+            
+            if (this->gameBoard.get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
+                this->gameBoard.setCreature(mousePos.x, mousePos.y, newCreature);
             }
         }
-        
-        this->selectedTile = NO_SELECTION;
     }
     
     //Attacking

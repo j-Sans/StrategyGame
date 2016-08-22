@@ -1000,6 +1000,26 @@ void Visualizer::processButton(std::string action) {
         //If the position is within the board
         if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
             
+            //North
+            if (buildingPos.y > 0) {
+                this->game.board()->setStyle(buildingPos.x, buildingPos.y - 1, Reachable);
+            }
+            
+            //East
+            if (buildingPos.x > 0) {
+                this->game.board()->setStyle(buildingPos.x - 1, buildingPos.y, Reachable);
+            }
+            
+            //South
+            if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) {
+                this->game.board()->setStyle(buildingPos.x, buildingPos.y + 1, Reachable);
+            }
+            
+            //West
+            if (buildingPos.y < this->game.board()->width() - 1) {
+                this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
+            }
+            /*
             glm::ivec2 creatureTile(buildingPos.x, buildingPos.y + 1);
             
             if (creatureTile.y < this->game.board()->height(creatureTile.x) - 1) { //If the spot south of the building is on the board
@@ -1009,6 +1029,7 @@ void Visualizer::processButton(std::string action) {
                     this->game.board()->setCreature(creatureTile.x, creatureTile.y, newCreature);
                 }
             }
+             */
         }
     }
 }
