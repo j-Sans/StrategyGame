@@ -208,6 +208,7 @@ private:
     
     //Settings menu
     Box darkenBox; //A box to render to darken the entire screen
+    bool showSettings = false; //A boolean representing whether or not to display the settings menu
     
     
     //Private member functions

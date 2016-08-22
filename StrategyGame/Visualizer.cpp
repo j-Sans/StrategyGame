@@ -226,6 +226,8 @@ void Visualizer::render() {
         }
     }
     
+    this->renderSettingsMenu(mouseUp, mouseDown);
+    
     //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
     if (mouseDown)
         mouseDown = false;
@@ -947,6 +949,7 @@ void Visualizer::processButton(std::string action) {
 
 void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
     glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
+    glScissor(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
     
     this->darkenBox.render();
     
