@@ -576,7 +576,7 @@ void Visualizer::setInterface() {
     this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
     
     //Settings popup menu
-    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->windowWidth / 3.0, this->windowHeight / 3.0, this->windowWidth / 3.0, this->windowHeight / 3.0, settings);
+    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, viewportWidth/ 3.0, viewportHeight / 6.0, viewportWidth / 3.0, viewportHeight * 2.0 / 3.0, settings);
     
     this->darkenBox = Box(this->buttonShader, this->gameWindow, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
