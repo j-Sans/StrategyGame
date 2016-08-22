@@ -205,6 +205,7 @@ private:
     interfaceStat leftInterfaceStats;
     interfaceStat bottomInterfaceStats;
     interfaceStat rightInterfaceStats;
+    interfaceStat settingsMenuStats;
     
     //Settings menu
     Box darkenBox; //A box to render to darken the entire screen

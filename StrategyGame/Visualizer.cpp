@@ -175,11 +175,18 @@ void Visualizer::render() {
             //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
             tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
         }
-        
-        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click
-        this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
+    
+        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
+        if (!this->showSettings)
+            this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
         
         this->updateInterfaces();
+        
+        //If the mouse clicks outside of the settings menu when it's open, close the menu
+        if (this->showSettings) {
+            if (cursorPos.x < this->settingsMenuStats.x || cursorPos.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPos.y < this->settingsMenuStats.y || cursorPos.y > this->settingsMenuStats.y + this->settingsMenuStats.height)
+                this->showSettings = false;
+        }
     }
     
     this->game.updateCreatures(this->deltaTime);
@@ -553,6 +560,7 @@ void Visualizer::setInterface() {
     this->leftInterfaceStats = interfaceStat(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
     this->bottomInterfaceStats = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
     this->rightInterfaceStats = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    this->settingsMenuStats = interfaceStat(viewportWidth/ 3.0, viewportHeight / 6.0, viewportWidth / 3.0, viewportHeight * 2.0 / 3.0);
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     
@@ -577,7 +585,7 @@ void Visualizer::setInterface() {
     this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
     
     //Settings popup menu
-    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, viewportWidth/ 3.0, viewportHeight / 6.0, viewportWidth / 3.0, viewportHeight * 2.0 / 3.0, settings);
+    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->settingsMenuStats.x, this->settingsMenuStats.y, this->settingsMenuStats.width, this->settingsMenuStats.height, settings);
     
     this->darkenBox = Box(this->buttonShader, this->gameWindow, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
