@@ -37,6 +37,8 @@ enum interfaceType {
     
     creature, //The default creature interface
     building, //The default building interface
+    
+    settings, //The settings popup menu
 };
 
 class Interface {

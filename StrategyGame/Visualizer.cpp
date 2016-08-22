@@ -558,9 +558,14 @@ void Visualizer::setInterface() {
     //Right-Side Game UI (brown rectangle)
     this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
     
+    //Interface for selected creatures
     this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
     
+    //Interface for selected buildings
     this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
+    
+    //Settings popup menu
+    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->windowWidth / 3.0, this->windowHeight / 3.0, this->windowWidth / 3.0, this->windowHeight / 3.0, settings);
     
     this->darkenBox = Box(this->buttonShader, this->gameWindow, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
@@ -940,11 +945,12 @@ void Visualizer::processButton(std::string action) {
     }
 }
 
-void Visualizer::renderSettingsMenu() {
+void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
     glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
     
     this->darkenBox.render();
     
+    this->interfaces[settings].render(mouseUp, mouseDown);
 }
 
 std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {

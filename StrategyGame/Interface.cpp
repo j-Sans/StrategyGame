@@ -97,6 +97,10 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             break;
             
+        } case settings: {
+            
+            break;
+        
         } default: //For now includes the default bottom and default right interfaces
             
             break;

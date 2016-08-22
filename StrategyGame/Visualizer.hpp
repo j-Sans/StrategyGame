@@ -298,8 +298,11 @@ private:
     
     /*!
      * A function to render a display menu interface in the center of the screen. This can be useful as an "esc" settings menu (when escape is clicked). This also darkens the rest of the screen.
+     *
+     * @param mouseUp A bool representing if the mouse was just released.
+     * @param mouseDown A bool representing if the mouse is currently clicking.
      */
-    void renderSettingsMenu();
+    void renderSettingsMenu(bool mouseUp, bool mouseDown);
     
     /*!
      * A function to create a path from one tile to another tile in the fewest possible moves. An empty vector is returned if problems arise. See "return" for details.
