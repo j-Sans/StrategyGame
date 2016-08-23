@@ -971,7 +971,7 @@ void Visualizer::processButton(std::string action) {
         }
     } else if (action.find("building") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
         
-        //For now, just create a creature
+        //For now, set adjacent spots as reachable and create a creature on the selected one
         
         action.erase(0, 9); //Delete "building,(" from the action string
         
@@ -1000,36 +1000,28 @@ void Visualizer::processButton(std::string action) {
         //If the position is within the board
         if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
             
-            //North
-            if (buildingPos.y > 0) {
-                this->game.board()->setStyle(buildingPos.x, buildingPos.y - 1, Reachable);
-            }
+            if (this->game.board()->get(buildingPos.x, buildingPos.y).building() != nullptr && this->game.activePlayer() == this->game.board()->get(buildingPos.x, buildingPos.y).building()->controller()) {
             
-            //East
-            if (buildingPos.x > 0) {
-                this->game.board()->setStyle(buildingPos.x - 1, buildingPos.y, Reachable);
-            }
-            
-            //South
-            if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) {
-                this->game.board()->setStyle(buildingPos.x, buildingPos.y + 1, Reachable);
-            }
-            
-            //West
-            if (buildingPos.y < this->game.board()->width() - 1) {
-                this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
-            }
-            /*
-            glm::ivec2 creatureTile(buildingPos.x, buildingPos.y + 1);
-            
-            if (creatureTile.y < this->game.board()->height(creatureTile.x) - 1) { //If the spot south of the building is on the board
-                Creature newCreature(creatureTile.x, creatureTile.y, Human, 1, 3, 1, LightMelee, 1, 1, 1, NORTH, this->game.activePlayer());
+                //North
+                if (buildingPos.y > 0) {
+                    this->game.board()->setStyle(buildingPos.x, buildingPos.y - 1, Reachable);
+                }
                 
-                if (this->game.board()->get(creatureTile.x, creatureTile.y).passableByCreature(newCreature)) { //Set the new creature at the south spot if that spot is available to it
-                    this->game.board()->setCreature(creatureTile.x, creatureTile.y, newCreature);
+                //East
+                if (buildingPos.x > 0) {
+                    this->game.board()->setStyle(buildingPos.x - 1, buildingPos.y, Reachable);
+                }
+                
+                //South
+                if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) {
+                    this->game.board()->setStyle(buildingPos.x, buildingPos.y + 1, Reachable);
+                }
+                
+                //West
+                if (buildingPos.y < this->game.board()->width() - 1) {
+                    this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
                 }
             }
-             */
         }
     }
 }
