@@ -193,16 +193,6 @@ void Visualizer::render() {
             
             if (cursorPosFramebufferCoords.x < this->settingsMenuStats.x || cursorPosFramebufferCoords.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPosFramebufferCoords.y < this->settingsMenuStats.y || cursorPosFramebufferCoords.y > this->settingsMenuStats.y + this->settingsMenuStats.height) {
                 this->showSettings = false;
-                
-                std::cout << "cursorPos: (" << cursorPos.x << ", " << cursorPos.y << ")" << std::endl;
-                
-                std::cout << "X: " << this->settingsMenuStats.x << std::endl;
-                
-                std::cout << "Y: " << this->settingsMenuStats.y << std::endl;
-                
-                std::cout << "Width: " << this->settingsMenuStats.width << std::endl;
-                
-                std::cout << "Height: " << this->settingsMenuStats.height << std::endl;
             }
         }
     }
