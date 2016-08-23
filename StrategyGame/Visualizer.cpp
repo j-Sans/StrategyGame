@@ -184,8 +184,26 @@ void Visualizer::render() {
         
         //If the mouse clicks outside of the settings menu when it's open, close the menu
         if (this->showSettings) {
-            if (cursorPos.x < this->settingsMenuStats.x || cursorPos.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPos.y < this->settingsMenuStats.y || cursorPos.y > this->settingsMenuStats.y + this->settingsMenuStats.height)
+            
+            glm::ivec2 framebufferSize;
+            
+            glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
+            
+            glm::vec2 cursorPosFramebufferCoords = cursorPos * (glm::dvec2)framebufferSize / (glm::dvec2)windowSize;
+            
+            if (cursorPosFramebufferCoords.x < this->settingsMenuStats.x || cursorPosFramebufferCoords.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPosFramebufferCoords.y < this->settingsMenuStats.y || cursorPosFramebufferCoords.y > this->settingsMenuStats.y + this->settingsMenuStats.height) {
                 this->showSettings = false;
+                
+                std::cout << "cursorPos: (" << cursorPos.x << ", " << cursorPos.y << ")" << std::endl;
+                
+                std::cout << "X: " << this->settingsMenuStats.x << std::endl;
+                
+                std::cout << "Y: " << this->settingsMenuStats.y << std::endl;
+                
+                std::cout << "Width: " << this->settingsMenuStats.width << std::endl;
+                
+                std::cout << "Height: " << this->settingsMenuStats.height << std::endl;
+            }
         }
     }
     
