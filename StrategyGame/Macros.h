@@ -12,6 +12,7 @@
 //To make the window fill the entire screen
 #define FULL_SCREEN
 
+// ***Resizeability does not work currently*** 
 //To make the window resizable
 //#define RESIZEABLE
 

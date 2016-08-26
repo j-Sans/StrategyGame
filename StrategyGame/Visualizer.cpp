@@ -309,10 +309,10 @@ void Visualizer::initWindow() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Error with accidental use of legacy functions
     
 #ifdef RESIZEABLE
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Non-resizable
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 #endif
 #ifndef RESIZEABLE
-    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 #endif
     
 #ifndef _win32
