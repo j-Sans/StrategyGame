@@ -14,6 +14,7 @@
 class Building {
 public:
     //Constructor
+    
     Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost, unsigned int controller);
     
     //Destructor

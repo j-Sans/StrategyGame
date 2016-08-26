@@ -45,6 +45,12 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.6, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
             
             break;
+            
+        } case default_bottom: {
+            
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+            
+            break;
         
         } case creature: {
             
@@ -101,11 +107,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             break;
             
-        } case settings: {
-            
-            break;
-        
-        } default: //For now includes the default bottom and default right interfaces
+        } default: //For now includes the default_right and settings interfaces
             
             break;
     }

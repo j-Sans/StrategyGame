@@ -31,9 +31,9 @@
 
 //A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
 enum interfaceType {
-    default_left, //The default left interface
-    default_bottom, //The default bottom interface
-    default_right, //The default right interface
+    default_left, //The default left interface, where game options are
+    default_bottom, //The default bottom interface, where buying options are
+    default_right, //The default right interface, initially empty
     
     creature, //The default creature interface
     building, //The default building interface

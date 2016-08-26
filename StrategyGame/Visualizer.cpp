@@ -307,7 +307,14 @@ void Visualizer::initWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //Version 3.3 of OpenGL
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Error with accidental use of legacy functions
+    
+#ifdef RESIZEABLE
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Non-resizable
+#endif
+#ifndef RESIZEABLE
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+#endif
+    
 #ifndef _win32
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //On OS X
 #endif
@@ -1041,6 +1048,7 @@ void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
     this->darkenBox.render();
     
     this->interfaces[settings].render(mouseUp, mouseDown, true);
+    
 }
 
 std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
