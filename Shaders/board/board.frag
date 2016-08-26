@@ -15,10 +15,15 @@
 #define PLAYER_3_COLOR vec4(0.0f, 0.3f, 0.0f, 1.0f) //Player 3 has a green highlight
 
 //Terrain
-#define OPEN_TERRAIN 0
+#define OPEN_TERRAIN 0 //terrainMovementEnergyCosts[OPEN_TERRAIN] 1
 #define MOUNTAIN_TERRAIN 1
 #define WATER_TERRAIN 2
-#define CARROT_FARM_TERRAIN 3 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
+#define FOREST_TERRAIN 3
+#define HILL_TERRAIN 4
+#define SWAMP_TERRAIN 5
+#define ROAD_TERRAIN 6
+//to add creature movement modifiers in terrain it needs to be set up as a creature stat.
+//#define CARROT_TREE_TERRAIN 7 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 
 //Creature
 #define NO_CREATURE 0
@@ -43,11 +48,21 @@ uniform sampler2D circleTex;
 void main() {
     if (TexType.x == TERRAIN) {
         //Draw the ground
-        if (TexType.y == MOUNTAIN_TERRAIN) {
-            color = TileColor * texture(mountainTex, TexCoords);
-        } else if (TexType.y == OPEN_TERRAIN) {
+        if (TexType.y == OPEN_TERRAIN) {
             color = TileColor * texture(grassTex, TexCoords);
-        }
+        } else if (TexType.y == MOUNTAIN_TERRAIN) {
+            color = TileColor * texture(mountainTex, TexCoords);
+        } else if (TexType.y == WATER_TERRAIN) {
+            color = TileColor * texture(mountainTex, TexCoords);
+        } else if (TexType.y == FOREST_TERRAIN) {
+            color = TileColor * texture(mountainTex, TexCoords);
+        } /*else if (TexType.y == HILL_TERRAIN) {
+            color = TileColor * texture(hillTex, TexCoords);
+        } else if (TexType.y == SWAMP_TERRAIN) {
+            color = TileColor * texture(swampTex, TexCoords);
+        } else if (TexType.y == ROAD_TERRAIN) {
+            color = TileColor * texture(roadTex, TexCoords);
+        }*/
         
     } else if (TexType.x == CREATURE) {
         //Draw the creature
