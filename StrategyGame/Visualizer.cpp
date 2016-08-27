@@ -888,7 +888,7 @@ void Visualizer::processButton(std::string action) {
         
         this->game.nextTurn();
         
-    } else if (action.find("creature") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+    } else if (action.find("creature,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
         if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
             
             glm::ivec2 selectedTile = this->game.tileSelected();
@@ -905,7 +905,7 @@ void Visualizer::processButton(std::string action) {
             
             Race race = Human;
             AttackStyle attackStyle = LightMelee;
-            GLuint values[6] = {0, 0, 0, 0, 0, 0};
+            GLuint values[] = {0, 0, 0, 0, 0, 0};
             GLuint direction;
             
             action.erase(0, 9); //Gets rid of the "creature," from the string
@@ -984,7 +984,7 @@ void Visualizer::processButton(std::string action) {
                 }
             }
         }
-    } else if (action.find("building") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
+    } else if (action.find("building_new_creature") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
         
         //For now, set adjacent spots as reachable and create a creature on the selected one
         
@@ -1035,6 +1035,59 @@ void Visualizer::processButton(std::string action) {
                 //West
                 if (buildingPos.y < this->game.board()->width() - 1) {
                     this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
+                }
+            }
+        }
+    } else if (action.find("building,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
+            
+            glm::ivec2 selectedTile = this->game.tileSelected();
+            
+            //Interpret the string to find out what kind of building
+            
+            /* The contents of the button string are:
+             * building,[maxHealth],[cost]
+             *
+             * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
+             *
+             * This function goes through the string and extracts those values and constructs a building based on them.
+             */
+            GLuint values[] = {0, 0};
+            
+            action.erase(0, 9); //Gets rid of the "building," from the string
+            
+            //Extract the numerical values of the building
+            
+            for (GLuint valueNum = 0; valueNum < 2; valueNum++) {
+                //Find the position of the next comma, which is the number of digits before that comma
+                GLuint numDigits = (GLuint)action.find(',');
+                
+                for (GLint place = numDigits - 1; place >= 0; place--) {
+                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+                }
+                
+                action.erase(0, 1); //Get rid of the comma
+            }
+            
+            Building newBuilding(selectedTile.x, selectedTile.y, values[0], values[1], this->game.activePlayer());
+            
+            if (!this->game.board()->get(selectedTile.x, selectedTile.y).occupied()) {
+                try {
+                    this->game.board()->setBuilding(selectedTile.x, selectedTile.y, newBuilding);
+                    
+                    //Reset all tiles to be unselected now that the creature has been added
+                    for (GLuint x = 0; x < this->game.board()->width(); x++) {
+                        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+                            this->game.board()->setStyle(x, y, Regular);
+                        }
+                    }
+                    
+                    selectedTile = NO_SELECTION;
+                    
+                } catch (std::exception) {
+                    //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
+                    std::cout << "Error adding building" << std::endl;
                 }
             }
         }
