@@ -11,13 +11,18 @@
 
 #include "Macros.h"
 
+//Standard library includes
+#include <string>
+
 class Building {
 public:
     //Constructor
     
-    Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost, unsigned int controller);
+    Building(unsigned int x, unsigned int y, std::string action, unsigned int maxHealth, unsigned int cost, unsigned int controller);
     
     //Destructor
+    
+    //Public properties
     
     //Public member functions
     
@@ -31,6 +36,11 @@ public:
     bool takeDamage(unsigned int damage);
     
     //Public get functions
+    
+    /*!
+     * @return The action string for the button on the building to be used on the building interface.
+     */
+    const std::string action();
     
     /*!
      * @return The maximum health of this building.
@@ -64,6 +74,7 @@ public:
     
 private:
     //Private properties
+    const std::string buildingAction;
     const unsigned int buildingMaxHealth;
     const unsigned int buildingCost;
     const unsigned int buildingController;
