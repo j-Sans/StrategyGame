@@ -813,7 +813,7 @@ void Visualizer::updateInterfaces() {
             }
             
             if (this->interfaces[building].buttons.size() > 0) {
-                this->interfaces[building].buttons[0].action = "building(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")";
+                this->interfaces[building].buttons[0].action = "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")";
             }
         }
     }
@@ -988,7 +988,7 @@ void Visualizer::processButton(std::string action) {
         
         //For now, set adjacent spots as reachable and create a creature on the selected one
         
-        action.erase(0, 9); //Delete "building,(" from the action string
+        action.erase(0, 22); //Delete "building_new_creature(" from the action string
         
         glm::ivec2 buildingPos = glm::ivec2(0, 0);
         
