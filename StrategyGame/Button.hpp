@@ -46,15 +46,23 @@ public:
      * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
      * @param buttonAction An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
-     * @param text An std::string representing the text to display on the button as its name.
+     * @param buttonText An std::string representing the text to display on the button as its name.
      */
-    Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string text);
+    Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText);
     
     //Public properties
     
     const GLfloat buttonDownTime = 0.25f;
     
-    std::string action; //A string to represent the actions that this button does
+    /*!
+     * A string to represent the actions that this button does.
+     */
+    std::string action;
+    
+    /*!
+     * A string to have as the title of the button, what will be displayed.
+     */
+    std::string text;
     
     //Public member functions
     
@@ -80,7 +88,6 @@ private:
     //Button properties
     bool pressed = false;
     bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
-    std::string buttonText; //A string to have as the title of the button, what will be displayed
     
     //OpenGL and GLFW properties
     GLFWwindow* buttonWindow;

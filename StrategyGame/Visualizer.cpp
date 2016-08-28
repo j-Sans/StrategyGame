@@ -813,7 +813,8 @@ void Visualizer::updateInterfaces() {
             }
             
             if (this->interfaces[building].buttons.size() > 0) {
-                this->interfaces[building].buttons[0].action = "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")";
+                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
+                this->interfaces[building].buttons[0].action = tile.building()->action();
             }
         }
     }
@@ -1070,7 +1071,7 @@ void Visualizer::processButton(std::string action) {
                 action.erase(0, 1); //Get rid of the comma
             }
             
-            Building newBuilding(selectedTile.x, selectedTile.y, values[0], values[1], this->game.activePlayer());
+            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(3,5)", values[0], values[1], this->game.activePlayer());
             
             if (!this->game.board()->get(selectedTile.x, selectedTile.y).occupied()) {
                 try {

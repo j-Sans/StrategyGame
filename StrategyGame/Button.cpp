@@ -10,7 +10,7 @@
 
 //Public member functions
 
-Button::Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string text) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), buttonText(text) {
+Button::Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText) {
     
     this->buttonWindow = window;
     this->buttonShader = shader;
@@ -65,7 +65,7 @@ void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     if (buttonInteraction)
         this->updateMouse(mouseDown, mouseUp);
     
-    std::string text = ' ' + this->buttonText + ' ';
+    std::string buttonText = ' ' + this->text + ' ';
     
     //Bind the VAO and draw shapes
     this->buttonShader.use();
@@ -78,7 +78,7 @@ void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     GLfloat scale = 1.0f;
     
     //Get the text size
-    glm::vec2 textSize = this->font.getSize(text, scale);
+    glm::vec2 textSize = this->font.getSize(buttonText, scale);
     
     //Initialized with the lower left corner position of the button
     
@@ -102,7 +102,7 @@ void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
         //Redo the size calculations with the new text size
         
         //Get the text size
-        textSize = this->font.getSize(text, scale);
+        textSize = this->font.getSize(buttonText, scale);
         
         textPos = glm::vec2((this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight);
         
@@ -114,7 +114,7 @@ void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     }
     
     //Render the text on the button
-    this->font.render(text, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+    this->font.render(buttonText, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
 }
 
 bool Button::isPressed() {
