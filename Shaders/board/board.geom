@@ -15,10 +15,15 @@
 #define WEST 3
 
 //Terrain
-#define OPEN_TERRAIN 0
+#define OPEN_TERRAIN 0 //terrainMovementEnergyCosts[OPEN_TERRAIN] 1
 #define MOUNTAIN_TERRAIN 1
 #define WATER_TERRAIN 2
-#define CARROT_FARM_TERRAIN 3 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
+#define FOREST_TERRAIN 3
+#define HILL_TERRAIN 4
+#define SWAMP_TERRAIN 5
+#define ROAD_TERRAIN 6
+//to add creature movement modifiers in terrain it needs to be set up as a creature stat.
+//#define CARROT_TREE_TERRAIN 7 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 
 //Creature
 #define NO_CREATURE 0
@@ -91,7 +96,17 @@ void main() {
         makeOpen(position);
     } else if (terrain[0] == MOUNTAIN_TERRAIN) {
         makeMountain(position);
-    }
+    } else if (terrain[0] == WATER_TERRAIN) {
+        makeMountain(position);
+    } else if (terrain[0] == FOREST_TERRAIN) {
+        makeMountain(position);
+    } /*else if (terrain[0] == HILL_TERRAIN) {
+        makeHill(position);
+    } else if (terrain[0] == SWAMP_TERRAIN) {
+        makeSwamp(position);
+    } else if (terrain[0] == ROAD_TERRAIN) {
+        makeRoad(position);
+    }*/
     
     //Draw present building
     drawBuilding(position, building[0], square);
@@ -160,6 +175,8 @@ void makeMountain(vec4 position) {
     
     EndPrimitive();
 }
+
+
 
 //Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
 //The coordinates that are added to the transformation matrices make a rectange 4 times as tall as wide. Since the matrices compress it by a half, it fits with a 1x2 image for a humanoid

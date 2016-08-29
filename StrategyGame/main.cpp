@@ -43,7 +43,9 @@ int main(int argc, const char * argv[]) {
         for (GLuint y = 0; y < BOARD_WIDTH; y++) {
             if (x == 0 && y == 1)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-            else
+            else if (x == 3 && y < 3) {
+                row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
+            } else
                 row.push_back(Tile(OPEN_TERRAIN, x, y));
         }
         board.push_back(row);
@@ -53,7 +55,7 @@ int main(int argc, const char * argv[]) {
     
     //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
 
-    V.game.board()->setCreature(3, 3, Creature(3, 3, Human, 2, 3, 1, LightMelee, 1, 1, 1, NORTH, 0));
+    V.game.board()->setCreature(5, 4, Creature(3, 3, Human, 2, 3, 1, LightMelee, 1, 1, 1, NORTH, 0));
 
     V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 2, 3, 1, LightMelee, 1, 1, 1, NORTH, 1));
     
