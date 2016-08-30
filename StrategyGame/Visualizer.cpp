@@ -979,6 +979,8 @@ void Visualizer::processButton(std::string action) {
                     
                     selectedTile = NO_SELECTION;
                     
+                    this->game.setSelectedTile
+                    
                 } catch (std::exception) {
                     //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
                     std::cout << "Error adding creature" << std::endl;

@@ -42,6 +42,28 @@ void Game::nextTurn() {
 #endif
 }
 
+bool Game::selectTile(int x, int y) {
+    glm::ivec2 passedInTile = glm::ivec2(x, y);
+    
+    if (passedInTile == NO_SELECTION) {
+        this->selectedTile = NO_SELECTION;
+    } else if (passedInTile == INTERFACE_BOX_SELECTION) {
+        this->selectedTile = INTERFACE_BOX_SELECTION;
+    } else if (x >= 0 && x < this->gameBoard.width() && y >= 0 && y < this->gameBoard.height(x)) { //Make sure the passed in tile is on the board
+        
+        //If there is a creature at that spot, properly select it. Otherwise just set it normally
+        if (this->gameBoard.get(x, y).creature() != nullptr)
+            this->selectCreature(x, y);
+        else
+            this->selectedTile = passedInTile;
+        
+    } else { //If selectedTile wasn't set, return false
+        return false;
+    }
+    
+    return true;
+}
+
 //Public get functions
 
 Board* Game::board() {

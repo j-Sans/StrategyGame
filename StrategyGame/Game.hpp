@@ -54,6 +54,16 @@ public:
     void nextTurn();
     
     /*!
+     * A function to set the selected tile. If the x or y is out of range and the input isn't NO_SELECTION or INTERFACE_BOX_SELECTION, then nothing will happen and false will be returned. To pass NO_SELECTION or other glm::ivec2 macros as arguments, do this: selectTile(NO_SELECTION.x, NO_SELECTION.y);
+     *
+     * @param x An int representing the x location of the tile on the board.
+     * @param y An int representing the y location of the tile on the board.
+     *
+     * @return Whether the tile was successfully selected.
+     */
+    bool selectTile(int x, int y);
+    
+    /*!
      * A function that updates the offset of each creature to cause movement animation. This should be called once every frame.
      *
      * @param deltaTime The time since the last fram, to multiply by the velocity to get a constant distance. This keeps animation speed constant on different machines.
