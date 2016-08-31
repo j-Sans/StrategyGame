@@ -87,10 +87,10 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
             
             
-            //Create the displayBar for health that will be added to the map
-            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", energy_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            //Create the displayBar for energy that will be added to the map
+            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", energy_bar, glm::vec3(0.2, 0.2, 0.4), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
-            //Insert the display bar into the map with the key health
+            //Insert the display bar into the map with the key energy
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(energy_bar, energyBar));
             
             break;

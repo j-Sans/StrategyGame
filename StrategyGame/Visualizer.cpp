@@ -54,6 +54,11 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std
         std::cout << "Error loading mountain texture: " << e.what();
     }
     try {
+        this->loadTexture("Resources/forest.png", "forestTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading forest texture: " << e.what();
+    }
+    try {
         this->loadTexture("Resources/stick_figure.png", "stickFigureTex");
     } catch (std::exception e) {
         std::cout << "Error loading stick figure texture: " << e.what();
@@ -109,6 +114,11 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
         this->loadTexture("Resources/mountain.png", "mountainTex");
     } catch (std::exception e) {
         std::cout << "Error loading mountain texture: " << e.what();
+    }
+    try {
+        this->loadTexture("Resources/forest.png", "forestTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading forest texture: " << e.what();
     }
     try {
         this->loadTexture("Resources/stick_figure.png", "stickFigureTex");

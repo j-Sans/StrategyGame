@@ -41,6 +41,7 @@ out vec4 color;
 
 uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
+uniform sampler2D forestTex;
 uniform sampler2D stickFigureTex;
 uniform sampler2D towerTex;
 uniform sampler2D circleTex;
@@ -55,7 +56,7 @@ void main() {
         } else if (TexType.y == WATER_TERRAIN) {
             color = TileColor * texture(mountainTex, TexCoords);
         } else if (TexType.y == FOREST_TERRAIN) {
-            color = TileColor * texture(mountainTex, TexCoords);
+            color = TileColor * texture(forestTex, TexCoords);
         } /*else if (TexType.y == HILL_TERRAIN) {
             color = TileColor * texture(hillTex, TexCoords);
         } else if (TexType.y == SWAMP_TERRAIN) {
