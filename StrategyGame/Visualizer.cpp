@@ -18,6 +18,9 @@ bool mouseDown = false;
 //A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
 bool mouseUp = false;
 
+//A boolean representing if the escape button has been clicked, for use with the settings menu. This boolean is set in the key callback function and is reset when used.
+bool escClicked = false;
+
 //Constructor without geometry shader
 Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
     this->initWindow(); //Create the GLFW window and set the window property
@@ -172,11 +175,26 @@ void Visualizer::render() {
             //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
             tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
         }
-        
-        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click
-        this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
+    
+        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
+        if (!this->showSettings)
+            this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
         
         this->updateInterfaces();
+        
+        //If the mouse clicks outside of the settings menu when it's open, close the menu
+        if (this->showSettings) {
+            
+            glm::ivec2 framebufferSize;
+            
+            glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
+            
+            glm::vec2 cursorPosFramebufferCoords = cursorPos * (glm::dvec2)framebufferSize / (glm::dvec2)windowSize;
+            
+            if (cursorPosFramebufferCoords.x < this->settingsMenuStats.x || cursorPosFramebufferCoords.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPosFramebufferCoords.y < this->settingsMenuStats.y || cursorPosFramebufferCoords.y > this->settingsMenuStats.y + this->settingsMenuStats.height) {
+                this->showSettings = false;
+            }
+        }
     }
     
     this->game.updateCreatures(this->deltaTime);
@@ -216,15 +234,24 @@ void Visualizer::render() {
         else if (a == 2)
             interface = this->rightInterface;
         
-        interface->render(mouseDown, mouseUp); //This renders the interface and its buttons. Second because the map is likely stored as an std::pair with the interface being the second in the pair
+        //This renders the interface and its buttons
+        interface->render(mouseDown, mouseUp, !this->showSettings);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
             if (button->isPressed()) {
-                this->processButton(button->action());
+                this->processButton(button->action);
             }
         }
     }
+    
+    if (escClicked) { //When escape is clicked change whether the settings menu is shown or not
+        this->showSettings = !this->showSettings;
+        escClicked = false;
+    }
+    
+    if (this->showSettings)
+        this->renderSettingsMenu(mouseUp, mouseDown);
     
     //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
     if (mouseDown)
@@ -280,7 +307,14 @@ void Visualizer::initWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //Version 3.3 of OpenGL
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Error with accidental use of legacy functions
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Non-resizable
+    
+#ifdef RESIZEABLE
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+#endif
+#ifndef RESIZEABLE
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+#endif
+    
 #ifndef _win32
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //On OS X
 #endif
@@ -541,6 +575,7 @@ void Visualizer::setInterface() {
     this->leftInterfaceStats = interfaceStat(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
     this->bottomInterfaceStats = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
     this->rightInterfaceStats = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
+    this->settingsMenuStats = interfaceStat(viewportWidth/ 3.0, viewportHeight / 6.0, viewportWidth / 3.0, viewportHeight * 2.0 / 3.0);
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     
@@ -558,9 +593,16 @@ void Visualizer::setInterface() {
     //Right-Side Game UI (brown rectangle)
     this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
     
+    //Interface for selected creatures
     this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
     
-    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building );
+    //Interface for selected buildings
+    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
+    
+    //Settings popup menu
+    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->settingsMenuStats.x, this->settingsMenuStats.y, this->settingsMenuStats.width, this->settingsMenuStats.height, settings);
+    
+    this->darkenBox = Box(this->buttonShader, this->gameWindow, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -734,19 +776,46 @@ void Visualizer::updateInterfaces() {
         Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
         
         if (tile.creature() != nullptr) {
-            //Set teh right interface to be the creature if there is a creature at the selected tile
+            //Set the right interface to be the creature if there is a creature at the selected tile
             this->rightInterface = &this->interfaces[creature];
             
-            if (this->rightInterface->displayBars.size() > 0) {
-                this->rightInterface->displayBars[health_bar].setValue(tile.creature()->health());
-                this->rightInterface->displayBars[health_bar].setMaxValue(tile.creature()->maxHealth());
-                this->rightInterface->displayBars[health_bar].text = "Health: " + std::to_string(tile.creature()->health()) + "/" + std::to_string(tile.creature()->maxHealth());
+            //Update the boxes to display creature stats
+            if (this->interfaces[creature].boxes.size() > 0) {
+                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
+                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
+                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
+                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
+            }
+            
+            //Update the display bars to display the creature quantities, like health and energy, which change
+            if (this->interfaces[creature].displayBars.size() > 0) {
+                
+                this->interfaces[creature].displayBars[health_bar].setValue(tile.creature()->health());
+                this->interfaces[creature].displayBars[health_bar].setMaxValue(tile.creature()->maxHealth());
+                this->interfaces[creature].displayBars[health_bar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
+                
+                this->interfaces[creature].displayBars[energy_bar].setValue(tile.creature()->energy());
+                this->interfaces[creature].displayBars[energy_bar].setMaxValue(tile.creature()->maxEnergy());
+                this->interfaces[creature].displayBars[energy_bar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+                
+                
             }
         }
         
         if (tile.building() != nullptr) {
             //Do the same for buildings
             this->rightInterface = &this->interfaces[building];
+            
+            if (this->interfaces[building].displayBars.size() > 0) {
+                this->interfaces[building].displayBars[health_bar].setValue(tile.building()->health());
+                this->interfaces[building].displayBars[health_bar].setMaxValue(tile.building()->maxHealth());
+                this->interfaces[building].displayBars[health_bar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
+            }
+            
+            if (this->interfaces[building].buttons.size() > 0) {
+                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
+                this->interfaces[building].buttons[0].action = tile.building()->action();
+            }
         }
     }
 }
@@ -812,12 +881,15 @@ void Visualizer::moveCamera() {
 }
 
 void Visualizer::processButton(std::string action) {
-    //Process the button indicating to move to the next turn
-    if (action == "next turn") {
+    if (action == "settings") {
+        
+        this->showSettings = true;
+        
+    } else if (action == "next turn") { //Process the button indicating to move to the next turn
         
         this->game.nextTurn();
         
-    } else if (action.find("creature") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+    } else if (action.find("creature,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
         if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
             
             glm::ivec2 selectedTile = this->game.tileSelected();
@@ -834,7 +906,7 @@ void Visualizer::processButton(std::string action) {
             
             Race race = Human;
             AttackStyle attackStyle = LightMelee;
-            GLuint values[6] = {0, 0, 0, 0, 0, 0};
+            GLuint values[] = {0, 0, 0, 0, 0, 0};
             GLuint direction;
             
             action.erase(0, 9); //Gets rid of the "creature," from the string
@@ -905,7 +977,7 @@ void Visualizer::processButton(std::string action) {
                         }
                     }
                     
-                    selectedTile = NO_SELECTION;
+                    this->game.selectTile(NO_SELECTION.x, NO_SELECTION.y);
                     
                 } catch (std::exception) {
                     //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
@@ -913,7 +985,124 @@ void Visualizer::processButton(std::string action) {
                 }
             }
         }
+    } else if (action.find("building_new_creature") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
+        
+        //For now, set adjacent spots as reachable and create a creature on the selected one
+        
+        action.erase(0, 22); //Delete "building_new_creature(" from the action string
+        
+        glm::ivec2 buildingPos = glm::ivec2(0, 0);
+        
+        //Extract the building position
+        
+        GLuint numDigits = (GLuint)action.find(',');
+        
+        for (GLint place = numDigits - 1; place >= 0; place--) {
+            buildingPos.x += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+        }
+        
+        action.erase(0, 1); //Get rid of the comma
+        
+        numDigits = (GLuint)action.find(')');
+        
+        for (GLint place = numDigits - 1; place >= 0; place--) {
+            buildingPos.y += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+        }
+        
+        action.erase(0, 1); //Get rid of the parenthasis
+        
+        //If the position is within the board
+        if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
+            
+            if (this->game.board()->get(buildingPos.x, buildingPos.y).building() != nullptr && this->game.activePlayer() == this->game.board()->get(buildingPos.x, buildingPos.y).building()->controller()) {
+            
+                //North
+                if (buildingPos.y > 0) {
+                    this->game.board()->setStyle(buildingPos.x, buildingPos.y - 1, Reachable);
+                }
+                
+                //East
+                if (buildingPos.x > 0) {
+                    this->game.board()->setStyle(buildingPos.x - 1, buildingPos.y, Reachable);
+                }
+                
+                //South
+                if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) {
+                    this->game.board()->setStyle(buildingPos.x, buildingPos.y + 1, Reachable);
+                }
+                
+                //West
+                if (buildingPos.y < this->game.board()->width() - 1) {
+                    this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
+                }
+            }
+        }
+    } else if (action.find("building,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
+            
+            glm::ivec2 selectedTile = this->game.tileSelected();
+            
+            //Interpret the string to find out what kind of building
+            
+            /* The contents of the button string are:
+             * building,[maxHealth],[cost]
+             *
+             * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
+             *
+             * This function goes through the string and extracts those values and constructs a building based on them.
+             */
+            GLuint values[] = {0, 0};
+            
+            action.erase(0, 9); //Gets rid of the "building," from the string
+            
+            //Extract the numerical values of the building
+            
+            for (GLuint valueNum = 0; valueNum < 2; valueNum++) {
+                //Find the position of the next comma, which is the number of digits before that comma
+                GLuint numDigits = (GLuint)action.find(',');
+                
+                for (GLint place = numDigits - 1; place >= 0; place--) {
+                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+                }
+                
+                action.erase(0, 1); //Get rid of the comma
+            }
+            
+            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(3,5)", values[0], values[1], this->game.activePlayer());
+            
+            if (!this->game.board()->get(selectedTile.x, selectedTile.y).occupied()) {
+                try {
+                    this->game.board()->setBuilding(selectedTile.x, selectedTile.y, newBuilding);
+                    
+                    //Reset all tiles to be unselected now that the creature has been added
+                    for (GLuint x = 0; x < this->game.board()->width(); x++) {
+                        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+                            this->game.board()->setStyle(x, y, Regular);
+                        }
+                    }
+                    
+                    this->game.selectTile(NO_SELECTION.x, NO_SELECTION.y);
+                    
+                } catch (std::exception) {
+                    //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
+                    std::cout << "Error adding building" << std::endl;
+                }
+            }
+        }
     }
+}
+
+void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
+    glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
+    glScissor(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
+    
+    this->darkenBox.render();
+    
+    this->interfaces[settings].render(mouseUp, mouseDown, true);
+    
 }
 
 std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
@@ -1025,9 +1214,15 @@ std::vector<GLuint> Visualizer::getPath(GLuint x, GLuint y, GLuint destinationX,
 
 //A function GLFW can call when a key event occurs
 void Visualizer::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    
     if (key == GLFW_KEY_W && action == GLFW_PRESS && mods == GLFW_MOD_SUPER) { //Command-W: close the application
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
+    
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { //Escape: open settings menu
+        escClicked = true;
+    }
+    
     if (key >= 0 && key < 1024) {
         if (action == GLFW_PRESS) {
             keys[key] = true;

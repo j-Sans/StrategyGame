@@ -12,6 +12,10 @@
 //To make the window fill the entire screen
 #define FULL_SCREEN
 
+// ***Resizeability does not work currently*** 
+//To make the window resizable
+//#define RESIZEABLE
+
 //To make the inset of the inner box for display bars the same on both x and y axes
 #define EQUAL_BORDERED_DISPLAY_BARS
 

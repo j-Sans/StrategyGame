@@ -10,7 +10,7 @@
 
 //Constructor
 
-Building::Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int cost, unsigned int controller) : buildingX(x), buildingY(y), buildingMaxHealth(maxHealth), buildingCost(cost), buildingController(controller) {
+Building::Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int cost, unsigned int controller) : buildingX(x), buildingY(y), buildingButtonText(buttonText), buildingAction(action), buildingMaxHealth(maxHealth), buildingCost(cost), buildingController(controller) {
     this->buildingHealth = this->buildingMaxHealth;
 }
 
@@ -24,6 +24,14 @@ bool Building::takeDamage(unsigned int damage) {
 }
 
 //Get functions
+
+const std::string Building::buttonText() {
+    return this->buildingButtonText;
+}
+
+const std::string Building::action() {
+    return this->buildingAction;
+}
 
 const unsigned int Building::maxHealth() {
     return this->buildingMaxHealth;

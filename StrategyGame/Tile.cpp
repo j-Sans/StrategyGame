@@ -151,19 +151,19 @@ bool Tile::passableByAttackStyle(Creature creature) {
     //Mountains are not passable (except by terrain ignoring spells)
     if (this->tileTerrain == MOUNTAIN_TERRAIN) {
         if (creature.attackStyle() != TerrainIgnoring) {
-        return false;
+            return false;
         }
     }
     
     //Water is not passable by melee attacks.
     if (this->tileTerrain == WATER_TERRAIN) {
         if (creature.attackStyle() == LightMelee || creature.attackStyle() == HeavyMelee) {
-        return false;
+            return false;
         }
     }
     
     //Forest is not passable by light ranged attacks
-    if (this->tileTerrain == WATER_TERRAIN) {
+    if (this->tileTerrain == FOREST_TERRAIN) {
         if (creature.attackStyle() == LightMelee || creature.attackStyle() == HeavyMelee) {
             return false;
         }

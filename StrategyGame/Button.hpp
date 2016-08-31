@@ -35,7 +35,7 @@ public:
     /*!
      * A class representing a button on an interface block.
      *
-     * @param shader A pointer to a compiled shader for rendering this button.
+     * @param shader A compiled shader for rendering this button.
      * @param window A pointer to the current game window.
      * @param x A GLfloat representing the lower left x coordinate of the button in the current interface, from 0 to 1.
      * @param y A GLfloat representing the lower left y coordinate of the button in the current interface, from 0 to 1.
@@ -45,13 +45,24 @@ public:
      * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
      * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
-     * @param action An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
-     * @param text An std::string representing the text to display on the button as its name.
+     * @param buttonAction An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
+     * @param buttonText An std::string representing the text to display on the button as its name.
      */
-    Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string action, std::string text);
+    Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText);
     
     //Public properties
+    
     const GLfloat buttonDownTime = 0.25f;
+    
+    /*!
+     * A string to represent the actions that this button does.
+     */
+    std::string action;
+    
+    /*!
+     * A string to have as the title of the button, what will be displayed.
+     */
+    std::string text;
     
     //Public member functions
     
@@ -60,8 +71,9 @@ public:
      *
      * @param mouseDown A boolean representing if the mouse is currently pressed. This can set the button to being pressed.
      * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
+     * @param butttonInteraction Whether the button should change color based on mouse position and clicks. This can be used for when settings menu is up.
      */
-    void render(bool mouseDown, bool mouseUp);
+    void render(bool mouseDown, bool mouseUp, bool buttonInteraction);
     
     //Public get functions
     
@@ -72,17 +84,10 @@ public:
      */
     bool isPressed();
     
-    /*!
-     * @return An std::string representing the action that should be done when this button is pressed. The string should be interpreted in the Game class.
-     */
-    std::string action();
-    
 private:
     //Button properties
     bool pressed = false;
     bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
-    std::string buttonAction; //A string to represent the actions that this button does.
-    std::string buttonText; //A string to have as the title of the button, what will be displayed.
     
     //OpenGL and GLFW properties
     GLFWwindow* buttonWindow;

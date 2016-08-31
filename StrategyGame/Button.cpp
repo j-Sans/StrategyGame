@@ -10,10 +10,10 @@
 
 //Public member functions
 
-Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string action, std::string text) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), buttonAction(action), buttonText(text) {
+Button::Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText) {
     
     this->buttonWindow = window;
-    this->buttonShader = *shader;
+    this->buttonShader = shader;
     
     this->font = Font(FONT_PATH);
     
@@ -28,9 +28,9 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
         this->lowerLeftX + this->buttonWidth, this->lowerLeftY + this->buttonHeight,
     };
     
-    GLfloat color[6];
+    glm::vec4 color[6];
     for (int a = 0; a < 6; a++) {
-        color[a] = 0.33f;
+        color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
     }
     
     //Draw with OpenGL
@@ -54,17 +54,18 @@ Button::Button(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat
     glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
-void Button::render(bool mouseDown, bool mouseUp) {
-    this->updateMouse(mouseDown, mouseUp);
+void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
+    if (buttonInteraction)
+        this->updateMouse(mouseDown, mouseUp);
     
-    std::string text = ' ' + this->buttonText + ' ';
+    std::string buttonText = ' ' + this->text + ' ';
     
     //Bind the VAO and draw shapes
     this->buttonShader.use();
@@ -77,7 +78,7 @@ void Button::render(bool mouseDown, bool mouseUp) {
     GLfloat scale = 1.0f;
     
     //Get the text size
-    glm::vec2 textSize = this->font.getSize(text, scale);
+    glm::vec2 textSize = this->font.getSize(buttonText, scale);
     
     //Initialized with the lower left corner position of the button
     
@@ -101,7 +102,7 @@ void Button::render(bool mouseDown, bool mouseUp) {
         //Redo the size calculations with the new text size
         
         //Get the text size
-        textSize = this->font.getSize(text, scale);
+        textSize = this->font.getSize(buttonText, scale);
         
         textPos = glm::vec2((this->lowerLeftX + 1.0) / 2.0 * this->interfaceBoxWidth, (this->lowerLeftY + 1.0) / 2.0 * this->interfaceBoxHeight);
         
@@ -113,7 +114,7 @@ void Button::render(bool mouseDown, bool mouseUp) {
     }
     
     //Render the text on the button
-    this->font.render(text, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
+    this->font.render(buttonText, textPos.x, textPos.y, scale, glm::vec3(1.0f, 1.0f, 1.0f), this->interfaceBoxWidth, this->interfaceBoxHeight);
 }
 
 bool Button::isPressed() {
@@ -130,10 +131,6 @@ bool Button::isPressed() {
         
     }
     return false;
-}
-
-std::string Button::action() {
-    return this->buttonAction;
 }
 
 //Private member functions
@@ -173,7 +170,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
     actualButtonX += this->interfaceBoxLowerLeftX;
     actualButtonY += this->interfaceBoxLowerLeftY;
     
-    GLfloat color[6];
+    glm::vec4 color[6];
     
     //Make the button darker if it is pressed.
     if (this->pressed) {
@@ -181,7 +178,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBindVertexArray(this->VAO);
         
         for (GLuint a = 0; a < 6; a++) {
-            color[a] = 0.17f;
+            color[a] = glm::vec4(0.17, 0.17, 0.17, 1.0);
         }
         
         //Color VBO
@@ -189,7 +186,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -205,19 +202,19 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
             }
         
             for (GLuint a = 0; a < 6; a++) {
-                color[a] = 0.67f;
+                color[a] = glm::vec4(0.67, 0.67, 0.67, 1.0);
             }
         } else {
             
             for (GLuint a = 0; a < 6; a++) {
-                color[a] = 0.33f;
+                color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
             }
         }
         
         //Make the color darker if the button has been pressed recently. This has also been done if this->pressed is true
         if (this->hasBeenPressed) {
             for (GLuint a = 0; a < 6; a++) {
-                color[a] = 0.17f;
+                color[a] = glm::vec4(0.17, 0.17, 0.17, 1.0);
             }
             
             if (mouseUp)
@@ -232,7 +229,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -25,17 +25,20 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Box.hpp"
 #include "Button.hpp"
 #include "DisplayBar.hpp"
 
 //A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
 enum interfaceType {
-    default_left, //The default left interface
-    default_bottom, //The default bottom interface
-    default_right, //The default right interface
+    default_left, //The default left interface, where game options are
+    default_bottom, //The default bottom interface, where buying options are
+    default_right, //The default right interface, initially empty
     
     creature, //The default creature interface
     building, //The default building interface
+    
+    settings, //The settings popup menu
 };
 
 class Interface {
@@ -62,12 +65,17 @@ public:
     //Public properties
     
     /*!
+     * An std::map of the boses contained in this interface, with key values of type displayBoxType (see Box.hpp)
+     */
+    std::map<displayBoxType, Box> boxes; //So that the boxes can be accessed by the game
+    
+    /*!
      * An std::vector of the buttons contained in this interface.
      */
     std::vector<Button> buttons; //So that the buttons can be accessed by the game
     
     /*!
-     * An std::map of the display bars contained in this interface.
+     * An std::map of the display bars contained in this interface, with key values of type displayBarType (see DisplayBar.hpp)
      */
     std::map<displayBarType, DisplayBar> displayBars; //So that the display bars can be accessed by the game
     
@@ -83,8 +91,9 @@ public:
      *
      * @param mouseDown A boolean representing if the mouse is down, for the buttons to figure out whether to become pressed.
      * @param mouseUp A boolean representing if the mouse has just been released. This is used for when the button resets its 'down' state.
+     * @param buttonInteraction A boolean representing whether or not buttons should change color or jsut stay at default. This can be for when the settings menu is up, so button interaction outside of the menu doesn't occur.
      */
-    void render(bool mouseDown, bool mouseUp);
+    void render(bool mouseDown, bool mouseUp, bool buttonInteraction);
     
 private:
     //OpenGL and GLFW properties

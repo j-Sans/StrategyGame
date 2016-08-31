@@ -129,6 +129,25 @@ const Race Creature::race() {
     return this->creatureRace;
 }
 
+std::string Creature::raceString() {
+    if (this->creatureRace == Human)
+        return "Human";
+    else if (this->creatureRace == Elf)
+        return "Dwarf";
+    else if (this->creatureRace == Dwarf)
+        return "Dwarf";
+    else if (this->creatureRace == Orc)
+        return "Orc";
+    else if (this->creatureRace == Goblin)
+        return "Goblin";
+    else if (this->creatureRace == Undead)
+        return "Undead";
+    else if (this->creatureRace == Vampire)
+        return "Vampire";
+    else
+        return "Other";
+}
+
 const unsigned int Creature::maxHealth() {
     return this->creatureMaxHealth;
 }

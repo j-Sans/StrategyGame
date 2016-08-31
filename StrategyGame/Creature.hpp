@@ -11,6 +11,7 @@
 
 #include "Macros.h"
 
+#include <string>
 #include <queue>
 
 #define NORTH 0
@@ -50,7 +51,7 @@ public:
      * @param maxHealth An unsigned int representing the max health of the creature.
      * @param maxEnergy An unsigned int representing the max energy of the creature.
      * @param attack An unsigned int representing the damage value the creature.
-     * @param attackStyle an attackStyle enum type representing attack Style (projectile).
+     * @param attackStyle An attackStyle enum type representing attack Style (projectile).
      * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
      * @param range An unsigned int representing the distance the creature can attack.
      * @param cost An unsigned int representing the cost of the creature in mana.
@@ -143,6 +144,11 @@ public:
      * @return The race of this creature.
      */
     const Race race();
+    
+    /*!
+     * @return The race of this creature, in the form of an std::string.
+     */
+    std::string raceString();
     
     /*!
      * @return The maximum health of this creature.

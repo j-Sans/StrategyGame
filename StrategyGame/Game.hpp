@@ -54,6 +54,16 @@ public:
     void nextTurn();
     
     /*!
+     * A function to set the selected tile. If the x or y is out of range and the input isn't NO_SELECTION or INTERFACE_BOX_SELECTION, then nothing will happen and false will be returned. To pass NO_SELECTION or other glm::ivec2 macros as arguments, do this: selectTile(NO_SELECTION.x, NO_SELECTION.y);
+     *
+     * @param x An int representing the x location of the tile on the board.
+     * @param y An int representing the y location of the tile on the board.
+     *
+     * @return Whether the tile was successfully selected.
+     */
+    bool selectTile(int x, int y);
+    
+    /*!
      * A function that updates the offset of each creature to cause movement animation. This should be called once every frame.
      *
      * @param deltaTime The time since the last fram, to multiply by the velocity to get a constant distance. This keeps animation speed constant on different machines.
@@ -117,7 +127,20 @@ private:
     
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     
+    /*!
+     * Changes the active player to the next one in the turn cycle.
+     */
     void incrementActivePlayer();
+    
+    /*!
+     * A function to select a creature and and make nearby tiles properly stylized (reachable ones and attackable, for instance). If an error occurs (see below) no error is thrown, instead false is returned and nothing happens.
+     *
+     * @param x An unsigned int representing the x location of the creature on the board.
+     * @param y An unsigned int representing the y location of the creature on the board.
+     *
+     * @return Whether the creature was successfully selected or if an error prevented this. Errors include if x or y is out of range, or if there is no creature at the designated spot.
+     */
+    bool selectCreature(unsigned int x, unsigned int y);
     
     /*!
      * A function that gets all of the tiles that a creature can reach.
