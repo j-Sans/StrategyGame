@@ -552,10 +552,10 @@ float getTerrainMovementCost (Tile origin, Tile destination) {
     if (destination.terrain() == OPEN_TERRAIN) {
         return 1; //no creature currently requires more or less than one movement point
     } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        if (origin.creature()->race() != Dwarf) {
+        //if (origin.creature()->race() != Dwarf) {
             return 999;
-        }
-        else return 2;
+        //}else
+        return 2;
     } else if (destination.terrain() == WATER_TERRAIN) {
         /*if (origin.creature().promotions does not contain amphibious) {
             return 999;
@@ -567,9 +567,9 @@ float getTerrainMovementCost (Tile origin, Tile destination) {
         
         //promotions and characteristics have not yet been implemented
     } else if (destination.terrain() == FOREST_TERRAIN) {
-        if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
-            return 1;
-        }
+        //if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
+          //  return 1;
+        //}
         return 2;
     } else if (destination.terrain() == HILL_TERRAIN) {
         //if (/* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {

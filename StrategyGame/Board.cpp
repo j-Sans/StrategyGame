@@ -13,6 +13,10 @@
 Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
+float getTerrainMovementCosts(Tile origin, Tile Destination) {
+    return 1;
+}
+
 //Public member functions
 bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
     

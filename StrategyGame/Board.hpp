@@ -39,6 +39,8 @@ public:
     
     //Public member functions
     
+    float getTerrainMovementCosts(Tile origin, Tile Destination);
+    
     /*!
      * Move a creature from the designated spot in the designated direction.
      * Possible errors include if the destination is off of the board.
