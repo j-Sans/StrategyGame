@@ -13,7 +13,114 @@
 Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
-float getTerrainMovementCosts(Tile origin, Tile Destination) {
+float Board::getTerrainMovementCostALPHA(Tile origin, Tile destination) {
+    
+    if (destination.terrain() == OPEN_TERRAIN) {
+        return 1.0; //no creature currently requires more or less than one movement point
+    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        //if (origin.creature()->race() != Dwarf) {
+        return 999.0;
+        //}else
+        return 2.0;
+    } else if (destination.terrain() == WATER_TERRAIN) {
+        /*if (origin.creature().promotions does not contain amphibious) {
+         return 999;
+         }
+         if (origin.creature().characteristics does not contain flying) {
+         return 999;
+         }
+         */
+        
+        //promotions and characteristics have not yet been implemented
+    } else if (destination.terrain() == FOREST_TERRAIN) {
+        //if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
+        //  return 1;
+        //}
+        return 2.0;
+    } else if (destination.terrain() == HILL_TERRAIN) {
+        //if (/* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
+        return 1.0;
+        //} else
+        return 2.0; //no creature currently requires more or less than two movement points
+    } else if (destination.terrain() == SWAMP_TERRAIN) {
+        //if (|| origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?) {
+        return 1.0;
+        //} else
+        return 2.0; //no creature currently requires more or less than two movement points
+    } else if (destination.terrain() == ROAD_TERRAIN) {
+        return 0.5;
+    }
+    
+    return 1.0;
+}
+
+
+/*
+ Terrain Attack Pathing
+ LIGHT RANGED:
+ If on hill, can shoot into forest and jungle.
+ If on plains or water, can only shoot into first layer of forest and jungle
+ If on mountain, can shoot into forest and jungle with +1 range but -25% combat strength.
+ If in forest and jungle, can only shoot into first layer of forest and jungle
+ 
+ HEAVY RANGED:
+ Same as Light Ranged except can shooting through forest and jungle takes less.
+ 
+ LIGHT MELEE vs. GREAT MELEE
+ Same.
+ 
+ TERRAIN IGNORING
+ Ignores terrain - like telepathic spells and stuff
+ 
+ 
+ 
+ Terrain Attack Modifiers:
+ 
+ LIGHT RANGED and HEAVY RANGED:
+ No difference in attack damage.
+ 
+ LIGHT MELEE vs. GREAT MELEE
+ GreatMelee has combat bonus on hills
+ 
+ TERRAIN IGNORING
+ No combat modifier
+ 
+ General Combat Modifiers:
+ Half of missing hp % is deducted as a combat debuff.
+ Flanking Bonus grants 10% combat bonus per flanking unit.
+ */
+
+
+
+//The cost is in range, it deducts cost from range.
+float Board::getTerrainAttackCost (Tile origin, Tile destination) {
+    
+    if (destination.terrain() == OPEN_TERRAIN) {
+        
+        return 1;
+        
+    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        
+        return 999;
+        
+    } else if (destination.terrain() == WATER_TERRAIN) {
+        
+        return 1;
+        
+    } else if (destination.terrain() == FOREST_TERRAIN) {
+        
+        return 999; //need to figure out how to make this return (remaining energy when it hits the forest - 1)
+        
+    } else if (destination.terrain() == HILL_TERRAIN) {
+        
+        return 2;
+        
+    } else if (destination.terrain() == SWAMP_TERRAIN) {
+        
+    } else if (destination.terrain() == ROAD_TERRAIN) {
+        
+    }
+    
     return 1;
 }
 
@@ -51,8 +158,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             std::cout << "Internal: " << x << ", " << y << ' ' << "relocated North to " << x << ", " << y - 1 << '\n';
 #endif
             
-            //Decrement the creature's energy by 1
-            this->gameBoard[x][y - 1].creature()->decrementEnergy(1);
+            //Decrement the creature's energy by the terrain cost
+            this->gameBoard[x][y - 1].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x][y - 1]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -76,8 +183,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             std::cout << "Internal: " << x << ", " << y << ' ' << "relocated East to " << x - 1 << ", " << y << '\n';
 #endif
             
-            //Decrement the creature's energy by 1
-            this->gameBoard[x - 1][y].creature()->decrementEnergy(1);
+            //Decrement the creature's energy by the terrain cost
+            this->gameBoard[x - 1][y].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x - 1][y]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -101,8 +208,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             std::cout << "Internal: " << x << ", " << y << ' ' << "relocated South to " << x << ", " << y + 1 << '\n';
 #endif
             
-            //Decrement the creature's energy by 1
-            this->gameBoard[x][y + 1].creature()->decrementEnergy(1);
+            //Decrement the creature's energy by the terrain cost
+            this->gameBoard[x][y + 1].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x][y + 1]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -126,8 +233,8 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             std::cout << "Internal: " << x << ", " << y << ' ' << "relocated West to " << x + 1 << ", " << y << '\n';
 #endif
             
-            //Decrement the creature's energy by 1
-            this->gameBoard[x + 1][y].creature()->decrementEnergy(1);
+            //Decrement the creature's energy by the terrain cost
+            this->gameBoard[x + 1][y].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x + 1][y]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {

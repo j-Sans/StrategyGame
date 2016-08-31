@@ -552,115 +552,7 @@ glm::ivec2 Game::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 
     return tileIndexVec;
 }
 
-float getTerrainMovementCost (Tile origin, Tile destination) {
-    
-    if (destination.terrain() == OPEN_TERRAIN) {
-        return 1; //no creature currently requires more or less than one movement point
-    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        //if (origin.creature()->race() != Dwarf) {
-            return 999;
-        //}else
-        return 2;
-    } else if (destination.terrain() == WATER_TERRAIN) {
-        /*if (origin.creature().promotions does not contain amphibious) {
-            return 999;
-        }
-         if (origin.creature().characteristics does not contain flying) {
-         return 999;
-         }
-         */
-        
-        //promotions and characteristics have not yet been implemented
-    } else if (destination.terrain() == FOREST_TERRAIN) {
-        //if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
-          //  return 1;
-        //}
-        return 2;
-    } else if (destination.terrain() == HILL_TERRAIN) {
-        //if (/* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
-            return 1;
-        //} else
-        return 2; //no creature currently requires more or less than two movement points
-    } else if (destination.terrain() == SWAMP_TERRAIN) {
-        //if (|| origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?) {
-            return 1;
-        //} else
-        return 2; //no creature currently requires more or less than two movement points
-    } else if (destination.terrain() == ROAD_TERRAIN) {
-        return 0.5;
-    }
-    
-    return 1;
-}
 
-/*
- Terrain Attack Pathing
- LIGHT RANGED:
- If on hill, can shoot into forest and jungle.
- If on plains or water, can only shoot into first layer of forest and jungle
- If on mountain, can shoot into forest and jungle with +1 range but -25% combat strength.
- If in forest and jungle, can only shoot into first layer of forest and jungle
- 
- HEAVY RANGED:
- Same as Light Ranged except can shooting through forest and jungle takes less.
-
- LIGHT MELEE vs. GREAT MELEE
- Same.
- 
- TERRAIN IGNORING
- Ignores terrain - like telepathic spells and stuff
- 
- 
- 
- Terrain Attack Modifiers:
- 
- LIGHT RANGED and HEAVY RANGED:
- No difference in attack damage.
- 
- LIGHT MELEE vs. GREAT MELEE
- GreatMelee has combat bonus on hills
- 
- TERRAIN IGNORING
- No combat modifier
- 
- General Combat Modifiers:
- Half of missing hp % is deducted as a combat debuff.
- Flanking Bonus grants 10% combat bonus per flanking unit.
- */
-
-
-
-//The cost is in range, it deducts cost from range.
-float getTerrainAttackCost (Tile origin, Tile destination) {
-    
-    if (destination.terrain() == OPEN_TERRAIN) {
-
-        return 1;
-        
-    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        
-        return 999;
-
-    } else if (destination.terrain() == WATER_TERRAIN) {
-        
-        return 1;
-
-    } else if (destination.terrain() == FOREST_TERRAIN) {
-        
-        return 999; //need to figure out how to make this return (remaining energy when it hits the forest - 1)
-
-    } else if (destination.terrain() == HILL_TERRAIN) {
-        
-        return 2;
-
-    } else if (destination.terrain() == SWAMP_TERRAIN) {
-
-    } else if (destination.terrain() == ROAD_TERRAIN) {
-
-    }
-    
-    return 1;
-}
 
 
 std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
@@ -690,29 +582,29 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)) >= 0) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())) >= 0) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //South
                 if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)) >= 0) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //West
                 if (tile.x() < this->gameBoard.width() - 1) {
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())) >= 0) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
             }

@@ -44,7 +44,7 @@ int main(int argc, const char * argv[]) {
             if (x == 0 && y == 1)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
             else if (x == 3 && y < 3) {
-                row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
+                row.push_back(Tile(FOREST_TERRAIN, x, y));
             } else
                 row.push_back(Tile(OPEN_TERRAIN, x, y));
         }

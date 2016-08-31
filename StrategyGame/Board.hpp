@@ -33,13 +33,15 @@ public:
      */
     Board(std::vector<std::vector<Tile> > board);
     
+    
     //Destructor
     
     //Public properties
     
     //Public member functions
     
-    float getTerrainMovementCosts(Tile origin, Tile Destination);
+    float getTerrainMovementCostALPHA(Tile origin, Tile destination);
+    float getTerrainAttackCost (Tile origin, Tile destination);
     
     /*!
      * Move a creature from the designated spot in the designated direction.
