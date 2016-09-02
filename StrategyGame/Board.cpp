@@ -338,6 +338,8 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
  0% in Water
  +50% in Mountain
  
+ Terrain modifiers of the defender are subtracted from the damage of the attacking unit. The defender does not deal extra damage. Swamp causes more damage.
+ 
  Melee Units can Fortify. If they had full energy on the turn they fortified they heal and gain a +20% Combat Bonus, which becomes 40% on the next turn if the unit remains fortified.
  */
 
@@ -438,7 +440,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                     attackerCombatModifier += calculateFlankingBonus(*attacker, *defender);
                 }
                 //Terrain:
-                attackerCombatModifier += calculateTerrainModifier(*defender);
+                attackerCombatModifier -= calculateTerrainModifier(*defender);
 #ifdef COMBAT_CONSOLE_OUTPUT
                 std::cout << "Attacker Modifier: " << attackerCombatModifier << '\n';
 #endif
@@ -466,8 +468,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                         defenderCombatModifier += calculateFlankingBonus(*defender, *attacker);
                         //defenderCombatModifier += defender->creature().getFortificationBonus();
                     }
-                    //Terrain:
-                    defenderCombatModifier += calculateTerrainModifier(*defender);
+
 #ifdef COMBAT_CONSOLE_OUTPUT
                     std::cout << "Defender Modifier: " << defenderCombatModifier << '\n';
 #endif

@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
         for (GLuint y = 0; y < BOARD_WIDTH; y++) {
             if (x == 0 && y == 1)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-            else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3)) {
+            else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3) || (y > 7) || (x == 11) || (x == 10 && y == 7) || (x == 10 && y == 6) || (x == 9 && y == 7) || (x == 10 && y == 5) || (x == 6 && y == 0)) {
                 row.push_back(Tile(FOREST_TERRAIN, x, y));
             } else
                 row.push_back(Tile(OPEN_TERRAIN, x, y));
