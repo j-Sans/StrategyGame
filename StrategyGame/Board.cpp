@@ -347,9 +347,9 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
 
 //Calculate missing HP debuff for combat
 float Board::calculateWeaknessDebuff(Tile combatTile) {
-    float debuff = -0.5 * (1.00 - (((float)(combatTile.creature()->health()))/ (float)(combatTile.creature()->maxHealth())));
+    float debuff = -0.5 * (1.0 - (((float)(combatTile.creature()->health())) / (float)(combatTile.creature()->maxHealth())));
 #ifdef COMBAT_CONSOLE_OUTPUT
-    std::cout << debuff << '\n';
+    std::cout << "Injury debuff: " << debuff << '\n';
 #endif
     return debuff;
 };
