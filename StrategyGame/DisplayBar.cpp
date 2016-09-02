@@ -58,21 +58,6 @@ DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y,
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    
-    //Send the colors as uniforms to the shader
-    
-    this->barShader.use();
-    
-#ifdef EQUAL_BORDERED_DISPLAY_BARS
-    this->barShader.uniform1f("framebufferWidthToHeightRatio", this->interfaceBoxWidth / this->interfaceBoxHeight);
-#endif
-    
-    this->barShader.uniform1f("width", this->barWidth);
-    this->barShader.uniform1f("height", this->barHeight);
-    
-    this->barShader.uniform3f("remainingColor", this->remainingValueColor);
-    this->barShader.uniform3f("lostColor", this->lostValueColor);
-    this->barShader.uniform3f("outsideColor", this->outsideColor);
 }
 
 void DisplayBar::render() {
@@ -94,6 +79,21 @@ void DisplayBar::render() {
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    
+    //Send the colors as uniforms to the shader
+    
+    this->barShader.use();
+    
+#ifdef EQUAL_BORDERED_DISPLAY_BARS
+    this->barShader.uniform1f("framebufferWidthToHeightRatio", this->interfaceBoxWidth / this->interfaceBoxHeight);
+#endif
+    
+    this->barShader.uniform1f("width", this->barWidth);
+    this->barShader.uniform1f("height", this->barHeight);
+    
+    this->barShader.uniform3f("remainingColor", this->remainingValueColor);
+    this->barShader.uniform3f("lostColor", this->lostValueColor);
+    this->barShader.uniform3f("outsideColor", this->outsideColor);
     
     //Bind the VAO and draw shapes
     this->barShader.use();
