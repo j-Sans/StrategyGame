@@ -1101,7 +1101,7 @@ void Visualizer::processButton(std::string action) {
                 action.erase(0, 1); //Get rid of the comma
             }
             
-            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(3,5)", values[0], values[1], this->game.activePlayer());
+            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], this->game.activePlayer());
             
             if (!this->game.board()->get(selectedTile.x, selectedTile.y).occupied()) {
                 try {
