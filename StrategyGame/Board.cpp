@@ -13,40 +13,41 @@
 Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
 }
 
-float Board::getTerrainMovementCostALPHA(Tile origin, Tile destination) {
+float Board::getTerrainMovementCost(Tile origin, Tile destination) {
+    
+    /*if (origin.creature().characteristics().find(TerrainIgnoring) != std::string::npos) {
+        return 1;
+    }*/
     
     if (destination.terrain() == OPEN_TERRAIN) {
         return 1.0; //no creature currently requires more or less than one movement point
     } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        //if (origin.creature()->race() != Dwarf) {
-        return 999.0;
-        //}else
-        return 2.0;
+        if (origin.creature()->race() != Dwarf) {
+            return 999.0;
+        } else return 2.0;
     } else if (destination.terrain() == WATER_TERRAIN) {
-        /*if (origin.creature().promotions does not contain amphibious) {
+        /*if (origin.creature().find(Amphibious) != std::string::npos) {
          return 999;
          }
-         if (origin.creature().characteristics does not contain flying) {
+         if (origin.creature().characteristics().find(Flying) != std::string::npos) {
          return 999;
          }
          */
         
         //promotions and characteristics have not yet been implemented
     } else if (destination.terrain() == FOREST_TERRAIN) {
-        //if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
-        //  return 1;
-        //}
+        if (origin.creature() != nullptr) {
+            if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
+                return 1;
+            }
+        }
         return 2.0;
     } else if (destination.terrain() == HILL_TERRAIN) {
-        //if (/* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
-        return 1.0;
-        //} else
         return 2.0; //no creature currently requires more or less than two movement points
+        
     } else if (destination.terrain() == SWAMP_TERRAIN) {
-        //if (|| origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?) {
-        return 1.0;
-        //} else
-        return 2.0; //no creature currently requires more or less than two movement points
+        return 3.0; //no creature currently requires more or less than two movement points
+        
     } else if (destination.terrain() == ROAD_TERRAIN) {
         return 0.5;
     }
@@ -108,16 +109,27 @@ float Board::getTerrainAttackCost (Tile origin, Tile destination) {
         return 1;
         
     } else if (destination.terrain() == FOREST_TERRAIN) {
+        if (origin.terrain() == HILL_TERRAIN) {
+            return 1;
+        }
         
-        return 999; //need to figure out how to make this return (remaining energy when it hits the forest - 1)
+        else return 999; //need to figure out how to make this return (remaining energy when it hits the forest - 1) for light ranged.
         
     } else if (destination.terrain() == HILL_TERRAIN) {
         
-        return 2;
+        if (origin.terrain() == HILL_TERRAIN) {
+            return 1;
+        }
+        
+        return 999;
         
     } else if (destination.terrain() == SWAMP_TERRAIN) {
         
+        return 1;
+        
     } else if (destination.terrain() == ROAD_TERRAIN) {
+        
+        return 1;
         
     }
     
@@ -159,7 +171,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
 #endif
             
             //Decrement the creature's energy by the terrain cost
-            this->gameBoard[x][y - 1].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x][y - 1]));
+            this->gameBoard[x][y - 1].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x][y - 1]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -184,7 +196,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
 #endif
             
             //Decrement the creature's energy by the terrain cost
-            this->gameBoard[x - 1][y].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x - 1][y]));
+            this->gameBoard[x - 1][y].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x - 1][y]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -209,7 +221,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
 #endif
             
             //Decrement the creature's energy by the terrain cost
-            this->gameBoard[x][y + 1].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x][y + 1]));
+            this->gameBoard[x][y + 1].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x][y + 1]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -234,7 +246,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
 #endif
             
             //Decrement the creature's energy by the terrain cost
-            this->gameBoard[x + 1][y].creature()->decrementEnergy(getTerrainMovementCostALPHA(this->gameBoard[x][y], this->gameBoard[x + 1][y]));
+            this->gameBoard[x + 1][y].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x + 1][y]));
             
             //Find the creature, and update its location on the board
             for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
@@ -303,8 +315,85 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
 /*
  * TO ADD:
  * MODIFIER VALUE
+ 
+ Combat Rules:
+ Attackers deal damage. Modifiers are applied.
+ Defenders deal damage to attacker if attacker is within range. Modifiers are applied.
+ 
+ 
+ 
+ Combat Modifiers
+ Missing HP:
+ Units deal less damage and take more damage equal to half of the percentage of missing health (but not defense)
+ 
+ Flanking:
+ Units deal 15% more damage for each flanking creature and deal 15% less damage when being flanked for each flanking creature.
+ 
+ Terrain - based on the terrain of the defender that is being attacked. This is because it is assumed that attackers run into the defending square to attack.
+  0% in Open
+ -20% in Swamp
+ +20% in Forest
+ +25% in Hill
+ 0% in Road
+ 0% in Water
+ +50% in Mountain
+ 
+ Melee Units can Fortify. If they had full energy on the turn they fortified they heal and gain a +20% Combat Bonus, which becomes 40% on the next turn if the unit remains fortified.
  */
-bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
+
+//There needs to be a combat calculator that shows you the attack (after modifiers) and health of attacker and defender when you mouse over the tile of a specific attack.
+
+//Calculate missing HP debuff for combat
+float Board::calculateWeaknessDebuff(Tile combatTile) {
+    float debuff = -0.5 * (1.00 - (((float)(combatTile.creature()->health()))/ (float)(combatTile.creature()->maxHealth())));
+#ifdef COMBAT_CONSOLE_OUTPUT
+    std::cout << debuff << '\n';
+#endif
+    return debuff;
+};
+
+//Calculate flanking bonus for melee combat
+float Board::calculateFlankingBonus(Tile attacker, Tile defender) {
+    int adjacentEnemies = 0;
+    
+    //North
+    
+    //East
+    
+    //South
+    
+    //West
+    return 0.00;
+};
+
+//Calculate terrain modifier for combat
+float Board::calculateTerrainModifier(Tile defender) {
+    if (defender.terrain() ==  OPEN_TERRAIN) {
+        return 0.00;
+    }
+    if (defender.terrain() ==  FOREST_TERRAIN) {
+        return 0.20;
+    }
+    if (defender.terrain() ==  SWAMP_TERRAIN) {
+        return -0.20;
+    }
+    if (defender.terrain() ==  HILL_TERRAIN) {
+        return 0.25;
+    }
+    if (defender.terrain() ==  ROAD_TERRAIN) {
+        return 0.00;
+    }
+    if (defender.terrain() ==  WATER_TERRAIN) {
+        return 0.00;
+    }
+    if (defender.terrain() ==  MOUNTAIN_TERRAIN) {
+        return 0.50;
+    }
+    return 0.00;
+};
+
+
+bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
     if (attackerX >= this->gameBoard.size()) {
         throw std::range_error("Attacker x out of range");
     }
@@ -322,19 +411,38 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
     Tile* attacker = &this->gameBoard[attackerX][attackerY];
     Tile* defender = &this->gameBoard[defenderX][defenderY];
     
+    //Calculate Combat Modifiers
+    float attackerCombatModifier = 1.00;
+    float defenderCombatModifier = 1.00;
+    
     if (defender->creature() != nullptr) {
-        //If both creatures are melee creatures
-        if (attacker->creature()->melee()) {
             
-            //Check to make sure the creatures are one tile away from each other
+            //Check to make sure the creatures are within range
             unsigned int distanceBetweenTiles;
             distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY); //An error is only thrown if arguments are out of range, but that is checked above
             
             if (distanceBetweenTiles > this->gameBoard[attackerX][attackerY].creature()->range()) {
                 return false; //No combat occurs
-            } else {
+            } else { //if its not melee its ranged. or terrain ignoring.
                 
-                int damageDealtByAttacker = attacker->creature()->attack();
+                //Calculate Attacker Modifiers
+                //Missing HP:
+                attackerCombatModifier += 0.00+(float)calculateWeaknessDebuff(*attacker);
+                
+#ifdef COMBAT_CONSOLE_OUTPUT
+                std::cout << "Attacker Modifier After Weakness Debuff: " << attackerCombatModifier << '\n';
+#endif
+                
+                //Flanking:        (Only occurs on melee)
+                if (attacker->creature()->attackStyle() == LightMelee || attacker->creature()->attackStyle() == HeavyMelee) {
+                    attackerCombatModifier += calculateFlankingBonus(*attacker, *defender);
+                }
+                //Terrain:
+                attackerCombatModifier += calculateTerrainModifier(*defender);
+#ifdef COMBAT_CONSOLE_OUTPUT
+                std::cout << "Attacker Modifier: " << attackerCombatModifier << '\n';
+#endif
+                int damageDealtByAttacker = round( (float)attacker->creature()->attack() * attackerCombatModifier );
                 
                 bool defenderDied = defender->creature()->takeDamage(damageDealtByAttacker);
                 attacker->creature()->useAllEnergy();
@@ -343,8 +451,27 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
                     *attackDamage = damageDealtByAttacker;
                 
                 //If the defender is a melee fighter and survived, it can strike back
-                if (!defenderDied && defender->creature()->melee()) {
-                    int damageDealtByDefender = defender->creature()->attack();
+                if (!defenderDied && defender->creature()->range() >= distanceBetweenTiles) {
+                    
+                    //Calculate Defender Modifiers
+                    //Missing HP:
+                    defenderCombatModifier += (float)calculateWeaknessDebuff(*defender);
+                    
+#ifdef COMBAT_CONSOLE_OUTPUT
+                    std::cout << "Defender Modifier after Weakness Debuff: " << defenderCombatModifier << '\n';
+#endif
+                    
+                    //Flanking:        (Only occurs on melee)
+                    if (defender->creature()->attackStyle() == LightMelee || defender->creature()->attackStyle() == HeavyMelee) {
+                        defenderCombatModifier += calculateFlankingBonus(*defender, *attacker);
+                        //defenderCombatModifier += defender->creature().getFortificationBonus();
+                    }
+                    //Terrain:
+                    defenderCombatModifier += calculateTerrainModifier(*defender);
+#ifdef COMBAT_CONSOLE_OUTPUT
+                    std::cout << "Defender Modifier: " << defenderCombatModifier << '\n';
+#endif
+                    int damageDealtByDefender = round((float)defender->creature()->attack() * defenderCombatModifier);
                     
                     bool attackerDied = attacker->creature()->takeDamage(damageDealtByDefender);
                     
@@ -361,21 +488,6 @@ bool Board::attack(unsigned int attackerX, unsigned int attackerY, unsigned int 
                 return true; //Combat occurs
             }
             
-        } else { //The attacker is a range fighter so there can be no strike back. To consider: other range units can strike back?
-            int damageDealtByAttacker = attacker->creature()->attack();
-            
-            bool defenderDied = defender->creature()->takeDamage(damageDealtByAttacker);
-            attacker->creature()->useAllEnergy();
-            
-            if (attackDamage != nullptr)
-                *attackDamage = damageDealtByAttacker;
-            
-            if (defenderDied) {
-                this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
-            }
-            
-            return true;
-        }
     } else if (defender->building() != nullptr) {
         //If both creatures are melee creatures
         if (attacker->creature()->melee()) {

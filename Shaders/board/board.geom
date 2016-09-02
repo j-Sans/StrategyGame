@@ -28,6 +28,8 @@
 //Creature
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
+#define SCOUT_PLACEHOLDER 2 //Simple test creature type using an easily identifiable box texture
+#define ARCHER_PLACEHOLDER 3 //Simple test creature type using an easily identifiable box texture
 
 //Building
 #define NO_BUILDING 0

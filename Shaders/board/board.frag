@@ -28,6 +28,8 @@
 //Creature
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
+#define SCOUT_PLACEHOLDER 2 //Simple test creature type using an easily identifiable box texture
+#define ARCHER_PLACEHOLDER 3 //Simple test creature type using an easily identifiable box texture
 
 //Building
 #define NO_BUILDING 0
@@ -43,6 +45,8 @@ uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
 uniform sampler2D forestTex;
 uniform sampler2D stickFigureTex;
+uniform sampler2D scoutPTex;
+uniform sampler2D archerPTex;
 uniform sampler2D towerTex;
 uniform sampler2D circleTex;
 
@@ -69,6 +73,12 @@ void main() {
         //Draw the creature
         if (TexType.y == STICK_FIGURE_CREATURE) {
             color = texture(stickFigureTex, TexCoords);
+        }
+        else if (TexType.y == SCOUT_PLACEHOLDER) {
+            color = texture(scoutPTex, TexCoords);
+        }
+        else if (TexType.y == ARCHER_PLACEHOLDER) {
+            color = texture(archerPTex, TexCoords);
         }
         
     } else if (TexType.x == BUILDING) {

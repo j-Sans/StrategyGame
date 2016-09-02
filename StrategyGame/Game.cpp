@@ -243,7 +243,7 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         
         //Create the creature from the building
         else if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) {
-            Creature newCreature(mousePos.x, mousePos.y, Human, 1, 3, 1, LightMelee, 1, 1, 1, NORTH, this->currentActivePlayer);
+            Creature newCreature(mousePos.x, mousePos.y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, this->currentActivePlayer);
             
             if (this->gameBoard.get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
                 this->gameBoard.setCreature(mousePos.x, mousePos.y, newCreature);
@@ -271,7 +271,7 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             int attackDamage = 0;
             int defendDamage = 0;
             
-            this->gameBoard.attack(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+            this->gameBoard.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
             
             //Set the damage data on the defending square equal to damage dealt by the attacker
             this->gameBoard.setDamage(defender.x, defender.y, attackDamage, glfwGetTime());
@@ -582,29 +582,29 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y()))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //South
                 if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //West
                 if (tile.x() < this->gameBoard.width() - 1) {
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())) >= 0) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCostALPHA(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y()))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
             }
@@ -641,7 +641,7 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
     } else {
         Creature creature = *creatureTile.creature();
         
-        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
+        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
         
         std::vector<Tile> attackableTiles; //A vector of the tiles that can be attacked
         
@@ -649,14 +649,14 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
         
         //Keep pushing the vector back with new tiles, that the for loop will eventually go through
         for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-            if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+            if (reachedTiles[tileIterator].second > 0) { //If an attack at this spot would be able to continue to move further, expand in the four directions from that tile.
                 
                 Tile tile = reachedTiles[tileIterator].first;
                 
                 //North
                 if (tile.y() > 0) {
                     if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->gameBoard.get(tile.x(), tile.y() - 1).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
@@ -666,7 +666,7 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 //East
                 if (tile.x() > 0) {
                     if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->gameBoard.get(tile.x() - 1, tile.y()).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
@@ -676,7 +676,7 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 //South
                 if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
                     if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->gameBoard.get(tile.x(), tile.y() + 1).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
@@ -686,7 +686,7 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 //West
                 if (tile.x() < this->gameBoard.width() - 1) {
                     if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - 1)); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->gameBoard.get(tile.x() + 1, tile.y()).occupied()) {
                         attackableTiles.push_back(this->gameBoard.get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles

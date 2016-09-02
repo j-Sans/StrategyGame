@@ -40,15 +40,16 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,1,1,NORTH", "New Melee creature"));
+            //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.6, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,1,3,1,1,3,1,NORTH", "New 3-Ranged creature"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.6, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged"));
             
             break;
             
         } case default_bottom: {
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building,3,1", "New building"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building,300,1", "New Building"));
             
             break;
         
@@ -103,7 +104,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             //Inserts a display bar into the map with the key health
             this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building_new_creature", "Make creature"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building_new_creature", "Make Melee"));
             
             break;
             

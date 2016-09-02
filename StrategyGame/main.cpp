@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
         for (GLuint y = 0; y < BOARD_WIDTH; y++) {
             if (x == 0 && y == 1)
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-            else if (x == 3 && y < 3) {
+            else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3)) {
                 row.push_back(Tile(FOREST_TERRAIN, x, y));
             } else
                 row.push_back(Tile(OPEN_TERRAIN, x, y));
@@ -55,13 +55,13 @@ int main(int argc, const char * argv[]) {
     
     //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
 
-    V.game.board()->setCreature(5, 4, Creature(3, 3, Human, 2, 3, 1, LightMelee, 1, 1, 1, NORTH, 0));
+    V.game.board()->setCreature(5, 4, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 0));
 
-    V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 2, 3, 1, LightMelee, 1, 1, 1, NORTH, 1));
+    V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 1));
     
-    V.game.board()->setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 3, 1, 0));
+    V.game.board()->setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
     
-    V.game.board()->setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 3, 1, 1));
+    V.game.board()->setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1, 1));
     
 //Game loop:
     while(!glfwWindowShouldClose(V.window())) {

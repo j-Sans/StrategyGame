@@ -40,7 +40,10 @@ public:
     
     //Public member functions
     
-    float getTerrainMovementCostALPHA(Tile origin, Tile destination);
+    //Terrain Costs of Movement
+    float getTerrainMovementCost(Tile origin, Tile destination);
+    
+    //Terrain Costs of Attack
     float getTerrainAttackCost (Tile origin, Tile destination);
     
     /*!
@@ -68,6 +71,15 @@ public:
      */
     bool moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
     
+    //Calculate missing HP debuff for combat
+    float calculateWeaknessDebuff(Tile combatTile);
+    
+    //Calculate flanking bonus for combat
+    float calculateFlankingBonus(Tile attacker, Tile defender);
+    
+    //Calculate terrain modifier for combat
+    float calculateTerrainModifier(Tile defender);
+    
     /*!
      * Have one creature attack the other creature. Possible errors include if the indices are off of the board.
      
@@ -80,7 +92,7 @@ public:
      
      * @return Whether combat occurred or not, for various reasons.
      */
-    bool attack(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
+    bool initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
     
     /*!
      * Get the distance (in taxicab geometry) from one tile to another.
