@@ -480,7 +480,11 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                         *defendDamage = damageDealtByDefender;
                     
                     if (attackerDied) {
-                        this->deleteCreature(attacker->x(), attacker->y());//Remove the dead creature
+                        this->deleteCreature(attacker->x(), attacker->y()); //Remove the dead creature
+                    }
+                    
+                    if (defenderDied) {
+                        this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
                     }
                 } else if (defenderDied) {
                     this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
