@@ -28,7 +28,7 @@ void ServerSocket::setSocket(int portNum) {
     
     //If socket() returns an error, -1.
     if (this->hostSocket < 0)
-        throw std::runtime_error("ERROR opening socket");
+        throw std::runtime_error("Error opening socket");
     
     /* bzero()
      The bzero() function sets all values in a buffer to zero, with two parameters.
@@ -65,7 +65,7 @@ void ServerSocket::setSocket(int portNum) {
      This function can fail for multiple reasons. The most likely one is if the port is already in use.
      */
     if (bind(this->hostSocket, (struct sockaddr *) &this->serverAddress, sizeof(this->serverAddress)) < 0)
-        this->error("ERROR on binding");
+        throw std::runtime_error("ERROR binding socket to host");
     
     /* listen()
      The listen() function listens for connections on the socket, with two arguments.
@@ -95,35 +95,16 @@ void ServerSocket::setSocket(int portNum) {
     
     //Checks for error with accepting
     if (this->clientSocket < 0)
-        this->error("ERROR on accept");
+        throw std::runtime_error("ERROR accepting client");
 }
 
-
-
-    int messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
-
-    char buffer[256]; //This program will read characters from the connection into this buffer
-
+void ServerSocket::send(std::string message) {
+    char buffer[message.length()]; //This program will read characters from the connection into this buffer
+    
     //Initialize the buffer where received info is stored
     bzero(buffer,256);
     
-    /* read()
-     The read() function will read in info from the client socket, with three arguments. It will block until the client writes and there is something to read in.
-     
-     The first argument is the reference for the client's socket.
-     
-     The second argument is the buffer to store the message.
-     
-     The third argument is the maximum number of characters to to be read into the buffer.
-     */
-    messageSize = read(this->clientSocket, buffer, 255);
-    
-    //Checks for errors reading from the socket
-    if (messageSize < 0)
-        this->error("ERROR reading from socket");
-    
-    //Print the received message to the console
-    std::cout << "Here is the message: " << buffer << std::endl;
+    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
     /* write()
      The write() function will write a message to the client socket, with three arguments.
@@ -134,12 +115,41 @@ void ServerSocket::setSocket(int portNum) {
      
      The third argument is the length of the message.
      */
-    messageSize = write(this->clientSocket, "I got your message", 18);
+    messageSize = write(this->clientSocket, message.c_str(), message.length());
     
     //Check for errors writing the message
     if (messageSize < 0)
-        this->error("ERROR writing to socket");
+        throw std::runtime_error("ERROR writing to socket");
+}
+
+std::string ServerSocket::receive() {
+    char buffer[1024]; //This program will read characters from the connection into this buffer
     
+    //Initialize the buffer where received info is stored
+    bzero(buffer,1024);
+    
+    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
+    
+    /* read()
+     The read() function will read in info from the client socket, with three arguments. It will block until the client writes and there is something to read in.
+     
+     The first argument is the reference for the client's socket.
+     
+     The second argument is the buffer to store the message.
+     
+     The third argument is the maximum number of characters to to be read into the buffer.
+     */
+    messageSize = read(this->clientSocket, buffer, 1023);
+    
+    //Checks for errors reading from the socket
+    if (messageSize < 0)
+        throw std::runtime_error("ERROR reading from socket");
+    
+    //Return the received message to the console
+    return std::string(buffer);
+}
+
+ServerSocket::~ServerSocket() {
     //Properly terminate the sockets
     close(this->clientSocket);
     close(this->hostSocket);

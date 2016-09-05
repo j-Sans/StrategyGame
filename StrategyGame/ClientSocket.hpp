@@ -1,13 +1,13 @@
 //
-//  ServerSocket.hpp
-//  Server_C_Socket
+//  ClientSocket.hpp
+//  Client_C_Socket
 //
 //  Created by Jake Sanders on 9/5/16.
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
 
-#ifndef ServerSocket_hpp
-#define ServerSocket_hpp
+#ifndef ClientSocket_hpp
+#define ClientSocket_hpp
 
 #include <iostream>
 #include <string>
@@ -21,13 +21,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-class ServerSocket {
+class ClientSocket {
 public:
     //Constructor
-    ServerSocket();
+    ClientSocket();
     
     //Destructor
-    ~ServerSocket();
+    ~ClientSocket();
     
     //Public properties
     
@@ -41,9 +41,8 @@ public:
 private:
     //Private properties
     
-    //These are "file descriptors", which store values from both the socket system call and the accept system call
-    int hostSocket;
-    int clientSocket;
+    //This is the "file descriptor", which stores values from both the socket system call and the accept system call
+    int connectionSocket;
     int portNumber; //The port nubmer where connections are accepted
     socklen_t clientAddressSize; //The size of the address of the client, for the accept system call
     
@@ -65,4 +64,4 @@ private:
     
 };
 
-#endif /* ServerSocket_hpp */
+#endif /* ClientSocket_hpp */
