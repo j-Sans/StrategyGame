@@ -64,7 +64,8 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
      
      If a host with that name couldn't be found, NULL is returned rather than the pointer.
      */
-    server = gethostbyname(argv[1]);
+    
+    server = gethostbyname(hostName.c_str());
     
     //Check for errors finding host
     if (server == NULL) {
