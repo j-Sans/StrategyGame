@@ -96,12 +96,12 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
 }
 
 void ClientSocket::send(std::string message) {
-    int messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
-    
     char buffer[message.length()];
     
     //Initialize the buffer to store the message to send
     bzero(buffer, message.length());
+    
+    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
     /* write()
      The write() function will write a message to the client socket, with three arguments.
@@ -112,7 +112,7 @@ void ClientSocket::send(std::string message) {
      
      The third argument is the length of the message.
      */
-    messageSize = (int)write(this->connectionSocket, buffer, strlen(buffer));
+    messageSize = write(this->connectionSocket, buffer, strlen(buffer));
     
     //Check for errors writing the message
     if (messageSize < 0)
@@ -120,12 +120,12 @@ void ClientSocket::send(std::string message) {
 }
 
 std::string ClientSocket::receive() {
-    int messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
-    
-    char buffer[1024];
+    char buffer[MAXIMUM_SOCKET_MESSAGE_SIZE];
     
     //Initialize the buffer to store the message to send
-    bzero(buffer, 1024);
+    bzero(buffer, MAXIMUM_SOCKET_MESSAGE_SIZE);
+    
+    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
     /* read()
      The read() function will read in info from the client socket, with three arguments. It will block until the client writes and there is something to read in.
@@ -136,7 +136,7 @@ std::string ClientSocket::receive() {
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = (int)read(this->connectionSocket, buffer, 1023);
+    messageSize = read(this->connectionSocket, buffer, MAXIMUM_SOCKET_MESSAGE_SIZE - 1);
     
     //Check for errors reading in the message
     if (messageSize < 0)

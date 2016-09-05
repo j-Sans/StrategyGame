@@ -9,6 +9,8 @@
 #ifndef ClientSocket_hpp
 #define ClientSocket_hpp
 
+#include "Macros.h"
+
 #include <iostream>
 #include <string>
 #include <exception>

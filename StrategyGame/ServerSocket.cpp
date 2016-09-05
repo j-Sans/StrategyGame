@@ -123,10 +123,10 @@ void ServerSocket::send(std::string message) {
 }
 
 std::string ServerSocket::receive() {
-    char buffer[1024]; //This program will read characters from the connection into this buffer
+    char buffer[MAXIMUM_SOCKET_MESSAGE_SIZE]; //This program will read characters from the connection into this buffer
     
     //Initialize the buffer where received info is stored
-    bzero(buffer,1024);
+    bzero(buffer, MAXIMUM_SOCKET_MESSAGE_SIZE);
     
     long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
@@ -139,7 +139,7 @@ std::string ServerSocket::receive() {
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = read(this->clientSocket, buffer, 1023);
+    messageSize = read(this->clientSocket, buffer, MAXIMUM_SOCKET_MESSAGE_SIZE - 1);
     
     //Checks for errors reading from the socket
     if (messageSize < 0)
