@@ -102,7 +102,7 @@ void ServerSocket::send(std::string message) {
     char buffer[message.length()]; //This program will read characters from the connection into this buffer
     
     //Initialize the buffer where received info is stored
-    bzero(buffer,256);
+    bzero(buffer, message.length());
     
     long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     

@@ -9,29 +9,6 @@
 #include "ClientSocket.hpp"
 
 void ClientSocket::setSocket(std::string hostName, int portNum) {
-    int connectionSocket; //This is a "file descriptor", which stores values from both the socket system call and the accept system call
-    int portno; //The port nubmer where connections are accepted
-    struct sockaddr_in serv_addr; //This is an object of the struct "sockaddr_in", which contains internet address. See the server side code for more details
-    int n; //n stores the return value from the calls to read() and write() by holding the number of characters either read or written
-    
-    char buffer[256]; //This program will read characters from the connection into this buffer
-    
-    /* struct hostent
-     
-     struct hostent {
-         char *h_name;           //Official name of the host
-         char **h_aliases;       //A zero terminated array of alternate names for the host
-         int h_addrtype;         //The type of address being returned; currently always AF_INET
-         int h_length;           //The length, in bytes, of the address
-         char **h_addr_list;     //A pointer to a list of network addresses for the named host. Host addresses are returned in network byte order.
-     
-     #define h_addr h addr_list[0]
-     };
-     
-     */
-    
-    struct hostent *server; //A hostent object representing the server side.
-    
     this->portNumber = portNum;
     
     /* socket()
@@ -49,7 +26,7 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
      
      The function returns an integer than can be used like a reference to the socket. Failure results in returning -1.
      */
-    connectionSocket = socket(AF_INET, SOCK_STREAM, 0);
+    this->connectionSocket = socket(AF_INET, SOCK_STREAM, 0);
     
     //Checks for errors initializing socket
     if (socket < 0)
@@ -65,12 +42,11 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
      If a host with that name couldn't be found, NULL is returned rather than the pointer.
      */
     
-    server = gethostbyname(hostName.c_str());
+    this->server = gethostbyname(hostName.c_str());
     
     //Check for errors finding host
-    if (server == NULL) {
-        fprintf(stderr, "ERROR, no such host\n");
-        exit(0);
+    if (this->server == NULL) {
+        std::runtime_error("ERROR, no such host");
     }
     
     /* bzero()
@@ -82,10 +58,10 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
      
      This line essentially "initializes" serv_addr with zeros.
      */
-    bzero((char *) &serv_addr, sizeof(serv_addr));
+    bzero((char *) &this->serverAddress, sizeof(this->serverAddress));
     
     //The first property of the struct sockaddr_in should always be set to the symbolic constant AF_INET
-    serv_addr.sin_family = AF_INET;
+    this->serverAddress.sin_family = AF_INET;
     
     /* bcopy()
      The bcopy() function copies a specified number of chars from one array to another, with three argument.
@@ -98,10 +74,10 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
      
      This line copies the server's IP adress to the correct property in the address.
      */
-    bcopy((char *)server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
+    bcopy((char *)this->server->h_addr, (char *) &this->serverAddress.sin_addr.s_addr, this->server->h_length);
     
     //The second property contains the port numver, but it has to be converted to a network byte order
-    serv_addr.sin_port = htons(portno);
+    this->serverAddress.sin_port = htons(this->portNumber);
     
     /* connect()
      The connect() function is called by the client to establish a connection with the server, with three arguments.
@@ -114,67 +90,18 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
      
      The function returns 0 if successful and -1 if it fails.
      */
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
-        error("ERROR connecting");
+    if (connect(this->connectionSocket, (struct sockaddr *) &this->serverAddress, sizeof(this->serverAddress)) < 0)
+        throw std::runtime_error("ERROR connecting");
     
-    //Prompts the user to enter the message to be sent to the server
-    printf("Please enter the message:\n");
-    
-    //Initialize the buffer to store the message to send
-    bzero(buffer, 256);
-    
-    //Get a message from the console
-    fgets(buffer, 255, stdin);
-    
-    /* write()
-     The write() function will write a message to the client socket, with three arguments.
-     
-     The first argument is the reference for the client's socket.
-     
-     The second argument is the message.
-     
-     The third argument is the length of the message.
-     */
-    n = write(sockfd, buffer, strlen(buffer));
-    
-    //Check for errors writing the message
-    if (n < 0)
-        error("ERROR writing to socket");
-    
-    //Reset the buffer to store the incoming message
-    bzero(buffer, 256);
-    
-    /* read()
-     The read() function will read in info from the client socket, with three arguments. It will block until the client writes and there is something to read in.
-     
-     The first argument is the reference for the client's socket.
-     
-     The second argument is the buffer to store the message.
-     
-     The third argument is the maximum number of characters to to be read into the buffer.
-     */
-    n = read(sockfd, buffer, 255);
-    
-    //Check for errors reading in the message
-    if (n < 0)
-        error("ERROR reading from socket");
-    
-    //Print the received message
-    printf("%s\n", buffer);
-    
-    //Properly terminate the socket
-    close(sockfd);
-    
-    return 0;
 }
 
-void ServerSocket::send(std::string message) {
-    char buffer[message.length()]; //This program will read characters from the connection into this buffer
+void ClientSocket::send(std::string message) {
+    int messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
-    //Initialize the buffer where received info is stored
-    bzero(buffer,256);
+    char buffer[message.length()];
     
-    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
+    //Initialize the buffer to store the message to send
+    bzero(buffer, message.length());
     
     /* write()
      The write() function will write a message to the client socket, with three arguments.
@@ -185,20 +112,20 @@ void ServerSocket::send(std::string message) {
      
      The third argument is the length of the message.
      */
-    messageSize = write(this->clientSocket, message.c_str(), message.length());
+    messageSize = (int)write(this->connectionSocket, buffer, strlen(buffer));
     
     //Check for errors writing the message
     if (messageSize < 0)
         throw std::runtime_error("ERROR writing to socket");
 }
 
-std::string ServerSocket::receive() {
-    char buffer[1024]; //This program will read characters from the connection into this buffer
+std::string ClientSocket::receive() {
+    int messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
-    //Initialize the buffer where received info is stored
-    bzero(buffer,1024);
+    char buffer[1024];
     
-    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
+    //Initialize the buffer to store the message to send
+    bzero(buffer, 1024);
     
     /* read()
      The read() function will read in info from the client socket, with three arguments. It will block until the client writes and there is something to read in.
@@ -209,18 +136,17 @@ std::string ServerSocket::receive() {
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = read(this->clientSocket, buffer, 1023);
+    messageSize = (int)read(this->connectionSocket, buffer, 1023);
     
-    //Checks for errors reading from the socket
+    //Check for errors reading in the message
     if (messageSize < 0)
         throw std::runtime_error("ERROR reading from socket");
     
-    //Return the received message to the console
+    //Return the received message
     return std::string(buffer);
 }
 
-ServerSocket::~ServerSocket() {
+ClientSocket::~ClientSocket() {
     //Properly terminate the sockets
-    close(this->clientSocket);
-    close(this->hostSocket);
+    close(this->connectionSocket);
 }

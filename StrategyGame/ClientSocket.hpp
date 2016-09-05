@@ -33,7 +33,7 @@ public:
     //Public properties
     
     //Public member functions
-    void setSocket(int portNum);
+    void setSocket(std::string hostName, int portNum);
     
     void send(std::string message);
     
@@ -42,27 +42,25 @@ public:
 private:
     //Private properties
     
-    //This is the "file descriptor", which stores values from both the socket system call and the accept system call
-    int connectionSocket;
+    int connectionSocket; //This is the "file descriptor", which stores values from both the socket system call and the accept system call
     int portNumber; //The port nubmer where connections are accepted
-    socklen_t clientAddressSize; //The size of the address of the client, for the accept system call
+    struct sockaddr_in serverAddress; //This is an object of the struct "sockaddr_in", which contains internet address. See the server side code for more details
     
-    /* struct sockaddr_in
+    /* struct hostent
      
-     struct sockaddr_in {
-         short sin_family; //Should be AF_INET, see below
-         u_short sin_port;
-         struct in_addr sin_addr;
-         char sin_zero[8]; //Not used, should be zero, see below
+     struct hostent {
+         char *h_name;           //Official name of the host
+         char **h_aliases;       //A zero terminated array of alternate names for the host
+         int h_addrtype;         //The type of address being returned; currently always AF_INET
+         int h_length;           //The length, in bytes, of the address
+         char **h_addr_list;     //A pointer to a list of network addresses for the named host. Host addresses are returned in network byte order.
+         
+         #define h_addr h addr_list[0]
      };
      
-     Note: the struct in_addr contains only a single property, an unsigned long named s_addr.
      */
     
-    //These are objects of the struct "sockaddr_in", which contain internet addresses
-    struct sockaddr_in serverAddress;
-    struct sockaddr_in clientAddress;
-    
+    struct hostent *server;
 };
 
 #endif /* ClientSocket_hpp */
