@@ -63,6 +63,8 @@ private:
      */
     
     struct hostent *server;
+    
+    bool setUp = false; //Represents if the socket has already been set. If not, reading and writing will cause errors
 };
 
 #endif /* ClientSocket_hpp */

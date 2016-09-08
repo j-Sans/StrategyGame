@@ -93,9 +93,13 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
     if (connect(this->connectionSocket, (struct sockaddr *) &this->serverAddress, sizeof(this->serverAddress)) < 0)
         throw std::runtime_error("ERROR connecting");
     
+    this->setUp = true;
 }
 
 void ClientSocket::send(std::string message) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     char buffer[message.length()];
     
     //Initialize the buffer to store the message to send
@@ -120,6 +124,9 @@ void ClientSocket::send(std::string message) {
 }
 
 std::string ClientSocket::receive() {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     char buffer[MAXIMUM_SOCKET_MESSAGE_SIZE];
     
     //Initialize the buffer to store the message to send
@@ -147,6 +154,7 @@ std::string ClientSocket::receive() {
 }
 
 ClientSocket::~ClientSocket() {
-    //Properly terminate the sockets
-    close(this->connectionSocket);
+    if (this->setUp)
+        //Properly terminate the sockets
+        close(this->connectionSocket);
 }

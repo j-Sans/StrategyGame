@@ -65,6 +65,8 @@ private:
     struct sockaddr_in serverAddress;
     struct sockaddr_in clientAddress;
     
+    bool setUp = false; //Represents if the socket has already been set. If not, reading and writing will cause errors
+    
 };
 
 #endif /* ServerSocket_hpp */

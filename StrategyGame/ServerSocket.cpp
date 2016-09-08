@@ -96,9 +96,14 @@ void ServerSocket::setSocket(int portNum) {
     //Checks for error with accepting
     if (this->clientSocket < 0)
         throw std::runtime_error("ERROR accepting client");
+    
+    this->setUp = true;
 }
 
 void ServerSocket::send(std::string message) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     char buffer[message.length()]; //This program will read characters from the connection into this buffer
     
     //Initialize the buffer where received info is stored
@@ -123,6 +128,9 @@ void ServerSocket::send(std::string message) {
 }
 
 std::string ServerSocket::receive() {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+        
     char buffer[MAXIMUM_SOCKET_MESSAGE_SIZE]; //This program will read characters from the connection into this buffer
     
     //Initialize the buffer where received info is stored
@@ -150,7 +158,9 @@ std::string ServerSocket::receive() {
 }
 
 ServerSocket::~ServerSocket() {
-    //Properly terminate the sockets
-    close(this->clientSocket);
-    close(this->hostSocket);
+    if (this->setUp) {
+        //Properly terminate the sockets
+        close(this->clientSocket);
+        close(this->hostSocket);
+    }
 }

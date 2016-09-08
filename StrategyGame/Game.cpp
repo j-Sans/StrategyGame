@@ -618,7 +618,7 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
         }
         
 #ifdef PATHFINDING_CONSOLE_OUTPUT
-        std::cout << "return success";
+        std::cout << "return success" << std::endl;
 #endif
         return reachedTileReturnVector;
     }
