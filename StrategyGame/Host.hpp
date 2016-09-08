@@ -11,14 +11,23 @@
 
 //Standard library includes
 #include <vector>
+#include <exception>
 
 //Local includes
+#include "ServerSocket.hpp"
 #include "Player.hpp"
 
 class Host {
 public:
     
+    //Constructor
+    Host(unsigned int numberOfPlayers, int portNum);
+    
 private:
+    
+    //Private properties
+    
+    ServerSocket socket;
     
     std::vector<Player> players;
     
