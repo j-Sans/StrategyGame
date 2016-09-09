@@ -57,21 +57,6 @@ public:
     //Public properties
     
     /*!
-     * The color of selected tiles.
-     */
-    static const Color selectedTileColor = BlueGrey;
-    
-    /*!
-     * The color of adjacent open tiles.
-     */
-    static const Color openAdjTileColor = Cyan;
-    
-    /*!
-     * The color of adjacent attackable tiles.
-     */
-    static const Color attackableAdjTileColor = Red;
-    
-    /*!
      * Time before deletion of damage boxes, in seconds.
      */
     constexpr static const float damageBoxTime = 3.0f;
@@ -93,13 +78,6 @@ public:
      * @param building A pointer to the new building. If nullptr, then the spot becomes empty.
      */
     void setBuilding(Building *building);
-    
-    /*!
-     * Sets a style to alter the hue of this tile.
-     *
-     * @param style A style type representing the color. Styles include Regular, Selected, OpenAdj, and AttackableAdj.
-     */
-    void setStyle(Style style);
     
     /*!
      * Sets a direction at the creature at this tile.
@@ -157,21 +135,6 @@ public:
      * @return The type of the building, indicating which texture to use to the openGL VBO. Currently returns the basic building if there is any building.
      */
     unsigned int buildingType();
-    
-    /*!
-     * @return The name of the color of this tile, of type Color enum. Possible values include White, Grey, Red, Yellow, Green, Cyan, and Blue.
-     */
-    Color colorName();
-    
-    /*!
-     * @return The color alteration of the tile as a vec3 of RGB values. Values range from 0.0 to 1.0.
-     */
-    glm::vec3 color();
-    
-    /*!
-     * @return The style of this tile, of type Style enum. Possible values include Regular, Selected, OpenAdj, and AttackableAdj.
-     */
-    Style style();
     
     /*!
      * @return A boolean representing whether the creature would be able to go through this tile.
