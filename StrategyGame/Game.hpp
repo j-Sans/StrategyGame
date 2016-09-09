@@ -43,18 +43,6 @@
 #define BLUE glm::vec3(0.625f, 0.625f, 1.0f)
 #define PURPLE glm::vec3(0.5f, 0.1f, 0.9f)
 
-enum Color {
-    White,
-    Grey, //Revealed
-    Red,
-    Yellow,
-    Green,
-    Cyan,
-    Blue,
-    Purple,
-    BlueGrey, //Selection
-};
-
 enum Style {
     Regular,
     Selected,
