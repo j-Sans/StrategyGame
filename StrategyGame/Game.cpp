@@ -10,36 +10,20 @@
 
 //Constructor
 
-Game::Game(Board board) : gameBoard(board) {
-    
+Game::Game(Board* board) : gameBoard(board) {
+    for (int x = 0; x < this->gameBoard->width(); x++) {
+        std::vector<std::pair<Style, bool> > boardColumnInfo;
+        for (int y = 0; y < this->gameBoard->height(x); y++) {
+            boardColumnInfo.push_back(std::pair<Style, bool>(Regular, true));
+        }
+        this->boardInfo.push_back(boardColumnInfo);
+    }
 }
 
 //Public member functions
 
 GLfloat Game::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
-}
-
-void Game::nextTurn() {
-    this->incrementActivePlayer();
-    
-    //Increment the turn if a full player cycle has occurred
-    if (this->currentActivePlayer == 0)
-        turn++;
-    
-    //Iterate through the entire board and reset style and energy.
-    for (GLuint x = 0; x < this->gameBoard.width(); x++) {
-        for (GLuint y = 0; y < this->gameBoard.height(x); y++) {
-            this->gameBoard.setStyle(x, y, Regular);
-            Creature* creature = this->gameBoard.get(x, y).creature();
-            if (creature != nullptr)
-                creature->resetEnergy();
-        }
-    }
-    
-#ifdef TURN_CONSOLE_OUTPUT
-    std::cout << std::endl << std::endl << "--------------------" << std::endl << "Player " << this->currentActivePlayer + 1 << "'s turn" << std::endl << std::endl;
-#endif
 }
 
 bool Game::selectTile(int x, int y) {
@@ -49,10 +33,10 @@ bool Game::selectTile(int x, int y) {
         this->selectedTile = NO_SELECTION;
     } else if (passedInTile == INTERFACE_BOX_SELECTION) {
         this->selectedTile = INTERFACE_BOX_SELECTION;
-    } else if (x >= 0 && x < this->gameBoard.width() && y >= 0 && y < this->gameBoard.height(x)) { //Make sure the passed in tile is on the board
+    } else if (x >= 0 && x < this->gameBoard->width() && y >= 0 && y < this->gameBoard->height(x)) { //Make sure the passed in tile is on the board
         
         //If there is a creature at that spot, properly select it. Otherwise just set it normally
-        if (this->gameBoard.get(x, y).creature() != nullptr)
+        if (this->gameBoard->get(x, y).creature() != nullptr)
             this->selectCreature(x, y);
         else
             this->selectedTile = passedInTile;
@@ -67,11 +51,7 @@ bool Game::selectTile(int x, int y) {
 //Public get functions
 
 Board* Game::board() {
-    return &this->gameBoard;
-}
-
-unsigned int Game::activePlayer() {
-    return this->currentActivePlayer;
+    return this->gameBoard;
 }
 
 glm::ivec2 Game::tileSelected() {
@@ -79,10 +59,10 @@ glm::ivec2 Game::tileSelected() {
 }
 
 void Game::updateCreatures(float deltaTime) {
-    for (int x = 0; x < this->gameBoard.width(); x++) {
-        for (int y = 0; y < this->gameBoard.height(x); y++) {
+    for (int x = 0; x < this->gameBoard->width(); x++) {
+        for (int y = 0; y < this->gameBoard->height(x); y++) {
             
-            Creature* creature = this->gameBoard.get(x, y).creature();
+            Creature* creature = this->gameBoard->get(x, y).creature();
             
             if (creature != nullptr) {
                 
@@ -96,7 +76,7 @@ void Game::updateCreatures(float deltaTime) {
                     //If the creature is in the process of moving currently, continue to move it
                     if (creature->incrementOffset(deltaTime)) {
                         if (direction == NORTH) {
-                            if (this->gameBoard.moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                            if (this->gameBoard->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
                                 creatureLoc.y -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
@@ -104,7 +84,7 @@ void Game::updateCreatures(float deltaTime) {
 #endif
                             }
                         } else if (direction == EAST) {
-                            if (this->gameBoard.moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                            if (this->gameBoard->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
                                 creatureLoc.x -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
@@ -152,9 +132,9 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         
     } else if (mousePos == NO_SELECTION) {
         //Reset all tiles if the mouse clicked out of the screen
-        for (int x = 0; x < this->gameBoard.width(); x++) {
-            for (int y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        for (int x = 0; x < this->gameBoard->width(); x++) {
+            for (int y = 0; y < this->gameBoard->height(x); y++) {
+                this->boardInfo[x][y].TILE_STYLE = Regular;
             }
         }
     }
@@ -163,9 +143,9 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
     else if (mousePos == this->selectedTile) {
         
         //Goes through all tiles and sets them to regular
-        for (int x = 0; x < this->gameBoard.width(); x++) {
-            for (int y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        for (int x = 0; x < this->gameBoard->width(); x++) {
+            for (int y = 0; y < this->gameBoard->height(x); y++) {
+                this->boardInfo[x][y].TILE_STYLE = Regular;
             }
         }
         
@@ -174,44 +154,45 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
     }
     
     //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
-    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Regular) {
+    else if (this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE == Regular) {
         
         //Reset all tiles (this one is highlighted after)
-        for (int x = 0; x < this->gameBoard.width(); x++) {
-            for (int y = 0; y < this->gameBoard.height(x); y++) {
-                this->gameBoard.setStyle(x, y, Regular);
+        for (int x = 0; x < this->gameBoard->width(); x++) {
+            for (int y = 0; y < this->gameBoard->height(x); y++) {
+                this->boardInfo[x][y].TILE_STYLE = Regular;
             }
         }
         
         //Select this new tile
-        this->gameBoard.setStyle(mousePos.x, mousePos.y, Selected);
+        this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE = Selected;
         
         //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
         
-        if (this->gameBoard.get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard.get(mousePos.x, mousePos.y).creature()->controller() == currentActivePlayer) {
-            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
+        if (this->gameBoard->get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard->get(mousePos.x, mousePos.y).creature()->controller() == currentActivePlayer) {
+            std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard->get(mousePos.x, mousePos.y));
             
-            Creature creature = *this->gameBoard.get(mousePos.x, mousePos.y).creature();
+            Creature creature = *this->gameBoard->get(mousePos.x, mousePos.y).creature();
             for (int a = 0; a < reachableTiles.size(); a++) {
-                if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                    this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
-                }             }
+                if (this->gameBoard->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
+                    this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()].TILE_STYLE = Reachable;
+                }
+            }
             
-            std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(mousePos.x, mousePos.y));
+            std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard->get(mousePos.x, mousePos.y));
             
             for (int a = 0; a < attackableTiles.size(); a++) {
                 
                 //If there is a creature on the tile, controlled by an opponent, make it attackable
-                if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
+                if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
                     
                     if (creature.energy() > 0)
-                        this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+                        this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
                 
                 //If there is a building on the tile, controlled by an opponent, make it attackable
-                if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
+                if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
                     
                     if (creature.energy() > 0)
-                        this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+                        this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
             }
         }
         
@@ -219,22 +200,22 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
     }
     
     //Selecting selectable tiles
-    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == Reachable) {
+    else if (this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE == Reachable) {
         
         //Move the creature to the selected tile
-        if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) {
+        if (this->gameBoard->get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) {
             std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
             
             for (int a = 0; a < directions.size(); a++) {
-                this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
+                this->gameBoard->get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
                 if (a == 0)
-                    this->gameBoard.setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
+                    this->gameBoard->setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
             }
             
             //Reset all tiles
-            for (int x = 0; x < this->gameBoard.width(); x++) {
-                for (int y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
+            for (int x = 0; x < this->gameBoard->width(); x++) {
+                for (int y = 0; y < this->gameBoard->height(x); y++) {
+                    this->boardInfo[x][y].TILE_STYLE = Regular;
                 }
             }
             
@@ -242,17 +223,17 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         }
         
         //Create the creature from the building
-        else if (this->gameBoard.get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) {
+        else if (this->gameBoard->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) {
             Creature newCreature(mousePos.x, mousePos.y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, this->currentActivePlayer);
             
-            if (this->gameBoard.get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
-                this->gameBoard.setCreature(mousePos.x, mousePos.y, newCreature);
+            if (this->gameBoard->get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
+                this->gameBoard->setCreature(mousePos.x, mousePos.y, newCreature);
             }
             
             //Reset all tiles
-            for (int x = 0; x < this->gameBoard.width(); x++) {
-                for (int y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
+            for (int x = 0; x < this->gameBoard->width(); x++) {
+                for (int y = 0; y < this->gameBoard->height(x); y++) {
+                    this->boardInfo[x][y].TILE_STYLE = Regular;;
                 }
             }
             
@@ -261,28 +242,28 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
     }
     
     //Attacking
-    else if (this->gameBoard.get(mousePos.x, mousePos.y).style() == AttackableAdj) {
+    else if (this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE == AttackableAdj) {
         
         glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
         glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
         
-        if (this->gameBoard.tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->gameBoard.get(attacker.x, attacker.y).creature()->range()) {
+        if (this->gameBoard->tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->gameBoard->get(attacker.x, attacker.y).creature()->range()) {
             
             int attackDamage = 0;
             int defendDamage = 0;
             
-            this->gameBoard.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+            this->gameBoard->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
             
             //Set the damage data on the defending square equal to damage dealt by the attacker
-            this->gameBoard.setDamage(defender.x, defender.y, attackDamage, glfwGetTime());
+            this->gameBoard->setDamage(defender.x, defender.y, attackDamage, glfwGetTime());
             
             //Set the damage data on the attacking square equal to damage dealt by the defender
-            this->gameBoard.setDamage(attacker.x, attacker.y, defendDamage, glfwGetTime());
+            this->gameBoard->setDamage(attacker.x, attacker.y, defendDamage, glfwGetTime());
             
             //Reset all tiles
-            for (int x = 0; x < this->gameBoard.width(); x++) {
-                for (int y = 0; y < this->gameBoard.height(x); y++) {
-                    this->gameBoard.setStyle(x, y, Regular);
+            for (int x = 0; x < this->gameBoard->width(); x++) {
+                for (int y = 0; y < this->gameBoard->height(x); y++) {
+                    this->boardInfo[x][y].TILE_STYLE = Regular;
                 }
             }
             
@@ -300,7 +281,7 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
 
 bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime) {
     //Return false if there is no creature at the designated spot to move
-    if (this->gameBoard.get(x, y).creature() == nullptr)
+    if (this->gameBoard->get(x, y).creature() == nullptr)
         return false;
     
     //Check if move goes beyond map
@@ -316,13 +297,13 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
         newX = x + 1;
         newY = y;
         
-        if (newX >= this->gameBoard.width())
+        if (newX >= this->gameBoard->width())
             return false;
     } else if (direction == SOUTH) {
         newX = x;
         newY = y + 1;
         
-        if (newY >= this->gameBoard.height(x))
+        if (newY >= this->gameBoard->height(x))
             return false;
     } else if (direction == EAST) {
         newX = x - 1;
@@ -333,17 +314,17 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
     }
     
     //Passable Check
-    if (!this->gameBoard.get(newX, newY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
+    if (!this->gameBoard->get(newX, newY).passableByCreature(*this->gameBoard->get(x, y).creature())) {
         return false;
     }
     
     //Set the direction that was found at the selected creature
-    this->gameBoard.setDirection(x, y, direction);
+    this->gameBoard->setDirection(x, y, direction);
     
     //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
     //For these directions, the creature is moved after, in the function that updates the offset data
     if (direction == NORTH || direction == EAST)
-        this->gameBoard.get(x, y).creature()->initiateMovementOffset(deltaTime);
+        this->gameBoard->get(x, y).creature()->initiateMovementOffset(deltaTime);
     
     //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
     //For these directions, the creature is moved here, and then the offset is slowly updated to follow
@@ -351,15 +332,15 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
         unsigned int tile; //The location in the data array
         
         if (direction == SOUTH) {
-            tile = (x * this->gameBoard.width()) + (y + 1); //One row below
+            tile = (x * this->gameBoard->width()) + (y + 1); //One row below
         } else if (direction == WEST) {
-            tile = ((x + 1) * this->gameBoard.width()) + y; //One tile further
+            tile = ((x + 1) * this->gameBoard->width()) + y; //One tile further
         }
         
         if (tile < NUMBER_OF_TILES) {
-            this->gameBoard.get(x, y).creature()->initiateMovementOffset(deltaTime);
+            this->gameBoard->get(x, y).creature()->initiateMovementOffset(deltaTime);
             
-            this->gameBoard.moveCreatureByDirection(x, y, direction);
+            this->gameBoard->moveCreatureByDirection(x, y, direction);
         }
     }
     return true;
@@ -373,46 +354,46 @@ void Game::incrementActivePlayer() {
 }
 
 bool Game::selectCreature(unsigned int x, unsigned int y) {
-    if (x >= this->gameBoard.width()) //No selecting happens if the x is out of range
+    if (x >= this->gameBoard->width()) //No selecting happens if the x is out of range
         return false;
     
-    if (y >= this->gameBoard.height(x)) //No selecting happens if the y is out of range
+    if (y >= this->gameBoard->height(x)) //No selecting happens if the y is out of range
         return false;
     
-    if (this->gameBoard.get(x, y).creature() == nullptr) //No selecting happens if there is no creature at the selected location
+    if (this->gameBoard->get(x, y).creature() == nullptr) //No selecting happens if there is no creature at the selected location
         return false;
     
-    Creature* creature = this->gameBoard.get(x, y).creature();
+    Creature* creature = this->gameBoard->get(x, y).creature();
     
     if (creature->directions.size() == 0) {
         this->selectedTile = glm::vec2(x, y); //Set the selected tile to this location
         
-        this->gameBoard.setStyle(x, y, Selected);
+        this->boardInfo[x][y].TILE_STYLE = Selected;
         
-        std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard.get(x, y));
+        std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard->get(x, y));
         
-        Creature creature = *this->gameBoard.get(x, y).creature();
+        Creature creature = *this->gameBoard->get(x, y).creature();
         for (int a = 0; a < reachableTiles.size(); a++) {
-            if (this->gameBoard.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                this->gameBoard.setStyle(reachableTiles[a].x(), reachableTiles[a].y(), Reachable);
+            if (this->gameBoard->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
+                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()].TILE_STYLE = Reachable;
             }
         }
         
-        std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard.get(x, y));
+        std::vector<Tile> attackableTiles = getAttackableTiles(this->gameBoard->get(x, y));
         
         for (int a = 0; a < attackableTiles.size(); a++) {
             
             //If there is a creature on the tile, controlled by an opponent, make it attackable
-            if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
+            if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
                 
                 if (creature.energy() > 0)
-                    this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
             
             //If there is a building on the tile, controlled by an opponent, make it attackable
-            if (this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
+            if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
                 
                 if (creature.energy() > 0)
-                    this->gameBoard.setStyle(attackableTiles[a].x(), attackableTiles[a].y(), AttackableAdj);
+                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
         }
     }
     
@@ -582,29 +563,29 @@ std::vector<Tile> Game::getReachableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard->get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x(), tile.y() - 1))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y()))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    if (this->gameBoard->get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x() - 1, tile.y()))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //South
-                if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                if (tile.y() < this->gameBoard->height(tile.x()) - 1) {
+                    if (this->gameBoard->get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x(), tile.y() + 1))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //West
-                if (tile.x() < this->gameBoard.width() - 1) {
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y()))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainMovementCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                if (tile.x() < this->gameBoard->width() - 1) {
+                    if (this->gameBoard->get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x() + 1, tile.y()))) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard->getTerrainMovementCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
             }
@@ -655,41 +636,41 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    if (this->gameBoard->get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->gameBoard->getTerrainAttackCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
-                    if (this->gameBoard.get(tile.x(), tile.y() - 1).occupied()) {
-                        attackableTiles.push_back(this->gameBoard.get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
+                    if (this->gameBoard->get(tile.x(), tile.y() - 1).occupied()) {
+                        attackableTiles.push_back(this->gameBoard->get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
                     }
                 }
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    if (this->gameBoard->get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard->getTerrainAttackCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
-                    if (this->gameBoard.get(tile.x() - 1, tile.y()).occupied()) {
-                        attackableTiles.push_back(this->gameBoard.get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
+                    if (this->gameBoard->get(tile.x() - 1, tile.y()).occupied()) {
+                        attackableTiles.push_back(this->gameBoard->get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
                     }
                 }
                 
                 //South
-                if (tile.y() < this->gameBoard.height(tile.x()) - 1) {
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                if (tile.y() < this->gameBoard->height(tile.x()) - 1) {
+                    if (this->gameBoard->get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->gameBoard->getTerrainAttackCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
-                    if (this->gameBoard.get(tile.x(), tile.y() + 1).occupied()) {
-                        attackableTiles.push_back(this->gameBoard.get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
+                    if (this->gameBoard->get(tile.x(), tile.y() + 1).occupied()) {
+                        attackableTiles.push_back(this->gameBoard->get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
                     }
                 }
                 
                 //West
-                if (tile.x() < this->gameBoard.width() - 1) {
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard.getTerrainAttackCost(this->gameBoard.get(tile.x(), tile.y()), this->gameBoard.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                if (tile.x() < this->gameBoard->width() - 1) {
+                    if (this->gameBoard->get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, GLint>(this->gameBoard->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->gameBoard->getTerrainAttackCost(this->gameBoard->get(tile.x(), tile.y()), this->gameBoard->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
-                    if (this->gameBoard.get(tile.x() + 1, tile.y()).occupied()) {
-                        attackableTiles.push_back(this->gameBoard.get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
+                    if (this->gameBoard->get(tile.x() + 1, tile.y()).occupied()) {
+                        attackableTiles.push_back(this->gameBoard->get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
                     }
                 }
             }
@@ -700,27 +681,27 @@ std::vector<Tile> Game::getAttackableTiles(Tile creatureTile) {
 }
 
 std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
-    if (x >= this->gameBoard.width()) {
+    if (x >= this->gameBoard->width()) {
         std::vector<GLuint> emptyVector;
         return emptyVector;
-    } else if (y >= this->gameBoard.height(x)) {
+    } else if (y >= this->gameBoard->height(x)) {
         std::vector<GLuint> emptyVector;
         return emptyVector;
-    } else if (destinationX >= this->gameBoard.width()) {
+    } else if (destinationX >= this->gameBoard->width()) {
         std::vector<GLuint> emptyVector;
         return emptyVector;
-    } else if (destinationY >= this->gameBoard.height(destinationX)) {
+    } else if (destinationY >= this->gameBoard->height(destinationX)) {
         std::vector<GLuint> emptyVector;
         return emptyVector;
-    } else if (this->gameBoard.get(x, y).creature() == nullptr) {
+    } else if (this->gameBoard->get(x, y).creature() == nullptr) {
         std::vector<GLuint> emptyVector;
         return emptyVector;
-    } else if (!this->gameBoard.get(destinationX, destinationY).passableByCreature(*this->gameBoard.get(x, y).creature())) {
+    } else if (!this->gameBoard->get(destinationX, destinationY).passableByCreature(*this->gameBoard->get(x, y).creature())) {
         std::vector<GLuint> emptyVector;
         return emptyVector;
     }
     
-    Creature creature = *this->gameBoard.get(x, y).creature();
+    Creature creature = *this->gameBoard->get(x, y).creature();
     
     std::queue<std::vector<std::pair<GLuint, GLuint> > > possiblePaths;
     
@@ -745,7 +726,7 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
             
             //North
             if (tile.second > 0) {
-                if (this->gameBoard.get(tile.first, tile.second - 1).passableByCreature(creature)) {
+                if (this->gameBoard->get(tile.first, tile.second - 1).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second - 1));
                     possiblePaths.push(nextPath);
@@ -754,7 +735,7 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
             
             //East
             if (tile.first > 0) {
-                if (this->gameBoard.get(tile.first - 1, tile.second).passableByCreature(creature)) {
+                if (this->gameBoard->get(tile.first - 1, tile.second).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first - 1, tile.second));
                     possiblePaths.push(nextPath);
@@ -762,8 +743,8 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
             }
             
             //South
-            if (tile.second < this->gameBoard.height(tile.first) - 1) {
-                if (this->gameBoard.get(tile.first, tile.second + 1).passableByCreature(creature)) {
+            if (tile.second < this->gameBoard->height(tile.first) - 1) {
+                if (this->gameBoard->get(tile.first, tile.second + 1).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first, tile.second + 1));
                     possiblePaths.push(nextPath);
@@ -771,8 +752,8 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
             }
             
             //West
-            if (tile.first < this->gameBoard.width() - 1) {
-                if (this->gameBoard.get(tile.first + 1, tile.second).passableByCreature(creature)) {
+            if (tile.first < this->gameBoard->width() - 1) {
+                if (this->gameBoard->get(tile.first + 1, tile.second).passableByCreature(creature)) {
                     std::vector<std::pair<GLuint, GLuint> > nextPath = path;
                     nextPath.push_back(std::pair<GLuint, GLuint>(tile.first + 1, tile.second));
                     possiblePaths.push(nextPath);
@@ -804,4 +785,25 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
     }
     
     return directions;
+}
+
+glm::vec3 Game::tileColor(unsigned int x, unsigned int y) {
+    if (x >= this->gameBoar.width())
+        throw std::range_error("X out of range");
+    if (y >= this->gameBoard.height(x))
+        throw std::range_error("Y out of range");
+    
+    Style style = this->boardInfo[x][y].TILE_STYLE;
+    
+    if (style == Regular)
+        return WHITE;
+    else if (style == Selected)
+        return GREY
+    else if (style == AttackableAdj)
+        return RED;
+    else if (style == Reachable)
+        return GREEN;
+    
+    //Something went wrong. Return White to have an unaltered color
+    return WHITE;
 }

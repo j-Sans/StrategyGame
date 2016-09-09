@@ -22,7 +22,7 @@ bool mouseUp = false;
 bool escClicked = false;
 
 //Constructor without geometry shader
-Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
+Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> >* board) : game(&board) {
     this->initWindow(); //Create the GLFW window and set the window property
     this->setData(true, true, true, true, true, true, true); //Set all of the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data

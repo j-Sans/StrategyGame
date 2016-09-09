@@ -38,26 +38,6 @@
 #define NO_BUILDING 0
 #define TOWER_BUILDING 1 //Simple test building type using a tower image
 
-enum Color {
-    White,
-    Grey, //Revealed
-    Red,
-    Yellow,
-    Green,
-    Cyan,
-    Blue,
-    Purple,
-    BlueGrey, //Selection
-};
-
-enum Style {
-    Regular,
-    Selected,
-    OpenAdj,
-    AttackableAdj,
-    Reachable,
-};
-
 class Tile {
 public:
     //Constructors
@@ -230,8 +210,6 @@ private:
     
     //Tile info
     int tileTerrain;
-    Color tileColor = White;
-    Style tileStyle = Regular;
     
     //The damage to be shown on the creature at this tile.
     unsigned int tileDamage;

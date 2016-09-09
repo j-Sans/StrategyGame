@@ -8,6 +8,8 @@
 
 #include "ClientSocket.hpp"
 
+ClientSocket::ClientSocket() {}
+
 void ClientSocket::setSocket(std::string hostName, int portNum) {
     this->portNumber = portNum;
     

@@ -7,3 +7,7 @@
 //
 
 #include "Player.hpp"
+
+Player::Player(Board* gameBoard) : game(gameBoard) {
+
+}

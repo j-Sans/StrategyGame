@@ -9,15 +9,17 @@
 #ifndef Player_hpp
 #define Player_hpp
 
-#include "Macros.h"
-
 #include <string>
+
+#include "Macros.h"
+#include "Game.hpp"
 
 class Player {
 public:
+    Player(Board* gameBoard);
     
+    Game game;
 private:
-    const std::string name;
     unsigned int mana;
 };
 

@@ -32,6 +32,8 @@
 //Local includes
 #include "Visualizer.hpp"
 
+#include "Host.hpp"
+
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)time(NULL));

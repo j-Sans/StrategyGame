@@ -21,7 +21,6 @@
 
 //Local includes
 #include "Board.hpp"
-#include "Player.hpp"
 
 //Preprocessor Directives
 #define BOARD_WIDTH 12
@@ -32,12 +31,41 @@
 #define NO_SELECTION glm::ivec2(-1, -1)
 #define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
 
-#define MOVEMENT_CONSOLE_OUTPUT
+#define TILE_STYLE first
+#define TILE_VISION second
+
+#define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
+#define GREY glm::vec3(0.625f, 0.625f, 0.625f)
+#define RED glm::vec3(1.0f, 0.625f, 0.625f)
+#define YELLOW glm::vec3(1.0f, 1.0f, 0.5f)
+#define GREEN glm::vec3(0.62f, 1.0f, 0.625f)
+#define CYAN glm::vec3(0.625f, 1.0f, 1.0f)
+#define BLUE glm::vec3(0.625f, 0.625f, 1.0f)
+#define PURPLE glm::vec3(0.5f, 0.1f, 0.9f)
+
+enum Color {
+    White,
+    Grey, //Revealed
+    Red,
+    Yellow,
+    Green,
+    Cyan,
+    Blue,
+    Purple,
+    BlueGrey, //Selection
+};
+
+enum Style {
+    Regular,
+    Selected,
+    AttackableAdj,
+    Reachable,
+};
 
 class Game {
 public:
     //Constructor
-    Game(Board board);
+    Game(Board* board);
     
     //Public properties
     
@@ -47,11 +75,6 @@ public:
      * Distance formula using Pythagorean Theorem
      */
     static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
-    
-    /*!
-     * A function to advance to the next turn.
-     */
-    void nextTurn();
     
     /*!
      * A function to set the selected tile. If the x or y is out of range and the input isn't NO_SELECTION or INTERFACE_BOX_SELECTION, then nothing will happen and false will be returned. To pass NO_SELECTION or other glm::ivec2 macros as arguments, do this: selectTile(NO_SELECTION.x, NO_SELECTION.y);
@@ -101,11 +124,6 @@ public:
     Board* board();
     
     /*!
-     * @return The current active player.
-     */
-    unsigned int activePlayer();
-    
-    /*!
      * @return The current selected tile, in the form of a glm::ivec2. The coordinates are in terms of board coordinates.
      */
     glm::ivec2 tileSelected();
@@ -115,22 +133,14 @@ private:
     //Private properties
     
     //Board data
-    Board gameBoard;
+    Board *gameBoard;
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
-    //Player and turn data
-    Player players[NUMBER_OF_PLAYERS];
-    unsigned int currentActivePlayer = 0;
-    unsigned int turn = 1;
+    std::vector<std::vector<std::pair<Style, bool> > > boardInfo; //Contains info on the styles and visibilty of tiles. With vision not being implemented, the bool is unused
     
     //Private member functions
     
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
-    
-    /*!
-     * Changes the active player to the next one in the turn cycle.
-     */
-    void incrementActivePlayer();
     
     /*!
      * A function to select a creature and and make nearby tiles properly stylized (reachable ones and attackable, for instance). If an error occurs (see below) no error is thrown, instead false is returned and nothing happens.
@@ -161,6 +171,10 @@ private:
     std::vector<Tile> getAttackableTiles(Tile creatureTile);
     
     std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
+    
+    //Private get functions
+    
+    glm::vec3 tileColor(unsigned int x, unsigned int y);
     
 };
 
