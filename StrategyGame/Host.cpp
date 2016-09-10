@@ -39,6 +39,8 @@ void Host::update() {
      [1]: Current mouse position's y coordinate on the board.
             -1 for either [0] or [1] represents that no tile is being selected.
      [2]: Whether the mouse is down or not. 0 represents up (false), and 1 represents down (true). Everything else converts to down.
+     
+     Any other input should be done here. That hasn't been implimented.
      */
     
     glm::ivec2 selectedTile = glm::ivec2(clientInfo[0], clientInfo[1]);
