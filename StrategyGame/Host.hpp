@@ -25,21 +25,24 @@ public:
     //Constructor
     Host(unsigned int numberOfPlayers, int portNum, Board gameBoard);
     
-    void update();
+    void update(bool mouseDown, glm::vec2 selectedTile);
     
 private:
     //Private properties
     
+    //Time
     float programStartTime = clock() / CLOCKS_PER_SEC;
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     
+    //Turn
     unsigned int activePlayer = 0;
     
+    //Clients
     std::vector<ServerSocket> sockets;
     
+    //Game
     std::vector<Player> players;
-    
     Board board;
     
     //Private member functions

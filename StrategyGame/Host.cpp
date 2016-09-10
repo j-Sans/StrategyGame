@@ -26,13 +26,13 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     }
 }
 
-void Host::update() {
+void Host::update(bool mouseDown, glm::vec2 selectedTile) {
     GLfloat currentFrame = (clock() / CLOCKS_PER_SEC) - this->programStartTime;
     this->deltaTime = currentFrame - this->lastFrame;
     this->lastFrame = currentFrame;
     
-//    this->players[this->activePlayer].game.updateSelected(<#bool *mouseDown#>, <#glm::vec2 cursorPos#>, <#glm::ivec2 windowSize#>, <#glm::vec4 *tileCenters#>);
-    this->players[this->activePlayer].game.updateCreatures(this->deltaTime);
+    this->players[this->activePlayer].game.updateSelected(mouseDown, selectedTile, this->activePlayer);
+    this->players[this->activePlayer].game.updateCreatures(this->deltaTime, this->activePlayer);
 }
 
 void Host::incrementActivePlayer() {

@@ -26,7 +26,7 @@ GLfloat Game::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
 }
 
-bool Game::selectTile(int x, int y) {
+bool Game::selectTile(int x, int y, unsigned int activePlayer) {
     glm::ivec2 passedInTile = glm::ivec2(x, y);
     
     if (passedInTile == NO_SELECTION) {
@@ -37,7 +37,7 @@ bool Game::selectTile(int x, int y) {
         
         //If there is a creature at that spot, properly select it. Otherwise just set it normally
         if (this->gameBoard->get(x, y).creature() != nullptr)
-            this->selectCreature(x, y);
+            this->selectCreature(x, y, activePlayer);
         else
             this->selectedTile = passedInTile;
         
@@ -58,7 +58,7 @@ glm::ivec2 Game::tileSelected() {
     return this->selectedTile;
 }
 
-void Game::updateCreatures(float deltaTime) {
+void Game::updateCreatures(float deltaTime, unsigned int activePlayer) {
     for (int x = 0; x < this->gameBoard->width(); x++) {
         for (int y = 0; y < this->gameBoard->height(x); y++) {
             
@@ -80,7 +80,7 @@ void Game::updateCreatures(float deltaTime) {
                                 creatureLoc.y -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                this->selectCreature(x, y - 1);
+                                this->selectCreature(x, y - 1, activePlayer);
 #endif
                             }
                         } else if (direction == EAST) {
@@ -88,7 +88,7 @@ void Game::updateCreatures(float deltaTime) {
                                 creatureLoc.x -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                this->selectCreature(x - 1, y);
+                                this->selectCreature(x - 1, y, activePlayer);
 #endif
                             }
                         }
@@ -99,7 +99,7 @@ void Game::updateCreatures(float deltaTime) {
                     if (creature->incrementOffset(deltaTime)) {
                         
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                        this->selectCreature(x, y);
+                        this->selectCreature(x, y, activePlayer);
 #endif
                     }
                 }
@@ -119,18 +119,8 @@ void Game::updateCreatures(float deltaTime) {
     }
 }
 
-void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES], unsigned int activePlayer) {
-    glm::ivec2 mousePos;
-    
-    mousePos = mouseTile(cursorPos, windowSize, tileCenters);
-    
-    if (mousePos == INTERFACE_BOX_SELECTION) {
-        //Don't alter the selected tile if the interface box has been clicked
-        
-        //Make mouseDown true again so the interface box can check the mouse click location
-        *mouseDown = true;
-        
-    } else if (mousePos == NO_SELECTION) {
+void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer) {
+    if (mousePos == NO_SELECTION) {
         //Reset all tiles if the mouse clicked out of the screen
         for (int x = 0; x < this->gameBoard->width(); x++) {
             for (int y = 0; y < this->gameBoard->height(x); y++) {
@@ -271,7 +261,7 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
             //If the attacker died, nothing will happen and the function will return false
-            this->selectCreature(attacker.x, attacker.y);
+            this->selectCreature(attacker.x, attacker.y, activePlayer);
 #endif
         }
     }

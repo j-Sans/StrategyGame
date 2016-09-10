@@ -71,26 +71,26 @@ public:
      * @param y An int representing the y location of the tile on the board.
      *
      * @return Whether the tile was successfully selected.
+     * @param activePlayer An unsigned int representing the index of the active player.
      */
-    bool selectTile(int x, int y);
+    bool selectTile(int x, int y, unsigned int activePlayer);
     
     /*!
      * A function that updates the offset of each creature to cause movement animation. This should be called once every frame.
      *
      * @param deltaTime The time since the last fram, to multiply by the velocity to get a constant distance. This keeps animation speed constant on different machines.
+     * @param activePlayer An unsigned int representing the index of the active player.
      */
-    void updateCreatures(float deltaTime);
+    void updateCreatures(float deltaTime, unsigned int activePlayer);
     
     /*!
      * A function to update the selected tile based on mouse clicks.
      *
-     * @param mouseDown A pointer to the boolean representing if the mouse is down. Note: This function may alter that bool based on if the mouse click has been dealt with.
-     * @param cursorPos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.
-     * @param windowSize A glm::ivec2 representing the window size, in screen coordinates. Can be obtained from glfwGetWindowSize.
-     * @param tileCenters An array of glm::vec4 of length NUMBER_OF_TILES representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
+     * @param mouseDown A boolean representing if the mouse is down. 
+     * @param mousePos A glm::ivec2 representing the tile the mouse is currently at. This should be calculated on the client side and sent to the server.
      * @param activePlayer An unsigned int representing the index of the active player.
      */
-    void updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES], unsigned int activePlayer);
+    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
