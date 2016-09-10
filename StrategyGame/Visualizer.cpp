@@ -103,6 +103,32 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 void Visualizer::render() {
+    std::string clientInfo;
+    
+    glm::dvec2 mousePos;
+    glm::ivec2 windowSize;
+    
+    glfwGetCursorPos(this->gameWindow, &mousePos.x, &mousePos.y);
+    glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+    
+    glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+    
+    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+        tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+    }
+    
+    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
+    
+    clientInfo.push_back(mouseTile.x);
+    clientInfo.push_back(mouseTile.y);
+    clientInfo.push_back(mouseDown ? 1 : 0);
+    
+    this->socket.send(clientInfo);
+    
+    std::string boardInfo = this->socket.receive();
+    
+    this->updateBuffers(boardInfo);
     
     GLfloat currentFrame = glfwGetTime();
     this->deltaTime = currentFrame - this->lastFrame;

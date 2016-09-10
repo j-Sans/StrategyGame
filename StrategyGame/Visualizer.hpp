@@ -257,7 +257,7 @@ private:
     /*!
      * A function to update all of the buffers that need to be updated. Should be called every frame.
      */
-    void updateBuffers();
+    void updateBuffers(boardInfo);
     
     /*!
      * Set the correct interfaces to render based on the selected tile. Should be called every frame.
@@ -293,6 +293,19 @@ private:
      * @param mouseDown A bool representing if the mouse is currently clicking.
      */
     void renderSettingsMenu(bool mouseUp, bool mouseDown);
+    
+    /*!
+     * A function to calculate the tile closest to the mouse location at any given point in time.
+     * (-1, -1) is returned if the selection was outside of the board.
+     * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
+     *
+     * @param mousePos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.
+     * @param windowSize A glm::ivec2 representing the window size, in screen coordinates. Can be obtained from glfwGetWindowSize.
+     * @param tileCenters An array of glm::vec4 of length NUMBER_OF_TILES representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
+     *
+     * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
+     */
+    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
     
     /*!
      * A function GLFW can call when a key event occurs.
