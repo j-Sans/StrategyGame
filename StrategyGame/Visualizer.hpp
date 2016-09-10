@@ -34,9 +34,9 @@
 
 //Local includes
 #include "Shader.hpp"
+#include "ClientSocket.hpp"
 #include "Texture.hpp"
 #include "Font.hpp"
-#include "Game.hpp"
 
 #include "Interface.hpp"
 
@@ -49,7 +49,7 @@ struct interfaceStat {
     
     interfaceStat() {} //So that it can be constructed at a later point within the visualizer class
     
-    interfaceStat(GLuint interfaceX, GLuint interfaceY, GLuint interfaceWidth, GLuint interfaceHeight) {
+    interfaceStat(GLuint interfaceX, GLuint interfaceY, GLuint interfaceWidth, GLuint interfaceHeight, std::string hostName, int portNum) {
         this->x = interfaceX;
         this->y = interfaceY;
         this->width = interfaceWidth;
@@ -64,21 +64,11 @@ public:
     /*!
      * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
      *
-     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
-     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
-     * @param board A 2D vector of Tiles representing the game board.
+     * @param vertexPath A string which is the path to the text file that contains vertex shader GLSL code.
+     * @param geometryPath A string which is the path to the text file that contains geometry shader GLSL code.
+     * @param fragmentPath A string which is the path to the text file that contains fragment shader GLSL code.
      */
-    Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board);
-    
-    /*!
-     * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
-     *
-     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
-     * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
-     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
-     * @param board A 2D vector of Tiles representing the game board.
-     */
-    Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board);
+    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
     
     //Destructor
     
@@ -103,11 +93,6 @@ public:
      * A limiting factor preventing the camera from moving too far off screen.
      */
     const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
-    
-    /*!
-     * The game board, containing a 2D vector of Tile objects.
-     */
-    Game game;
     
     //Public member functions
     
@@ -171,6 +156,9 @@ private:
     GLint damageData[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
     GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
     GLint buildingData[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
+    
+    //Socket
+    ClientSocket socket;
     
     //Textures
     std::vector<Texture> textures;

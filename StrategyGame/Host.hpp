@@ -28,7 +28,7 @@ public:
      *
      * @param numberOfPlayers The number of players with which to initialize the game.
      * @param portNum The port on this system (the server side) where to start taking connections. Succeeding ports may also be used, depending on implementation and number of players.
-     * @param gameBoard A board to be used as the game board. Passed by value, so the game board will actually be stored within the host class. 
+     * @param gameBoard A board to be used as the game board. Passed by value, so the game board will actually be stored within the host class.
      */
     Host(unsigned int numberOfPlayers, int portNum, Board gameBoard);
     

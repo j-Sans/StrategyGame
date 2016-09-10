@@ -21,77 +21,17 @@ bool mouseUp = false;
 //A boolean representing if the escape button has been clicked, for use with the settings menu. This boolean is set in the key callback function and is reset when used.
 bool escClicked = false;
 
-//Constructor without geometry shader
-Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> >* board) : game(&board) {
+//Constructor
+Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, std::string hostName, int portNum) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true, true, true, true); //Set all of the data arrays with information from the board
+    this->setData(); //Set the data arrays with information from the board
     this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
-    this->gameShader = Shader(vertexPath, fragmentPath);
-    
-    this->font = Font(FONT_PATH);
-    
-    this->setInterface();
-    this->updateInterfaces();
-    
-    //Allow for transparency
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    //Allow for multiple windows
-    glEnable(GL_SCISSOR_TEST);
-    
-    //Load textures
-    //Exception only thrown if there are 32 textures already present
     try {
-        this->loadTexture("Resources/grass.jpg", "grassTex");
+        this->socket.setSocket(hostName, portNum);
     } catch (std::exception e) {
-        std::cout << "Error loading grass texture: " << e.what();
+        std::cout << "Error setting socket: " << e.what() << std::endl;
     }
-    try {
-        this->loadTexture("Resources/mountain.png", "mountainTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading mountain texture: " << e.what();
-    }
-    try {
-        this->loadTexture("Resources/forest.png", "forestTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading forest texture: " << e.what();
-    }
-    try {
-        this->loadTexture("Resources/stick_figure.png", "stickFigureTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading stick figure texture: " << e.what();
-    }
-    try {
-        this->loadTexture("Resources/ScoutPlaceholder.png", "scoutPTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading scout placeholder texture: " << e.what();
-    }
-    try {
-        this->loadTexture("Resources/ArcherPlaceholder.png", "archerPTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading archer placeholder texture: " << e.what();
-    }
-    try {
-        this->loadTexture("Resources/tower.png", "towerTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading numbers texture: " << e.what();
-    }
-    try {
-        this->loadTexture("Resources/circle.png", "circleTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading circle texture: " << e.what();
-    }
-    
-    this->presetTransformations();
-}
-
-//Constructor with geometry shader
-Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, const GLchar* fragmentPath, std::vector<std::vector<Tile> > board) : game(board) {
-    this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(true, true, true, true, true, true, true); //Set the data arrays with information from the board
-    this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
     
     glm::ivec2 windowSize;
     glm::ivec2 framebufferSize;
@@ -99,7 +39,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
     glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
     glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
     
-    this->gameShader = Shader(vertexPath, geometryPath, fragmentPath);
+    this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
     this->font = Font(FONT_PATH);
     
@@ -163,6 +103,7 @@ Visualizer::Visualizer(const GLchar* vertexPath, const GLchar* geometryPath, con
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 void Visualizer::render() {
+    
     GLfloat currentFrame = glfwGetTime();
     this->deltaTime = currentFrame - this->lastFrame;
     this->lastFrame = currentFrame;
@@ -385,6 +326,123 @@ void Visualizer::initWindow() {
     
     //Set mouse button click callback function
     glfwSetMouseButtonCallback(this->gameWindow, this->mouseButtonCallback);
+}
+
+//Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
+void Visualizer::setData() {
+    //Distance between each seed point
+    GLfloat pointDistance = 0.2f;
+    
+    GLfloat locationOfFirstPoint = 0.0f;
+    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
+    
+    //Vertex data
+    GLuint numberOfIndices = NUMBER_OF_TILES * INDICES_PER_TILES;
+    
+    GLuint index = 0;
+    
+    GLfloat vertices[numberOfIndices];
+    
+    for (GLuint x = 0; x < this->boardWidth; x++) {
+        for (GLuint y = 0; y < this->boardHeight; y++) {
+            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+                
+                //Sets the point location based on the location in the board and on the modifiers above.
+                vertices[index] = locationOfFirstPoint - (x * pointDistance);
+                index++;
+                
+                vertices[index] = locationOfFirstPoint - (y * pointDistance);
+                index++;
+            }
+        }
+    }
+    
+    for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
+        this->vertexData[a] = vertices[a];
+    }
+    
+    //Terrain and creature data. One for each tile
+    numberOfIndices = NUMBER_OF_TILES;
+    
+    GLint terrains[numberOfIndices];
+    GLint creatures[numberOfIndices];
+    GLint directions[numberOfIndices];
+    GLint creatureControllers[numberOfIndices];
+    GLfloat colors[3 * numberOfIndices];
+    GLint buildings[numberOfIndices];
+    GLint buildingControllers[numberOfIndices];
+    
+    index = 0;
+    
+    for (GLuint x = 0; x < this->boardWidth; x++) {
+        for (GLuint y = 0; y < this->boardHeight; y++) {
+            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
+                if (setTerrainData)
+                    //Gets the terrain of the tile
+                    terrains[index] = this->game.board()->get(x, y).terrain();
+                
+                if (setCreatureData) {
+                    //Gets the creature on the tile
+                    creatures[index] = this->game.board()->get(x, y).creatureType();
+                    
+                    //Gets the direction if there is a creature there
+                    if (this->game.board()->get(x, y).creature() != nullptr) {
+                        directions[index] = this->game.board()->get(x, y).creature()->direction();
+                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
+                    } else {
+                        directions[index] = NORTH;
+                        creatureControllers[index] = 0;
+                    }
+                }
+                if (setColorData) {
+                    //Gets the color alteration of the tile
+                    colors[3 * index] = this->game.board()->get(x, y).color().x;
+                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
+                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
+                }
+                if (setBuildingData) {
+                    //Gets the building of the tile
+                    buildings[index] = this->game.board()->get(x, y).buildingType();
+                    
+                    //Gets the direction if there is a creature there
+                    if (this->game.board()->get(x, y).building() != nullptr) {
+                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
+                    } else {
+                        buildingControllers[index] = 0;
+                    }
+                }
+                
+                //Increment
+                index++;
+            }
+        }
+    }
+    
+    for (int a = 0; a < NUMBER_OF_TILES; a++) {
+        if (setTerrainData)
+            this->terrainData[a] = terrains[a];
+        if (setCreatureData) {
+            this->creatureData[3 * a] = creatures[a];
+            this->creatureData[(3 * a) + 1] = directions[a];
+            this->creatureData[(3 * a) + 2] = creatureControllers[a];
+        }
+        if (setColorData) {
+            this->colorData[3 * a] = colors[3 * a];
+            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
+            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
+        }
+        if (setDamageData) {
+            this->damageData[a] = 0;
+        }
+        if (setOffsetData) {
+            this->offsetData[a] = 0;
+        }
+        if (setBuildingData) {
+            this->buildingData[2 * a] = buildings[a];
+            this->buildingData[(2 * a) + 1] = buildingControllers[a];
+        }
+    }
 }
 
 //Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
