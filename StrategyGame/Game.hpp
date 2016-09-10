@@ -88,8 +88,9 @@ public:
      * @param cursorPos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.
      * @param windowSize A glm::ivec2 representing the window size, in screen coordinates. Can be obtained from glfwGetWindowSize.
      * @param tileCenters An array of glm::vec4 of length NUMBER_OF_TILES representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
+     * @param activePlayer An unsigned int representing the index of the active player.
      */
-    void updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
+    void updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES], unsigned int activePlayer);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
@@ -135,10 +136,11 @@ private:
      *
      * @param x An unsigned int representing the x location of the creature on the board.
      * @param y An unsigned int representing the y location of the creature on the board.
+     * @param activePlayer An unsigned int representing the index of the active player.
      *
      * @return Whether the creature was successfully selected or if an error prevented this. Errors include if x or y is out of range, or if there is no creature at the designated spot.
      */
-    bool selectCreature(unsigned int x, unsigned int y);
+    bool selectCreature(unsigned int x, unsigned int y, unsigned int activePlayer);
     
     /*!
      * A function that gets all of the tiles that a creature can reach.

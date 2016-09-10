@@ -654,17 +654,6 @@ void Board::deleteBuilding(unsigned int x, unsigned int y) {
     //If no building is deleted in the loop, then there was no creature at that location, which is also fine.
 }
 
-void Board::setStyle(unsigned int x, unsigned int y, Style style) {
-    if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
-    }
-    if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
-    }
-    
-    this->gameBoard[x][y].setStyle(style);
-}
-
 bool Board::setDirection(unsigned int x, unsigned int y, unsigned int direction) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range");

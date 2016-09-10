@@ -146,16 +146,6 @@ public:
     void deleteBuilding(unsigned int x, unsigned int y);
     
     /*!
-     * Set a color in the designated spot on the board.
-     * Possible errors include if the coordinates are outside of the range of the board.
-     *
-     * @param x The x index of the coordinate in the board.
-     * @param y The y index of the coordinate in the board.
-     * @param style A style to be set in the board at the designated spot. Possible colors include Regular, Selected, OpenAdj, and AttackableAdj.
-     */
-    void setStyle(unsigned int x, unsigned int y, Style style);
-    
-    /*!
      * Set a direction for the creature at the designated spot on the board.
      * Possible errors include if the coordinates are outside of the range of the board.
      *

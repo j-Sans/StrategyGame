@@ -119,7 +119,7 @@ void Game::updateCreatures(float deltaTime) {
     }
 }
 
-void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]) {
+void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES], unsigned int activePlayer) {
     glm::ivec2 mousePos;
     
     mousePos = mouseTile(cursorPos, windowSize, tileCenters);
@@ -168,7 +168,7 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         
         //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
         
-        if (this->gameBoard->get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard->get(mousePos.x, mousePos.y).creature()->controller() == currentActivePlayer) {
+        if (this->gameBoard->get(mousePos.x, mousePos.y).creature() != nullptr && this->gameBoard->get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
             std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard->get(mousePos.x, mousePos.y));
             
             Creature creature = *this->gameBoard->get(mousePos.x, mousePos.y).creature();
@@ -183,13 +183,13 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
             for (int a = 0; a < attackableTiles.size(); a++) {
                 
                 //If there is a creature on the tile, controlled by an opponent, make it attackable
-                if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
+                if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer)
                     
                     if (creature.energy() > 0)
                         this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
                 
                 //If there is a building on the tile, controlled by an opponent, make it attackable
-                if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
+                if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer)
                     
                     if (creature.energy() > 0)
                         this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
@@ -224,7 +224,7 @@ void Game::updateSelected(bool *mouseDown, glm::vec2 cursorPos, glm::ivec2 windo
         
         //Create the creature from the building
         else if (this->gameBoard->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) {
-            Creature newCreature(mousePos.x, mousePos.y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, this->currentActivePlayer);
+            Creature newCreature(mousePos.x, mousePos.y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, activePlayer);
             
             if (this->gameBoard->get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
                 this->gameBoard->setCreature(mousePos.x, mousePos.y, newCreature);
@@ -346,14 +346,7 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
     return true;
 }
 
-void Game::incrementActivePlayer() {
-    this->currentActivePlayer++;
-    
-    if (this->currentActivePlayer >= NUMBER_OF_PLAYERS)
-        this->currentActivePlayer = 0;
-}
-
-bool Game::selectCreature(unsigned int x, unsigned int y) {
+bool Game::selectCreature(unsigned int x, unsigned int y, unsigned int activePlayer) {
     if (x >= this->gameBoard->width()) //No selecting happens if the x is out of range
         return false;
     
@@ -384,13 +377,13 @@ bool Game::selectCreature(unsigned int x, unsigned int y) {
         for (int a = 0; a < attackableTiles.size(); a++) {
             
             //If there is a creature on the tile, controlled by an opponent, make it attackable
-            if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->currentActivePlayer)
+            if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer)
                 
                 if (creature.energy() > 0)
                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
             
             //If there is a building on the tile, controlled by an opponent, make it attackable
-            if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->currentActivePlayer)
+            if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer)
                 
                 if (creature.energy() > 0)
                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
@@ -788,9 +781,9 @@ std::vector<GLuint> Game::getPath(GLuint x, GLuint y, GLuint destinationX, GLuin
 }
 
 glm::vec3 Game::tileColor(unsigned int x, unsigned int y) {
-    if (x >= this->gameBoar.width())
+    if (x >= this->gameBoard->width())
         throw std::range_error("X out of range");
-    if (y >= this->gameBoard.height(x))
+    if (y >= this->gameBoard->height(x))
         throw std::range_error("Y out of range");
     
     Style style = this->boardInfo[x][y].TILE_STYLE;
@@ -798,7 +791,7 @@ glm::vec3 Game::tileColor(unsigned int x, unsigned int y) {
     if (style == Regular)
         return WHITE;
     else if (style == Selected)
-        return GREY
+        return GREY;
     else if (style == AttackableAdj)
         return RED;
     else if (style == Reachable)
