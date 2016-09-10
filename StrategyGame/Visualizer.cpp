@@ -137,11 +137,7 @@ void Visualizer::render() {
 
     this->updateBuffers(boardInfo);
     
-    
-    
-    
-    
-    
+    this->updateInterfaces();
     
     GLfloat currentFrame = glfwGetTime();
     this->deltaTime = currentFrame - this->lastFrame;
@@ -168,53 +164,30 @@ void Visualizer::render() {
         tex->use(this->gameShader);
     }
     
-    //If the mouse was clicked, set the color of the tile that was clicked
-    if (mouseDown) {
-        //Set mouseDown to false because this next function deals with the mouse and updates accordingly.
-        mouseDown = false;
-        
-        glm::dvec2 cursorPos;
-        glm::ivec2 windowSize;
-        
-        glfwGetCursorPos(this->gameWindow, &cursorPos.x, &cursorPos.y);
-        glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
-        
-        glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
-        
-        for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
-            //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-            tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
-        }
+//    if (!this->showSettings)
+//        this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
+//    
+//    this->updateInterfaces();
+//    
+//    //If the mouse clicks outside of the settings menu when it's open, close the menu
+//    if (this->showSettings) {
+//        
+//        glm::ivec2 framebufferSize;
+//        
+//        glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
+//        
+//        glm::vec2 cursorPosFramebufferCoords = cursorPos * (glm::dvec2)framebufferSize / (glm::dvec2)windowSize;
+//        
+//        if (cursorPosFramebufferCoords.x < this->settingsMenuStats.x || cursorPosFramebufferCoords.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPosFramebufferCoords.y < this->settingsMenuStats.y || cursorPosFramebufferCoords.y > this->settingsMenuStats.y + this->settingsMenuStats.height) {
+//            this->showSettings = false;
+//        }
+//    }
+//    
+//    if (escClicked) { //When escape is clicked change whether the settings menu is shown or not
+//        this->showSettings = !this->showSettings;
+//        escClicked = false;
+//    }
     
-        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
-        if (!this->showSettings)
-            this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
-        
-        this->updateInterfaces();
-        
-        //If the mouse clicks outside of the settings menu when it's open, close the menu
-        if (this->showSettings) {
-            
-            glm::ivec2 framebufferSize;
-            
-            glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
-            
-            glm::vec2 cursorPosFramebufferCoords = cursorPos * (glm::dvec2)framebufferSize / (glm::dvec2)windowSize;
-            
-            if (cursorPosFramebufferCoords.x < this->settingsMenuStats.x || cursorPosFramebufferCoords.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPosFramebufferCoords.y < this->settingsMenuStats.y || cursorPosFramebufferCoords.y > this->settingsMenuStats.y + this->settingsMenuStats.height) {
-                this->showSettings = false;
-            }
-        }
-    }
-    
-    this->game.updateCreatures(this->deltaTime);
-    
-    //Update the buffers that need updating.
-    this->updateBuffers();
-    
-    this->updateInterfaces();
-    
-    //Set the camera-translation vector based on arrowkey inputs
     this->moveCamera();
     
     //Reset the view matrix
@@ -229,7 +202,6 @@ void Visualizer::render() {
     glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
     glBindVertexArray(0);
     
-    //This doesn't work yet
     this->renderDamageText();
     
     //Render the left, bottom, and right interfaces
@@ -255,13 +227,8 @@ void Visualizer::render() {
         }
     }
     
-    if (escClicked) { //When escape is clicked change whether the settings menu is shown or not
-        this->showSettings = !this->showSettings;
-        escClicked = false;
-    }
-    
-    if (this->showSettings)
-        this->renderSettingsMenu(mouseUp, mouseDown);
+//    if (this->showSettings)
+//        this->renderSettingsMenu(mouseUp, mouseDown);
     
     //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
     if (mouseDown)
@@ -270,6 +237,44 @@ void Visualizer::render() {
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
 }
+    
+    
+    
+    
+    
+    /*
+    
+    //If the mouse was clicked, set the color of the tile that was clicked
+    if (mouseDown) {
+        //Set mouseDown to false because this next function deals with the mouse and updates accordingly.
+        mouseDown = false;
+        
+        glm::dvec2 cursorPos;
+        glm::ivec2 windowSize;
+        
+        glfwGetCursorPos(this->gameWindow, &cursorPos.x, &cursorPos.y);
+        glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+        
+        glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+        
+        for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+            //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+            tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+        }
+    
+        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
+        
+    }
+    
+    this->game.updateCreatures(this->deltaTime);
+    
+    //Update the buffers that need updating.
+    this->updateBuffers();
+    
+    this->updateInterfaces();
+    
+    //Set the camera-translation vector based on arrowkey inputs
+   */
 
 //Close the window
 void Visualizer::closeWindow() {
@@ -771,13 +776,15 @@ void Visualizer::presetTransformations() {
 //A function to update all of the buffers that need to be updated. Should be called every frame.
 void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     
+    //The data arrays that hold ints are converted implicitly directly from chars
+    //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
     for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
-        this->terrainData[tile] = boardInfo[Terrain];
-        this->creatureData[tile] = boardInfo[Creature];
-        this->colorData[tile] = boardInfo[Color];
-        this->damageData[tile] = boardInfo[Damage];
-        this->offsetData[tile] = boardInfo[Offset];
-        this->buildingData[tile] = boardInfo[Building];
+        this->terrainData[tile] = boardInfo[Terrain]; //char -> int
+        this->creatureData[tile] = boardInfo[Creature]; //char -> int
+        this->colorData[tile] = boardInfo[Color] / 100; //char / 100 -> int
+        this->damageData[tile] = boardInfo[Damage]; //char -> int
+        this->offsetData[tile] = boardInfo[Offset] / 100; //char / 100 -> int
+        this->buildingData[tile] = boardInfo[Building]; //char -> int
     }
     
     //First we bind the VAO
@@ -835,10 +842,9 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
-    
-    
-    
-    
+}
+
+    /*
     
     
     
@@ -960,7 +966,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
-}
+}*/
 
 void Visualizer::updateInterfaces() {
     glm::ivec2 selectedTile = this->game.tileSelected();
