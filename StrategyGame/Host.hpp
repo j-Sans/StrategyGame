@@ -25,7 +25,7 @@ public:
     //Constructor
     Host(unsigned int numberOfPlayers, int portNum, Board gameBoard);
     
-    void update(bool mouseDown, glm::vec2 selectedTile);
+    void update();
     
 private:
     //Private properties
