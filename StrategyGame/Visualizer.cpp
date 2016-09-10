@@ -126,9 +126,22 @@ void Visualizer::render() {
     
     this->socket.send(clientInfo);
     
-    std::string boardInfo = this->socket.receive();
+    std::map<BoardInfoDataTypes, std::string> boardInfo;
     
+    boardInfo[Terrain] = this->socket.receive();
+    boardInfo[Creature] = this->socket.receive();
+    boardInfo[Color] = this->socket.receive();
+    boardInfo[Damage] = this->socket.receive();
+    boardInfo[Offset] = this->socket.receive();
+    boardInfo[Building] = this->socket.receive();
+
     this->updateBuffers(boardInfo);
+    
+    
+    
+    
+    
+    
     
     GLfloat currentFrame = glfwGetTime();
     this->deltaTime = currentFrame - this->lastFrame;
@@ -756,7 +769,79 @@ void Visualizer::presetTransformations() {
 }
 
 //A function to update all of the buffers that need to be updated. Should be called every frame.
-void Visualizer::updateBuffers() {
+void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+    
+    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+        this->terrainData[tile] = boardInfo[Terrain];
+        this->creatureData[tile] = boardInfo[Creature];
+        this->colorData[tile] = boardInfo[Color];
+        this->damageData[tile] = boardInfo[Damage];
+        this->offsetData[tile] = boardInfo[Offset];
+        this->buildingData[tile] = boardInfo[Building];
+    }
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData), this->terrainData, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(3 * GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(2);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(3 * GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(3);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(4);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(5);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, sizeof(2 * GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(6);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
+    
+    
+    
+    
+    
+    
+    
     //Set the offset VBO
     
     //Update creature data array and buildings

@@ -40,6 +40,15 @@
 
 #include "Interface.hpp"
 
+enum BoardInfoDataTypes {
+    Terrain,
+    Creature,
+    Color,
+    Damage,
+    Offset,
+    Building,
+};
+
 //A simple struct to hold the data of interfaces
 struct interfaceStat {
     GLuint x;
@@ -256,8 +265,10 @@ private:
     
     /*!
      * A function to update all of the buffers that need to be updated. Should be called every frame.
+     *
+     * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
-    void updateBuffers(boardInfo);
+    void updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
     /*!
      * Set the correct interfaces to render based on the selected tile. Should be called every frame.
