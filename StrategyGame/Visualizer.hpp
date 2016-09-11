@@ -158,13 +158,13 @@ private:
     GLuint buildingVBO;
     
     //Array data to be sent to respective VBO's
-    GLfloat vertexData[NUMBER_OF_TILES * INDICES_PER_TILES];
-    GLint terrainData[NUMBER_OF_TILES];
-    GLint creatureData[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
-    GLfloat colorData[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
-    GLint damageData[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
-    GLfloat offsetData[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
-    GLint buildingData[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
+    std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
+    std::vector<GLint> terrainData; //[NUMBER_OF_TILES];
+    std::vector<GLint> creatureData; //[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
+    std::vector<GLfloat> colorData; //[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
+    std::vector<GLint> damageData; //[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
+    std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
+    std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
     
     //Socket
     ClientSocket socket;

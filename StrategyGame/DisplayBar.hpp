@@ -27,9 +27,9 @@
 #include "Shader.hpp"
 #include "Font.hpp"
 
-enum displayBarType {
-    health_bar,
-    energy_bar,
+enum DisplayBarType {
+    HealthBar,
+    EnergyBar,
 };
 
 class DisplayBar {
@@ -59,7 +59,7 @@ public:
      * @param lostColor The color of the inactive section of the bar, that represents the lost value, in the form of a glm::vec3.
      * @param backgroundColor The color of the outside section of the bar in the form of a glm::vec3.
      */
-    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, displayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
+    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
     
     //Public properties
     
@@ -101,7 +101,7 @@ public:
     /*!
      * @return The displayBartype of this display bar.
      */
-    displayBarType type();
+    DisplayBarType type();
     
 private:
     //Button properties
@@ -120,7 +120,7 @@ private:
     glm::vec3 lostValueColor;
     glm::vec3 outsideColor;
     
-    displayBarType barType;
+    DisplayBarType barType;
     
     Font font;
     

@@ -628,7 +628,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData), this->vertexData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, INDICES_PER_TILES * sizeof(GLfloat), (GLvoid*)0);
@@ -638,7 +638,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData), this->terrainData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData.data()), this->terrainData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
@@ -648,7 +648,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
@@ -658,7 +658,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -668,7 +668,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData.data()), this->damageData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
@@ -678,7 +678,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData.data()), this->offsetData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
@@ -688,7 +688,7 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
@@ -792,7 +792,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData), this->terrainData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData.data()), this->terrainData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
@@ -800,7 +800,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(3 * GLint), (GLvoid*)0);
@@ -808,7 +808,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(3 * GLfloat), (GLvoid*)0);
@@ -816,7 +816,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData.data()), this->damageData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
@@ -824,7 +824,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData.data()), this->offsetData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
@@ -832,7 +832,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, sizeof(2 * GLint), (GLvoid*)0);

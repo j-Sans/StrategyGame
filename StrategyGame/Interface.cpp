@@ -59,50 +59,50 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             Box attackBox(*this->buttonShader, this->interfaceWindow, 0.05, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack);
             
             //Insert the box into with the key creature_
-            this->boxes.insert(std::pair<displayBoxType, Box>(creature_attack, attackBox));
+            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_attack, attackBox));
             
             //Create the box for range info that will be added to the map
             Box rangeBox(*this->buttonShader, this->interfaceWindow, 0.525, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range);
             
             //Insert the box into with the key creature_range
-            this->boxes.insert(std::pair<displayBoxType, Box>(creature_range, rangeBox));
+            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_range, rangeBox));
             
             
             //Create the box for vision info that will be added to the map
             Box visionBox(*this->buttonShader, this->interfaceWindow, 0.05, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
             
             //Insert the box into with the key creature_vision
-            this->boxes.insert(std::pair<displayBoxType, Box>(creature_vision, visionBox));
+            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_vision, visionBox));
             
             //Create the box for race info that will be added to the map
             Box raceBox(*this->buttonShader, this->interfaceWindow, 0.525, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
             
             //Insert the box into with the key creature_race
-            this->boxes.insert(std::pair<displayBoxType, Box>(creature_race, raceBox));
+            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_race, raceBox));
             
             
             //Create the displayBar for health that will be added to the map
-            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", HealthBar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Inserts a display bar into the map with the key health
-            this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
+            this->displayBars.insert(std::pair<DisplayBarType, DisplayBar>(HealthBar, healthBar));
             
             
             //Create the displayBar for energy that will be added to the map
-            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", energy_bar, glm::vec3(0.2, 0.2, 0.4), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", EnergyBar, glm::vec3(0.2, 0.2, 0.4), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Insert the display bar into the map with the key energy
-            this->displayBars.insert(std::pair<displayBarType, DisplayBar>(energy_bar, energyBar));
+            this->displayBars.insert(std::pair<DisplayBarType, DisplayBar>(EnergyBar, energyBar));
             
             break;
             
         } case building: {
             
             //Create the displayBar for health that will be added to the map
-            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", health_bar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", HealthBar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Inserts a display bar into the map with the key health
-            this->displayBars.insert(std::pair<displayBarType, DisplayBar>(health_bar, healthBar));
+            this->displayBars.insert(std::pair<DisplayBarType, DisplayBar>(HealthBar, healthBar));
             
             this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building_new_creature", "Make Melee"));
             
