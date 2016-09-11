@@ -9,11 +9,13 @@
 #ifndef Tile_hpp
 #define Tile_hpp
 
-#include "Macros.h"
+//Standard library includes
+#include <iostream>
 
+//Local includes
+#include "Macros.h"
 #include "Creature.hpp"
 #include "Building.hpp"
-#include <iostream>
 
 //GLM: OpenGL mathematics for rotations, translations, dilations
 #include <GLM/glm.hpp>

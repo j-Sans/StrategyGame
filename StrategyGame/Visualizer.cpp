@@ -51,6 +51,8 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     
     this->setBuffers(boardInfo); //Set up all of the OpenGL buffers with the vertex data
     
+    this->camMaxDisplacement = this->boardWidth / 10.0f;
+    
     glm::ivec2 windowSize;
     glm::ivec2 framebufferSize;
     
@@ -632,12 +634,12 @@ void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo)
     //The data arrays that hold ints are converted implicitly directly from chars
     //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
     for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        this->terrainData[tile] = boardInfo[Terrain]; //char -> int
-        this->creatureData[tile] = boardInfo[Creature]; //char -> int
-        this->colorData[tile] = boardInfo[Color] / 100; //char / 100 -> int
-        this->damageData[tile] = boardInfo[Damage]; //char -> int
-        this->offsetData[tile] = boardInfo[Offset] / 100; //char / 100 -> int
-        this->buildingData[tile] = boardInfo[Building]; //char -> int
+        this->terrainData[tile] = boardInfo[Terrain][tile]; //char -> int
+        this->creatureData[tile] = boardInfo[Creature][tile]; //char -> int
+        this->colorData[tile] = boardInfo[Color][tile] / 100; //char / 100 -> int
+        this->damageData[tile] = boardInfo[Damage][tile]; //char -> int
+        this->offsetData[tile] = boardInfo[Offset][tile] / 100; //char / 100 -> int
+        this->buildingData[tile] = boardInfo[Building][tile]; //char -> int
     }
     
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
@@ -661,7 +663,7 @@ void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo)
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, INDICES_PER_TILES * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     
     //Terrain VBO:
@@ -809,12 +811,12 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     //The data arrays that hold ints are converted implicitly directly from chars
     //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
     for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        this->terrainData[tile] = boardInfo[Terrain]; //char -> int
-        this->creatureData[tile] = boardInfo[Creature]; //char -> int
-        this->colorData[tile] = boardInfo[Color] / 100; //char / 100 -> int
-        this->damageData[tile] = boardInfo[Damage]; //char -> int
-        this->offsetData[tile] = boardInfo[Offset] / 100; //char / 100 -> int
-        this->buildingData[tile] = boardInfo[Building]; //char -> int
+        this->terrainData[tile] = boardInfo[Terrain][tile]; //char -> int
+        this->creatureData[tile] = boardInfo[Creature][tile]; //char -> int
+        this->colorData[tile] = boardInfo[Color][tile] / 100; //char / 100 -> int
+        this->damageData[tile] = boardInfo[Damage][tile]; //char -> int
+        this->offsetData[tile] = boardInfo[Offset][tile] / 100; //char / 100 -> int
+        this->buildingData[tile] = boardInfo[Building][tile]; //char -> int
     }
     
     //First we bind the VAO
@@ -833,7 +835,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(3 * GLint), (GLvoid*)0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
     //Bind the VBO with the data
@@ -841,7 +843,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(3 * GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(3);
     
     //Bind the VBO with the data
@@ -865,7 +867,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, sizeof(2 * GLint), (GLvoid*)0);
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(6);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);

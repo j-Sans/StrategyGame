@@ -58,7 +58,7 @@ struct interfaceStat {
     
     interfaceStat() {} //So that it can be constructed at a later point within the visualizer class
     
-    interfaceStat(GLuint interfaceX, GLuint interfaceY, GLuint interfaceWidth, GLuint interfaceHeight, std::string hostName, int portNum) {
+    interfaceStat(GLuint interfaceX, GLuint interfaceY, GLuint interfaceWidth, GLuint interfaceHeight) {
         this->x = interfaceX;
         this->y = interfaceY;
         this->width = interfaceWidth;
@@ -183,7 +183,7 @@ private:
     glm::mat4 projection; //Keeps board scale constant with different window sizes
     
     glm::vec3 cameraCenter;
-    GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
+    GLfloat camMaxDisplacement;
     
     //Window data
     GLfloat deltaTime = 0.0f;
@@ -321,7 +321,7 @@ private:
      *
      * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
      */
-    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[NUMBER_OF_TILES]);
+    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[/* NUMBER_OF_TILES */]);
     
     /*!
      * A function GLFW can call when a key event occurs.

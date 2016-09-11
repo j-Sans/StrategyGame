@@ -17,6 +17,8 @@
 #include <experimental/optional>
 #include <exception>
 
+#include "Creature.hpp"
+#include "Building.hpp"
 #include "Tile.hpp"
 
 //How creatures are stored:
