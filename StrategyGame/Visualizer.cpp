@@ -47,6 +47,7 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
         
     } catch (std::exception e) {
         std::cout << "Error setting socket: " << e.what() << std::endl;
+        throw std::runtime_error("Visualizer couldn't be set");
     }
     
     this->setBuffers(boardInfo); //Set up all of the OpenGL buffers with the vertex data

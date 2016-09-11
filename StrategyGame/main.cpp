@@ -38,25 +38,53 @@ int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)time(NULL));
     
-//Gameboard:
-    std::vector<std::vector<Tile> > board;
-    for (GLuint x = 0; x < BOARD_WIDTH; x++) {
-        std::vector<Tile> row;
-        for (GLuint y = 0; y < BOARD_WIDTH; y++) {
-            if (x == 0 && y == 1)
-                row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-            else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3) || (y > BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 1) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 5) || (x == BOARD_WIDTH - 3 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 6) || (x == 6 && y == 0)) {
-                row.push_back(Tile(FOREST_TERRAIN, x, y));
-            } else
-                row.push_back(Tile(OPEN_TERRAIN, x, y));
-        }
-        board.push_back(row);
+    bool host;
+    
+    bool repeat = true;
+    while (repeat) {
+        repeat = false;
+        std::cout << "Run as host? Type \"Y\" for yes or \"N\" for no" << std::endl;
+        std::string input;
+        std::cin >> input;
+        if (input == "Y" || input == "y")
+            host = true;
+        else if (input == "N" || input == "n")
+            host = false;
+        else
+            repeat = true;
     }
     
-    Visualizer V("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", "localhost", 3000);
+    if (!host) {
+        Visualizer V("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", "localhost", 3000);
+        
+        while (!glfwWindowShouldClose(V.window()))
+            V.render();
+        
+        V.terminate();
+    } else {
+        //Gameboard:
+        std::vector<std::vector<Tile> > board;
+        for (GLuint x = 0; x < BOARD_WIDTH; x++) {
+            std::vector<Tile> row;
+            for (GLuint y = 0; y < BOARD_WIDTH; y++) {
+                if (x == 0 && y == 1)
+                    row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
+                else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3) || (y > BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 1) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 5) || (x == BOARD_WIDTH - 3 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 6) || (x == 6 && y == 0)) {
+                    row.push_back(Tile(FOREST_TERRAIN, x, y));
+                } else
+                    row.push_back(Tile(OPEN_TERRAIN, x, y));
+            }
+            board.push_back(row);
+        }
+        
+        Host H(1, 3000, Board(board));
+        
+        while (true)
+            H.update();
+    }
     
-    //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
-
+//    //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
+//
 //    V.game.board()->setCreature(5, 4, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 0));
 //
 //    V.game.board()->setCreature(2, 2, Creature(2, 2, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 1));
@@ -64,13 +92,13 @@ int main(int argc, const char * argv[]) {
 //    V.game.board()->setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
 //    
 //    V.game.board()->setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1, 1));
-    
-//Game loop:
-    while(!glfwWindowShouldClose(V.window())) {
-        V.render();
-    }
-    
-    V.terminate();
+//    
+////Game loop:
+//    while(!glfwWindowShouldClose(V.window())) {
+//        V.render();
+//    }
+//    
+//    V.terminate();
 
     return 0;
 }
