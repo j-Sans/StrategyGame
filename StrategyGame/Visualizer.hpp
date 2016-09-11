@@ -40,6 +40,12 @@
 
 #include "Interface.hpp"
 
+//For when no tile is being selected
+#define NO_SELECTION glm::ivec2(-1, -1)
+
+//For when no tile is being selected
+#define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
+
 enum BoardInfoDataTypes {
     TerrainData,
     CreatureData,
@@ -101,6 +107,11 @@ public:
     const GLfloat camSpeed = 1.5f;
     
     //Public member functions
+    
+    /*!
+     * Distance formula using Pythagorean Theorem
+     */
+    static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
     
     /*!
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
@@ -190,6 +201,7 @@ private:
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::ivec2 viewportSize;
+    glm::ivec2 selectedTile = NO_SELECTION;
     
     
     //Interfaces
@@ -317,11 +329,11 @@ private:
      *
      * @param mousePos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.
      * @param windowSize A glm::ivec2 representing the window size, in screen coordinates. Can be obtained from glfwGetWindowSize.
-     * @param tileCenters An array of glm::vec4 of length NUMBER_OF_TILES representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
+     * @param tileCenters An std::vector of glm::vec4 (should be length NUMBER_OF_TILES) representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
      *
      * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
      */
-    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, glm::vec4 tileCenters[/* NUMBER_OF_TILES */]);
+    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters);
     
     /*!
      * A function GLFW can call when a key event occurs.

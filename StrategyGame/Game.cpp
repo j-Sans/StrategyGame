@@ -22,9 +22,9 @@ Game::Game(Board* board) : gameBoard(board) {
 
 //Public member functions
 
-GLfloat Game::getDistance(glm::vec2 point1, glm::vec2 point2) {
-    return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
-}
+//GLfloat Game::getDistance(glm::vec2 point1, glm::vec2 point2) {
+//    return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
+//}
 
 bool Game::selectTile(int x, int y, unsigned int activePlayer) {
     glm::ivec2 passedInTile = glm::ivec2(x, y);

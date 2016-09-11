@@ -121,6 +121,10 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
 
 //Public member functions
 
+GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
+    return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
+}
+
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 void Visualizer::render() {
     std::string clientInfo;
@@ -131,11 +135,11 @@ void Visualizer::render() {
     glfwGetCursorPos(this->gameWindow, &mousePos.x, &mousePos.y);
     glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
     
-    glm::vec4 tileCenters[this->numberOfTiles]; //Representing the center point of all of the map squares
+    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-        tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
@@ -143,6 +147,12 @@ void Visualizer::render() {
     clientInfo.push_back(mouseTile.x);
     clientInfo.push_back(mouseTile.y);
     clientInfo.push_back(mouseDown ? 1 : 0);
+    
+    //Set the selected tile if the mouse is pressing
+    if (mouseDown)
+        this->selectedTile = mouseTile;
+    else
+        this->selectedTile = NO_SELECTION;
     
     this->socket.send(clientInfo);
     
@@ -1001,68 +1011,66 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
 }*/
 
 void Visualizer::updateInterfaces() {
-    glm::ivec2 selectedTile = this->game.tileSelected();
-    
     this->leftInterface = &this->interfaces[default_left];
     this->bottomInterface = &this->interfaces[default_bottom];
     this->rightInterface = &this->interfaces[default_right];
     
     //If the selected tile is on the board
-    if (selectedTile.x >= 0 && selectedTile.x < this->game.board()->width() && selectedTile.y >= 0 && selectedTile.y < this->game.board()->height(selectedTile.x)) {
+    if (this->selectedTile.x >= 0 && this->selectedTile.x < this->boardWidth && selectedTile.y >= 0 && this->selectedTile.y < this->boardHeight) {
         
-        Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
-        
-        if (tile.creature() != nullptr) {
-            //Set the right interface to be the creature if there is a creature at the selected tile
-            this->rightInterface = &this->interfaces[creature];
-            
-            //Update the boxes to display creature stats
-            if (this->interfaces[creature].boxes.size() > 0) {
-                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
-                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
-                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
-                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
-            }
-            
-            //Update the display bars to display the creature quantities, like health and energy, which change
-            if (this->interfaces[creature].displayBars.size() > 0) {
-                
-                this->interfaces[creature].displayBars[HealthBar].setValue(tile.creature()->health());
-                this->interfaces[creature].displayBars[HealthBar].setMaxValue(tile.creature()->maxHealth());
-                this->interfaces[creature].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
-                
-                this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
-                this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
-                this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
-                
-                
-            }
-        }
-        
-        if (tile.building() != nullptr) {
-            //Do the same for buildings
-            this->rightInterface = &this->interfaces[building];
-            
-            if (this->interfaces[building].displayBars.size() > 0) {
-                this->interfaces[building].displayBars[HealthBar].setValue(tile.building()->health());
-                this->interfaces[building].displayBars[HealthBar].setMaxValue(tile.building()->maxHealth());
-                this->interfaces[building].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
-            }
-            
-            if (this->interfaces[building].buttons.size() > 0) {
-                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
-                this->interfaces[building].buttons[0].action = tile.building()->action();
-            }
-        }
+//        Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
+//        
+//        if (tile.creature() != nullptr) {
+//            //Set the right interface to be the creature if there is a creature at the selected tile
+//            this->rightInterface = &this->interfaces[creature];
+//            
+//            //Update the boxes to display creature stats
+//            if (this->interfaces[creature].boxes.size() > 0) {
+//                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
+//                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
+//                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
+//                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
+//            }
+//            
+//            //Update the display bars to display the creature quantities, like health and energy, which change
+//            if (this->interfaces[creature].displayBars.size() > 0) {
+//                
+//                this->interfaces[creature].displayBars[HealthBar].setValue(tile.creature()->health());
+//                this->interfaces[creature].displayBars[HealthBar].setMaxValue(tile.creature()->maxHealth());
+//                this->interfaces[creature].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
+//                
+//                this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
+//                this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
+//                this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+//                
+//                
+//            }
+//        }
+//        
+//        if (tile.building() != nullptr) {
+//            //Do the same for buildings
+//            this->rightInterface = &this->interfaces[building];
+//            
+//            if (this->interfaces[building].displayBars.size() > 0) {
+//                this->interfaces[building].displayBars[HealthBar].setValue(tile.building()->health());
+//                this->interfaces[building].displayBars[HealthBar].setMaxValue(tile.building()->maxHealth());
+//                this->interfaces[building].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
+//            }
+//            
+//            if (this->interfaces[building].buttons.size() > 0) {
+//                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
+//                this->interfaces[building].buttons[0].action = tile.building()->action();
+//            }
+//        }
     }
 }
 
 void Visualizer::renderDamageText() {
-    glm::vec4 tileCenters[this->numberOfTiles]; //Representing the center point of all of the map squares
+    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-        tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
     
     //Goes through existence times and updates them based on glfwGetTime()
@@ -1118,218 +1126,218 @@ void Visualizer::moveCamera() {
 }
 
 void Visualizer::processButton(std::string action) {
-    if (action == "settings") {
-        
-        this->showSettings = true;
-        
-    } else if (action == "next turn") { //Process the button indicating to move to the next turn
-        
-        this->game.nextTurn();
-        
-    } else if (action.find("creature,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
-        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
-            
-            glm::ivec2 selectedTile = this->game.tileSelected();
-            
-            //Interpret the string to find out what kind of creature
-            
-            /* The contents of the button string are:
-             * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[cost],[start direction]
-             *
-             * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
-             *
-             * This function goes through the string and extracts those values and constructs a creature based on them.
-             */
-            
-            Race race = Human;
-            AttackStyle attackStyle = LightMelee;
-            GLuint values[] = {0, 0, 0, 0, 0, 0};
-            GLuint direction;
-            
-            action.erase(0, 9); //Gets rid of the "creature," from the string
-            
-            //Extract the race of the creature
-            
-            if (action.compare(0, 5, "Human") == 0) {
-                race = Human;
-                action.erase(0, 6); //Gets rid of "Human,". This is 1 more than the number of characters in "Human" to also get rid of the comma. Same is true with the other races.
-            } else if (action.compare(0, 3, "Elf") == 0) {
-                race = Elf;
-                action.erase(0, 4);
-            } else if (action.compare(0, 5, "Dwarf") == 0) {
-                race = Dwarf;
-                action.erase(0, 6);
-            } else if (action.compare(0, 3, "Orc") == 0) {
-                race = Orc;
-                action.erase(0, 4);
-            } else if (action.compare(0, 6, "Goblin") == 0) {
-                race = Goblin;
-                action.erase(0, 7);
-            } else if (action.compare(0, 6, "Undead") == 0) {
-                race = Undead;
-                action.erase(0, 7);
-            } else if (action.compare(0, 7, "Vampire") == 0) {
-                race = Vampire;
-                action.erase(0, 8);
-            }
-            
-            //Extract the numerical values of the creature
-            
-            for (GLuint valueNum = 0; valueNum < 6; valueNum++) {
-                //Find the position of the next comma, which is the number of digits before that comma
-                GLuint numDigits = (GLuint)action.find(',');
-                
-                for (GLint place = numDigits - 1; place >= 0; place--) {
-                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-                }
-                
-                action.erase(0, 1); //Get rid of the comma
-            }
-            
-            if (action.compare(0, 5, "NORTH") == 0) {
-                direction = NORTH;
-                action.erase(0, 6); //Gets rid of "NORTH,". This is 1 more than the number of characters in "NORTH" to also get rid of the comma. Same is true with the other directions.
-            } else if (action.compare(0, 4, "EAST") == 0) {
-                direction = EAST;
-                action.erase(0, 5);
-            } else if (action.compare(0, 5, "SOUTH") == 0) {
-                direction = SOUTH;
-                action.erase(0, 6);
-            } else if (action.compare(0, 4, "WEST") == 0) {
-                direction = WEST;
-                action.erase(0, 5);
-            }
-            
-            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], values[5], direction, this->game.activePlayer());
-            
-            if (this->game.board()->get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
-                try {
-                    this->game.board()->setCreature(selectedTile.x, selectedTile.y, newCreature);
-                    
-                    //Reset all tiles to be unselected now that the creature has been added
-                    for (GLuint x = 0; x < this->game.board()->width(); x++) {
-                        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-                            this->game.board()->setStyle(x, y, Regular);
-                        }
-                    }
-                    
-                    this->game.selectTile(NO_SELECTION.x, NO_SELECTION.y);
-                    
-                } catch (std::exception) {
-                    //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
-                    std::cout << "Error adding creature" << std::endl;
-                }
-            }
-        }
-    } else if (action.find("building_new_creature") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
-        
-        //For now, set adjacent spots as reachable and create a creature on the selected one
-        
-        action.erase(0, 22); //Delete "building_new_creature(" from the action string
-        
-        glm::ivec2 buildingPos = glm::ivec2(0, 0);
-        
-        //Extract the building position
-        
-        GLuint numDigits = (GLuint)action.find(',');
-        
-        for (GLint place = numDigits - 1; place >= 0; place--) {
-            buildingPos.x += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-        }
-        
-        action.erase(0, 1); //Get rid of the comma
-        
-        numDigits = (GLuint)action.find(')');
-        
-        for (GLint place = numDigits - 1; place >= 0; place--) {
-            buildingPos.y += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-        }
-        
-        action.erase(0, 1); //Get rid of the parenthasis
-        
-        //If the position is within the board
-        if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
-            
-            if (this->game.board()->get(buildingPos.x, buildingPos.y).building() != nullptr && this->game.activePlayer() == this->game.board()->get(buildingPos.x, buildingPos.y).building()->controller()) {
-            
-                //North
-                if (buildingPos.y > 0) {
-                    this->game.board()->setStyle(buildingPos.x, buildingPos.y - 1, Reachable);
-                }
-                
-                //East
-                if (buildingPos.x > 0) {
-                    this->game.board()->setStyle(buildingPos.x - 1, buildingPos.y, Reachable);
-                }
-                
-                //South
-                if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) {
-                    this->game.board()->setStyle(buildingPos.x, buildingPos.y + 1, Reachable);
-                }
-                
-                //West
-                if (buildingPos.y < this->game.board()->width() - 1) {
-                    this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
-                }
-            }
-        }
-    } else if (action.find("building,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
-        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
-            
-            glm::ivec2 selectedTile = this->game.tileSelected();
-            
-            //Interpret the string to find out what kind of building
-            
-            /* The contents of the button string are:
-             * building,[maxHealth],[cost]
-             *
-             * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
-             *
-             * This function goes through the string and extracts those values and constructs a building based on them.
-             */
-            GLuint values[] = {0, 0};
-            
-            action.erase(0, 9); //Gets rid of the "building," from the string
-            
-            //Extract the numerical values of the building
-            
-            for (GLuint valueNum = 0; valueNum < 2; valueNum++) {
-                //Find the position of the next comma, which is the number of digits before that comma
-                GLuint numDigits = (GLuint)action.find(',');
-                
-                for (GLint place = numDigits - 1; place >= 0; place--) {
-                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-                }
-                
-                action.erase(0, 1); //Get rid of the comma
-            }
-            
-            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], this->game.activePlayer());
-            
-            if (!this->game.board()->get(selectedTile.x, selectedTile.y).occupied()) {
-                try {
-                    this->game.board()->setBuilding(selectedTile.x, selectedTile.y, newBuilding);
-                    
-                    //Reset all tiles to be unselected now that the creature has been added
-                    for (GLuint x = 0; x < this->game.board()->width(); x++) {
-                        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-                            this->game.board()->setStyle(x, y, Regular);
-                        }
-                    }
-                    
-                    this->game.selectTile(NO_SELECTION.x, NO_SELECTION.y);
-                    
-                } catch (std::exception) {
-                    //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
-                    std::cout << "Error adding building" << std::endl;
-                }
-            }
-        }
-    }
+//    if (action == "settings") {
+//        
+//        this->showSettings = true;
+//        
+//    } else if (action == "next turn") { //Process the button indicating to move to the next turn
+//        
+//        this->game.nextTurn();
+//        
+//    } else if (action.find("creature,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+//        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
+//            
+//            glm::ivec2 selectedTile = this->game.tileSelected();
+//            
+//            //Interpret the string to find out what kind of creature
+//            
+//            /* The contents of the button string are:
+//             * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[cost],[start direction]
+//             *
+//             * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
+//             *
+//             * This function goes through the string and extracts those values and constructs a creature based on them.
+//             */
+//            
+//            Race race = Human;
+//            AttackStyle attackStyle = LightMelee;
+//            GLuint values[] = {0, 0, 0, 0, 0, 0};
+//            GLuint direction;
+//            
+//            action.erase(0, 9); //Gets rid of the "creature," from the string
+//            
+//            //Extract the race of the creature
+//            
+//            if (action.compare(0, 5, "Human") == 0) {
+//                race = Human;
+//                action.erase(0, 6); //Gets rid of "Human,". This is 1 more than the number of characters in "Human" to also get rid of the comma. Same is true with the other races.
+//            } else if (action.compare(0, 3, "Elf") == 0) {
+//                race = Elf;
+//                action.erase(0, 4);
+//            } else if (action.compare(0, 5, "Dwarf") == 0) {
+//                race = Dwarf;
+//                action.erase(0, 6);
+//            } else if (action.compare(0, 3, "Orc") == 0) {
+//                race = Orc;
+//                action.erase(0, 4);
+//            } else if (action.compare(0, 6, "Goblin") == 0) {
+//                race = Goblin;
+//                action.erase(0, 7);
+//            } else if (action.compare(0, 6, "Undead") == 0) {
+//                race = Undead;
+//                action.erase(0, 7);
+//            } else if (action.compare(0, 7, "Vampire") == 0) {
+//                race = Vampire;
+//                action.erase(0, 8);
+//            }
+//            
+//            //Extract the numerical values of the creature
+//            
+//            for (GLuint valueNum = 0; valueNum < 6; valueNum++) {
+//                //Find the position of the next comma, which is the number of digits before that comma
+//                GLuint numDigits = (GLuint)action.find(',');
+//                
+//                for (GLint place = numDigits - 1; place >= 0; place--) {
+//                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+//                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+//                }
+//                
+//                action.erase(0, 1); //Get rid of the comma
+//            }
+//            
+//            if (action.compare(0, 5, "NORTH") == 0) {
+//                direction = NORTH;
+//                action.erase(0, 6); //Gets rid of "NORTH,". This is 1 more than the number of characters in "NORTH" to also get rid of the comma. Same is true with the other directions.
+//            } else if (action.compare(0, 4, "EAST") == 0) {
+//                direction = EAST;
+//                action.erase(0, 5);
+//            } else if (action.compare(0, 5, "SOUTH") == 0) {
+//                direction = SOUTH;
+//                action.erase(0, 6);
+//            } else if (action.compare(0, 4, "WEST") == 0) {
+//                direction = WEST;
+//                action.erase(0, 5);
+//            }
+//            
+//            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], values[5], direction, this->game.activePlayer());
+//            
+//            if (this->game.board()->get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
+//                try {
+//                    this->game.board()->setCreature(selectedTile.x, selectedTile.y, newCreature);
+//                    
+//                    //Reset all tiles to be unselected now that the creature has been added
+//                    for (GLuint x = 0; x < this->game.board()->width(); x++) {
+//                        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+//                            this->game.board()->setStyle(x, y, Regular);
+//                        }
+//                    }
+//                    
+//                    this->game.selectTile(NO_SELECTION.x, NO_SELECTION.y);
+//                    
+//                } catch (std::exception) {
+//                    //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
+//                    std::cout << "Error adding creature" << std::endl;
+//                }
+//            }
+//        }
+//    } else if (action.find("building_new_creature") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
+//        
+//        //For now, set adjacent spots as reachable and create a creature on the selected one
+//        
+//        action.erase(0, 22); //Delete "building_new_creature(" from the action string
+//        
+//        glm::ivec2 buildingPos = glm::ivec2(0, 0);
+//        
+//        //Extract the building position
+//        
+//        GLuint numDigits = (GLuint)action.find(',');
+//        
+//        for (GLint place = numDigits - 1; place >= 0; place--) {
+//            buildingPos.x += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+//            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+//        }
+//        
+//        action.erase(0, 1); //Get rid of the comma
+//        
+//        numDigits = (GLuint)action.find(')');
+//        
+//        for (GLint place = numDigits - 1; place >= 0; place--) {
+//            buildingPos.y += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+//            action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+//        }
+//        
+//        action.erase(0, 1); //Get rid of the parenthasis
+//        
+//        //If the position is within the board
+//        if (buildingPos.x >= 0 && buildingPos.x < this->game.board()->width() && buildingPos.y >= 0 && buildingPos.y < this->game.board()->height(buildingPos.x)) {
+//            
+//            if (this->game.board()->get(buildingPos.x, buildingPos.y).building() != nullptr && this->game.activePlayer() == this->game.board()->get(buildingPos.x, buildingPos.y).building()->controller()) {
+//            
+//                //North
+//                if (buildingPos.y > 0) {
+//                    this->game.board()->setStyle(buildingPos.x, buildingPos.y - 1, Reachable);
+//                }
+//                
+//                //East
+//                if (buildingPos.x > 0) {
+//                    this->game.board()->setStyle(buildingPos.x - 1, buildingPos.y, Reachable);
+//                }
+//                
+//                //South
+//                if (buildingPos.y < this->game.board()->height(buildingPos.x) - 1) {
+//                    this->game.board()->setStyle(buildingPos.x, buildingPos.y + 1, Reachable);
+//                }
+//                
+//                //West
+//                if (buildingPos.y < this->game.board()->width() - 1) {
+//                    this->game.board()->setStyle(buildingPos.x + 1, buildingPos.y, Reachable);
+//                }
+//            }
+//        }
+//    } else if (action.find("building,") != std::string::npos) { //Basically if the string action contains "creature", the button makes a creature
+//        if (this->game.tileSelected() != NO_SELECTION && this->game.tileSelected() != INTERFACE_BOX_SELECTION && !this->game.board()->get(this->game.tileSelected().x, this->game.tileSelected().y).occupied()) {
+//            
+//            glm::ivec2 selectedTile = this->game.tileSelected();
+//            
+//            //Interpret the string to find out what kind of building
+//            
+//            /* The contents of the button string are:
+//             * building,[maxHealth],[cost]
+//             *
+//             * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
+//             *
+//             * This function goes through the string and extracts those values and constructs a building based on them.
+//             */
+//            GLuint values[] = {0, 0};
+//            
+//            action.erase(0, 9); //Gets rid of the "building," from the string
+//            
+//            //Extract the numerical values of the building
+//            
+//            for (GLuint valueNum = 0; valueNum < 2; valueNum++) {
+//                //Find the position of the next comma, which is the number of digits before that comma
+//                GLuint numDigits = (GLuint)action.find(',');
+//                
+//                for (GLint place = numDigits - 1; place >= 0; place--) {
+//                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+//                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+//                }
+//                
+//                action.erase(0, 1); //Get rid of the comma
+//            }
+//            
+//            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], this->game.activePlayer());
+//            
+//            if (!this->game.board()->get(selectedTile.x, selectedTile.y).occupied()) {
+//                try {
+//                    this->game.board()->setBuilding(selectedTile.x, selectedTile.y, newBuilding);
+//                    
+//                    //Reset all tiles to be unselected now that the creature has been added
+//                    for (GLuint x = 0; x < this->game.board()->width(); x++) {
+//                        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+//                            this->game.board()->setStyle(x, y, Regular);
+//                        }
+//                    }
+//                    
+//                    this->game.selectTile(NO_SELECTION.x, NO_SELECTION.y);
+//                    
+//                } catch (std::exception) {
+//                    //For now, nothing needs to be done if there isn't a selected tile that wasn't caught above. Later, if a banner of error or something is shown, that can be added here too
+//                    std::cout << "Error adding building" << std::endl;
+//                }
+//            }
+//        }
+//    }
 }
 
 void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
@@ -1340,6 +1348,139 @@ void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
     
     this->interfaces[settings].render(mouseUp, mouseDown, true);
     
+}
+
+glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters) {
+    GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
+    
+    //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
+    if (mousePos.x > (windowSize.x * 5.0 / 6.0) || mousePos.x < (windowSize.x / 6.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Only the middle 2/3 of the screen is the board, so make the start of that section 0
+    mousePos.x -= (windowSize.x / 6.0);
+    
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    mousePos.x *= (3.0 / 2.0);
+    
+    //Do the same for y, except that only the bottom 1/4 of the screen is not part of the board
+    if (mousePos.y > (windowSize.y * 3.0 / 4.0))
+        return INTERFACE_BOX_SELECTION;
+    
+    //Then make it 2/3 of the size to dilate it with the board's dilation
+    mousePos.y *= (4.0 / 3.0);
+    
+    //Make mousePos between 0 and 1 by dividing the position by the maximum position (width or height)
+    mousePos.x /= windowSize.x;
+    mousePos.y /= windowSize.y;
+    
+    //Now make it 0 to 2 by doubling it
+    mousePos.x *= 2.0f;
+    mousePos.y *= 2.0f;
+    
+    //Now subtract 1 to get it between -1 and 1
+    mousePos.x -= 1.0f;
+    mousePos.y -= 1.0f;
+    
+    //So that -1 is the bottom of the screen, not the top
+    mousePos.y = -mousePos.y;
+    
+    /*for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+     //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+     tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
+     }*/
+    
+    //The distance from one point to the horizontal point and the vertical point:
+    
+    //The points diagonally above and below each vertex become horizontal and vertical after rotation. To find them, find the point below the vertex and add one and subtract one.
+    
+    if (this->boardWidth * this->boardWidth < this->boardWidth + 1) { //In case finding the distances (just below) would cause a bad access
+        throw std::length_error("Board too small");
+    }
+    
+    GLfloat distance1 = Visualizer::getDistance(tileCenters[0], tileCenters[0 + this->boardWidth + 1]); //Diagonal down and to the right
+    GLfloat distance2 = Visualizer::getDistance(tileCenters[1], tileCenters[1 + this->boardWidth - 1]); //Diagonal down and to the left
+    
+    //Distance horizontally is double the distance of the vertical one because it was compressed vertically.
+    //The horizontal distance is the max of the above distances, and the vertical distance the minimum
+    
+    GLfloat verticalDistance = fminf(distance1, distance2);
+    GLfloat horizontalDistance = fmaxf(distance1, distance2);
+    
+    //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
+    
+    GLfloat slope = verticalDistance / horizontalDistance; // = rise / run
+    
+    //Using line equation:
+    // y = slope ( x - h ) + k
+    //Where (h,k) is a point on the line
+    
+    for (GLuint index = 0; index < this->numberOfTiles; index++) {
+        glm::vec2 center = glm::vec2(tileCenters[index].x, tileCenters[index].y);
+        
+        bool pointInIndex = true;
+        
+        //Lower left inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y > ( -slope ) ( x - h ) + k
+        // (h,k) is the point below the center
+        
+        GLfloat h = center.x;
+        GLfloat k = center.y - (verticalDistance / 2.0);
+        
+        if (mousePos.y < ( -slope ) * ( mousePos.x - h ) + k) { //If it's below this line
+            pointInIndex = false;
+            continue;
+        }
+        
+        //Lower right inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y > ( slope ) ( x - h ) + k
+        // (h,k) is the point below the center, the same as previously
+        
+        if (mousePos.y < ( slope ) * ( mousePos.x - h ) + k) { //If it's below this line
+            pointInIndex = false;
+            continue;
+        }
+        
+        //Upper left inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y < ( slope ) ( x - h ) + k
+        // (h,k) is the point above the center
+        
+        h = center.x; //h stays the same
+        k = center.y + (verticalDistance / 2.0);
+        
+        if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
+            pointInIndex = false;
+            continue;
+        }
+        //Upper right inequality: (if this does NOT hold then the point isn't in the region. We check if this is false)
+        // y < ( -slope ) ( x - h ) + k
+        // (h,k) is the point above the center, the same as previously
+        
+        if (mousePos.y > ( -slope ) * ( mousePos.x - h ) + k) { //If it's above this line
+            pointInIndex = false;
+            continue;
+        }
+        
+        if (pointInIndex) { //The point was in bounds
+            tileIndex = index;
+            break; //Point found, no need to search more
+        }
+    }
+    
+    //If no tile was found, -1 is returned. Otherwise, the index pointing to the coordinate in the array of glm::vec2's is returned
+    //Since there are double the number of coordinates, this coordinate times 2 is the first coordinate of the tile in vertexData
+    
+    //Return negative coordinates if the click is outside of all tiles
+    if (tileIndex == -1)
+        return NO_SELECTION;
+    
+    glm::ivec2 tileIndexVec;
+    
+    tileIndexVec.x = (int)(tileIndex / this->boardWidth); //The x index in the 2D vector
+    
+    tileIndexVec.y = tileIndex - (this->boardWidth * tileIndexVec.x); //The y index in the 2D vector
+    
+    return tileIndexVec;
 }
 
 //A function GLFW can call when a key event occurs
