@@ -53,7 +53,7 @@ int main(int argc, const char * argv[]) {
         board.push_back(row);
     }
     
-    Visualizer V("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", board);
+    Visualizer V("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", "localhost", 3000);
     
     //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
 

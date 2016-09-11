@@ -41,12 +41,12 @@
 #include "Interface.hpp"
 
 enum BoardInfoDataTypes {
-    Terrain,
-    Creature,
-    Color,
-    Damage,
-    Offset,
-    Building,
+    TerrainData,
+    CreatureData,
+    ColorData,
+    DamageData,
+    OffsetData,
+    BuildingData,
 };
 
 //A simple struct to hold the data of interfaces

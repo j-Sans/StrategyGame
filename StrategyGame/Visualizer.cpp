@@ -634,12 +634,12 @@ void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo)
     //The data arrays that hold ints are converted implicitly directly from chars
     //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
     for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        this->terrainData[tile] = boardInfo[Terrain][tile]; //char -> int
-        this->creatureData[tile] = boardInfo[Creature][tile]; //char -> int
-        this->colorData[tile] = boardInfo[Color][tile] / 100; //char / 100 -> int
-        this->damageData[tile] = boardInfo[Damage][tile]; //char -> int
-        this->offsetData[tile] = boardInfo[Offset][tile] / 100; //char / 100 -> int
-        this->buildingData[tile] = boardInfo[Building][tile]; //char -> int
+        this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
+        this->creatureData[tile] = boardInfo[CreatureData][tile]; //char -> int
+        this->colorData[tile] = boardInfo[ColorData][tile] / 100; //char / 100 -> int
+        this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
+        this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
+        this->buildingData[tile] = boardInfo[BuildingData][tile]; //char -> int
     }
     
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
@@ -811,12 +811,12 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     //The data arrays that hold ints are converted implicitly directly from chars
     //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
     for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        this->terrainData[tile] = boardInfo[Terrain][tile]; //char -> int
-        this->creatureData[tile] = boardInfo[Creature][tile]; //char -> int
-        this->colorData[tile] = boardInfo[Color][tile] / 100; //char / 100 -> int
-        this->damageData[tile] = boardInfo[Damage][tile]; //char -> int
-        this->offsetData[tile] = boardInfo[Offset][tile] / 100; //char / 100 -> int
-        this->buildingData[tile] = boardInfo[Building][tile]; //char -> int
+        this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
+        this->creatureData[tile] = boardInfo[CreatureData][tile]; //char -> int
+        this->colorData[tile] = boardInfo[ColorData][tile] / 100; //char / 100 -> int
+        this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
+        this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
+        this->buildingData[tile] = boardInfo[BuildingData][tile]; //char -> int
     }
     
     //First we bind the VAO

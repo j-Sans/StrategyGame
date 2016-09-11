@@ -14,7 +14,6 @@
 #include <math.h>
 #include <vector>
 #include <list>
-#include <experimental/optional>
 #include <exception>
 
 #include "Creature.hpp"
