@@ -38,12 +38,12 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
         
         this->numberOfTiles = this->boardWidth * this->boardHeight;
         
-        boardInfo[Terrain] = this->socket.receive();
-        boardInfo[Creature] = this->socket.receive();
-        boardInfo[Color] = this->socket.receive();
-        boardInfo[Damage] = this->socket.receive();
-        boardInfo[Offset] = this->socket.receive();
-        boardInfo[Building] = this->socket.receive();
+        boardInfo[TerrainData] = this->socket.receive();
+        boardInfo[CreatureData] = this->socket.receive();
+        boardInfo[ColorData] = this->socket.receive();
+        boardInfo[DamageData] = this->socket.receive();
+        boardInfo[OffsetData] = this->socket.receive();
+        boardInfo[BuildingData] = this->socket.receive();
         
     } catch (std::exception e) {
         std::cout << "Error setting socket: " << e.what() << std::endl;
@@ -148,12 +148,12 @@ void Visualizer::render() {
     
     std::map<BoardInfoDataTypes, std::string> boardInfo;
     
-    boardInfo[Terrain] = this->socket.receive();
-    boardInfo[Creature] = this->socket.receive();
-    boardInfo[Color] = this->socket.receive();
-    boardInfo[Damage] = this->socket.receive();
-    boardInfo[Offset] = this->socket.receive();
-    boardInfo[Building] = this->socket.receive();
+    boardInfo[TerrainData] = this->socket.receive();
+    boardInfo[CreatureData] = this->socket.receive();
+    boardInfo[ColorData] = this->socket.receive();
+    boardInfo[DamageData] = this->socket.receive();
+    boardInfo[OffsetData] = this->socket.receive();
+    boardInfo[BuildingData] = this->socket.receive();
 
     this->updateBuffers(boardInfo);
     
@@ -1027,13 +1027,13 @@ void Visualizer::updateInterfaces() {
             //Update the display bars to display the creature quantities, like health and energy, which change
             if (this->interfaces[creature].displayBars.size() > 0) {
                 
-                this->interfaces[creature].displayBars[health_bar].setValue(tile.creature()->health());
-                this->interfaces[creature].displayBars[health_bar].setMaxValue(tile.creature()->maxHealth());
-                this->interfaces[creature].displayBars[health_bar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
+                this->interfaces[creature].displayBars[HealthBar].setValue(tile.creature()->health());
+                this->interfaces[creature].displayBars[HealthBar].setMaxValue(tile.creature()->maxHealth());
+                this->interfaces[creature].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
                 
-                this->interfaces[creature].displayBars[energy_bar].setValue(tile.creature()->energy());
-                this->interfaces[creature].displayBars[energy_bar].setMaxValue(tile.creature()->maxEnergy());
-                this->interfaces[creature].displayBars[energy_bar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+                this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
+                this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
+                this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
                 
                 
             }
@@ -1044,9 +1044,9 @@ void Visualizer::updateInterfaces() {
             this->rightInterface = &this->interfaces[building];
             
             if (this->interfaces[building].displayBars.size() > 0) {
-                this->interfaces[building].displayBars[health_bar].setValue(tile.building()->health());
-                this->interfaces[building].displayBars[health_bar].setMaxValue(tile.building()->maxHealth());
-                this->interfaces[building].displayBars[health_bar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
+                this->interfaces[building].displayBars[HealthBar].setValue(tile.building()->health());
+                this->interfaces[building].displayBars[HealthBar].setMaxValue(tile.building()->maxHealth());
+                this->interfaces[building].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
             }
             
             if (this->interfaces[building].buttons.size() > 0) {
