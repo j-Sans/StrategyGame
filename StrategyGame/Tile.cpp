@@ -54,7 +54,7 @@ Building* Tile::building() {
     return this->tileBuilding;
 }
 
-float Tile::terrain() {
+unsigned int Tile::terrain() {
     return this->tileTerrain;
 }
 

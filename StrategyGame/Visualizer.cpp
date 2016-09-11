@@ -823,11 +823,21 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
     for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
         this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
-        this->creatureData[tile] = boardInfo[CreatureData][tile]; //char -> int
-        this->colorData[tile] = boardInfo[ColorData][tile] / 100; //char / 100 -> int
+        
+        this->creatureData[3 * tile] = boardInfo[CreatureData][3 * tile]; //char -> int
+        this->creatureData[(3 * tile) + 1] = boardInfo[CreatureData][(3 * tile) + 1]; //char -> int
+        this->creatureData[(3 * tile) + 2] = boardInfo[CreatureData][(3 * tile) + 2]; //char -> int
+        
+        this->colorData[3 * tile] = boardInfo[ColorData][3 * tile] / 100; //char / 100 -> int
+        this->colorData[(3 * tile) + 1] = boardInfo[ColorData][(3 * tile) + 1] / 100; //char / 100 -> int
+        this->colorData[(3 * tile) + 2] = boardInfo[ColorData][(3 * tile) + 2] / 100; //char / 100 -> int
+        
         this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
+        
         this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
-        this->buildingData[tile] = boardInfo[BuildingData][tile]; //char -> int
+        
+        this->buildingData[2 * tile] = boardInfo[BuildingData][2 * tile]; //char -> int
+        this->buildingData[(2 * tile) + 1] = boardInfo[BuildingData][(2 * tile) + 1]; //char -> int
     }
     
     //First we bind the VAO

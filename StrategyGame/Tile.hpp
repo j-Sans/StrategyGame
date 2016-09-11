@@ -121,7 +121,7 @@ public:
     /*!
      * @return The terrain type of this tile.
      */
-    float terrain();
+    unsigned int terrain();
     
     /*!
      * @return A boolean representing if there is a creature on this tile currently.
