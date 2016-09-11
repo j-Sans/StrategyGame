@@ -24,14 +24,32 @@ bool escClicked = false;
 //Constructor
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, std::string hostName, int portNum) {
     this->initWindow(); //Create the GLFW window and set the window property
-    this->setData(); //Set the data arrays with information from the board
-    this->setBuffers(); //Set up all of the OpenGL buffers with the vertex data
+//    this->setData(); //Set the data arrays with information from the board
+    
+    std::map<BoardInfoDataTypes, std::string> boardInfo;
     
     try {
         this->socket.setSocket(hostName, portNum);
+        
+        std::string initialInfo = this->socket.receive();
+        
+        this->boardWidth = initialInfo[0];
+        this->boardHeight = initialInfo[1];
+        
+        this->numberOfTiles = this->boardWidth * this->boardHeight;
+        
+        boardInfo[Terrain] = this->socket.receive();
+        boardInfo[Creature] = this->socket.receive();
+        boardInfo[Color] = this->socket.receive();
+        boardInfo[Damage] = this->socket.receive();
+        boardInfo[Offset] = this->socket.receive();
+        boardInfo[Building] = this->socket.receive();
+        
     } catch (std::exception e) {
         std::cout << "Error setting socket: " << e.what() << std::endl;
     }
+    
+    this->setBuffers(boardInfo); //Set up all of the OpenGL buffers with the vertex data
     
     glm::ivec2 windowSize;
     glm::ivec2 framebufferSize;
@@ -58,42 +76,42 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     try {
         this->loadTexture("Resources/grass.jpg", "grassTex");
     } catch (std::exception e) {
-        std::cout << "Error loading grass texture: " << e.what();
+        std::cout << "Error loading grass texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/mountain.png", "mountainTex");
     } catch (std::exception e) {
-        std::cout << "Error loading mountain texture: " << e.what();
+        std::cout << "Error loading mountain texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/forest.png", "forestTex");
     } catch (std::exception e) {
-        std::cout << "Error loading forest texture: " << e.what();
+        std::cout << "Error loading forest texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/stick_figure.png", "stickFigureTex");
     } catch (std::exception e) {
-        std::cout << "Error loading stick figure texture: " << e.what();
+        std::cout << "Error loading stick figure texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/ScoutPlaceholder.png", "scoutPTex");
     } catch (std::exception e) {
-        std::cout << "Error loading scout placeholder texture: " << e.what();
+        std::cout << "Error loading scout placeholder texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/ArcherPlaceholder.png", "archerPTex");
     } catch (std::exception e) {
-        std::cout << "Error loading archer placeholder texture: " << e.what();
+        std::cout << "Error loading archer placeholder texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/tower.png", "towerTex");
     } catch (std::exception e) {
-        std::cout << "Error loading numbers texture: " << e.what();
+        std::cout << "Error loading numbers texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/circle.png", "circleTex");
     } catch (std::exception e) {
-        std::cout << "Error loading circle texture: " << e.what();
+        std::cout << "Error loading circle texture: " << e.what() << std::endl;
     }
     
     this->presetTransformations();
@@ -111,9 +129,9 @@ void Visualizer::render() {
     glfwGetCursorPos(this->gameWindow, &mousePos.x, &mousePos.y);
     glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
     
-    glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+    glm::vec4 tileCenters[this->numberOfTiles]; //Representing the center point of all of the map squares
     
-    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+    for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
         tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
     }
@@ -199,7 +217,7 @@ void Visualizer::render() {
     
     //Bind the VAO and draw shapes
     glBindVertexArray(this->VAO);
-    glDrawArrays(GL_POINTS, 0, NUMBER_OF_TILES);
+    glDrawArrays(GL_POINTS, 0, this->numberOfTiles);
     glBindVertexArray(0);
     
     this->renderDamageText();
@@ -255,9 +273,9 @@ void Visualizer::render() {
         glfwGetCursorPos(this->gameWindow, &cursorPos.x, &cursorPos.y);
         glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
         
-        glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+        glm::vec4 tileCenters[this->numberOfTiles]; //Representing the center point of all of the map squares
         
-        for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+        for (GLuint index = 0; index < this->numberOfTiles; index++) {
             //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
             tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
         }
@@ -372,244 +390,256 @@ void Visualizer::initWindow() {
     glfwSetMouseButtonCallback(this->gameWindow, this->mouseButtonCallback);
 }
 
-//Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Visualizer::setData() {
-    //Distance between each seed point
-    GLfloat pointDistance = 0.2f;
-    
-    GLfloat locationOfFirstPoint = 0.0f;
-    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
-    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
-    
-    //Vertex data
-    GLuint numberOfIndices = NUMBER_OF_TILES * INDICES_PER_TILES;
-    
-    GLuint index = 0;
-    
-    GLfloat vertices[numberOfIndices];
-    
-    for (GLuint x = 0; x < this->boardWidth; x++) {
-        for (GLuint y = 0; y < this->boardHeight; y++) {
-            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
-                
-                //Sets the point location based on the location in the board and on the modifiers above.
-                vertices[index] = locationOfFirstPoint - (x * pointDistance);
-                index++;
-                
-                vertices[index] = locationOfFirstPoint - (y * pointDistance);
-                index++;
-            }
-        }
-    }
-    
-    for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
-        this->vertexData[a] = vertices[a];
-    }
-    
-    //Terrain and creature data. One for each tile
-    numberOfIndices = NUMBER_OF_TILES;
-    
-    GLint terrains[numberOfIndices];
-    GLint creatures[numberOfIndices];
-    GLint directions[numberOfIndices];
-    GLint creatureControllers[numberOfIndices];
-    GLfloat colors[3 * numberOfIndices];
-    GLint buildings[numberOfIndices];
-    GLint buildingControllers[numberOfIndices];
-    
-    index = 0;
-    
-    for (GLuint x = 0; x < this->boardWidth; x++) {
-        for (GLuint y = 0; y < this->boardHeight; y++) {
-            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
-                if (setTerrainData)
-                    //Gets the terrain of the tile
-                    terrains[index] = this->game.board()->get(x, y).terrain();
-                
-                if (setCreatureData) {
-                    //Gets the creature on the tile
-                    creatures[index] = this->game.board()->get(x, y).creatureType();
-                    
-                    //Gets the direction if there is a creature there
-                    if (this->game.board()->get(x, y).creature() != nullptr) {
-                        directions[index] = this->game.board()->get(x, y).creature()->direction();
-                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
-                    } else {
-                        directions[index] = NORTH;
-                        creatureControllers[index] = 0;
-                    }
-                }
-                if (setColorData) {
-                    //Gets the color alteration of the tile
-                    colors[3 * index] = this->game.board()->get(x, y).color().x;
-                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
-                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
-                }
-                if (setBuildingData) {
-                    //Gets the building of the tile
-                    buildings[index] = this->game.board()->get(x, y).buildingType();
-                    
-                    //Gets the direction if there is a creature there
-                    if (this->game.board()->get(x, y).building() != nullptr) {
-                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
-                    } else {
-                        buildingControllers[index] = 0;
-                    }
-                }
-                
-                //Increment
-                index++;
-            }
-        }
-    }
-    
-    for (int a = 0; a < NUMBER_OF_TILES; a++) {
-        if (setTerrainData)
-            this->terrainData[a] = terrains[a];
-        if (setCreatureData) {
-            this->creatureData[3 * a] = creatures[a];
-            this->creatureData[(3 * a) + 1] = directions[a];
-            this->creatureData[(3 * a) + 2] = creatureControllers[a];
-        }
-        if (setColorData) {
-            this->colorData[3 * a] = colors[3 * a];
-            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
-            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
-        }
-        if (setDamageData) {
-            this->damageData[a] = 0;
-        }
-        if (setOffsetData) {
-            this->offsetData[a] = 0;
-        }
-        if (setBuildingData) {
-            this->buildingData[2 * a] = buildings[a];
-            this->buildingData[(2 * a) + 1] = buildingControllers[a];
-        }
-    }
-}
-
-//Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData) {
-    //Distance between each seed point
-    GLfloat pointDistance = 0.2f;
-    
-    GLfloat locationOfFirstPoint = 0.0f;
-    locationOfFirstPoint += (this->game.board()->width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
-    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
-    
-    //Vertex data
-    GLuint numberOfIndices = NUMBER_OF_TILES * INDICES_PER_TILES;
-    
-    GLuint index = 0;
-    
-    if (setVertexData) {
-        GLfloat vertices[numberOfIndices];
-        
-        for (GLuint x = 0; x < this->game.board()->width(); x++) {
-            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-                if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
-                    
-                    //Sets the point location based on the location in the board and on the modifiers above.
-                    vertices[index] = locationOfFirstPoint - (x * pointDistance);
-                    index++;
-                    
-                    vertices[index] = locationOfFirstPoint - (y * pointDistance);
-                    index++;
-                }
-            }
-        }
-        
-        for (int a = 0; a < NUMBER_OF_TILES * INDICES_PER_TILES; a++) {
-            this->vertexData[a] = vertices[a];
-        }
-    }
-    
-    //Terrain and creature data. One for each tile
-    numberOfIndices = NUMBER_OF_TILES;
-    
-    GLint terrains[numberOfIndices];
-    GLint creatures[numberOfIndices];
-    GLint directions[numberOfIndices];
-    GLint creatureControllers[numberOfIndices];
-    GLfloat colors[3 * numberOfIndices];
-    GLint buildings[numberOfIndices];
-    GLint buildingControllers[numberOfIndices];
-    
-    index = 0;
-    
-    for (GLuint x = 0; x < this->game.board()->width(); x++) {
-        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
-                if (setTerrainData)
-                    //Gets the terrain of the tile
-                    terrains[index] = this->game.board()->get(x, y).terrain();
-                
-                if (setCreatureData) {
-                    //Gets the creature on the tile
-                    creatures[index] = this->game.board()->get(x, y).creatureType();
-                    
-                    //Gets the direction if there is a creature there
-                    if (this->game.board()->get(x, y).creature() != nullptr) {
-                        directions[index] = this->game.board()->get(x, y).creature()->direction();
-                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
-                    } else {
-                        directions[index] = NORTH;
-                        creatureControllers[index] = 0;
-                    }
-                }
-                if (setColorData) {
-                    //Gets the color alteration of the tile
-                    colors[3 * index] = this->game.board()->get(x, y).color().x;
-                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
-                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
-                }
-                if (setBuildingData) {
-                    //Gets the building of the tile
-                    buildings[index] = this->game.board()->get(x, y).buildingType();
-                    
-                    //Gets the direction if there is a creature there
-                    if (this->game.board()->get(x, y).building() != nullptr) {
-                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
-                    } else {
-                        buildingControllers[index] = 0;
-                    }
-                }
-                
-                //Increment
-                index++;
-            }
-        }
-    }
-    
-    for (int a = 0; a < NUMBER_OF_TILES; a++) {
-        if (setTerrainData)
-            this->terrainData[a] = terrains[a];
-        if (setCreatureData) {
-            this->creatureData[3 * a] = creatures[a];
-            this->creatureData[(3 * a) + 1] = directions[a];
-            this->creatureData[(3 * a) + 2] = creatureControllers[a];
-        }
-        if (setColorData) {
-            this->colorData[3 * a] = colors[3 * a];
-            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
-            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
-        }
-        if (setDamageData) {
-            this->damageData[a] = 0;
-        }
-        if (setOffsetData) {
-            this->offsetData[a] = 0;
-        }
-        if (setBuildingData) {
-            this->buildingData[2 * a] = buildings[a];
-            this->buildingData[(2 * a) + 1] = buildingControllers[a];
-        }
-    }
-}
+////Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
+//void Visualizer::setData() {
+//    //Distance between each seed point
+//    GLfloat pointDistance = 0.2f;
+//    
+//    GLfloat locationOfFirstPoint = 0.0f;
+//    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+//    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
+//    
+//    //Vertex data
+//    GLuint numberOfIndices = this->numberOfTiles * INDICES_PER_TILES;
+//    
+//    GLuint index = 0;
+//    
+//    GLfloat vertices[numberOfIndices];
+//    
+//    for (GLuint x = 0; x < this->boardWidth; x++) {
+//        for (GLuint y = 0; y < this->boardHeight; y++) {
+//            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+//                
+//                //Sets the point location based on the location in the board and on the modifiers above.
+//                vertices[index] = locationOfFirstPoint - (x * pointDistance);
+//                index++;
+//                
+//                vertices[index] = locationOfFirstPoint - (y * pointDistance);
+//                index++;
+//            }
+//        }
+//    }
+//    
+//    for (int a = 0; a < this->numberOfTiles * 2; a++) { //2 for each tile to hold both an x and y coordinate
+//        this->vertexData[a] = vertices[a];
+//    }
+//    
+//    //Terrain and creature data. One for each tile
+//    numberOfIndices = this->numberOfTiles;
+//    
+//    GLint terrains[numberOfIndices];
+//    GLint creatures[numberOfIndices];
+//    GLint directions[numberOfIndices];
+//    GLint creatureControllers[numberOfIndices];
+//    GLfloat colors[3 * numberOfIndices];
+//    GLint buildings[numberOfIndices];
+//    GLint buildingControllers[numberOfIndices];
+//    
+//    index = 0;
+//    
+//    for (GLuint x = 0; x < this->boardWidth; x++) {
+//        for (GLuint y = 0; y < this->boardHeight; y++) {
+//            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
+//                if (setTerrainData)
+//                    //Gets the terrain of the tile
+//                    terrains[index] = this->game.board()->get(x, y).terrain();
+//                
+//                if (setCreatureData) {
+//                    //Gets the creature on the tile
+//                    creatures[index] = this->game.board()->get(x, y).creatureType();
+//                    
+//                    //Gets the direction if there is a creature there
+//                    if (this->game.board()->get(x, y).creature() != nullptr) {
+//                        directions[index] = this->game.board()->get(x, y).creature()->direction();
+//                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
+//                    } else {
+//                        directions[index] = NORTH;
+//                        creatureControllers[index] = 0;
+//                    }
+//                }
+//                if (setColorData) {
+//                    //Gets the color alteration of the tile
+//                    colors[3 * index] = this->game.board()->get(x, y).color().x;
+//                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
+//                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
+//                }
+//                if (setBuildingData) {
+//                    //Gets the building of the tile
+//                    buildings[index] = this->game.board()->get(x, y).buildingType();
+//                    
+//                    //Gets the direction if there is a creature there
+//                    if (this->game.board()->get(x, y).building() != nullptr) {
+//                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
+//                    } else {
+//                        buildingControllers[index] = 0;
+//                    }
+//                }
+//                
+//                //Increment
+//                index++;
+//            }
+//        }
+//    }
+//    
+//    for (int a = 0; a < this->numberOfTiles; a++) {
+//        if (setTerrainData)
+//            this->terrainData[a] = terrains[a];
+//        if (setCreatureData) {
+//            this->creatureData[3 * a] = creatures[a];
+//            this->creatureData[(3 * a) + 1] = directions[a];
+//            this->creatureData[(3 * a) + 2] = creatureControllers[a];
+//        }
+//        if (setColorData) {
+//            this->colorData[3 * a] = colors[3 * a];
+//            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
+//            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
+//        }
+//        if (setDamageData) {
+//            this->damageData[a] = 0;
+//        }
+//        if (setOffsetData) {
+//            this->offsetData[a] = 0;
+//        }
+//        if (setBuildingData) {
+//            this->buildingData[2 * a] = buildings[a];
+//            this->buildingData[(2 * a) + 1] = buildingControllers[a];
+//        }
+//    }
+//}
+//
+////Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
+//void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData) {
+//    //Distance between each seed point
+//    GLfloat pointDistance = 0.2f;
+//    
+//    GLfloat locationOfFirstPoint = 0.0f;
+//    locationOfFirstPoint += (this->game.board()->width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+//    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
+//    
+//    //Vertex data
+//    GLuint numberOfIndices = this->numberOfTiles * INDICES_PER_TILES;
+//    
+//    GLuint index = 0;
+//    
+//    if (setVertexData) {
+//        GLfloat vertices[numberOfIndices];
+//        
+//        for (GLuint x = 0; x < this->game.board()->width(); x++) {
+//            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+//                if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
+//                    
+//                    //Sets the point location based on the location in the board and on the modifiers above.
+//                    vertices[index] = locationOfFirstPoint - (x * pointDistance);
+//                    index++;
+//                    
+//                    vertices[index] = locationOfFirstPoint - (y * pointDistance);
+//                    index++;
+//                }
+//            }
+//        }
+//        
+//        for (int a = 0; a < this->numberOfTiles * INDICES_PER_TILES; a++) {
+//            this->vertexData[a] = vertices[a];
+//        }
+//    }
+//    
+//    //Terrain and creature data. One for each tile
+//    numberOfIndices = this->numberOfTiles;
+//    
+//    GLint terrains[numberOfIndices];
+//    GLint creatures[numberOfIndices];
+//    GLint directions[numberOfIndices];
+//    GLint creatureControllers[numberOfIndices];
+//    GLfloat colors[3 * numberOfIndices];
+//    GLint buildings[numberOfIndices];
+//    GLint buildingControllers[numberOfIndices];
+//    
+//    index = 0;
+//    
+//    for (GLuint x = 0; x < this->game.board()->width(); x++) {
+//        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
+//            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
+//                if (setTerrainData)
+//                    //Gets the terrain of the tile
+//                    terrains[index] = this->game.board()->get(x, y).terrain();
+//                
+//                if (setCreatureData) {
+//                    //Gets the creature on the tile
+//                    creatures[index] = this->game.board()->get(x, y).creatureType();
+//                    
+//                    //Gets the direction if there is a creature there
+//                    if (this->game.board()->get(x, y).creature() != nullptr) {
+//                        directions[index] = this->game.board()->get(x, y).creature()->direction();
+//                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
+//                    } else {
+//                        directions[index] = NORTH;
+//                        creatureControllers[index] = 0;
+//                    }
+//                }
+//                if (setColorData) {
+//                    //Gets the color alteration of the tile
+//                    colors[3 * index] = this->game.board()->get(x, y).color().x;
+//                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
+//                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
+//                }
+//                if (setBuildingData) {
+//                    //Gets the building of the tile
+//                    buildings[index] = this->game.board()->get(x, y).buildingType();
+//                    
+//                    //Gets the direction if there is a creature there
+//                    if (this->game.board()->get(x, y).building() != nullptr) {
+//                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
+//                    } else {
+//                        buildingControllers[index] = 0;
+//                    }
+//                }
+//                
+//                //Increment
+//                index++;
+//            }
+//        }
+//    }
+//    
+//    for (int a = 0; a < this->numberOfTiles; a++) {
+//        if (setTerrainData)
+//            this->terrainData[a] = terrains[a];
+//        if (setCreatureData) {
+//            this->creatureData[3 * a] = creatures[a];
+//            this->creatureData[(3 * a) + 1] = directions[a];
+//            this->creatureData[(3 * a) + 2] = creatureControllers[a];
+//        }
+//        if (setColorData) {
+//            this->colorData[3 * a] = colors[3 * a];
+//            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
+//            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
+//        }
+//        if (setDamageData) {
+//            this->damageData[a] = 0;
+//        }
+//        if (setOffsetData) {
+//            this->offsetData[a] = 0;
+//        }
+//        if (setBuildingData) {
+//            this->buildingData[2 * a] = buildings[a];
+//            this->buildingData[(2 * a) + 1] = buildingControllers[a];
+//        }
+//    }
+//}
 
 //Initialize OpenGL buffers with the object's vertex data.
-void Visualizer::setBuffers() {
+void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+    
+    //The data arrays that hold ints are converted implicitly directly from chars
+    //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
+    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
+        this->terrainData[tile] = boardInfo[Terrain]; //char -> int
+        this->creatureData[tile] = boardInfo[Creature]; //char -> int
+        this->colorData[tile] = boardInfo[Color] / 100; //char / 100 -> int
+        this->damageData[tile] = boardInfo[Damage]; //char -> int
+        this->offsetData[tile] = boardInfo[Offset] / 100; //char / 100 -> int
+        this->buildingData[tile] = boardInfo[Building]; //char -> int
+    }
+    
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     glGenVertexArrays(1, &this->VAO);
@@ -778,7 +808,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     
     //The data arrays that hold ints are converted implicitly directly from chars
     //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
-    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
         this->terrainData[tile] = boardInfo[Terrain]; //char -> int
         this->creatureData[tile] = boardInfo[Creature]; //char -> int
         this->colorData[tile] = boardInfo[Color] / 100; //char / 100 -> int
@@ -854,7 +884,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     this->setData(false, false, true, false, false, false, true);
     
     //Goes through all tiles and continues moving any that are moving
-    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
         
         glm::ivec2 boardLoc;
         boardLoc.x = tile / this->game.board()->width();
@@ -937,7 +967,7 @@ void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardIn
     glBindVertexArray(0);
     
     //Goes through existence times and updates them based on glfwGetTime()
-    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
         glm::ivec2 boardLoc;
         boardLoc.x = tile / this->game.board()->width();
         boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
@@ -1026,15 +1056,15 @@ void Visualizer::updateInterfaces() {
 }
 
 void Visualizer::renderDamageText() {
-    glm::vec4 tileCenters[NUMBER_OF_TILES]; //Representing the center point of all of the map squares
+    glm::vec4 tileCenters[this->numberOfTiles]; //Representing the center point of all of the map squares
     
-    for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
+    for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
         tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
     }
     
     //Goes through existence times and updates them based on glfwGetTime()
-    for (GLuint tile = 0; tile < NUMBER_OF_TILES; tile++) {
+    for (GLuint tile = 0; tile < this->numberOfTiles ; tile++) {
         
         if (this->damageData[tile] != 0) { //Don't show the damage if it is not new
         

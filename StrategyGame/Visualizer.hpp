@@ -76,8 +76,10 @@ public:
      * @param vertexPath A string which is the path to the text file that contains vertex shader GLSL code.
      * @param geometryPath A string which is the path to the text file that contains geometry shader GLSL code.
      * @param fragmentPath A string which is the path to the text file that contains fragment shader GLSL code.
+     * @param hostName A string representing the name of the host to connect to.
+     * @param portNum The port number on the server that is being connected to.
      */
-    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
+    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, std::string hostName, int portNum);
     
     //Destructor
     
@@ -97,11 +99,6 @@ public:
      * The speed at which the camera pans across the board.
      */
     const GLfloat camSpeed = 1.5f;
-    
-    /*!
-     * A limiting factor preventing the camera from moving too far off screen.
-     */
-    const GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
     //Public member functions
     
@@ -144,6 +141,11 @@ public:
 private:
     //Private properties
     
+    //Board info
+    unsigned int boardWidth;
+    unsigned int boardHeight;
+    unsigned int numberOfTiles;
+    
     //OpenGL and GLFW properties
     GLFWwindow* gameWindow;
     Shader gameShader; //Compiled shader
@@ -181,6 +183,7 @@ private:
     glm::mat4 projection; //Keeps board scale constant with different window sizes
     
     glm::vec3 cameraCenter;
+    GLfloat camMaxDisplacement = BOARD_WIDTH / 10.0f;
     
     //Window data
     GLfloat deltaTime = 0.0f;
@@ -216,23 +219,25 @@ private:
      */
     void initWindow();
     
-    /*!
-     * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-     *
-     * @param setVertexData A boolean indicating whether to update the vertex data array.
-     * @param setTerrainData A boolean indicating whether to update the terrain data array.
-     * @param setCreatureData A boolean indicating whether to update the creature data array.
-     * @param setColorData A boolean indicating whether to update the color data array.
-     * @param setDamageData A boolean indicating whether to update the damage data array.
-     * @param setOffsetData A boolean indicating whether to update the offset data array.
-     * @param setBuildingData A boolean indicating whether to update the building data array.
-     */
-    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData);
+//    /*!
+//     * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
+//     *
+//     * @param setVertexData A boolean indicating whether to update the vertex data array.
+//     * @param setTerrainData A boolean indicating whether to update the terrain data array.
+//     * @param setCreatureData A boolean indicating whether to update the creature data array.
+//     * @param setColorData A boolean indicating whether to update the color data array.
+//     * @param setDamageData A boolean indicating whether to update the damage data array.
+//     * @param setOffsetData A boolean indicating whether to update the offset data array.
+//     * @param setBuildingData A boolean indicating whether to update the building data array.
+//     */
+//    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData);
     
     /*!
      * Initialize OpenGL buffers with the object's vertex data.
+     *
+     * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
-    void setBuffers();
+    void setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
     /*!
      * Initialize the interface
