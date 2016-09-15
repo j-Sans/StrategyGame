@@ -107,6 +107,10 @@ void ClientSocket::send(std::string message) {
     //Initialize the buffer to store the message to send
     bzero(buffer, message.length());
     
+    for (int stringIndex = 0; stringIndex < message.length(); stringIndex++) {
+        buffer[stringIndex] = message[stringIndex];
+    }
+    
     long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
     /* write()

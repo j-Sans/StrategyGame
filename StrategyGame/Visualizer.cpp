@@ -28,8 +28,10 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     
     std::map<BoardInfoDataTypes, std::string> boardInfo;
     
-    try {
+//    try {
         this->socket.setSocket(hostName, portNum);
+        
+        std::cout << "Visualizer socket set" << std::endl;
         
         std::string initialInfo = this->socket.receive();
         
@@ -45,10 +47,10 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
         boardInfo[OffsetData] = this->socket.receive();
         boardInfo[BuildingData] = this->socket.receive();
         
-    } catch (std::exception e) {
-        std::cout << "Error setting socket: " << e.what() << std::endl;
-        throw std::runtime_error("Visualizer couldn't be set");
-    }
+//    } catch (std::exception e) {
+//        std::cout << "Error setting socket: " << e.what() << std::endl;
+//        throw std::runtime_error("Visualizer couldn't be set");
+//    }
     
     this->setBuffers(boardInfo); //Set up all of the OpenGL buffers with the vertex data
     

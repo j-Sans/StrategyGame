@@ -111,6 +111,10 @@ void ServerSocket::send(std::string message) {
     //Initialize the buffer where received info is stored
     bzero(buffer, message.length());
     
+    for (int stringIndex = 0; stringIndex < message.length(); stringIndex++) {
+        buffer[stringIndex] = message[stringIndex];
+    }
+    
     long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
     /* write()
@@ -122,7 +126,7 @@ void ServerSocket::send(std::string message) {
      
      The third argument is the length of the message.
      */
-    messageSize = write(this->clientSocket, message.c_str(), message.length());
+    messageSize = write(this->clientSocket, buffer, strlen(buffer));
     
     //Check for errors writing the message
     if (messageSize < 0)

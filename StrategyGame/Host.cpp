@@ -15,6 +15,8 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
             
             this->sockets.back().setSocket(portNum);
             
+            std::cout << "Host socket set" << std::endl;
+            
             portNum++;
         } catch (std::exception e) {
             std::cout << "Error initializing socket: " << e.what() << std::endl;
