@@ -34,19 +34,34 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
         std::cout << "Visualizer socket set" << std::endl;
         
         std::string initialInfo = this->socket.receive();
-        
+    
+        std::cout << "Initial info received" << std::endl;
+    
         this->boardWidth = initialInfo[0];
         this->boardHeight = initialInfo[1];
         
-        this->numberOfTiles = this->boardWidth * this->boardHeight;
-        
-        boardInfo[TerrainData] = this->socket.receive();
-        boardInfo[CreatureData] = this->socket.receive();
-        boardInfo[ColorData] = this->socket.receive();
-        boardInfo[DamageData] = this->socket.receive();
-        boardInfo[OffsetData] = this->socket.receive();
-        boardInfo[BuildingData] = this->socket.receive();
-        
+    this->numberOfTiles = this->boardWidth * this->boardHeight;
+    
+    std::cout << "Visualizer received 0/6" << std::endl;
+    boardInfo[TerrainData] = this->socket.receive();
+    
+    std::cout << "Visualizer received 1/6" << std::endl;
+    boardInfo[CreatureData] = this->socket.receive();
+    
+    std::cout << "Visualizer received 2/6" << std::endl;
+    boardInfo[ColorData] = this->socket.receive();
+    
+    std::cout << "Visualizer received 3/6" << std::endl;
+    boardInfo[DamageData] = this->socket.receive();
+    
+    std::cout << "Visualizer received 4/6" << std::endl;
+    boardInfo[OffsetData] = this->socket.receive();
+    
+    std::cout << "Visualizer received 5/6" << std::endl;
+    boardInfo[BuildingData] = this->socket.receive();
+    
+    std::cout << "Visualizer received 6/6" << std::endl;
+    
 //    } catch (std::exception e) {
 //        std::cout << "Error setting socket: " << e.what() << std::endl;
 //        throw std::runtime_error("Visualizer couldn't be set");

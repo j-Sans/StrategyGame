@@ -53,27 +53,7 @@ int main(int argc, const char * argv[]) {
         else
             repeat = true;
     }
-    
-    if (!host) {
-        ClientSocket socket;
-        
-        socket.setSocket("localhost", 3000);
-        
-        std::cout << "Message: " << socket.receive() << std::endl;
-        
-        socket.send("Hai back");
-    } else {
-        ServerSocket socket;
-        
-        socket.setSocket(3000);
-        
-        socket.send("Hai");
-        
-        std::cout << "Message: " << socket.receive() << std::endl;
-    }
 
-    
-    /*
     if (!host) {
         Visualizer V("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", "localhost", 3000);
         
@@ -101,7 +81,7 @@ int main(int argc, const char * argv[]) {
         
         while (true)
             H.update();
-    }*/
+    }
     
 //    //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
 //
