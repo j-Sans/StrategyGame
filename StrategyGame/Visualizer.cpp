@@ -23,49 +23,32 @@ bool escClicked = false;
 
 //Constructor
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, std::string hostName, int portNum) {
-    this->initWindow(); //Create the GLFW window and set the window property
-//    this->setData(); //Set the data arrays with information from the board
-    
     std::map<BoardInfoDataTypes, std::string> boardInfo;
     
-//    try {
-        this->socket.setSocket(hostName, portNum);
-        
-        std::cout << "Visualizer socket set" << std::endl;
-        
-        std::string initialInfo = this->socket.receive();
+    //    try {
+    this->socket.setSocket(hostName, portNum);
     
-        std::cout << "Initial info received" << std::endl;
+    std::string initialInfo = this->socket.receive();
     
-        this->boardWidth = initialInfo[0];
-        this->boardHeight = initialInfo[1];
-        
+    this->boardWidth = initialInfo[0];
+    this->boardHeight = initialInfo[1];
+    
     this->numberOfTiles = this->boardWidth * this->boardHeight;
     
-    std::cout << "Visualizer received 0/6" << std::endl;
     boardInfo[TerrainData] = this->socket.receive();
-    
-    std::cout << "Visualizer received 1/6" << std::endl;
     boardInfo[CreatureData] = this->socket.receive();
-    
-    std::cout << "Visualizer received 2/6" << std::endl;
     boardInfo[ColorData] = this->socket.receive();
-    
-    std::cout << "Visualizer received 3/6" << std::endl;
     boardInfo[DamageData] = this->socket.receive();
-    
-    std::cout << "Visualizer received 4/6" << std::endl;
     boardInfo[OffsetData] = this->socket.receive();
-    
-    std::cout << "Visualizer received 5/6" << std::endl;
     boardInfo[BuildingData] = this->socket.receive();
     
-    std::cout << "Visualizer received 6/6" << std::endl;
+    //    } catch (std::exception e) {
+    //        std::cout << "Error setting socket: " << e.what() << std::endl;
+    //        throw std::runtime_error("Visualizer couldn't be set");
+    //    }
     
-//    } catch (std::exception e) {
-//        std::cout << "Error setting socket: " << e.what() << std::endl;
-//        throw std::runtime_error("Visualizer couldn't be set");
-//    }
+    this->initWindow(); //Create the GLFW window and set the window property
+//    this->setData(); //Set the data arrays with information from the board
     
     this->setBuffers(boardInfo); //Set up all of the OpenGL buffers with the vertex data
     

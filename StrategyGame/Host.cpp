@@ -14,13 +14,9 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
             this->sockets.push_back(ServerSocket());
             
             this->sockets.back().setSocket(portNum);
-            
-            std::cout << "Host socket set" << std::endl;
         
             //Send initial info to the visualizer saying the width and height of the board
             this->sockets.back().send(std::to_string(this->board.width()) + std::to_string(this->board.height(0)));
-        
-        std::cout << "Host sent initial data" << std::endl;
         
             portNum++;
 //        } catch (std::exception e) {
@@ -28,8 +24,6 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
 //            throw std::runtime_error("Host couldn't be set");
 //        }
     }
-    
-    std::cout << "Host preparing players" << std::endl;
     
     while (this->players.size() < numberOfPlayers) {
         this->players.push_back(Player(&board));
@@ -42,14 +36,10 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     std::string offsetData;
     std::string buildingData;
     
-    std::cout << "Host preparing data" << std::endl;
-    
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
-            std::cout << "Setting terrain data" << std::endl;
             terrainData.push_back(this->board.get(x, y).terrain());
             
-            std::cout << "Setting creature data" << std::endl;
             creatureData.push_back(this->board.get(x, y).creatureType());
             if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
                 creatureData.push_back(this->board.get(x, y).creature()->direction());
@@ -59,51 +49,37 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
                 creatureData.push_back(0);
             }
             
-            std::cout << "Setting tile data" << std::endl;
             glm::vec3 tileColor = this->players[0].game.tileColor(x, y);
             colorData.push_back(tileColor.x * 100);
             colorData.push_back(tileColor.y * 100);
             colorData.push_back(tileColor.z * 100);
             
-            std::cout << "Setting damage data" << std::endl;
             damageData.push_back(this->board.get(x, y).damage());
             
-            std::cout << "Setting offset data" << std::endl;
             if (this->board.get(x, y).creature() != nullptr)
                 offsetData.push_back(this->board.get(x, y).creature()->offset() * 100);
             else
                 offsetData.push_back(0);
             
-            std::cout << "Setting building data" << std::endl;
             buildingData.push_back(this->board.get(x, y).buildingType());
             if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
                 buildingData.push_back(this->board.get(x, y).building()->controller());
             else
                 buildingData.push_back(0);
-            
-            std::cout << "Finished data for tile" << std::endl;
         }
     }
     
-    std::cout << "Host sent 0/6" << std::endl;
     this->sockets[0].send(terrainData);
     
-    std::cout << "Host sent 1/6" << std::endl;
     this->sockets[0].send(creatureData);
     
-    std::cout << "Host sent 2/6" << std::endl;
     this->sockets[0].send(colorData);
     
-    std::cout << "Host sent 3/6" << std::endl;
     this->sockets[0].send(damageData);
     
-    std::cout << "Host sent 4/6" << std::endl;
     this->sockets[0].send(offsetData);
     
-    std::cout << "Host sent 5/6" << std::endl;
     this->sockets[0].send(buildingData);
-    
-    std::cout << "Host sent 6/6" << std::endl;
 }
 
 void Host::update() {
