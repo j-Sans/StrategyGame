@@ -47,6 +47,8 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     //        throw std::runtime_error("Visualizer couldn't be set");
     //    }
     
+    std::cout << "Socket communication finished" << std::endl;
+    
     this->initWindow(); //Create the GLFW window and set the window property
 //    this->setData(); //Set the data arrays with information from the board
     

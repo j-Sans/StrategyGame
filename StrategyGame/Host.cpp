@@ -70,15 +70,10 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     }
     
     this->sockets[0].send(terrainData);
-    
     this->sockets[0].send(creatureData);
-    
     this->sockets[0].send(colorData);
-    
     this->sockets[0].send(damageData);
-    
     this->sockets[0].send(offsetData);
-    
     this->sockets[0].send(buildingData);
 }
 
@@ -102,8 +97,13 @@ void Host::update() {
             terrainData.push_back(this->board.get(x, y).terrain());
             
             creatureData.push_back(this->board.get(x, y).creatureType());
-            creatureData.push_back(this->board.get(x, y).creature()->direction());
-            creatureData.push_back(this->board.get(x, y).creature()->controller());
+            if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
+                creatureData.push_back(this->board.get(x, y).creature()->direction());
+                creatureData.push_back(this->board.get(x, y).creature()->controller());
+            } else {
+                creatureData.push_back(0);
+                creatureData.push_back(0);
+            }
             
             glm::vec3 tileColor = this->players[0].game.tileColor(x, y);
             colorData.push_back(tileColor.x * 100);
@@ -112,10 +112,16 @@ void Host::update() {
             
             damageData.push_back(this->board.get(x, y).damage());
             
-            offsetData.push_back(this->board.get(x, y).creature()->offset() * 100);
+            if (this->board.get(x, y).creature() != nullptr)
+                offsetData.push_back(this->board.get(x, y).creature()->offset() * 100);
+            else
+                offsetData.push_back(0);
             
             buildingData.push_back(this->board.get(x, y).buildingType());
-            buildingData.push_back(this->board.get(x, y).building()->controller());
+            if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
+                buildingData.push_back(this->board.get(x, y).building()->controller());
+            else
+                buildingData.push_back(0);
         }
     }
     
