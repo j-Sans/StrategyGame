@@ -136,7 +136,18 @@ void ServerSocket::send(std::string message) {
         throw std::runtime_error("ERROR writing to socket");
     
 #ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host sent: \"" << buffer << "\"" << std::endl;
+    std::cout << "Host sent:" << std::endl << "\t";
+    
+    for (int a = 0; a < MAXIMUM_SOCKET_MESSAGE_SIZE; a++) {
+        if ((int)buffer[a] == -1) {
+            std::cout << (int)buffer[a];
+            break;
+        }
+        
+        std::cout << (int)buffer[a] << " ";
+    }
+    
+    std::cout << std::endl << "\t\"" << buffer << "\"" << std::endl;
 #endif
 }
 
@@ -167,7 +178,18 @@ std::string ServerSocket::receive() {
         throw std::runtime_error("ERROR reading from socket");
     
 #ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host received: \"" << buffer << "\"" << std::endl;
+    std::cout << "Host received:" << std::endl << "\t";
+    
+    for (int a = 0; a < MAXIMUM_SOCKET_MESSAGE_SIZE; a++) {
+        if ((int)buffer[a] == -1) {
+            std::cout << (int)buffer[a];
+            break;
+        }
+        
+        std::cout << (int)buffer[a] << " ";
+    }
+    
+    std::cout << std::endl << "\t\"" << buffer << "\"" << std::endl;
 #endif
     
     std::string message;
