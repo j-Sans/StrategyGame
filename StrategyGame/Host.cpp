@@ -11,14 +11,21 @@
 Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(gameBoard) {
     while (this->sockets.size() < numberOfPlayers) {
 //        try {
-            this->sockets.push_back(ServerSocket());
-            
-            this->sockets.back().setSocket(portNum);
+        this->sockets.push_back(ServerSocket());
         
-            //Send initial info to the visualizer saying the width and height of the board
-            this->sockets.back().send(std::to_string(this->board.width()) + std::to_string(this->board.height(0)));
-        
-            portNum++;
+        this->sockets.back().setSocket(portNum);
+    
+        //Send initial info to the visualizer saying the width and height of the board
+    
+        std::string initialData;
+        initialData.push_back(this->board.width());
+        initialData.push_back(this->board.height(0));
+    
+        this->sockets.back().send(initialData);
+        if (this->sockets.back().receive() != "initialDataReceived")
+            throw std::runtime_error("Initial data not received");
+    
+        portNum++;
 //        } catch (std::exception e) {
 //            std::cout << "Error initializing socket: " << e.what() << std::endl;
 //            throw std::runtime_error("Host couldn't be set");
@@ -70,11 +77,28 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     }
     
     this->sockets[0].send(terrainData);
+    if (this->sockets[0].receive() != "terrainDataReceived")
+        throw std::runtime_error("Terrain data not received");
+    
     this->sockets[0].send(creatureData);
+    if (this->sockets[0].receive() != "creatureDataReceived")
+        throw std::runtime_error("Creature data not received");
+    
     this->sockets[0].send(colorData);
+    if (this->sockets[0].receive() != "colorDataReceived")
+        throw std::runtime_error("Color data not received");
+    
     this->sockets[0].send(damageData);
+    if (this->sockets[0].receive() != "damageDataReceived")
+        throw std::runtime_error("Damage data not received");
+    
     this->sockets[0].send(offsetData);
+    if (this->sockets[0].receive() != "offsetDataReceived")
+        throw std::runtime_error("Offset data not received");
+    
     this->sockets[0].send(buildingData);
+    if (this->sockets[0].receive() != "buildingDataReceived")
+        throw std::runtime_error("Building data not received");
 }
 
 void Host::update() {
@@ -126,11 +150,29 @@ void Host::update() {
     }
     
     this->sockets[0].send(terrainData);
+    if (this->sockets[0].receive() != "terrainDataReceived")
+        throw std::runtime_error("Terrain data not received");
+
     this->sockets[0].send(creatureData);
+    if (this->sockets[0].receive() != "creatureDataReceived")
+        throw std::runtime_error("Creature data not received");
+
     this->sockets[0].send(colorData);
+    if (this->sockets[0].receive() != "colorDataReceived")
+        throw std::runtime_error("Color data not received");
+
     this->sockets[0].send(damageData);
+    if (this->sockets[0].receive() != "damageDataReceived")
+        throw std::runtime_error("Damage data not received");
+
     this->sockets[0].send(offsetData);
+    if (this->sockets[0].receive() != "offsetDataReceived")
+        throw std::runtime_error("Offset data not received");
+
     this->sockets[0].send(buildingData);
+    if (this->sockets[0].receive() != "buildingDataReceived")
+        throw std::runtime_error("Building data not received");
+
     
     /* clientInfo stores information:
      [0]: Current mouse position's x coordinate on the board.

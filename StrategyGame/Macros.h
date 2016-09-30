@@ -22,15 +22,16 @@
 //To make the selected tile reset after movement
 //#ifdef RESET_SELECTED_TILE_AFTER_MOVEMENT
 
-//Various console outputs
+    //Various console outputs
 
 //#define MOVEMENT_CONSOLE_OUTPUT
 //#define TURN_CONSOLE_OUTPUT
 //#define PATHFINDING_CONSOLE_OUTPUT
 //#define COMBAT_CONSOLE_OUTPUT
+#define SOCKET_CONSOLE_OUTPUT
 
+    //Other
 #define FONT_PATH "Resources/Palatino.ttc"
-
 #define MAXIMUM_SOCKET_MESSAGE_SIZE 10000
 
 #endif /* Macros_h */

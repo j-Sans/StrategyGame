@@ -102,14 +102,17 @@ void ClientSocket::send(std::string message) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    char buffer[message.length()];
+    char buffer[message.length() + 1];
     
     //Initialize the buffer to store the message to send
-    bzero(buffer, message.length());
+    bzero(buffer, message.length() + 1);
     
     for (int stringIndex = 0; stringIndex < message.length(); stringIndex++) {
         buffer[stringIndex] = message[stringIndex];
     }
+    
+    //Add a terminating character
+    buffer[message.length()] = -1;
     
     long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
@@ -127,6 +130,11 @@ void ClientSocket::send(std::string message) {
     //Check for errors writing the message
     if (messageSize < 0)
         throw std::runtime_error("ERROR writing to socket");
+    
+#ifdef SOCKET_CONSOLE_OUTPUT
+    std::cout << "Client sent: \"" << buffer << "\"" << std::endl;
+#endif
+
 }
 
 std::string ClientSocket::receive() {
@@ -155,8 +163,21 @@ std::string ClientSocket::receive() {
     if (messageSize < 0)
         throw std::runtime_error("ERROR reading from socket");
     
+#ifdef SOCKET_CONSOLE_OUTPUT
+    std::cout << "Client received: \"" << buffer << "\"" << std::endl;
+#endif
+    
+    std::string message;
+    
+    for (int iterator = 0; iterator < MAXIMUM_SOCKET_MESSAGE_SIZE; iterator++) {
+        if (buffer[iterator] == -1)
+            break;
+        else
+            message.push_back(buffer[iterator]);
+    }
+    
     //Return the received message
-    return std::string(buffer);
+    return message;
 }
 
 ClientSocket::~ClientSocket() {

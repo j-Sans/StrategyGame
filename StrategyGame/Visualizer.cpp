@@ -29,6 +29,7 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     this->socket.setSocket(hostName, portNum);
     
     std::string initialInfo = this->socket.receive();
+    this->socket.send("initialDataReceived");
     
     this->boardWidth = initialInfo[0];
     this->boardHeight = initialInfo[1];
@@ -36,11 +37,22 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     this->numberOfTiles = this->boardWidth * this->boardHeight;
     
     boardInfo[TerrainData] = this->socket.receive();
+    this->socket.send("terrainDataReceived");
+    
     boardInfo[CreatureData] = this->socket.receive();
+    this->socket.send("creatureDataReceived");
+    
     boardInfo[ColorData] = this->socket.receive();
+    this->socket.send("colorDataReceived");
+    
     boardInfo[DamageData] = this->socket.receive();
+    this->socket.send("damageDataReceived");
+    
     boardInfo[OffsetData] = this->socket.receive();
+    this->socket.send("offsetDataReceived");
+    
     boardInfo[BuildingData] = this->socket.receive();
+    this->socket.send("buildingDataReceived");
     
     //    } catch (std::exception e) {
     //        std::cout << "Error setting socket: " << e.what() << std::endl;
@@ -162,11 +174,22 @@ void Visualizer::render() {
     std::map<BoardInfoDataTypes, std::string> boardInfo;
     
     boardInfo[TerrainData] = this->socket.receive();
+    this->socket.send("terrainDataReceived");
+    
     boardInfo[CreatureData] = this->socket.receive();
+    this->socket.send("creatureDataReceived");
+    
     boardInfo[ColorData] = this->socket.receive();
+    this->socket.send("colorDataReceived");
+    
     boardInfo[DamageData] = this->socket.receive();
+    this->socket.send("damageDataReceived");
+    
     boardInfo[OffsetData] = this->socket.receive();
+    this->socket.send("offsetDataReceived");
+    
     boardInfo[BuildingData] = this->socket.receive();
+    this->socket.send("buildingDataReceived");
 
     this->updateBuffers(boardInfo);
     
