@@ -24,51 +24,53 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     
     unsigned int boardHeight = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
     
-    boardInfo[TerrainData] = this->socket.receive();
+    std::vector<int> terrainDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("terrainDataReceived");
     
-    boardInfo[CreatureData] = this->socket.receive();
+    std::vector<int> creatureDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("creatureDataReceived");
     
-    boardInfo[ColorData] = this->socket.receive();
+    std::vector<float> colorDataVec = this->parseVectorOfFloat(this->socket.receive());
     this->socket.send("colorDataReceived");
     
-    boardInfo[DamageData] = this->socket.receive();
+    std::vector<int> damageDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("damageDataReceived");
     
-    boardInfo[OffsetData] = this->socket.receive();
+    std::vector<float> offsetDataVec = this->parseVectorOfFloat(this->socket.receive());
     this->socket.send("offsetDataReceived");
     
-    boardInfo[BuildingData] = this->socket.receive();
+    std::vector<int> buildingDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("buildingDataReceived");
     
     std::cout << "Socket communication finished" << std::endl;
     
-    this->visualizer.set(boardWidth, boardHeight, boardInfo);
+    this->visualizer.set(boardWidth, boardHeight, terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
 
 void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     this->socket.send(this->visualizer.getClientInfo());
+    if (this->socket.receive() != "clientDataReceived")
+        throw std::runtime_error("Client data not received");
 
-    boardInfo[TerrainData] = this->socket.receive();
+    std::vector<int> terrainDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("terrainDataReceived");
-
-    boardInfo[CreatureData] = this->socket.receive();
+    
+    std::vector<int> creatureDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("creatureDataReceived");
-
-    boardInfo[ColorData] = this->socket.receive();
+    
+    std::vector<float> colorDataVec = this->parseVectorOfFloat(this->socket.receive());
     this->socket.send("colorDataReceived");
-
-    boardInfo[DamageData] = this->socket.receive();
+    
+    std::vector<int> damageDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("damageDataReceived");
-
-    boardInfo[OffsetData] = this->socket.receive();
+    
+    std::vector<float> offsetDataVec = this->parseVectorOfFloat(this->socket.receive());
     this->socket.send("offsetDataReceived");
-
-    boardInfo[BuildingData] = this->socket.receive();
+    
+    std::vector<int> buildingDataVec = this->parseVectorOfInt(this->socket.receive());
     this->socket.send("buildingDataReceived");
     
-    this->visualizer.render(boardInfo);
+    this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
 
 std::vector<int> parseVectorOfInt(std::string str) {

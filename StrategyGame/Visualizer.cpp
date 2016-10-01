@@ -25,7 +25,7 @@ bool escClicked = false;
 //Visualizer::Visualizer() {}
 
 //Constructor
-Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo) : boardWidth(width), boardHeight(height) {
+Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath) {
     
     this->initWindow(); //Create the GLFW window and set the window property
 //    this->setData(); //Set the data arrays with information from the board
@@ -104,17 +104,20 @@ GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
 }
 
-void Visualizer::set(unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo) {
+void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
     this->boardHeight = width;
     this->boardHeight = height;
     
-    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
+    this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    
+//    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
     
     this->isSet = true;
 }
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
-void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+//void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
     //*****HOW MUCH OF CLIENT INFO SECTION HERE IS BEING USED?*****
     std::string clientInfo;
     
@@ -635,19 +638,30 @@ void Visualizer::initWindow() {
 //    }
 //}
 
-//Initialize OpenGL buffers with the object's vertex data.
-void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+////Initialize OpenGL buffers with the object's vertex data.
+//void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+//
+//    //The data arrays that hold ints are converted implicitly directly from chars
+//    //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
+//    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
+//        this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
+//        this->creatureData[tile] = boardInfo[CreatureData][tile]; //char -> int
+//        this->colorData[tile] = boardInfo[ColorData][tile] / 100; //char / 100 -> int
+//        this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
+//        this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
+//        this->buildingData[tile] = boardInfo[BuildingData][tile]; //char -> int
+//    }
     
-    //The data arrays that hold ints are converted implicitly directly from chars
-    //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
-    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
-        this->creatureData[tile] = boardInfo[CreatureData][tile]; //char -> int
-        this->colorData[tile] = boardInfo[ColorData][tile] / 100; //char / 100 -> int
-        this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
-        this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
-        this->buildingData[tile] = boardInfo[BuildingData][tile]; //char -> int
-    }
+
+
+void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
+    
+    this->terrainData = terrainDataVec;
+    this->creatureData = creatureDataVec;
+    this->colorData = colorDataVec;
+    this->damageData = damageDataVec;
+    this->offsetData = offsetDataVec;
+    this->buildingData = buildingDataVec;
     
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO

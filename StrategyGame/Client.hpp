@@ -35,7 +35,7 @@ private:
     
     //Private member functions
     std::vector<int> parseVectorOfInt(std::string str);
-    std::vector<float> parseVectorOfDouble(std::string str);
+    std::vector<float> parseVectorOfFloat(std::string str);
 };
 
 #endif /* Client_hpp */

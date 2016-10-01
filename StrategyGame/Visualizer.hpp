@@ -121,14 +121,15 @@ public:
      * @param height An unsigned int representing the number of tiles along the y axis on the board.
      * @param initialInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for initially setting openGL buffers.
      */
-    void set(unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo);
+    void set(unsigned int width, unsigned int height, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
     
     /*!
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
      *
      * @param boardInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for updating openGL buffers.
      */
-    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
+//    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
+    void render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
     
     /*!
      * A functino to return a string conatining the following.
@@ -271,7 +272,8 @@ private:
      *
      * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
-    void setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
+//    void setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
+    void setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
     
     /*!
      * Initialize the interface
