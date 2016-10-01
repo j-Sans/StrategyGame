@@ -21,13 +21,14 @@ bool mouseUp = false;
 //A boolean representing if the escape button has been clicked, for use with the settings menu. This boolean is set in the key callback function and is reset when used.
 bool escClicked = false;
 
+//Only so that Client.hpp can have a shader property without declaring it initially. No other purpose
+Visualizer::Visualizer() {}
+
 //Constructor
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo) : boardWidth(width), boardHeight(height) {
     
     this->initWindow(); //Create the GLFW window and set the window property
 //    this->setData(); //Set the data arrays with information from the board
-    
-    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
     
     this->camMaxDisplacement = this->boardWidth / 10.0f;
     
@@ -101,6 +102,15 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
 
 GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
+}
+
+void Visualizer::set(unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo) {
+    this->boardHeight = width;
+    this->boardHeight = height;
+    
+    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
+    
+    this->isSet = true;
 }
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.

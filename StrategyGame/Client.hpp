@@ -22,12 +22,15 @@ public:
     //Constructor
     Client(std::string hostName, int portNum);
     
-    render(std::map<BoardInfoDataTypes, std::string> boardInfo);
+    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
 private:
     
-    //Socket
+    //Socket, to receive information and give to the visualizer
     ClientSocket socket;
+    
+    //Visualizer, to render the window
+    Visualizer visualizer;
 };
 
 #endif /* Client_hpp */

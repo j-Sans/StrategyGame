@@ -44,29 +44,31 @@ Client::Client(std::string hostName, int portNum) {
     
     std::cout << "Socket communication finished" << std::endl;
     
-    Visualizer
+    this->visualizer = Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", 12, 12, boardInfo);
 }
 
+void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+    this->socket.send(clientInfo);
 
+    std::map<BoardInfoDataTypes, std::string> boardInfo;
 
-this->socket.send(clientInfo);
+    boardInfo[TerrainData] = this->socket.receive();
+    this->socket.send("terrainDataReceived");
 
-std::map<BoardInfoDataTypes, std::string> boardInfo;
+    boardInfo[CreatureData] = this->socket.receive();
+    this->socket.send("creatureDataReceived");
 
-boardInfo[TerrainData] = this->socket.receive();
-this->socket.send("terrainDataReceived");
+    boardInfo[ColorData] = this->socket.receive();
+    this->socket.send("colorDataReceived");
 
-boardInfo[CreatureData] = this->socket.receive();
-this->socket.send("creatureDataReceived");
+    boardInfo[DamageData] = this->socket.receive();
+    this->socket.send("damageDataReceived");
 
-boardInfo[ColorData] = this->socket.receive();
-this->socket.send("colorDataReceived");
+    boardInfo[OffsetData] = this->socket.receive();
+    this->socket.send("offsetDataReceived");
 
-boardInfo[DamageData] = this->socket.receive();
-this->socket.send("damageDataReceived");
-
-boardInfo[OffsetData] = this->socket.receive();
-this->socket.send("offsetDataReceived");
-
-boardInfo[BuildingData] = this->socket.receive();
-this->socket.send("buildingDataReceived");
+    boardInfo[BuildingData] = this->socket.receive();
+    this->socket.send("buildingDataReceived");
+    
+    this->visualizer.render(boardInfo);
+}

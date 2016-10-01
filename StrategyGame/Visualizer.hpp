@@ -76,17 +76,17 @@ class Visualizer {
 public:
     //Constructors
     
+    //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first
+    Visualizer();
+    
     /*!
      * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
      *
      * @param vertexPath A string which is the path to the text file that contains vertex shader GLSL code.
      * @param geometryPath A string which is the path to the text file that contains geometry shader GLSL code.
      * @param fragmentPath A string which is the path to the text file that contains fragment shader GLSL code.
-     * @param width An unsigned int representing the number of tiles along the x axis on the board.
-     * @param height An unsigned int representing the number of tiles along the y axis on the board.
-     * @param initialInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for initially setting openGL buffers.
      */
-    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo);
+    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
     
     //Destructor
     
@@ -115,9 +115,20 @@ public:
     static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
     
     /*!
-     * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
+     * A function that sets the initial information of the visualizer
+     *
+     * @param width An unsigned int representing the number of tiles along the x axis on the board.
+     * @param height An unsigned int representing the number of tiles along the y axis on the board.
+     * @param initialInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for initially setting openGL buffers.
      */
-    void render();
+    void set(unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo);
+    
+    /*!
+     * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
+     *
+     * @param boardInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for updating openGL buffers.
+     */
+    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
     /*!
      * A function that closes the window. Should be called within game loop to exit the loop.
@@ -152,6 +163,8 @@ public:
     
 private:
     //Private properties
+    
+    bool isSet = false;
     
     //Board info
     unsigned int boardWidth;
