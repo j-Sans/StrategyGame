@@ -22,6 +22,7 @@ public:
     //Constructor
     Client(std::string hostName, int portNum);
     
+    //Public member functions
     void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
 private:
@@ -31,6 +32,10 @@ private:
     
     //Visualizer, to render the window
     Visualizer visualizer;
+    
+    //Private member functions
+    std::vector<int> parseVectorOfInt(std::string str);
+    std::vector<float> parseVectorOfDouble(std::string str);
 };
 
 #endif /* Client_hpp */

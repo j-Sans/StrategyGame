@@ -22,7 +22,7 @@ bool mouseUp = false;
 bool escClicked = false;
 
 //Only so that Client.hpp can have a shader property without declaring it initially. No other purpose
-Visualizer::Visualizer() {}
+//Visualizer::Visualizer() {}
 
 //Constructor
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo) : boardWidth(width), boardHeight(height) {
@@ -115,6 +115,7 @@ void Visualizer::set(unsigned int width, unsigned int height, std::map<BoardInfo
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+    //*****HOW MUCH OF CLIENT INFO SECTION HERE IS BEING USED?*****
     std::string clientInfo;
     
     glm::dvec2 mousePos;
@@ -243,6 +244,25 @@ void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
+}
+
+std::string Visualizer::getClientInfo() {
+    glm::dvec2 mousePos;
+    glm::ivec2 windowSize;
+    
+    glfwGetCursorPos(this->gameWindow, &mousePos.x, &mousePos.y);
+    glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+    
+    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
+    
+    for (GLuint index = 0; index < this->numberOfTiles; index++) {
+        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
+    }
+    
+    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
+    
+    return std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown ? 't' : 'f');
 }
     
     

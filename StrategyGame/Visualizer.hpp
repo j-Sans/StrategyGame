@@ -77,7 +77,7 @@ public:
     //Constructors
     
     //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first
-    Visualizer();
+    //Visualizer();
     
     /*!
      * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
@@ -129,6 +129,17 @@ public:
      * @param boardInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for updating openGL buffers.
      */
     void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
+    
+    /*!
+     * A functino to return a string conatining the following.
+     *  mouse_x_position,mouse_y_position,t
+     *  mouse_x_position,mouse_y_position,f
+     * The first one if the mouse is down, the second if the mouse is not down.
+     * This string should be sent to the host.
+     *
+     * @return The string to send to the host as described above.
+     */
+    std::string getClientInfo();
     
     /*!
      * A function that closes the window. Should be called within game loop to exit the loop.

@@ -8,7 +8,7 @@
 
 #include "Client.hpp"
 
-Client::Client(std::string hostName, int portNum) {
+Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag")) {
     std::map<BoardInfoDataTypes, std::string> boardInfo;
     
     this->socket.setSocket(hostName, portNum);
@@ -44,13 +44,11 @@ Client::Client(std::string hostName, int portNum) {
     
     std::cout << "Socket communication finished" << std::endl;
     
-    this->visualizer = Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", 12, 12, boardInfo);
+    this->visualizer.set(boardWidth, boardHeight, boardInfo);
 }
 
 void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
-    this->socket.send(clientInfo);
-
-    std::map<BoardInfoDataTypes, std::string> boardInfo;
+    this->socket.send(this->visualizer.getClientInfo());
 
     boardInfo[TerrainData] = this->socket.receive();
     this->socket.send("terrainDataReceived");
@@ -71,4 +69,18 @@ void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     this->socket.send("buildingDataReceived");
     
     this->visualizer.render(boardInfo);
+}
+
+std::vector<int> parseVectorOfInt(std::string str) {
+    std::vector<int> vec;
+    
+    while (str.length() > 0) {
+        vec.push_back(std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')))); //Convert the substring to an int and add it to the vector
+        
+        initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+    }
+}
+
+std::vector<float> parseVectorOfDouble(std::string str) {
+    
 }
