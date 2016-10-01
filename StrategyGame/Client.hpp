@@ -23,6 +23,11 @@ public:
     Client(std::string hostName, int portNum);
     
     //Public member functions
+    
+    static std::vector<int> parseVectorOfInt(std::string str);
+
+    static std::vector<float> parseVectorOfFloat(std::string str);
+    
     void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
 private:
@@ -32,10 +37,6 @@ private:
     
     //Visualizer, to render the window
     Visualizer visualizer;
-    
-    //Private member functions
-    std::vector<int> parseVectorOfInt(std::string str);
-    std::vector<float> parseVectorOfFloat(std::string str);
 };
 
 #endif /* Client_hpp */

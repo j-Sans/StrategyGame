@@ -34,6 +34,10 @@ public:
     
     //Public member functions
     
+    static std::string storeVectorOfInts(std::vector<int> vec);
+    
+    static std::string storeVectorOfFloats(std::vector<float> vec);
+    
     /*!
      * Updates the players and the game based on input from clients. This should be called every frame.
      */

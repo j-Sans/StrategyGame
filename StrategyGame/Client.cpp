@@ -24,53 +24,27 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     
     unsigned int boardHeight = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
     
-    std::vector<int> terrainDataVec = this->parseVectorOfInt(this->socket.receive());
+    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("terrainDataReceived");
     
-    std::vector<int> creatureDataVec = this->parseVectorOfInt(this->socket.receive());
+    std::vector<int> creatureDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("creatureDataReceived");
     
-    std::vector<float> colorDataVec = this->parseVectorOfFloat(this->socket.receive());
+    std::vector<float> colorDataVec = Client::parseVectorOfFloat(this->socket.receive());
     this->socket.send("colorDataReceived");
     
-    std::vector<int> damageDataVec = this->parseVectorOfInt(this->socket.receive());
+    std::vector<int> damageDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("damageDataReceived");
     
-    std::vector<float> offsetDataVec = this->parseVectorOfFloat(this->socket.receive());
+    std::vector<float> offsetDataVec = Client::parseVectorOfFloat(this->socket.receive());
     this->socket.send("offsetDataReceived");
     
-    std::vector<int> buildingDataVec = this->parseVectorOfInt(this->socket.receive());
+    std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("buildingDataReceived");
     
     std::cout << "Socket communication finished" << std::endl;
     
     this->visualizer.set(boardWidth, boardHeight, terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
-}
-
-void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
-    this->socket.send(this->visualizer.getClientInfo());
-    if (this->socket.receive() != "clientDataReceived")
-        throw std::runtime_error("Client data not received");
-
-    std::vector<int> terrainDataVec = this->parseVectorOfInt(this->socket.receive());
-    this->socket.send("terrainDataReceived");
-    
-    std::vector<int> creatureDataVec = this->parseVectorOfInt(this->socket.receive());
-    this->socket.send("creatureDataReceived");
-    
-    std::vector<float> colorDataVec = this->parseVectorOfFloat(this->socket.receive());
-    this->socket.send("colorDataReceived");
-    
-    std::vector<int> damageDataVec = this->parseVectorOfInt(this->socket.receive());
-    this->socket.send("damageDataReceived");
-    
-    std::vector<float> offsetDataVec = this->parseVectorOfFloat(this->socket.receive());
-    this->socket.send("offsetDataReceived");
-    
-    std::vector<int> buildingDataVec = this->parseVectorOfInt(this->socket.receive());
-    this->socket.send("buildingDataReceived");
-    
-    this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
 
 std::vector<int> parseVectorOfInt(std::string str) {
@@ -79,8 +53,8 @@ std::vector<int> parseVectorOfInt(std::string str) {
     while (str.length() > 0) {
         int nextCommaPos = (int)str.find_first_of(',');
         
-        //If there are no more commas, the last element has been found
-        if (nextCommaPos == std::string::npos) {
+        //If there are no more commas or a comma is at the end, the last element has been found
+        if (nextCommaPos == std::string::npos || nextCommaPos == str.length() - 1) {
             vec.push_back(std::stoi(str));
             break;
         } else {
@@ -92,14 +66,14 @@ std::vector<int> parseVectorOfInt(std::string str) {
     return vec;
 }
 
-std::vector<float> parseVectorOfDouble(std::string str) {
+std::vector<float> parseVectorOfFloat(std::string str) {
     std::vector<float> vec;
     
     while (str.length() > 0) {
         int nextCommaPos = (int)str.find_first_of(',');
         
-        //If there are no more commas, the last element has been found
-        if (nextCommaPos == std::string::npos) {
+        //If there are no more commas or a comma is at the end, the last element has been found
+        if (nextCommaPos == std::string::npos || nextCommaPos == str.length() - 1) {
             vec.push_back(std::stof(str));
             break;
         } else {
@@ -109,4 +83,30 @@ std::vector<float> parseVectorOfDouble(std::string str) {
     }
     
     return vec;
+}
+
+void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+    this->socket.send(this->visualizer.getClientInfo());
+    if (this->socket.receive() != "clientDataReceived")
+        throw std::runtime_error("Client data not received");
+
+    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
+    this->socket.send("terrainDataReceived");
+    
+    std::vector<int> creatureDataVec = Client::parseVectorOfInt(this->socket.receive());
+    this->socket.send("creatureDataReceived");
+    
+    std::vector<float> colorDataVec = Client::parseVectorOfFloat(this->socket.receive());
+    this->socket.send("colorDataReceived");
+    
+    std::vector<int> damageDataVec = Client::parseVectorOfInt(this->socket.receive());
+    this->socket.send("damageDataReceived");
+    
+    std::vector<float> offsetDataVec = Client::parseVectorOfFloat(this->socket.receive());
+    this->socket.send("offsetDataReceived");
+    
+    std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
+    this->socket.send("buildingDataReceived");
+    
+    this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }

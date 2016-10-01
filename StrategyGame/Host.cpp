@@ -36,12 +36,12 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         this->players.push_back(Player(&board));
     }
     
-    std::string terrainData;
-    std::string creatureData;
-    std::string colorData;
-    std::string damageData;
-    std::string offsetData;
-    std::string buildingData;
+    std::vector<int> terrainData;
+    std::vector<int> creatureData;
+    std::vector<float> colorData;
+    std::vector<int> damageData;
+    std::vector<float> offsetData;
+    std::vector<int> buildingData;
     
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
@@ -57,14 +57,14 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
             }
             
             glm::vec3 tileColor = this->players[0].game.tileColor(x, y);
-            colorData.push_back(tileColor.x * 100);
-            colorData.push_back(tileColor.y * 100);
-            colorData.push_back(tileColor.z * 100);
+            colorData.push_back(tileColor.x);
+            colorData.push_back(tileColor.y);
+            colorData.push_back(tileColor.z);
             
             damageData.push_back(this->board.get(x, y).damage());
             
             if (this->board.get(x, y).creature() != nullptr)
-                offsetData.push_back(this->board.get(x, y).creature()->offset() * 100);
+                offsetData.push_back(this->board.get(x, y).creature()->offset());
             else
                 offsetData.push_back(0);
             
@@ -76,29 +76,49 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         }
     }
     
-    this->sockets[0].send(terrainData);
+    this->sockets[0].send(storeVectorOfInts(terrainData));
     if (this->sockets[0].receive() != "terrainDataReceived")
         throw std::runtime_error("Terrain data not received");
     
-    this->sockets[0].send(creatureData);
+    this->sockets[0].send(storeVectorOfInts(creatureData));
     if (this->sockets[0].receive() != "creatureDataReceived")
         throw std::runtime_error("Creature data not received");
     
-    this->sockets[0].send(colorData);
+    this->sockets[0].send(storeVectorOfFloats(colorData));
     if (this->sockets[0].receive() != "colorDataReceived")
         throw std::runtime_error("Color data not received");
     
-    this->sockets[0].send(damageData);
+    this->sockets[0].send(storeVectorOfInts(damageData));
     if (this->sockets[0].receive() != "damageDataReceived")
         throw std::runtime_error("Damage data not received");
     
-    this->sockets[0].send(offsetData);
+    this->sockets[0].send(storeVectorOfFloats(offsetData));
     if (this->sockets[0].receive() != "offsetDataReceived")
         throw std::runtime_error("Offset data not received");
     
-    this->sockets[0].send(buildingData);
+    this->sockets[0].send(storeVectorOfInts(buildingData));
     if (this->sockets[0].receive() != "buildingDataReceived")
         throw std::runtime_error("Building data not received");
+}
+
+static std::string storeVectorOfInts(std::vector<int> vec) {
+    std::string str;
+    
+    for (int a = 0; a < vec.size(); a++) {
+        str += std::to_string(vec[a]) + ',';
+    }
+    
+    return str;
+}
+
+static std::string storeVectorOfFloats(std::vector<float> vec) {
+    std::string str;
+    
+    for (int a = 0; a < vec.size(); a++) {
+        str += std::to_string(vec[a]) + ',';
+    }
+    
+    return str;
 }
 
 void Host::update() {
@@ -108,13 +128,14 @@ void Host::update() {
     this->lastFrame = currentFrame;
     
     std::string clientInfo = this->sockets[0].receive();
+    this->sockets[0].send("clientDataReceived");
     
-    std::string terrainData;
-    std::string creatureData;
-    std::string colorData;
-    std::string damageData;
-    std::string offsetData;
-    std::string buildingData;
+    std::vector<int> terrainData;
+    std::vector<int> creatureData;
+    std::vector<float> colorData;
+    std::vector<int> damageData;
+    std::vector<float> offsetData;
+    std::vector<int> buildingData;
     
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
@@ -130,14 +151,14 @@ void Host::update() {
             }
             
             glm::vec3 tileColor = this->players[0].game.tileColor(x, y);
-            colorData.push_back(tileColor.x * 100);
-            colorData.push_back(tileColor.y * 100);
-            colorData.push_back(tileColor.z * 100);
+            colorData.push_back(tileColor.x);
+            colorData.push_back(tileColor.y);
+            colorData.push_back(tileColor.z);
             
             damageData.push_back(this->board.get(x, y).damage());
             
             if (this->board.get(x, y).creature() != nullptr)
-                offsetData.push_back(this->board.get(x, y).creature()->offset() * 100);
+                offsetData.push_back(this->board.get(x, y).creature()->offset());
             else
                 offsetData.push_back(0);
             
@@ -149,47 +170,53 @@ void Host::update() {
         }
     }
     
-    this->sockets[0].send(terrainData);
+    this->sockets[0].send(storeVectorOfInts(terrainData));
     if (this->sockets[0].receive() != "terrainDataReceived")
         throw std::runtime_error("Terrain data not received");
-
-    this->sockets[0].send(creatureData);
+    
+    this->sockets[0].send(storeVectorOfInts(creatureData));
     if (this->sockets[0].receive() != "creatureDataReceived")
         throw std::runtime_error("Creature data not received");
-
-    this->sockets[0].send(colorData);
+    
+    this->sockets[0].send(storeVectorOfFloats(colorData));
     if (this->sockets[0].receive() != "colorDataReceived")
         throw std::runtime_error("Color data not received");
-
-    this->sockets[0].send(damageData);
+    
+    this->sockets[0].send(storeVectorOfInts(damageData));
     if (this->sockets[0].receive() != "damageDataReceived")
         throw std::runtime_error("Damage data not received");
-
-    this->sockets[0].send(offsetData);
+    
+    this->sockets[0].send(storeVectorOfFloats(offsetData));
     if (this->sockets[0].receive() != "offsetDataReceived")
         throw std::runtime_error("Offset data not received");
-
-    this->sockets[0].send(buildingData);
+    
+    this->sockets[0].send(storeVectorOfInts(buildingData));
     if (this->sockets[0].receive() != "buildingDataReceived")
         throw std::runtime_error("Building data not received");
 
     
     /* clientInfo stores information:
-     [0]: Current mouse position's x coordinate on the board.
-     [1]: Current mouse position's y coordinate on the board.
+     1) Current mouse position's x coordinate on the board.
+     2) Current mouse position's y coordinate on the board.
             -1 for either [0] or [1] represents that no tile is being selected.
-     [2]: Whether the mouse is down or not. 0 represents up (false), and 1 represents down (true). Everything else converts to down.
+     3) Whether the mouse is down or not. '0' represents up (false), and '1' represents down (true).
      
      Any other input should be done here. That hasn't been implimented.
      */
     
-    glm::ivec2 selectedTile = glm::ivec2(clientInfo[0], clientInfo[1]);
+    glm::ivec2 selectedTile;
     
-    if (clientInfo[0] == -1 || clientInfo[1] == -1) {
+    selectedTile.x = std::stoi(initialInfo.substr(0, clientInfo.find_first_of(','))); //Convert the substring to an int
+    
+    clientInfo = clientInfo.substr(clientInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+    
+    selectedTile.y = std::stoi(clientInfo.substr(0, clientInfo.find_first_of(','))); //Convert the substring to an int
+    
+    if (selectedTile.x == -1 || selectedTile.y == -1) {
         selectedTile = NO_SELECTION;
     }
     
-    bool mouseDown = clientInfo[2] == 0 ? false : true;
+    bool mouseDown = (clientInfo[0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
     
     this->players[this->activePlayer].game.updateSelected(mouseDown, selectedTile, this->activePlayer);
     this->players[this->activePlayer].game.updateCreatures(this->deltaTime, this->activePlayer);
