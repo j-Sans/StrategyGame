@@ -110,3 +110,7 @@ void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     
     this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
+
+bool Client::windowShouldClose() {
+    return glfwWindowShouldClose(this->visualizer.window());
+}

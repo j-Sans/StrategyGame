@@ -56,8 +56,8 @@ int main(int argc, const char * argv[]) {
     if (!host) {
         Client C("localhost", 3000);
         
-        while (!glfwWindowShouldClose(V.window()))
-            V.render();
+        while (!C.windowShouldClose())
+            C.render();
         
         V.terminate();
     } else {

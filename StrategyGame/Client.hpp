@@ -30,6 +30,8 @@ public:
     
     void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
     
+    bool windowShouldClose();
+    
 private:
     
     //Socket, to receive information and give to the visualizer
