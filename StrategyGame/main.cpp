@@ -30,8 +30,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 //Local includes
-#include "Visualizer.hpp"
-
+#include "Client.hpp"
 #include "Host.hpp"
 
 int main(int argc, const char * argv[]) {
@@ -55,7 +54,7 @@ int main(int argc, const char * argv[]) {
     }
 
     if (!host) {
-        Visualizer V("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", "localhost", 3000);
+        Client C("localhost", 3000);
         
         while (!glfwWindowShouldClose(V.window()))
             V.render();

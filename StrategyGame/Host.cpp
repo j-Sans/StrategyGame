@@ -198,7 +198,7 @@ void Host::update() {
     /* clientInfo stores information:
      1) Current mouse position's x coordinate on the board.
      2) Current mouse position's y coordinate on the board.
-            -1 for either [0] or [1] represents that no tile is being selected.
+            -1 for either (1) or (2) represents NO_SELECTION
      3) Whether the mouse is down or not. '0' represents up (false), and '1' represents down (true).
      
      Any other input should be done here. That hasn't been implimented.
@@ -206,7 +206,7 @@ void Host::update() {
     
     glm::ivec2 selectedTile;
     
-    selectedTile.x = std::stoi(initialInfo.substr(0, clientInfo.find_first_of(','))); //Convert the substring to an int
+    selectedTile.x = std::stoi(clientInfo.substr(0, clientInfo.find_first_of(','))); //Convert the substring to an int
     
     clientInfo = clientInfo.substr(clientInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
     
