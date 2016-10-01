@@ -82,10 +82,11 @@ public:
      * @param vertexPath A string which is the path to the text file that contains vertex shader GLSL code.
      * @param geometryPath A string which is the path to the text file that contains geometry shader GLSL code.
      * @param fragmentPath A string which is the path to the text file that contains fragment shader GLSL code.
-     * @param hostName A string representing the name of the host to connect to.
-     * @param portNum The port number on the server that is being connected to.
+     * @param width An unsigned int representing the number of tiles along the x axis on the board.
+     * @param height An unsigned int representing the number of tiles along the y axis on the board.
+     * @param initialInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for initially setting openGL buffers.
      */
-    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, std::string hostName, int portNum);
+    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo);
     
     //Destructor
     
@@ -178,9 +179,6 @@ private:
     std::vector<GLint> damageData; //[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
     std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
     std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
-    
-    //Socket
-    ClientSocket socket;
     
     //Textures
     std::vector<Texture> textures;

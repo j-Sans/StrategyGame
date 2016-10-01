@@ -22,49 +22,12 @@ bool mouseUp = false;
 bool escClicked = false;
 
 //Constructor
-Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, std::string hostName, int portNum) {
-    std::map<BoardInfoDataTypes, std::string> boardInfo;
-    
-    //    try {
-    this->socket.setSocket(hostName, portNum);
-    
-    std::string initialInfo = this->socket.receive();
-    this->socket.send("initialDataReceived");
-    
-    this->boardWidth = initialInfo[0];
-    this->boardHeight = initialInfo[1];
-    
-    this->numberOfTiles = this->boardWidth * this->boardHeight;
-    
-    boardInfo[TerrainData] = this->socket.receive();
-    this->socket.send("terrainDataReceived");
-    
-    boardInfo[CreatureData] = this->socket.receive();
-    this->socket.send("creatureDataReceived");
-    
-    boardInfo[ColorData] = this->socket.receive();
-    this->socket.send("colorDataReceived");
-    
-    boardInfo[DamageData] = this->socket.receive();
-    this->socket.send("damageDataReceived");
-    
-    boardInfo[OffsetData] = this->socket.receive();
-    this->socket.send("offsetDataReceived");
-    
-    boardInfo[BuildingData] = this->socket.receive();
-    this->socket.send("buildingDataReceived");
-    
-    //    } catch (std::exception e) {
-    //        std::cout << "Error setting socket: " << e.what() << std::endl;
-    //        throw std::runtime_error("Visualizer couldn't be set");
-    //    }
-    
-    std::cout << "Socket communication finished" << std::endl;
+Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath, unsigned int width, unsigned int height, std::map<BoardInfoDataTypes, std::string> initialInfo) : boardWidth(width), boardHeight(height) {
     
     this->initWindow(); //Create the GLFW window and set the window property
 //    this->setData(); //Set the data arrays with information from the board
     
-    this->setBuffers(boardInfo); //Set up all of the OpenGL buffers with the vertex data
+    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
     
     this->camMaxDisplacement = this->boardWidth / 10.0f;
     
@@ -141,7 +104,7 @@ GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
 }
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
-void Visualizer::render() {
+void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     std::string clientInfo;
     
     glm::dvec2 mousePos;
@@ -168,28 +131,6 @@ void Visualizer::render() {
         this->selectedTile = mouseTile;
     else
         this->selectedTile = NO_SELECTION;
-    
-    this->socket.send(clientInfo);
-    
-    std::map<BoardInfoDataTypes, std::string> boardInfo;
-    
-    boardInfo[TerrainData] = this->socket.receive();
-    this->socket.send("terrainDataReceived");
-    
-    boardInfo[CreatureData] = this->socket.receive();
-    this->socket.send("creatureDataReceived");
-    
-    boardInfo[ColorData] = this->socket.receive();
-    this->socket.send("colorDataReceived");
-    
-    boardInfo[DamageData] = this->socket.receive();
-    this->socket.send("damageDataReceived");
-    
-    boardInfo[OffsetData] = this->socket.receive();
-    this->socket.send("offsetDataReceived");
-    
-    boardInfo[BuildingData] = this->socket.receive();
-    this->socket.send("buildingDataReceived");
 
     this->updateBuffers(boardInfo);
     

@@ -18,8 +18,8 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         //Send initial info to the visualizer saying the width and height of the board
     
         std::string initialData;
-        initialData.push_back(this->board.width());
-        initialData.push_back(this->board.height(0));
+        initialData += this->board.width() + ',';
+        initialData += this->board.height(0) + ',';
     
         this->sockets.back().send(initialData);
         if (this->sockets.back().receive() != "initialDataReceived")
