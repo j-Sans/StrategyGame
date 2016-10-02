@@ -116,7 +116,7 @@ void ServerSocket::send(std::string message) {
     }
     
     //Add a terminating character
-    buffer[message.length()] = -1;
+    buffer[message.length()] = (char)4;
     
     long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
     
@@ -136,7 +136,7 @@ void ServerSocket::send(std::string message) {
         throw std::runtime_error("ERROR writing to socket");
     
 #ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host sent: \"" << buffer << "\"" << std::endl;
+    std::cout << "Host sent: \"" << buffer << "\"" << std::endl << std::endl;
 #endif
 }
 
@@ -167,13 +167,13 @@ std::string ServerSocket::receive() {
         throw std::runtime_error("ERROR reading from socket");
     
 #ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host received: \"" << buffer << "\"" << std::endl;
+    std::cout << "Host received: \"" << buffer << "\"" << std::endl << std::endl;
 #endif
     
     std::string message;
     
     for (int iterator = 0; iterator < MAXIMUM_SOCKET_MESSAGE_SIZE; iterator++) {
-        if (buffer[iterator] == -1)
+        if (buffer[iterator] == (char)4)
             break;
         else
             message.push_back(buffer[iterator]);
