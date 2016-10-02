@@ -41,8 +41,6 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("buildingDataReceived");
     
-    std::cout << "Socket communication finished" << std::endl;
-    
     this->visualizer.set(boardWidth, boardHeight, terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
 
@@ -85,6 +83,8 @@ std::vector<float> Client::parseVectorOfFloat(std::string str) {
 }
 
 void Client::render() {
+    std::cout << "Next frame for client" << std::endl << std::endl;
+    
     this->socket.send(this->visualizer.getClientInfo());
     if (this->socket.receive() != "clientDataReceived")
         throw std::runtime_error("Client data not received");

@@ -132,7 +132,7 @@ void ClientSocket::send(std::string message) {
         throw std::runtime_error("ERROR writing to socket");
     
 #ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Client sent: \"" << buffer << "\"" << std::endl << std::endl;
+    std::cout << "Client sent: \"" << message << "\"" << std::endl << std::endl;
 #endif
 
 }
@@ -163,10 +163,6 @@ std::string ClientSocket::receive() {
     if (messageSize < 0)
         throw std::runtime_error("ERROR reading from socket");
     
-#ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Client received: \"" << buffer << "\"" << std::endl << std::endl;
-#endif
-    
     std::string message;
     
     for (int iterator = 0; iterator < MAXIMUM_SOCKET_MESSAGE_SIZE; iterator++) {
@@ -175,6 +171,10 @@ std::string ClientSocket::receive() {
         else
             message.push_back(buffer[iterator]);
     }
+    
+#ifdef SOCKET_CONSOLE_OUTPUT
+    std::cout << "Client received: \"" << message << "\"" << std::endl << std::endl;
+#endif
     
     //Return the received message
     return message;
