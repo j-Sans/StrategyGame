@@ -9,7 +9,6 @@
 #include "Client.hpp"
 
 Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag")) {
-    std::map<BoardInfoDataTypes, std::string> boardInfo;
     
     this->socket.setSocket(hostName, portNum);
     

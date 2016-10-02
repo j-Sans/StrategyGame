@@ -38,9 +38,15 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
     glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
     
+    std::cout << "gameShader about to be set" << std::endl;
+    
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
+    std::cout << "gameShader set. Font about to be set" << std::endl;
+    
     this->font = Font(FONT_PATH);
+    
+    std::cout << "font set" << std::endl;
     
     this->setInterface();
     this->updateInterfaces();

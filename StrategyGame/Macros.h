@@ -20,7 +20,7 @@
 #define EQUAL_BORDERED_DISPLAY_BARS
 
 //To make the selected tile reset after movement
-//#ifdef RESET_SELECTED_TILE_AFTER_MOVEMENT
+//#define RESET_SELECTED_TILE_AFTER_MOVEMENT
 
     //Various console outputs
 
