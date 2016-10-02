@@ -28,7 +28,8 @@ public:
 
     static std::vector<float> parseVectorOfFloat(std::string str);
     
-    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
+    void render();
+    void terminate();
     
     bool windowShouldClose();
     

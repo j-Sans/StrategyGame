@@ -59,7 +59,7 @@ int main(int argc, const char * argv[]) {
         while (!C.windowShouldClose())
             C.render();
         
-        V.terminate();
+        C.terminate();
     } else {
         //Gameboard:
         std::vector<std::vector<Tile> > board;

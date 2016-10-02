@@ -47,7 +47,7 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     this->visualizer.set(boardWidth, boardHeight, terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
 
-std::vector<int> parseVectorOfInt(std::string str) {
+std::vector<int> Client::parseVectorOfInt(std::string str) {
     std::vector<int> vec;
     
     while (str.length() > 0) {
@@ -66,7 +66,7 @@ std::vector<int> parseVectorOfInt(std::string str) {
     return vec;
 }
 
-std::vector<float> parseVectorOfFloat(std::string str) {
+std::vector<float> Client::parseVectorOfFloat(std::string str) {
     std::vector<float> vec;
     
     while (str.length() > 0) {
@@ -85,7 +85,7 @@ std::vector<float> parseVectorOfFloat(std::string str) {
     return vec;
 }
 
-void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
+void Client::render() {
     this->socket.send(this->visualizer.getClientInfo());
     if (this->socket.receive() != "clientDataReceived")
         throw std::runtime_error("Client data not received");
@@ -109,6 +109,10 @@ void Client::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
     this->socket.send("buildingDataReceived");
     
     this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+}
+
+void Client::terminate() {
+    this->visualizer.terminate();
 }
 
 bool Client::windowShouldClose() {
