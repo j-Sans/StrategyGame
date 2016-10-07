@@ -105,7 +105,7 @@ GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
 }
 
 void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
-    this->boardHeight = width;
+    this->boardWidth = width;
     this->boardHeight = height;
     
     this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);

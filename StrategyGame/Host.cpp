@@ -226,7 +226,7 @@ void Host::update() {
     
     std::cout << "selectedTile: (" << selectedTile.x << ", " << selectedTile.y << ")" << std::endl;
     
-    if (selectedTile.x == -1 || selectedTile.y == -1) {
+    if (selectedTile.x < 0 || selectedTile.y < 0) {
         selectedTile = NO_SELECTION;
     }
     
