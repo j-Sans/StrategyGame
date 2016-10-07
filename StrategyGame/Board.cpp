@@ -154,9 +154,9 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
     
     
     if (x >= this->gameBoard.size())
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     if (y >= this->gameBoard[0].size())
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     
     if (direction == NORTH) {
         if (y > 0 && !this->gameBoard[x][y - 1].occupied()) {
@@ -566,10 +566,10 @@ unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int
 
 void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     this->creatures.push_back(creature);
@@ -579,10 +579,10 @@ void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
 
 void Board::deleteCreature(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     /* Note:
@@ -611,10 +611,10 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
 
 void Board::setBuilding(unsigned int x, unsigned int y, Building building) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     this->buildings.push_back(building);
@@ -624,10 +624,10 @@ void Board::setBuilding(unsigned int x, unsigned int y, Building building) {
 
 void Board::deleteBuilding(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     /* Note:
@@ -656,10 +656,10 @@ void Board::deleteBuilding(unsigned int x, unsigned int y) {
 
 bool Board::setDirection(unsigned int x, unsigned int y, unsigned int direction) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     if (this->gameBoard[x][y].creature() == nullptr)
@@ -674,10 +674,10 @@ bool Board::setDirection(unsigned int x, unsigned int y, unsigned int direction)
 
 void Board::setDamage(unsigned int x, unsigned int y, unsigned int damage, float time) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     this->gameBoard[x][y].setDamage(damage, time);
@@ -685,10 +685,10 @@ void Board::setDamage(unsigned int x, unsigned int y, unsigned int damage, float
 
 Tile Board::get(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
-        throw std::range_error("X out of range");
+        throw std::range_error("X out of range: " + std::to_string(x));
     }
     if (y >= this->gameBoard[x].size()) {
-        throw std::range_error("Y out of range");
+        throw std::range_error("Y out of range: " + std::to_string(y));
     }
     
     return this->gameBoard[x][y];
