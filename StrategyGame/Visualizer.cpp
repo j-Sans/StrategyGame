@@ -1430,7 +1430,7 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     //The points diagonally above and below each vertex become horizontal and vertical after rotation. To find them, find the point below the vertex and add one and subtract one.
     
     if (this->boardWidth * this->boardWidth < this->boardWidth + 1) { //In case finding the distances (just below) would cause a bad access
-        throw std::length_error("Board too small");
+        throw std::length_error("Board too small; Board size: (" + std::to_string(this->boardWidth) + ", " + std::to_string(this->boardHeight) + ")");
     }
     
     GLfloat distance1 = Visualizer::getDistance(tileCenters[0], tileCenters[0 + this->boardWidth + 1]); //Diagonal down and to the right

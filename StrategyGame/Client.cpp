@@ -107,6 +107,9 @@ void Client::render() {
     std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("buildingDataReceived");
     
+    if (this->socket.receive() != "End of frame")
+        throw std::runtime_error("Waiting on host to move to next frame");
+    
     this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
 }
 
