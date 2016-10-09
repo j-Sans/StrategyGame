@@ -108,6 +108,8 @@ void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> t
     this->boardWidth = width;
     this->boardHeight = height;
     
+    this->numberOfTiles = this->boardWidth * this->boardHeight;
+    
     this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
     
 //    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
@@ -129,10 +131,14 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
+    std::cout << "Visualizer::render creating tileCenters" << std::endl;
+    
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
+    
+    std::cout << "Visualizer::render tileCenters.size(): " << tileCenters.size() << std::endl;
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
@@ -258,6 +264,8 @@ std::string Visualizer::getClientInfo() {
     glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
+    
+    std::cout << "Visualizer::getClientInfo vertexData.size(): " << this->vertexData.size() << std::endl;
     
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
@@ -657,6 +665,26 @@ void Visualizer::initWindow() {
 
 void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
     
+    //Calculate an evenly spaced board of vertices
+    
+    GLfloat pointDistance = 0.2f;
+
+    GLfloat locationOfFirstPoint = 0.0f;
+    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
+    
+    std::vector<GLfloat> vertexDataVec;
+    
+    for (GLuint x = 0; x < this->boardWidth; x++) {
+        for (GLuint y = 0; y < this->boardHeight; y++) {
+            //Sets the point location based on the location in the board and on the modifiers above.
+            vertexDataVec.push_back(locationOfFirstPoint - (x * pointDistance));
+
+            vertexDataVec.push_back(locationOfFirstPoint - (y * pointDistance));
+        }
+    }
+    
+    this->vertexData = vertexDataVec;
     this->terrainData = terrainDataVec;
     this->creatureData = creatureDataVec;
     this->colorData = colorDataVec;
@@ -1386,6 +1414,10 @@ void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
 }
 
 glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters) {
+    std::cout << "Client starting mouseTile()" << std::endl;
+    
+    std::cout << "Visualizer::mouseTile tileCenters.size(): " << tileCenters.size() << std::endl;
+    
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
     //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
@@ -1432,6 +1464,8 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     if (this->boardWidth * this->boardWidth < this->boardWidth + 1) { //In case finding the distances (just below) would cause a bad access
         throw std::length_error("Board too small; Board size: (" + std::to_string(this->boardWidth) + ", " + std::to_string(this->boardHeight) + ")");
     }
+    
+    std::cout << "Visualizer::mouseTile tileCenters.size(): " << tileCenters.size() << std::endl;
     
     GLfloat distance1 = Visualizer::getDistance(tileCenters[0], tileCenters[0 + this->boardWidth + 1]); //Diagonal down and to the right
     GLfloat distance2 = Visualizer::getDistance(tileCenters[1], tileCenters[1 + this->boardWidth - 1]); //Diagonal down and to the left
@@ -1514,6 +1548,8 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     tileIndexVec.x = (int)(tileIndex / this->boardWidth); //The x index in the 2D vector
     
     tileIndexVec.y = tileIndex - (this->boardWidth * tileIndexVec.x); //The y index in the 2D vector
+    
+    std::cout << "Client finishing mouseTile()" << std::endl;
     
     return tileIndexVec;
 }
