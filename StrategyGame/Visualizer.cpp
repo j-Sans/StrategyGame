@@ -735,6 +735,84 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     glGenBuffers(1, &this->offsetVBO);
     glGenBuffers(1, &this->buildingVBO);
     
+    GLfloat vertices[2 * this->numberOfTiles];
+    GLfloat terrains[this->numberOfTiles];
+    GLfloat creatures[3 * this->numberOfTiles];
+    GLfloat colors[3 * this->numberOfTiles];
+    GLfloat damages[this->numberOfTiles];
+    GLfloat offsets[this->numberOfTiles];
+    GLfloat buildings[2 * this->numberOfTiles];
+    
+    for (int a = 0; a < 2 * this->numberOfTiles; a++) {
+        vertices[a] = this->vertexData[a];
+        terrains[a] = this->terrainData[a];
+        creatures[a] = this->creatureData[a];
+        colors[a] = this->colorData[a];
+        damages[a] = this->damageData[a];
+        offsets[a] = this->offsetData[a];
+        buildings[a] = this->buildingData[a];
+    }
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(terrains), terrains, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(creatures), creatures, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(2);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(3);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(damages), damages, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(4);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(offsets), offsets, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(5);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(buildings), buildings, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
+    glEnableVertexAttribArray(6);
+    
+    /*
     //First we bind the VAO
     glBindVertexArray(this->VAO);
     
@@ -795,6 +873,7 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(6);
+     */
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
@@ -891,9 +970,6 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
     
     this->buildingData = buildingDataVec;
     
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
     GLfloat vertices[2 * this->numberOfTiles];
     GLfloat terrains[this->numberOfTiles];
     GLfloat creatures[3 * this->numberOfTiles];
@@ -911,6 +987,9 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
         offsets[a] = this->offsetData[a];
         buildings[a] = this->buildingData[a];
     }
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
