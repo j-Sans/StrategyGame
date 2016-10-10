@@ -180,7 +180,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     
 //    if (!this->showSettings)
 //        this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
-//    
+//
 //    this->updateInterfaces();
 //    
 //    //If the mouse clicks outside of the settings menu when it's open, close the menu
@@ -669,14 +669,22 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     
     std::vector<GLfloat> vertexDataVec;
     
+    std::cout << "vectorData: ";
+    
     for (GLuint x = 0; x < this->boardWidth; x++) {
         for (GLuint y = 0; y < this->boardHeight; y++) {
             //Sets the point location based on the location in the board and on the modifiers above.
             vertexDataVec.push_back(locationOfFirstPoint - (x * pointDistance));
-
+            
+            std::cout << vertexDataVec.back() << ", ";
+            
             vertexDataVec.push_back(locationOfFirstPoint - (y * pointDistance));
+            
+            std::cout << vertexDataVec.back() << ", ";
         }
     }
+    
+    std::cout << std::endl;
     
     this->vertexData = vertexDataVec;
     this->terrainData = terrainDataVec;
@@ -867,6 +875,14 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);

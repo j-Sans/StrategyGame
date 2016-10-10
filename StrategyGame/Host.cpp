@@ -122,8 +122,6 @@ std::string Host::Host::storeVectorOfFloats(std::vector<float> vec) {
 }
 
 void Host::update() {
-    std::cout << "Next frame for host" << std::endl << std::endl;
-    
     //Update frame information first
     GLfloat currentFrame = (clock() / CLOCKS_PER_SEC) - this->programStartTime;
     this->deltaTime = currentFrame - this->lastFrame;
@@ -206,45 +204,25 @@ void Host::update() {
      Any other input should be done here. That hasn't been implimented.
      */
     
-    std::cout << "Error point 1" << std::endl;
-    
     glm::ivec2 selectedTile;
-    
-    std::cout << "Client info: " << clientInfo << std::endl;
     
     selectedTile.x = std::stoi(clientInfo.substr(0, clientInfo.find_first_of(','))); //Convert the substring to an int
     
     clientInfo = clientInfo.substr(clientInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
     
-    std::cout << "Error point 2" << std::endl;
-    
-    std::cout << "Client info: " << clientInfo << std::endl;
-    
     selectedTile.y = std::stoi(clientInfo.substr(0, clientInfo.find_first_of(','))); //Convert the substring to an int
     
     clientInfo = clientInfo.substr(clientInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-    
-    std::cout << "selectedTile: (" << selectedTile.x << ", " << selectedTile.y << ")" << std::endl;
     
     if (selectedTile.x < 0 || selectedTile.y < 0) {
         selectedTile = NO_SELECTION;
     }
     
-    std::cout << "Error point 3" << std::endl;
-    
-    std::cout << "Client info mouse down bool (1 is true, 0 is false): " << clientInfo << std::endl;
-    
     bool mouseDown = (clientInfo[0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
-    
-    std::cout << "Error point 4" << std::endl;
     
     this->players[this->activePlayer].game.updateSelected(mouseDown, selectedTile, this->activePlayer);
     
-    std::cout << "Error point 5" << std::endl;
-    
     this->players[this->activePlayer].game.updateCreatures(this->deltaTime, this->activePlayer);
-    
-    std::cout << "End of frame for host" << std::endl;
     
     this->sockets[0].send("End of frame");
 }
