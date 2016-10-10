@@ -131,14 +131,10 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
-    std::cout << "Visualizer::render creating tileCenters" << std::endl;
-    
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
-    
-    std::cout << "Visualizer::render tileCenters.size(): " << tileCenters.size() << std::endl;
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
@@ -265,8 +261,6 @@ std::string Visualizer::getClientInfo() {
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
-    std::cout << "Visualizer::getClientInfo vertexData.size(): " << this->vertexData.size() << std::endl;
-    
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
@@ -386,7 +380,7 @@ void Visualizer::initWindow() {
     
     if (this->gameWindow == nullptr) { //If the window isn't created, return an error
         glfwTerminate();
-        std::cout << "Failed to create GLFW Window.\n";
+        throw std::runtime_error("Failed to create GLFW Window.");
     }
     
     glfwMakeContextCurrent(this->gameWindow);
@@ -394,7 +388,7 @@ void Visualizer::initWindow() {
     //Initialize GLEW
     glewExperimental = GL_TRUE; //Allows the use of more modern OpenGL functionality
     if (glewInit() != GLEW_OK) { //If GLEW isn't properly initialized, return an error
-        std::cout << "Failed to initialize GLEW.\n";
+        throw std::runtime_error("Failed to initialize GLEW.\n");
     }
     
     //Tell OpenGL window information
@@ -858,27 +852,6 @@ void Visualizer::presetTransformations() {
 //A function to update all of the buffers that need to be updated. Should be called every frame.
 //void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
 void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
-    
-//    //The data arrays that hold ints are converted implicitly directly from chars
-//    //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
-//    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-//        this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
-//
-//        this->creatureData[3 * tile] = boardInfo[CreatureData][3 * tile]; //char -> int
-//        this->creatureData[(3 * tile) + 1] = boardInfo[CreatureData][(3 * tile) + 1]; //char -> int
-//        this->creatureData[(3 * tile) + 2] = boardInfo[CreatureData][(3 * tile) + 2]; //char -> int
-//
-//        this->colorData[3 * tile] = boardInfo[ColorData][3 * tile] / 100; //char / 100 -> int
-//        this->colorData[(3 * tile) + 1] = boardInfo[ColorData][(3 * tile) + 1] / 100; //char / 100 -> int
-//        this->colorData[(3 * tile) + 2] = boardInfo[ColorData][(3 * tile) + 2] / 100; //char / 100 -> int
-//
-//        this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
-//
-//        this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
-//
-//        this->buildingData[2 * tile] = boardInfo[BuildingData][2 * tile]; //char -> int
-//        this->buildingData[(2 * tile) + 1] = boardInfo[BuildingData][(2 * tile) + 1]; //char -> int
-//    }
     
     this->terrainData = terrainDataVec;
     
@@ -1414,10 +1387,6 @@ void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
 }
 
 glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters) {
-    std::cout << "Client starting mouseTile()" << std::endl;
-    
-    std::cout << "Visualizer::mouseTile tileCenters.size(): " << tileCenters.size() << std::endl;
-    
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found
     
     //If x is in the last sixth or the first sixth, ignore the click because the interface boxes were clicked
@@ -1464,8 +1433,6 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     if (this->boardWidth * this->boardWidth < this->boardWidth + 1) { //In case finding the distances (just below) would cause a bad access
         throw std::length_error("Board too small; Board size: (" + std::to_string(this->boardWidth) + ", " + std::to_string(this->boardHeight) + ")");
     }
-    
-    std::cout << "Visualizer::mouseTile tileCenters.size(): " << tileCenters.size() << std::endl;
     
     GLfloat distance1 = Visualizer::getDistance(tileCenters[0], tileCenters[0 + this->boardWidth + 1]); //Diagonal down and to the right
     GLfloat distance2 = Visualizer::getDistance(tileCenters[1], tileCenters[1 + this->boardWidth - 1]); //Diagonal down and to the left
@@ -1548,8 +1515,6 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     tileIndexVec.x = (int)(tileIndex / this->boardWidth); //The x index in the 2D vector
     
     tileIndexVec.y = tileIndex - (this->boardWidth * tileIndexVec.x); //The y index in the 2D vector
-    
-    std::cout << "Client finishing mouseTile()" << std::endl;
     
     return tileIndexVec;
 }

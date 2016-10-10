@@ -59,8 +59,6 @@ int main(int argc, const char * argv[]) {
         while (!C.windowShouldClose())
             C.render();
         
-        std::cout << "Terminating" << std::endl;
-        
         C.terminate();
     } else {
         //Gameboard:
