@@ -661,26 +661,56 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     
     //Calculate an evenly spaced board of vertices
     
-    GLfloat pointDistance = 0.2f;
-
-    GLfloat locationOfFirstPoint = 0.0f;
-    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
-    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
+//    GLfloat pointDistance = 0.2f;
+//
+//    GLfloat locationOfFirstPoint = 0.0f;
+//    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
+//    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
+//    
+//    std::vector<GLfloat> vertexDataVec;
+//    
+//    std::cout << "vectorData: " << std::endl << "(";
+//    
+//    for (GLuint x = 0; x < this->boardWidth; x++) {
+//        for (GLuint y = 0; y < this->boardHeight; y++) {
+//            //Sets the point location based on the location in the board and on the modifiers above.
+//            vertexDataVec.push_back(locationOfFirstPoint - (x * pointDistance));
+//            
+//            std::cout << vertexDataVec.back() << ", ";
+//            
+//            vertexDataVec.push_back(locationOfFirstPoint - (y * pointDistance));
+//            
+//            std::cout << vertexDataVec.back() << ")" << std::endl << "(";
+//        }
+//    }
+//    
+//    std::cout << std::endl;
+    
+    
+    
+    
+    glm::vec2 pointDistance;
+    pointDistance.x = 2.0 / this->boardWidth;
+    pointDistance.y = 2.0 / this->boardHeight;
+    
+    glm::vec2 locationOfFirstPoint = glm::vec2(-1.0, -1.0);
+    locationOfFirstPoint.x += pointDistance.x / 2.0; //Half of the distance between points is before the first point and after the last
+    locationOfFirstPoint.y += pointDistance.y / 2.0;
     
     std::vector<GLfloat> vertexDataVec;
     
-    std::cout << "vectorData: ";
+    std::cout << "vectorData: " << std::endl << "(";
     
     for (GLuint x = 0; x < this->boardWidth; x++) {
         for (GLuint y = 0; y < this->boardHeight; y++) {
             //Sets the point location based on the location in the board and on the modifiers above.
-            vertexDataVec.push_back(locationOfFirstPoint - (x * pointDistance));
+            vertexDataVec.push_back(locationOfFirstPoint.x + (x * pointDistance.x));
             
             std::cout << vertexDataVec.back() << ", ";
             
-            vertexDataVec.push_back(locationOfFirstPoint - (y * pointDistance));
+            vertexDataVec.push_back(locationOfFirstPoint.y + (y * pointDistance.y));
             
-            std::cout << vertexDataVec.back() << ", ";
+            std::cout << vertexDataVec.back() << ")" << std::endl << "(";
         }
     }
     
@@ -712,67 +742,55 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     
-    //Terrain VBO:
-    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData.data()), this->terrainData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData.data()), this->terrainData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
-    //Creature VBO:
-    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(2);
     
-    //Color VBO:
-    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(3);
     
-    //Damage VBO:
-    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData.data()), this->damageData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData.data()), this->damageData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(4);
     
-    //Offset VBO:
-    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData.data()), this->offsetData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData.data()), this->offsetData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(5);
     
-    //Building VBO:
-    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
@@ -876,9 +894,14 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
     //First we bind the VAO
     glBindVertexArray(this->VAO);
     
+    GLfloat vertices[2 * this->numberOfTiles];
+    for (int a = 0; a < 2 * this->numberOfTiles; a++) {
+        vertices[a] = this->vertexData[a];
+    }
+    
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
