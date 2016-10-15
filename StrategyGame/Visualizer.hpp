@@ -222,7 +222,7 @@ private:
     //Window data
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
-    glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 clearColor = glm::vec3(0.5f, 0.5f, 0.5f);
     glm::ivec2 viewportSize;
     glm::ivec2 selectedTile = NO_SELECTION;
     

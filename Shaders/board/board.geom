@@ -59,6 +59,8 @@ out vec2 TexCoords;
 out vec4 TileColor;
 flat out ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
+uniform vec2 tileDistance;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 ortho;
@@ -69,8 +71,7 @@ uniform mat4 creatureMat;
 
 //Functions
 void makeOpen(vec4 position);
-void makeMountain(vec4 position);
-void makeForest(vec4 position);
+void makeTerrain(vec4 position, int terrain);
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]);
 void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]);
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]);
@@ -81,28 +82,29 @@ void main() {
     
     //1x2 Rectangle coordinates with these transformations
     vec4 rect[] = vec4[](
-        vec4( 0.45f,  0.35f, 0.0f, 0.0f),
-        vec4( 0.05f, -0.05f, 0.0f, 0.0f),
-        vec4( 0.35f,  0.45f, 0.0f, 0.0f),
-        vec4(-0.05f,  0.05f, 0.0f, 0.0f)
+        vec4( 4.5f * tileDistance.x,  3.5f * tileDistance.y, 0.0f, 0.0f),
+        vec4( 0.5f * tileDistance.x, -0.5f * tileDistance.y, 0.0f, 0.0f),
+        vec4( 3.5f * tileDistance.x,  4.5f * tileDistance.y, 0.0f, 0.0f),
+        vec4(-0.5f * tileDistance.x,  0.5f * tileDistance.y, 0.0f, 0.0f)
     );
     
+    //1x1 Square coordinates with these transformations
     vec4 square[] = vec4[](
-       vec4( 0.30f,  0.10f, 0.0f, 0.0f),
-       vec4( 0.10f, -0.10f, 0.0f, 0.0f),
-       vec4( 0.10f,  0.30f, 0.0f, 0.0f),
-       vec4(-0.10f,  0.10f, 0.0f, 0.0f)
+       vec4( 3.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f),
+       vec4( 1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+       vec4( 1.0f * tileDistance.x,  3.0f * tileDistance.y, 0.0f, 0.0f),
+       vec4(-1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)
     );
     
     //Draw the ground
     if (terrain[0] == OPEN_TERRAIN) {
         makeOpen(position);
     } else if (terrain[0] == MOUNTAIN_TERRAIN) {
-        makeMountain(position);
+        makeTerrain(position, MOUNTAIN_TERRAIN);
     } else if (terrain[0] == WATER_TERRAIN) {
-        makeMountain(position);
+        makeTerrain(position, MOUNTAIN_TERRAIN);
     } else if (terrain[0] == FOREST_TERRAIN) {
-        makeForest(position);
+        makeTerrain(position, FOREST_TERRAIN);
     } /*else if (terrain[0] == HILL_TERRAIN) {
         makeHill(position);
     } else if (terrain[0] == SWAMP_TERRAIN) {
@@ -124,25 +126,25 @@ void main() {
 }
 
 void makeOpen(vec4 position) {
-    gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom left
+    gl_Position = ortho * view * model * (position + vec4(-1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f)); //Bottom left
     TexCoords = vec2(0.0f, 0.0f);
     TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Bottom right
+    gl_Position = ortho * view * model * (position + vec4( 1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f)); //Bottom right
     TexCoords = vec2(1.0f, 0.0f);
     TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Top left
+    gl_Position = ortho * view * model * (position + vec4(-1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)); //Top left
     TexCoords = vec2(0.0f, 1.0f);
     TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + vec4( 0.1f,  0.1f, 0.0f, 0.0f)); //Top right
+    gl_Position = ortho * view * model * (position + vec4( 1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)); //Top right
     TexCoords = vec2(1.0f, 1.0f);
     TileColor = tileColor[0];
     TexType = ivec2(TERRAIN, OPEN_TERRAIN);
@@ -151,62 +153,33 @@ void makeOpen(vec4 position) {
     EndPrimitive();
 }
 
-void makeMountain(vec4 position) {
-    gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
+void makeTerrain(vec4 position, int terrain) {
+    gl_Position = ortho * view * model * (position + vec4(-1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f)); //Bottom
     TexCoords = vec2(0.0f, 1.0f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
+    gl_Position = ortho * view * model * (position + vec4( 1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f)); //Right
     TexCoords = vec2(0.5f, 1.0f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
+    gl_Position = ortho * view * model * (position + vec4(-1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)); //Left
     TexCoords = vec2(0.0f, 0.5f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
-    gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
+    gl_Position = ortho * view * model * (position + vec4( 2.0f * tileDistance.x,  2.0f * tileDistance.y, 0.0f, 0.0f)); //Top
     TexCoords = vec2(1.0f, 0.0f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
     EndPrimitive();
 }
-
-void makeForest(vec4 position) {
-    gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
-    TexCoords = vec2(0.0f, 1.0f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
-    TexCoords = vec2(0.5f, 1.0f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
-    TexCoords = vec2(0.0f, 0.5f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
-    TexCoords = vec2(1.0f, 0.0f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    EndPrimitive();
-}
-
 
 
 //Note: This function appears to use seemingly random complex numbers for coordinates, but they have been calculated to ensure proper proportions for humanoid creatures
@@ -236,10 +209,10 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         
         //The positions of a diamond in the shape of the tile
         vec4 tileDiamond[] = vec4[](
-            vec4(-0.1f, -0.1f, 0.0f, 0.0f),
-            vec4( 0.1f, -0.1f, 0.0f, 0.0f),
-            vec4(-0.1f,  0.1f, 0.0f, 0.0f),
-            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+            vec4(-1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+            vec4( 1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+            vec4(-1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f),
+            vec4( 1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)
         );
         
         if (creatureDirection[0] == NORTH) {
@@ -326,10 +299,10 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         
         //The positions of a diamond in the shape of the tile
         vec4 tileDiamond[] = vec4[](
-            vec4(-0.1f, -0.1f, 0.0f, 0.0f),
-            vec4( 0.1f, -0.1f, 0.0f, 0.0f),
-            vec4(-0.1f,  0.1f, 0.0f, 0.0f),
-            vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+            vec4(-1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+            vec4( 1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+            vec4(-1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f),
+            vec4( 1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)
         );
         
         //Draw the circle
@@ -395,10 +368,10 @@ void drawDamageBox(vec4 position, int damage, vec4 squre[4]) {
     
     //The positions of a diamond in the shape of the tile
     vec4 tileDiamond[] = vec4[](
-        vec4(-0.1f, -0.1f, 0.0f, 0.0f),
-        vec4( 0.1f, -0.1f, 0.0f, 0.0f),
-        vec4(-0.1f,  0.1f, 0.0f, 0.0f),
-        vec4( 0.1f,  0.1f, 0.0f, 0.0f)
+        vec4(-1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+        vec4( 1.0f * tileDistance.x, -1.0f * tileDistance.y, 0.0f, 0.0f),
+        vec4(-1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f),
+        vec4( 1.0f * tileDistance.x,  1.0f * tileDistance.y, 0.0f, 0.0f)
     );
     
     vec4 boxCenter = position;
