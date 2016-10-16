@@ -55,7 +55,7 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     //Load textures
     //Exception only thrown if there are 32 textures already present
     try {
-        this->loadTexture("Resources/grass.png", "grassTex");
+        this->loadTexture("Resources/grass.jpg", "grassTex");
     } catch (std::exception e) {
         std::cout << "Error loading grass texture: " << e.what() << std::endl;
     }
@@ -111,12 +111,6 @@ void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> t
     this->numberOfTiles = this->boardWidth * this->boardHeight;
     
     this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
-    
-    glm::vec2 tileDistance(1.0 / (float)this->boardWidth, 1.0 / (float)this->boardHeight);
-    
-    std::cout << "tileDistance: (" << tileDistance.x << ", " << tileDistance.y << ")" << std::endl;
-    
-    this->gameShader.uniform2f("tileDistance", tileDistance);
     
 //    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
     
@@ -705,30 +699,22 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     
     std::vector<GLfloat> vertexDataVec;
     
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-    std::cout << "vectorData: " << std::endl;
-#endif
+    std::cout << "vectorData: " << std::endl << "(";
     
     for (GLuint x = 0; x < this->boardWidth; x++) {
         for (GLuint y = 0; y < this->boardHeight; y++) {
             //Sets the point location based on the location in the board and on the modifiers above.
             vertexDataVec.push_back(locationOfFirstPoint.x + (x * pointDistance.x));
             
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-            std::cout << "(" << vertexDataVec.back() << ", ";
-#endif
+            std::cout << vertexDataVec.back() << ", ";
             
             vertexDataVec.push_back(locationOfFirstPoint.y + (y * pointDistance.y));
             
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-            std::cout << vertexDataVec.back() << ")" << std::endl;
-#endif
+            std::cout << vertexDataVec.back() << ")" << std::endl << "(";
         }
     }
     
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
     std::cout << std::endl;
-#endif
     
     this->vertexData = vertexDataVec;
     this->terrainData = terrainDataVec;
@@ -750,33 +736,21 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     glGenBuffers(1, &this->buildingVBO);
     
     GLfloat vertices[2 * this->numberOfTiles];
-    GLint terrains[this->numberOfTiles];
-    GLint creatures[3 * this->numberOfTiles];
+    GLfloat terrains[this->numberOfTiles];
+    GLfloat creatures[3 * this->numberOfTiles];
     GLfloat colors[3 * this->numberOfTiles];
-    GLint damages[this->numberOfTiles];
+    GLfloat damages[this->numberOfTiles];
     GLfloat offsets[this->numberOfTiles];
-    GLint buildings[2 * this->numberOfTiles];
+    GLfloat buildings[2 * this->numberOfTiles];
     
-    for (int a = 0; a < this->numberOfTiles; a++) {
-        vertices[a] = this->vertexData[2 * a];
-        vertices[a] = this->vertexData[(2 * a) + 1];
-        
+    for (int a = 0; a < 2 * this->numberOfTiles; a++) {
+        vertices[a] = this->vertexData[a];
         terrains[a] = this->terrainData[a];
-        
-        creatures[a] = this->creatureData[3 * a];
-        creatures[a] = this->creatureData[(3 * a) + 1];
-        creatures[a] = this->creatureData[(3 * a) + 2];
-        
-        colors[a] = this->colorData[3 * a];
-        colors[a] = this->colorData[(3 * a) + 1];
-        colors[a] = this->colorData[(3 * a) + 2];
-        
+        creatures[a] = this->creatureData[a];
+        colors[a] = this->colorData[a];
         damages[a] = this->damageData[a];
-        
         offsets[a] = this->offsetData[a];
-        
-        buildings[a] = this->buildingData[2 * a];
-        buildings[a] = this->buildingData[(2 * a) + 1];
+        buildings[a] = this->buildingData[a];
     }
     
     //First we bind the VAO
@@ -997,33 +971,21 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
     this->buildingData = buildingDataVec;
     
     GLfloat vertices[2 * this->numberOfTiles];
-    GLint terrains[this->numberOfTiles];
-    GLint creatures[3 * this->numberOfTiles];
+    GLfloat terrains[this->numberOfTiles];
+    GLfloat creatures[3 * this->numberOfTiles];
     GLfloat colors[3 * this->numberOfTiles];
-    GLint damages[this->numberOfTiles];
+    GLfloat damages[this->numberOfTiles];
     GLfloat offsets[this->numberOfTiles];
-    GLint buildings[2 * this->numberOfTiles];
+    GLfloat buildings[2 * this->numberOfTiles];
     
-    for (int a = 0; a < this->numberOfTiles; a++) {
-        vertices[a] = this->vertexData[2 * a];
-        vertices[a] = this->vertexData[(2 * a) + 1];
-        
+    for (int a = 0; a < 2 * this->numberOfTiles; a++) {
+        vertices[a] = this->vertexData[a];
         terrains[a] = this->terrainData[a];
-        
-        creatures[a] = this->creatureData[3 * a];
-        creatures[a] = this->creatureData[(3 * a) + 1];
-        creatures[a] = this->creatureData[(3 * a) + 2];
-        
-        colors[a] = this->colorData[3 * a];
-        colors[a] = this->colorData[(3 * a) + 1];
-        colors[a] = this->colorData[(3 * a) + 2];
-        
+        creatures[a] = this->creatureData[a];
+        colors[a] = this->colorData[a];
         damages[a] = this->damageData[a];
-        
         offsets[a] = this->offsetData[a];
-        
-        buildings[a] = this->buildingData[2 * a];
-        buildings[a] = this->buildingData[(2 * a) + 1];
+        buildings[a] = this->buildingData[a];
     }
     
     //First we bind the VAO
