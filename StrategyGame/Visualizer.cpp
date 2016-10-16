@@ -744,21 +744,33 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     glGenBuffers(1, &this->buildingVBO);
     
     GLfloat vertices[2 * this->numberOfTiles];
-    GLfloat terrains[this->numberOfTiles];
-    GLfloat creatures[3 * this->numberOfTiles];
+    GLint terrains[this->numberOfTiles];
+    GLint creatures[3 * this->numberOfTiles];
     GLfloat colors[3 * this->numberOfTiles];
-    GLfloat damages[this->numberOfTiles];
+    GLint damages[this->numberOfTiles];
     GLfloat offsets[this->numberOfTiles];
-    GLfloat buildings[2 * this->numberOfTiles];
+    GLint buildings[2 * this->numberOfTiles];
     
-    for (int a = 0; a < 2 * this->numberOfTiles; a++) {
-        vertices[a] = this->vertexData[a];
+    for (int a = 0; a < this->numberOfTiles; a++) {
+        vertices[2 * a] = this->vertexData[2 * a];
+        vertices[(2 * a) + 1] = this->vertexData[(2 * a) + 1];
+        
         terrains[a] = this->terrainData[a];
-        creatures[a] = this->creatureData[a];
-        colors[a] = this->colorData[a];
+        
+        creatures[3 * a] = this->creatureData[3 * a];
+        creatures[(3 * a) + 1] = this->creatureData[(3 * a) + 1];
+        creatures[(3 * a) + 2] = this->creatureData[(3 * a) + 2];
+        
+        colors[3 * a] = this->colorData[3 * a];
+        colors[(3 * a) + 1] = this->colorData[(3 * a) + 1];
+        colors[(3 * a) + 2] = this->colorData[(3 * a) + 2];
+        
         damages[a] = this->damageData[a];
+        
         offsets[a] = this->offsetData[a];
-        buildings[a] = this->buildingData[a];
+        
+        buildings[2 * a] = this->buildingData[2 * a];
+        buildings[(2 * a) + 1] = this->buildingData[(2 * a) + 1];
     }
     
     //First we bind the VAO
@@ -979,21 +991,33 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
     this->buildingData = buildingDataVec;
     
     GLfloat vertices[2 * this->numberOfTiles];
-    GLfloat terrains[this->numberOfTiles];
-    GLfloat creatures[3 * this->numberOfTiles];
+    GLint terrains[this->numberOfTiles];
+    GLint creatures[3 * this->numberOfTiles];
     GLfloat colors[3 * this->numberOfTiles];
-    GLfloat damages[this->numberOfTiles];
+    GLint damages[this->numberOfTiles];
     GLfloat offsets[this->numberOfTiles];
-    GLfloat buildings[2 * this->numberOfTiles];
+    GLint buildings[2 * this->numberOfTiles];
     
-    for (int a = 0; a < 2 * this->numberOfTiles; a++) {
-        vertices[a] = this->vertexData[a];
+    for (int a = 0; a < this->numberOfTiles; a++) {
+        vertices[2 * a] = this->vertexData[2 * a];
+        vertices[(2 * a) + 1] = this->vertexData[(2 * a) + 1];
+        
         terrains[a] = this->terrainData[a];
-        creatures[a] = this->creatureData[a];
-        colors[a] = this->colorData[a];
+        
+        creatures[3 * a] = this->creatureData[3 * a];
+        creatures[(3 * a) + 1] = this->creatureData[(3 * a) + 1];
+        creatures[(3 * a) + 2] = this->creatureData[(3 * a) + 2];
+        
+        colors[3 * a] = this->colorData[3 * a];
+        colors[(3 * a) + 1] = this->colorData[(3 * a) + 1];
+        colors[(3 * a) + 2] = this->colorData[(3 * a) + 2];
+        
         damages[a] = this->damageData[a];
+        
         offsets[a] = this->offsetData[a];
-        buildings[a] = this->buildingData[a];
+        
+        buildings[2 * a] = this->buildingData[2 * a];
+        buildings[(2 * a) + 1] = this->buildingData[(2 * a) + 1];
     }
     
     //First we bind the VAO
