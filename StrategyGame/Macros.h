@@ -24,6 +24,7 @@
 
     //Various console outputs
 
+//#define VERTEX_DATA_CONSOLE_OUTPUT
 //#define MOVEMENT_CONSOLE_OUTPUT
 //#define TURN_CONSOLE_OUTPUT
 //#define PATHFINDING_CONSOLE_OUTPUT

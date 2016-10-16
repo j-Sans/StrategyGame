@@ -69,8 +69,7 @@ uniform mat4 creatureMat;
 
 //Functions
 void makeOpen(vec4 position);
-void makeMountain(vec4 position);
-void makeForest(vec4 position);
+void makeTerrain(vec4 position, int terrain);
 void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]);
 void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]);
 void drawDamageBox(vec4 position, int damage, vec4 rect[4]);
@@ -98,11 +97,11 @@ void main() {
     if (terrain[0] == OPEN_TERRAIN) {
         makeOpen(position);
     } else if (terrain[0] == MOUNTAIN_TERRAIN) {
-        makeMountain(position);
+        makeTerrain(position, MOUNTAIN_TERRAIN);
     } else if (terrain[0] == WATER_TERRAIN) {
-        makeMountain(position);
+        makeTerrain(position, MOUNTAIN_TERRAIN);
     } else if (terrain[0] == FOREST_TERRAIN) {
-        makeForest(position);
+        makeTerrain(position, FOREST_TERRAIN);
     } /*else if (terrain[0] == HILL_TERRAIN) {
         makeHill(position);
     } else if (terrain[0] == SWAMP_TERRAIN) {
@@ -151,57 +150,29 @@ void makeOpen(vec4 position) {
     EndPrimitive();
 }
 
-void makeMountain(vec4 position) {
+void makeTerrain(vec4 position, int terrain) {
     gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
     TexCoords = vec2(0.0f, 1.0f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
     TexCoords = vec2(0.5f, 1.0f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
     TexCoords = vec2(0.0f, 0.5f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
     gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
     TexCoords = vec2(1.0f, 0.0f);
     TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, MOUNTAIN_TERRAIN);
-    EmitVertex();
-    
-    EndPrimitive();
-}
-
-void makeForest(vec4 position) {
-    gl_Position = ortho * view * model * (position + vec4(-0.1f, -0.1f, 0.0f, 0.0f)); //Bottom
-    TexCoords = vec2(0.0f, 1.0f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    gl_Position = ortho * view * model * (position + vec4( 0.1f, -0.1f, 0.0f, 0.0f)); //Right
-    TexCoords = vec2(0.5f, 1.0f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    gl_Position = ortho * view * model * (position + vec4(-0.1f,  0.1f, 0.0f, 0.0f)); //Left
-    TexCoords = vec2(0.0f, 0.5f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
-    EmitVertex();
-    
-    gl_Position = ortho * view * model * (position + vec4( 0.2f,  0.2f, 0.0f, 0.0f)); //Top
-    TexCoords = vec2(1.0f, 0.0f);
-    TileColor = tileColor[0];
-    TexType = ivec2(TERRAIN, FOREST_TERRAIN);
+    TexType = ivec2(TERRAIN, terrain);
     EmitVertex();
     
     EndPrimitive();

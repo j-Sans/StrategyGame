@@ -699,22 +699,30 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     
     std::vector<GLfloat> vertexDataVec;
     
-    std::cout << "vectorData: " << std::endl << "(";
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+    std::cout << "vectorData: " << std::endl;
+#endif
     
     for (GLuint x = 0; x < this->boardWidth; x++) {
         for (GLuint y = 0; y < this->boardHeight; y++) {
             //Sets the point location based on the location in the board and on the modifiers above.
             vertexDataVec.push_back(locationOfFirstPoint.x + (x * pointDistance.x));
             
-            std::cout << vertexDataVec.back() << ", ";
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+            std::cout << "(" << vertexDataVec.back() << ", ";
+#endif
             
             vertexDataVec.push_back(locationOfFirstPoint.y + (y * pointDistance.y));
             
-            std::cout << vertexDataVec.back() << ")" << std::endl << "(";
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+            std::cout << vertexDataVec.back() << ")" << std::endl;
+#endif
         }
     }
     
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
     std::cout << std::endl;
+#endif
     
     this->vertexData = vertexDataVec;
     this->terrainData = terrainDataVec;
