@@ -66,11 +66,11 @@ int main(int argc, const char * argv[]) {
         for (GLuint x = 0; x < BOARD_WIDTH; x++) {
             std::vector<Tile> row;
             for (GLuint y = 0; y < BOARD_WIDTH; y++) {
-                if (x == 0 && y == 1)
+                if (x == BOARD_WIDTH - 1 && y == BOARD_WIDTH - 1)
                     row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-                else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3) || (y > BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 1) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 5) || (x == BOARD_WIDTH - 3 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 6) || (x == 6 && y == 0)) {
+                else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3) || (y > BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 1) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 5) || (x == BOARD_WIDTH - 3 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 6) || (x == 6 && y == 0))
                     row.push_back(Tile(FOREST_TERRAIN, x, y));
-                } else
+                else
                     row.push_back(Tile(OPEN_TERRAIN, x, y));
             }
             board.push_back(row);
