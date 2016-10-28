@@ -223,7 +223,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
             //Reset all tiles
             for (int x = 0; x < this->gameBoard->width(); x++) {
                 for (int y = 0; y < this->gameBoard->height(x); y++) {
-                    this->boardInfo[x][y].TILE_STYLE = Regular;;
+                    this->boardInfo[x][y].TILE_STYLE = Regular;
                 }
             }
             
@@ -644,8 +644,10 @@ glm::vec3 Game::tileColor(unsigned int x, unsigned int y) {
     
     if (style == Regular)
         return WHITE;
-    else if (style == Selected)
+    if (style == Hovered)
         return GREY;
+    else if (style == Selected)
+        return DARK_GREY;
     else if (style == AttackableAdj)
         return RED;
     else if (style == Reachable)

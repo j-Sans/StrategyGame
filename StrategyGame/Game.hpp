@@ -35,7 +35,8 @@
 #define TILE_VISION second
 
 #define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
-#define GREY glm::vec3(0.625f, 0.625f, 0.625f)
+#define GREY glm::vec3(0.7f, 0.7f, 0.7f)
+#define DARK_GREY glm::vec3(0.4f, 0.4f, 0.4f)
 #define RED glm::vec3(1.0f, 0.625f, 0.625f)
 #define YELLOW glm::vec3(1.0f, 1.0f, 0.5f)
 #define GREEN glm::vec3(0.62f, 1.0f, 0.625f)
@@ -45,6 +46,7 @@
 
 enum Style {
     Regular,
+    Hovered,
     Selected,
     AttackableAdj,
     Reachable,
