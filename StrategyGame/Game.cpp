@@ -12,9 +12,11 @@
 
 Game::Game(Board* board) : gameBoard(board) {
     for (int x = 0; x < this->gameBoard->width(); x++) {
-        std::vector<std::pair<Style, bool> > boardColumnInfo;
+        std::vector<std::array<int, 1> > boardColumnInfo;
         for (int y = 0; y < this->gameBoard->height(x); y++) {
-            boardColumnInfo.push_back(std::pair<Style, bool>(Regular, true));
+            std::array<int, 1> tileData = { REGULAR };
+            
+            boardColumnInfo.push_back(tileData);
         }
         this->boardInfo.push_back(boardColumnInfo);
     }
@@ -124,7 +126,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
         //Reset all tiles if the mouse clicked out of the screen
         for (int x = 0; x < this->gameBoard->width(); x++) {
             for (int y = 0; y < this->gameBoard->height(x); y++) {
-                this->boardInfo[x][y].TILE_STYLE = Regular;
+                this->boardInfo[x][y][TILE_STYLE] = REGULAR;
             }
         }
     }
@@ -132,10 +134,10 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
     //Reset the tile (and others) if the current tile is clicked again
     else if (mousePos == this->selectedTile) {
         
-        //Goes through all tiles and sets them to regular
+        //Goes through all tiles and sets them to REGULAR
         for (int x = 0; x < this->gameBoard->width(); x++) {
             for (int y = 0; y < this->gameBoard->height(x); y++) {
-                this->boardInfo[x][y].TILE_STYLE = Regular;
+                this->boardInfo[x][y][TILE_STYLE] = REGULAR;
             }
         }
         
@@ -144,17 +146,17 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
     }
     
     //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
-    else if (this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE == Regular) {
+    else if (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] == REGULAR) {
         
         //Reset all tiles (this one is highlighted after)
         for (int x = 0; x < this->gameBoard->width(); x++) {
             for (int y = 0; y < this->gameBoard->height(x); y++) {
-                this->boardInfo[x][y].TILE_STYLE = Regular;
+                this->boardInfo[x][y][TILE_STYLE] = REGULAR;
             }
         }
         
         //Select this new tile
-        this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE = Selected;
+        this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
         
         //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
         
@@ -164,7 +166,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
             Creature creature = *this->gameBoard->get(mousePos.x, mousePos.y).creature();
             for (int a = 0; a < reachableTiles.size(); a++) {
                 if (this->gameBoard->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                    this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()].TILE_STYLE = Reachable;
+                    this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
                 }
             }
             
@@ -176,13 +178,13 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
                 if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer)
                     
                     if (creature.energy() > 0)
-                        this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
+                        this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
                 
                 //If there is a building on the tile, controlled by an opponent, make it attackable
                 if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer)
                     
                     if (creature.energy() > 0)
-                        this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
+                        this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
             }
         }
         
@@ -190,7 +192,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
     }
     
     //Selecting selectable tiles
-    else if (this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE == Reachable) {
+    else if (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] == REACHABLE) {
         
         //Move the creature to the selected tile
         if (this->gameBoard->get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) {
@@ -205,7 +207,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
             //Reset all tiles
             for (int x = 0; x < this->gameBoard->width(); x++) {
                 for (int y = 0; y < this->gameBoard->height(x); y++) {
-                    this->boardInfo[x][y].TILE_STYLE = Regular;
+                    this->boardInfo[x][y][TILE_STYLE] = REGULAR;
                 }
             }
             
@@ -223,7 +225,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
             //Reset all tiles
             for (int x = 0; x < this->gameBoard->width(); x++) {
                 for (int y = 0; y < this->gameBoard->height(x); y++) {
-                    this->boardInfo[x][y].TILE_STYLE = Regular;
+                    this->boardInfo[x][y][TILE_STYLE] = REGULAR;
                 }
             }
             
@@ -232,7 +234,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
     }
     
     //Attacking
-    else if (this->boardInfo[mousePos.x][mousePos.y].TILE_STYLE == AttackableAdj) {
+    else if (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] == ATTACKABLE) {
         
         glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
         glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
@@ -253,7 +255,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
             //Reset all tiles
             for (int x = 0; x < this->gameBoard->width(); x++) {
                 for (int y = 0; y < this->gameBoard->height(x); y++) {
-                    this->boardInfo[x][y].TILE_STYLE = Regular;
+                    this->boardInfo[x][y][TILE_STYLE] = REGULAR;
                 }
             }
             
@@ -351,14 +353,14 @@ bool Game::selectCreature(unsigned int x, unsigned int y, unsigned int activePla
     if (creature->directions.size() == 0) {
         this->selectedTile = glm::vec2(x, y); //Set the selected tile to this location
         
-        this->boardInfo[x][y].TILE_STYLE = Selected;
+        this->boardInfo[x][y][TILE_STYLE] = SELECTED;
         
         std::vector<Tile> reachableTiles = getReachableTiles(this->gameBoard->get(x, y));
         
         Creature creature = *this->gameBoard->get(x, y).creature();
         for (int a = 0; a < reachableTiles.size(); a++) {
             if (this->gameBoard->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()].TILE_STYLE = Reachable;
+                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
             }
         }
         
@@ -370,13 +372,13 @@ bool Game::selectCreature(unsigned int x, unsigned int y, unsigned int activePla
             if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer)
                 
                 if (creature.energy() > 0)
-                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
+                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
             
             //If there is a building on the tile, controlled by an opponent, make it attackable
             if (this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->gameBoard->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer)
                 
                 if (creature.energy() > 0)
-                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()].TILE_STYLE = AttackableAdj;
+                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
         }
     }
     
@@ -640,17 +642,15 @@ glm::vec3 Game::tileColor(unsigned int x, unsigned int y) {
     if (y >= this->gameBoard->height(x))
         throw std::range_error("Y out of range");
     
-    Style style = this->boardInfo[x][y].TILE_STYLE;
+    int style = this->boardInfo[x][y][TILE_STYLE];
     
-    if (style == Regular)
+    if (style == REGULAR)
         return WHITE;
-    if (style == Hovered)
+    else if (style == SELECTED)
         return GREY;
-    else if (style == Selected)
-        return DARK_GREY;
-    else if (style == AttackableAdj)
+    else if (style == ATTACKABLE)
         return RED;
-    else if (style == Reachable)
+    else if (style == REACHABLE)
         return GREEN;
     
     //Something went wrong. Return White to have an unaltered color

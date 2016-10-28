@@ -11,6 +11,9 @@
 
 #include "Macros.h"
 
+//Standard library includes
+#include <array>
+
 //GLFW: Window functionality
 #include <GLFW/glfw3.h>
 
@@ -31,12 +34,10 @@
 #define NO_SELECTION glm::ivec2(-1, -1)
 #define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
 
-#define TILE_STYLE first
-#define TILE_VISION second
+#define TILE_STYLE 0
 
 #define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
-#define GREY glm::vec3(0.7f, 0.7f, 0.7f)
-#define DARK_GREY glm::vec3(0.4f, 0.4f, 0.4f)
+#define GREY glm::vec3(0.625f, 0.625f, 0.625f)
 #define RED glm::vec3(1.0f, 0.625f, 0.625f)
 #define YELLOW glm::vec3(1.0f, 1.0f, 0.5f)
 #define GREEN glm::vec3(0.62f, 1.0f, 0.625f)
@@ -44,13 +45,10 @@
 #define BLUE glm::vec3(0.625f, 0.625f, 1.0f)
 #define PURPLE glm::vec3(0.5f, 0.1f, 0.9f)
 
-enum Style {
-    Regular,
-    Hovered,
-    Selected,
-    AttackableAdj,
-    Reachable,
-};
+#define REGULAR 0
+#define SELECTED 1
+#define ATTACKABLE 2
+#define REACHABLE 3
 
 class Game {
 public:
@@ -127,7 +125,11 @@ private:
     Board *gameBoard;
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
-    std::vector<std::vector<std::pair<Style, bool> > > boardInfo; //Contains info on the styles and visibilty of tiles. With vision not being implemented, the bool is unused
+    std::vector<std::vector<std::array<int, 1> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
+    /*
+     * [0]: Tile style (whether it is selected, attackable, reachable, etc...)
+     */
+    
     
     //Private member functions
     
