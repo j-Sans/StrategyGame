@@ -120,9 +120,6 @@ void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> t
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 //void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
 void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
-    //*****HOW MUCH OF CLIENT INFO SECTION HERE IS BEING USED?*****
-    std::string clientInfo;
-    
     glm::dvec2 mousePos;
     glm::ivec2 windowSize;
     
@@ -137,10 +134,6 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     }
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
-    
-    clientInfo.push_back(mouseTile.x);
-    clientInfo.push_back(mouseTile.y);
-    clientInfo.push_back(mouseDown ? 1 : 0);
     
     //Set the selected tile if the mouse is pressing
     if (mouseDown)

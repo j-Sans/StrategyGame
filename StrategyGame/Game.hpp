@@ -46,7 +46,7 @@
 #define BLUE glm::vec3(0.625f, 0.625f, 1.0f)
 #define PURPLE glm::vec3(0.5f, 0.1f, 0.9f)
 
-#define HOVER_EFFECT glm::vec3(0.8f, 0.8f, 0.8f)
+#define HOVER_EFFECT glm::vec3(0.75f, 0.75f, 0.75f)
 
 //TILE_STYLE
 #define REGULAR 0
