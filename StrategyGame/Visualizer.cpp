@@ -136,10 +136,10 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
     //Set the selected tile if the mouse is pressing
-    if (mouseDown)
-        this->selectedTile = mouseTile;
-    else
-        this->selectedTile = NO_SELECTION;
+//    if (mouseDown)
+//        this->selectedTile = mouseTile;
+//    else
+//        this->selectedTile = NO_SELECTION;
 
 //    this->updateBuffers(boardInfo);
     this->updateBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
@@ -238,8 +238,8 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
 //        this->renderSettingsMenu(mouseUp, mouseDown);
     
     //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
-    if (mouseDown)
-        mouseDown = false;
+//    if (mouseDown)
+//        mouseDown = false;
     
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
@@ -1761,8 +1761,9 @@ void Visualizer::mouseButtonCallback(GLFWwindow *window, int button, int action,
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         mouseDown = true;
     
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         mouseUp = true;
-    else
+        mouseDown = false;
+    } else
         mouseUp = false;
 }
