@@ -35,6 +35,7 @@
 #define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
 
 #define TILE_STYLE 0
+#define TILE_HOVER 1
 
 #define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
 #define GREY glm::vec3(0.625f, 0.625f, 0.625f)
@@ -45,10 +46,17 @@
 #define BLUE glm::vec3(0.625f, 0.625f, 1.0f)
 #define PURPLE glm::vec3(0.5f, 0.1f, 0.9f)
 
+#define HOVER_EFFECT glm::vec3(0.8f, 0.8f, 0.8f)
+
+//TILE_STYLE
 #define REGULAR 0
 #define SELECTED 1
 #define ATTACKABLE 2
 #define REACHABLE 3
+
+//HOVER
+#define NO_HOVERING 0
+#define HOVERING 1
 
 class Game {
 public:
@@ -125,9 +133,10 @@ private:
     Board *gameBoard;
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
-    std::vector<std::vector<std::array<int, 1> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
+    std::vector<std::vector<std::array<int, 2> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
     /*
      * [0]: Tile style (whether it is selected, attackable, reachable, etc...)
+     * [1]: Whether the mouse is hovering, either as TRUE or FALSE
      */
     
     
