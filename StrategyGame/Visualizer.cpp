@@ -1758,12 +1758,12 @@ void Visualizer::mouseButtonCallback(GLFWwindow *window, int button, int action,
     double xPos, yPos;
     glfwGetCursorPos(window, &xPos, &yPos);
     
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         mouseDown = true;
-    
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-        mouseUp = true;
+        mouseUp = false;
+    } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         mouseDown = false;
+        mouseUp = true;
     } else
         mouseUp = false;
 }
