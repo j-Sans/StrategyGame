@@ -83,6 +83,8 @@ std::vector<float> Client::parseVectorOfFloat(std::string str) {
 }
 
 void Client::render() {
+    this->visualizer.startFrame();
+    
     this->socket.send(this->visualizer.getClientInfo());
     if (this->socket.receive() != "clientDataReceived")
         throw std::runtime_error("Client data not received");
@@ -109,6 +111,8 @@ void Client::render() {
         throw std::runtime_error("Waiting on host to move to next frame");
     
     this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    
+    this->visualizer.endFrame();
 }
 
 void Client::terminate() {

@@ -143,6 +143,18 @@ public:
     std::string getClientInfo();
     
     /*!
+     * A function that should be called at the beginning of each frame from the larger class, in this case client.
+     * If not, errors involving the mouse being pressed will occur.
+     */
+    void startFrame();
+    
+    /*!
+     * A function that should be called at the end of each frame from the larger class, in this case client.
+     * If not, errors involving the mouse being pressed will occur.
+     */
+    void endFrame();
+    
+    /*!
      * A function that closes the window. Should be called within game loop to exit the loop.
      */
     void closeWindow();
@@ -225,6 +237,7 @@ private:
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::ivec2 viewportSize;
     glm::ivec2 selectedTile = NO_SELECTION;
+    bool mouseBeingPressed = false;
     
     
     //Interfaces

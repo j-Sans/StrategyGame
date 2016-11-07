@@ -13,6 +13,11 @@
 bool keys[1024];
 
 //A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
+//This is only true right after the mouse is pressed
+bool mousePressed = false;
+
+//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
+//This is true as long as the mouse is down
 bool mouseDown = false;
 
 //A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
@@ -136,7 +141,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
     //Set the selected tile if the mouse is pressing
-//    if (mouseDown)
+//    if (mousePressed)
 //        this->selectedTile = mouseTile;
 //    else
 //        this->selectedTile = NO_SELECTION;
@@ -172,7 +177,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     }
     
 //    if (!this->showSettings)
-//        this->game.updateSelected(&mouseDown, cursorPos, windowSize, tileCenters);
+//        this->game.updateSelected(&mousePressed, cursorPos, windowSize, tileCenters);
 //
 //    this->updateInterfaces();
 //    
@@ -224,7 +229,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
             interface = this->rightInterface;
         
         //This renders the interface and its buttons
-        interface->render(mouseDown, mouseUp, !this->showSettings);
+        interface->render(mousePressed, mouseUp, !this->showSettings);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
@@ -235,11 +240,11 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     }
     
 //    if (this->showSettings)
-//        this->renderSettingsMenu(mouseUp, mouseDown);
+//        this->renderSettingsMenu(mouseUp, mousePressed);
     
-    //mouseDown is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
-//    if (mouseDown)
-//        mouseDown = false;
+    //mousePressed is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
+//    if (mousePressed)
+//        mousePressed = false;
     
     //Swap buffers so as to properly render without flickering
     glfwSwapBuffers(this->gameWindow);
@@ -261,19 +266,44 @@ std::string Visualizer::getClientInfo() {
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
-    return std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown ? '1' : '0');
+    if (mouseDown) //this->mouseBeingPressed)
+        std::cout << "getClientInfo() sees mouse as pressed" << std::endl;
+    
+    return std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown /* this->mouseBeingPressed */? '1' : '0');
 }
+
+void Visualizer::startFrame() {
+    mousePressed = false;
+//    if (mousePressed) {
+//        this->mouseBeingPressed = true;
+//        std::cout << "startFrame() sees mouse as pressed" << std::endl;
+//    }
+}
+
+void Visualizer::endFrame() {
+    if (mousePressed) {
+        mousePressed = false;
+    } else {
+        mouseDown = false;
+    }
+        
     
-    
+//    if (mouseDown) {
+//        mousePressed = false;
+//        this->mouseBeingPressed = false;
+//    }
+//    
+//    this->mouseBeingPressed = false;
+}
     
     
     
     /*
     
     //If the mouse was clicked, set the color of the tile that was clicked
-    if (mouseDown) {
-        //Set mouseDown to false because this next function deals with the mouse and updates accordingly.
-        mouseDown = false;
+    if (mousePressed) {
+        //Set mousePressed to false because this next function deals with the mouse and updates accordingly.
+        mousePressed = false;
         
         glm::dvec2 cursorPos;
         glm::ivec2 windowSize;
@@ -288,7 +318,7 @@ std::string Visualizer::getClientInfo() {
             tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
         }
     
-        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mouseDown is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
+        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mousePressed is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
         
     }
     
@@ -1589,13 +1619,13 @@ void Visualizer::processButton(std::string action) {
 //    }
 }
 
-void Visualizer::renderSettingsMenu(bool mouseUp, bool mouseDown) {
+void Visualizer::renderSettingsMenu(bool mouseUp, bool mousePressed) {
     glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
     glScissor(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
     
     this->darkenBox.render();
     
-    this->interfaces[settings].render(mouseUp, mouseDown, true);
+    this->interfaces[settings].render(mouseUp, mousePressed, true);
     
 }
 
@@ -1758,12 +1788,16 @@ void Visualizer::mouseButtonCallback(GLFWwindow *window, int button, int action,
     double xPos, yPos;
     glfwGetCursorPos(window, &xPos, &yPos);
     
+    mouseDown = false;
+    mousePressed = false;
+    mouseUp = false;
+    
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         mouseDown = true;
-        mouseUp = false;
+        mousePressed = true;
     } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-        mouseDown = false;
+//        mousePressed = false;
+//        mouseDown = false;
         mouseUp = true;
-    } else
-        mouseUp = false;
+    }
 }

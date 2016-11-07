@@ -23,6 +23,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+/*
+ Make it so it broadcasts not only to itself
+ Multiple people can run from same port
+ 
+ Set up queue (FIFO)
+ */
+
 class ServerSocket {
 public:
     //Constructor
