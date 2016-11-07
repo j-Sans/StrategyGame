@@ -237,8 +237,6 @@ private:
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::ivec2 viewportSize;
     glm::ivec2 selectedTile = NO_SELECTION;
-    bool mouseBeingPressed = false;
-    
     
     //Interfaces
     std::map<interfaceType, Interface> interfaces;

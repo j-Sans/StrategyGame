@@ -14,7 +14,7 @@ bool keys[1024];
 
 //A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
 //This is only true right after the mouse is pressed
-bool mousePressed = false;
+bool mouseJustPressed = false;
 
 //A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
 //This is true as long as the mouse is down
@@ -229,7 +229,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
             interface = this->rightInterface;
         
         //This renders the interface and its buttons
-        interface->render(mousePressed, mouseUp, !this->showSettings);
+        interface->render(mouseDown, mouseUp, !this->showSettings);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
@@ -266,34 +266,25 @@ std::string Visualizer::getClientInfo() {
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
-    if (mouseDown) //this->mouseBeingPressed)
-        std::cout << "getClientInfo() sees mouse as pressed" << std::endl;
-    
-    return std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown /* this->mouseBeingPressed */? '1' : '0');
+    return std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown ? '1' : '0');
 }
 
 void Visualizer::startFrame() {
-    mousePressed = false;
-//    if (mousePressed) {
-//        this->mouseBeingPressed = true;
-//        std::cout << "startFrame() sees mouse as pressed" << std::endl;
-//    }
+    //At the start of each frame, if the mouse has been clicked, then mouseDown will be set to true
+    if (mouseJustPressed) {
+        mouseJustPressed = false;
+        mouseDown = true;
+    }
 }
 
 void Visualizer::endFrame() {
-    if (mousePressed) {
-        mousePressed = false;
+    //At the end of each frame, if the mouse was clicked before the frame finished, then mouseDown will be set to true, otherwise false
+    if (mouseJustPressed) {
+        mouseJustPressed = false;
+        mouseDown = true;
     } else {
         mouseDown = false;
     }
-        
-    
-//    if (mouseDown) {
-//        mousePressed = false;
-//        this->mouseBeingPressed = false;
-//    }
-//    
-//    this->mouseBeingPressed = false;
 }
     
     
@@ -1788,16 +1779,12 @@ void Visualizer::mouseButtonCallback(GLFWwindow *window, int button, int action,
     double xPos, yPos;
     glfwGetCursorPos(window, &xPos, &yPos);
     
-    mouseDown = false;
-    mousePressed = false;
+    mouseJustPressed = false;
     mouseUp = false;
     
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        mouseDown = true;
-        mousePressed = true;
+        mouseJustPressed = true; //Indicate the mouse has just been pressed. This will then be processed at the start and end of each frame to set mouseDown
     } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-//        mousePressed = false;
-//        mouseDown = false;
         mouseUp = true;
     }
 }
