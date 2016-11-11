@@ -128,6 +128,7 @@ void Game::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int acti
             this->boardInfo[x][y][TILE_HOVER] = NO_HOVERING;
         }
     }
+    
     if (mousePos != NO_SELECTION)
         this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
     

@@ -84,7 +84,7 @@ public:
     Box(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, DisplayBoxType type);
     
     //Static properties
-    constexpr const static float defaultColor = 0.33;
+    constexpr static float defaultColor = 0.33; //Set in constructor
     
     //Public properties
     

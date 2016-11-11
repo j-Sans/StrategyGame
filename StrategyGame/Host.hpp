@@ -32,6 +32,9 @@ public:
      */
     Host(unsigned int numberOfPlayers, int portNum, Board gameBoard);
     
+    //Public properties
+    Board board;
+    
     //Public member functions
     
     static std::string storeVectorOfInts(std::vector<int> vec);
@@ -59,7 +62,6 @@ private:
     
     //Game
     std::vector<Player> players;
-    Board board;
     
     //Private member functions
     

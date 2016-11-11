@@ -66,9 +66,9 @@ int main(int argc, const char * argv[]) {
         for (GLuint x = 0; x < BOARD_WIDTH; x++) {
             std::vector<Tile> row;
             for (GLuint y = 0; y < BOARD_WIDTH; y++) {
-                if (x == BOARD_WIDTH - 1 && y == BOARD_WIDTH - 1)
+                if (x + (2 * y) < 5)
                     row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-                else if ((x == 3  && y < 4) || (x == 4  && y < 5) || (x == 5 && y < 3) || (y > BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 1) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 5) || (x == BOARD_WIDTH - 3 && y == BOARD_WIDTH - 4) || (x == BOARD_WIDTH - 2 && y == BOARD_WIDTH - 6) || (x == 6 && y == 0))
+                else if (x + y > 15)
                     row.push_back(Tile(FOREST_TERRAIN, x, y));
                 else
                     row.push_back(Tile(OPEN_TERRAIN, x, y));
@@ -77,6 +77,16 @@ int main(int argc, const char * argv[]) {
         }
         
         Host H(1, 3000, Board(board));
+        
+//      Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
+    
+        H.board.setCreature(3, 3, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 1, 1, NORTH, 0));
+    
+//        H.board.setCreature(2, 2, Creature(2, 2, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 1));
+        
+        H.board.setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
+    
+//        H.board.setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1, 1));
         
         while (true)
             H.update();
