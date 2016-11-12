@@ -50,7 +50,7 @@ private:
     //Private properties
     
     //Time
-    float programStartTime = clock() / CLOCKS_PER_SEC;
+    float programStartTime = 0.0f;
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     

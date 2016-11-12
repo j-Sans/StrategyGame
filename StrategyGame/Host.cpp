@@ -36,6 +36,8 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         this->players.push_back(Player(&board));
     }
     
+    this->programStartTime = (float)clock() / (float)CLOCKS_PER_SEC;
+    
     std::vector<int> terrainData;
     std::vector<int> creatureData;
     std::vector<float> colorData;
@@ -123,7 +125,7 @@ std::string Host::Host::storeVectorOfFloats(std::vector<float> vec) {
 
 void Host::update() {
     //Update frame information first
-    GLfloat currentFrame = (clock() / CLOCKS_PER_SEC) - this->programStartTime;
+    GLfloat currentFrame = ((float)clock() / (float)CLOCKS_PER_SEC) - this->programStartTime;
     this->deltaTime = currentFrame - this->lastFrame;
     this->lastFrame = currentFrame;
     

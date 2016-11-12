@@ -345,6 +345,8 @@ bool Game::moveAdjacent(unsigned int x, unsigned int y, int direction, float del
             this->gameBoard->get(x, y).creature()->initiateMovementOffset(deltaTime);
             
             this->gameBoard->moveCreatureByDirection(x, y, direction);
+        } else {
+            return false;
         }
     }
     return true;
