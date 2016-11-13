@@ -981,6 +981,15 @@ void Visualizer::presetTransformations() {
     //Send the model matrix to the shader
     this->gameShader.uniformMat4("model", this->model);
     
+    //Counteract the 45º rotation of model
+    this->rectRotation = glm::rotate(this->rectRotation, glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    
+    //Counteract the y-scaling down of model
+    this->rectRotation = glm::scale(this->rectRotation, glm::vec3(1.0f, 2.0f, 1.0f));
+    
+    //Send the model matrix to the shader
+    this->gameShader.uniformMat4("rectRotation", this->rectRotation);
+    
     //Orthographic (non-3D projection) added so that different window sizes don't distort the scale
     this->projection = glm::ortho((GLfloat)windowWidth / (GLfloat)windowHeight * -1.0f, (GLfloat)windowWidth / (GLfloat)windowHeight * 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
     

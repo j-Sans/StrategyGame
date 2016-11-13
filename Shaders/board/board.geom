@@ -59,6 +59,7 @@ out vec2 TexCoords;
 out vec4 TileColor;
 flat out ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
+uniform mat4 rectRotation;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 ortho;
@@ -78,20 +79,41 @@ void drawDamageBox(vec4 position, int damage, vec4 rect[4]);
 void main() {
     vec4 position = gl_in[0].gl_Position;
     
-    //1x2 Rectangle coordinates with these transformations
     vec4 rect[] = vec4[](
-        vec4( 0.45f,  0.35f, 0.0f, 0.0f),
-        vec4( 0.05f, -0.05f, 0.0f, 0.0f),
-        vec4( 0.35f,  0.45f, 0.0f, 0.0f),
-        vec4(-0.05f,  0.05f, 0.0f, 0.0f)
+        vec4( 0.05f,  0.40f, 0.0f, 0.0f),
+        vec4( 0.05f,  0.00f, 0.0f, 0.0f),
+        vec4(-0.05f,  0.40f, 0.0f, 0.0f),
+        vec4(-0.05f,  0.00f, 0.0f, 0.0f)
     );
     
-    vec4 square[] = vec4[](
-       vec4( 0.30f,  0.10f, 0.0f, 0.0f),
-       vec4( 0.10f, -0.10f, 0.0f, 0.0f),
-       vec4( 0.10f,  0.30f, 0.0f, 0.0f),
-       vec4(-0.10f,  0.10f, 0.0f, 0.0f)
+    //Rotate rect back 45 degrees, so when it is rotated and translated later, it is rotated properly
+    for (int a = 0; a < 4; a++) {
+        rect[a] = rectRotation * rect[a];
+    }
+    
+    rect = vec4[](
+        vec4( 0.05f,  0.20f, 0.0f, 0.0f),
+        vec4( 0.05f,  0.00f, 0.0f, 0.0f),
+        vec4(-0.05f,  0.20f, 0.0f, 0.0f),
+        vec4(-0.05f,  0.00f, 0.0f, 0.0f)
     );
+    
+    //Rotate rect back 45 degrees, so when it is rotated and translated later, it is rotated properly
+    for (int a = 0; a < 4; a++) {
+        rect[a] = rectRotation * rect[a];
+    }
+    
+    vec4 square[] = vec4[](
+        vec4( 0.20f,  0.20f, 0.0f, 0.0f),
+        vec4( 0.20f,  0.00f, 0.0f, 0.0f),
+        vec4(-0.20f,  0.20f, 0.0f, 0.0f),
+        vec4(-0.20f,  0.00f, 0.0f, 0.0f)
+    );
+    
+    //Rotate square back 45 degrees, so when it is rotated and translated later, it is rotated properly
+    for (int a = 0; a < 4; a++) {
+        square[a] = rectRotation * square[a];
+    }
     
     //Draw the ground
     if (terrain[0] == OPEN_TERRAIN) {
@@ -233,25 +255,25 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         
         //Draw the circle
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[0])); //Bottom
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[1])); //Right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[2])); //Left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, creatureController[0]);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[3])); //Top
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, creatureController[0]);
@@ -262,25 +284,25 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         
         //Draw the creature after
         
-        gl_Position = ortho * view * model * (position + (0.5f * rect[0])); //Top right
+        gl_Position = ortho * view * model * (position + (0.4f * rect[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * rect[1])); //Bottom right
+        gl_Position = ortho * view * model * (position + (0.4f * rect[1])); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * rect[2])); //Top left
+        gl_Position = ortho * view * model * (position + (0.4f * rect[2])); //Top left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * rect[3])); //Bottom left
+        gl_Position = ortho * view * model * (position + (0.4f * rect[3])); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CREATURE, creatureTypeToDraw);
@@ -305,25 +327,25 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         
         //Draw the circle
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[0])); //Bottom
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[0])); //Bottom
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[1])); //Right
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[1])); //Right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[2])); //Left
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[2])); //Left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, buildingController[0]);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.5f * tileDiamond[3])); //Top
+        gl_Position = ortho * view * model * (position + (0.4f * tileDiamond[3])); //Top
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(CIRCLE, buildingController[0]);
@@ -334,25 +356,25 @@ void drawBuilding(vec4 position, int buildingTypeToDraw, vec4 square[4]) {
         
         //Draw the building after
         
-        gl_Position = ortho * view * model * (position + (0.6f * square[0])); //Top right
+        gl_Position = ortho * view * model * (position + (0.4f * square[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.6f * square[1])); //Bottom right
+        gl_Position = ortho * view * model * (position + (0.4f * square[1])); //Bottom right
         TexCoords = vec2(0.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.6f * square[2])); //Top left
+        gl_Position = ortho * view * model * (position + (0.4f * square[2])); //Top left
         TexCoords = vec2(1.0f, 0.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);
         EmitVertex();
         
-        gl_Position = ortho * view * model * (position + (0.6f * square[3])); //Bottom left
+        gl_Position = ortho * view * model * (position + (0.4f * square[3])); //Bottom left
         TexCoords = vec2(1.0f, 1.0f);
         TileColor = tileColor[0];
         TexType = ivec2(BUILDING, buildingTypeToDraw);

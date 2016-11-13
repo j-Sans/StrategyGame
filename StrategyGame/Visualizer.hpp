@@ -228,6 +228,8 @@ private:
     glm::mat4 view; //Translates camera view
     glm::mat4 projection; //Keeps board scale constant with different window sizes
     
+    glm::mat4 rectRotation;
+    
     glm::vec3 cameraCenter;
     GLfloat camMaxDisplacement;
     
