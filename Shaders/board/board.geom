@@ -92,10 +92,10 @@ void main() {
     }
     
     rect = vec4[](
-        vec4( 0.05f,  0.20f, 0.0f, 0.0f),
-        vec4( 0.05f,  0.00f, 0.0f, 0.0f),
-        vec4(-0.05f,  0.20f, 0.0f, 0.0f),
-        vec4(-0.05f,  0.00f, 0.0f, 0.0f)
+        vec4( 0.075f,  0.30f, 0.0f, 0.0f),
+        vec4( 0.075f,  0.00f, 0.0f, 0.0f),
+        vec4(-0.075f,  0.30f, 0.0f, 0.0f),
+        vec4(-0.075f,  0.00f, 0.0f, 0.0f)
     );
     
     //Rotate rect back 45 degrees, so when it is rotated and translated later, it is rotated properly
