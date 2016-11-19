@@ -10,7 +10,7 @@
 
 ServerSocket::ServerSocket() {}
 
-void ServerSocket::setSocket(int portNum ) {
+void ServerSocket::setSocket(int portNum) {
     /* socket()
      The socket() function returns a new socket, with three parameters.
      

@@ -348,11 +348,6 @@ private:
     void processButton(std::string action);
     
     /*!
-     * A function to move to the next player's turn.
-     */
-    void incrementActivePlayer();
-    
-    /*!
      * A function to render a display menu interface in the center of the screen. This can be useful as an "esc" settings menu (when escape is clicked). This also darkens the rest of the screen.
      *
      * @param mouseUp A bool representing if the mouse was just released.
