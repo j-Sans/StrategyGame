@@ -80,7 +80,16 @@ void ServerSocket::setSocket(int portNum) {
      */
     listen(this->hostSocket, 5);
     
-    this->clientAddressSize = sizeof(this->clientAddress);
+    this->setUp = true;
+}
+
+void ServerSocket::addClient() {
+    if (this->connectedClients >= 5)
+        throw std::range_error("Cannot connect more than five socekts");
+    
+    //this->connectedClients represents the number of connected clients, and also the next open index of sockets
+    
+    this->clientAddressSizes[this->connectedClients] = sizeof(this->clientAddresses[this->connectedClients]);
     
     /* accept()
      The accept() function makes the process block until a connection is formed between the client and the server, with three arguments. It then wakes when the connection is successfully established.
@@ -93,18 +102,21 @@ void ServerSocket::setSocket(int portNum) {
      
      The return value is a socket, passed by a small integer reference.
      */
-    this->clientSocket = accept(this->hostSocket, (struct sockaddr *) &this->clientAddress, &this->clientAddressSize);
+    this->clientSockets[this->connectedClients] = accept(this->hostSocket, (struct sockaddr *) &this->clientAddresses[this->connectedClients], &this->clientAddressSizes[this->connectedClients]);
     
     //Checks for error with accepting
-    if (this->clientSocket < 0)
+    if (this->clientSockets[this->connectedClients] < 0)
         throw std::runtime_error("ERROR accepting client");
     
-    this->setUp = true;
+    this->connectedClients++;
 }
 
-void ServerSocket::send(std::string message) {
+void ServerSocket::send(std::string message, unsigned int clientIndex) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
+    
+    if (clientIndex >= connectedClients)
+        throw std::range_error("Socket index uninitialized");
     
     char buffer[message.length() + 1]; //This program will read characters from the connection into this buffer
     
@@ -129,7 +141,7 @@ void ServerSocket::send(std::string message) {
      
      The third argument is the length of the message.
      */
-    messageSize = write(this->clientSocket, buffer, strlen(buffer));
+    messageSize = write(this->clientSockets[index], buffer, strlen(buffer));
     
     //Check for errors writing the message
     if (messageSize < 0)
@@ -140,7 +152,49 @@ void ServerSocket::send(std::string message) {
 #endif
 }
 
-std::string ServerSocket::receive() {
+void ServerSocket::broadcast(std::string message) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
+    if (clientIndex >= connectedClients)
+        throw std::range_error("Socket index uninitialized");
+    
+    char buffer[message.length() + 1]; //This program will read characters from the connection into this buffer
+    
+    //Initialize the buffer where received info is stored
+    bzero(buffer, message.length() + 1);
+    
+    for (int stringIndex = 0; stringIndex < message.length(); stringIndex++) {
+        buffer[stringIndex] = message[stringIndex];
+    }
+    
+    //Add a terminating character
+    buffer[message.length()] = (char)4;
+    
+    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
+    
+    /* write()
+     The write() function will write a message to the client socket, with three arguments.
+     
+     The first argument is the reference for the client's socket.
+     
+     The second argument is the message.
+     
+     The third argument is the length of the message.
+     */
+    for (int socket = 0; socket < this->connectedClients; socket++)
+        messageSize = write(this->clientSockets[socket], buffer, strlen(buffer));
+    
+    //Check for errors writing the message
+    if (messageSize < 0)
+        throw std::runtime_error("ERROR writing to socket");
+    
+#ifdef SOCKET_CONSOLE_OUTPUT
+    std::cout << "Host sent: \"" << message << "\"" << std::endl << std::endl;
+#endif
+}
+
+std::string ServerSocket::receive(unsigned int clientIndex) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
         
@@ -160,7 +214,7 @@ std::string ServerSocket::receive() {
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = read(this->clientSocket, buffer, MAXIMUM_SOCKET_MESSAGE_SIZE - 1);
+    messageSize = read(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE - 1);
     
     //Checks for errors reading from the socket
     if (messageSize < 0)
