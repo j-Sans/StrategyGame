@@ -41,11 +41,15 @@ public:
     //Public properties
     
     //Public member functions
+    void addClient();
+    
     void setSocket(int portNum);
     
-    void send(std::string message);
+    void send(std::string message, unsigned int clientIndex);
     
-    std::string receive();
+    void broadcast(std::string message);
+    
+    std::string receive(unsigned int clientIndex);
     
 private:
     //Private properties

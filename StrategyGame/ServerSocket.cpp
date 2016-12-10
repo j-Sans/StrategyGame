@@ -141,7 +141,7 @@ void ServerSocket::send(std::string message, unsigned int clientIndex) {
      
      The third argument is the length of the message.
      */
-    messageSize = write(this->clientSockets[index], buffer, strlen(buffer));
+    messageSize = write(this->clientSockets[clientIndex], buffer, strlen(buffer));
     
     //Check for errors writing the message
     if (messageSize < 0)
@@ -156,9 +156,6 @@ void ServerSocket::broadcast(std::string message) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    if (clientIndex >= connectedClients)
-        throw std::range_error("Socket index uninitialized");
-    
     char buffer[message.length() + 1]; //This program will read characters from the connection into this buffer
     
     //Initialize the buffer where received info is stored
@@ -171,8 +168,6 @@ void ServerSocket::broadcast(std::string message) {
     //Add a terminating character
     buffer[message.length()] = (char)4;
     
-    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
-    
     /* write()
      The write() function will write a message to the client socket, with three arguments.
      
@@ -182,12 +177,12 @@ void ServerSocket::broadcast(std::string message) {
      
      The third argument is the length of the message.
      */
-    for (int socket = 0; socket < this->connectedClients; socket++)
-        messageSize = write(this->clientSockets[socket], buffer, strlen(buffer));
-    
-    //Check for errors writing the message
-    if (messageSize < 0)
-        throw std::runtime_error("ERROR writing to socket");
+    for (int socket = 0; socket < this->connectedClients; socket++) {
+        
+        //Checks the return value from the calls to read() and write() by holding the number of characters either read or written. If less than 0, it was an error
+        if (write(this->clientSockets[socket], buffer, strlen(buffer)) < 0)
+            throw std::runtime_error("ERROR writing to socket number " + std::to_string(socket));
+    }
     
 #ifdef SOCKET_CONSOLE_OUTPUT
     std::cout << "Host sent: \"" << message << "\"" << std::endl << std::endl;
@@ -240,7 +235,8 @@ std::string ServerSocket::receive(unsigned int clientIndex) {
 ServerSocket::~ServerSocket() {
     if (this->setUp) {
         //Properly terminate the sockets
-        close(this->clientSocket);
+        for (int clientIndex = 0; clientIndex < this->connectedClients; clientIndex++)
+            close(this->clientSockets[clientIndex]);
         close(this->hostSocket);
     }
 }
