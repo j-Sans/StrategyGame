@@ -50,7 +50,7 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
                 creatureData.push_back(0);
             }
             
-            glm::vec3 tileColor = this->players[0].game.tileColor(x, y);
+            glm::vec3 tileColor = this->players[0].tileColor(x, y);
             colorData.push_back(tileColor.x);
             colorData.push_back(tileColor.y);
             colorData.push_back(tileColor.z);
@@ -149,7 +149,7 @@ void Host::update() {
             }
             
             for (int a = 0; a < this->socket.numberOfClients(); a++) {
-                glm::vec3 tileColor = this->players[a].game.tileColor(x, y);
+                glm::vec3 tileColor = this->players[a].tileColor(x, y);
                 colorDataVec[a].push_back(tileColor.x);
                 colorDataVec[a].push_back(tileColor.y);
                 colorDataVec[a].push_back(tileColor.z);
@@ -223,9 +223,9 @@ void Host::update() {
         
         bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
         
-        this->players[a].game.updateSelected(mouseDown, selectedTile, this->activePlayer);
+        this->players[a].updateSelected(mouseDown, selectedTile, this->activePlayer);
         
-        this->players[a].game.updateCreatures(this->deltaTime, this->activePlayer);
+        this->players[a].updateCreatures(this->deltaTime, this->activePlayer);
     }
     
     this->socket.broadcast("End of frame");
