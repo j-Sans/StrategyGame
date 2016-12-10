@@ -58,7 +58,7 @@ private:
     unsigned int activePlayer = 0;
     
     //Clients
-    std::vector<ServerSocket> sockets;
+    ServerSocket socket;
     
     //Game
     std::vector<Player> players;

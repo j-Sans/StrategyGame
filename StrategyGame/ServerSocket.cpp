@@ -232,6 +232,19 @@ std::string ServerSocket::receive(unsigned int clientIndex) {
     return message;
 }
 
+bool ServerSocket::allReceived(std::string messageToCompare) {
+    for (int a = 0; a < this->connectedClients; a++) {
+        if (this->receive(a) != messageToCompare)
+            return false;
+    }
+    
+    return true;
+}
+
+unsigned int ServerSocket::numberOfClients() {
+    return this->connectedClients;
+}
+
 ServerSocket::~ServerSocket() {
     if (this->setUp) {
         //Properly terminate the sockets

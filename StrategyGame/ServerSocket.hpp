@@ -51,6 +51,10 @@ public:
     
     std::string receive(unsigned int clientIndex);
     
+    bool allReceived(std::string messageToCompare);
+    
+    unsigned int numberOfClients();
+    
 private:
     //Private properties
     unsigned int connectedClients = 0;
