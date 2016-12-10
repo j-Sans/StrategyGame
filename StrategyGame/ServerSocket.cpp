@@ -237,7 +237,6 @@ bool ServerSocket::allReceived(std::string messageToCompare) {
         if (this->receive(a) != messageToCompare)
             return false;
     }
-    
     return true;
 }
 
