@@ -130,7 +130,7 @@ void Host::update() {
     
     std::vector<int> terrainData;
     std::vector<int> creatureData;
-    std::vector<std::vector<float> > colorDataVec; //2D vectors because each player should have different data
+    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //2D vectors because each player should have different data
     std::vector<int> damageData;
     std::vector<float> offsetData;
     std::vector<int> buildingData;
@@ -150,13 +150,9 @@ void Host::update() {
             
             for (int a = 0; a < this->socket.numberOfClients(); a++) {
                 glm::vec3 tileColor = this->players[a].game.tileColor(x, y);
-                std::vector<float> colorVec;
-                
-                colorVec.push_back(tileColor.x);
-                colorVec.push_back(tileColor.y);
-                colorVec.push_back(tileColor.z);
-                
-                colorDataVec.push_back(colorVec);
+                colorDataVec[a].push_back(tileColor.x);
+                colorDataVec[a].push_back(tileColor.y);
+                colorDataVec[a].push_back(tileColor.z);
             }
             
             damageData.push_back(this->board.get(x, y).damage());
