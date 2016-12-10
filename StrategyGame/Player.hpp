@@ -13,6 +13,8 @@
 
 //Standard library includes
 #include <array>
+#include <queue>
+#include <string>
 
 //GLFW: Window functionality
 #include <GLFW/glfw3.h>
@@ -138,6 +140,7 @@ private:
      * [1]: Whether the mouse is hovering, either as TRUE or FALSE
      */
     
+    std::vector<std::vector<std::queue<std::string> > > tileActions; //For each tile, contains a queue of action strings, the first to be done when the tile is clicked if it is reachable
     
     //Private member functions
     
@@ -145,6 +148,14 @@ private:
      * Reset the style of all tiles.
      */
     void resetAllTiles();
+    
+    /*!
+     * Resolve the next tile action at the given location
+     *
+     * @param x The x coordinate of the tile to resolve.
+     * @param y The y coordinate of the tile to resolve.
+     */
+    void resolveTileAction(unsigned int x, unsigned int y);
     
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     

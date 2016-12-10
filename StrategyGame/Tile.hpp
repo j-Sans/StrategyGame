@@ -11,6 +11,7 @@
 
 //Standard library includes
 #include <iostream>
+#include <queue>
 
 //Local includes
 #include "Macros.h"

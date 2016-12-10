@@ -76,7 +76,7 @@ int main(int argc, const char * argv[]) {
             board.push_back(row);
         }
         
-        Host H(2, 3000, Board(board));
+        Host H(1, 3000, Board(board));
         
 //      Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
     
