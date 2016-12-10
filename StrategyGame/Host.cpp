@@ -130,7 +130,7 @@ void Host::update() {
     
     std::vector<int> terrainData;
     std::vector<int> creatureData;
-    std::vector<float> colorData;
+    std::vector<std::vector<float> > colorDataVec; //2D vectors because each player should have different data
     std::vector<int> damageData;
     std::vector<float> offsetData;
     std::vector<int> buildingData;
@@ -148,10 +148,16 @@ void Host::update() {
                 creatureData.push_back(0);
             }
             
-            glm::vec3 tileColor = this->players[0].game.tileColor(x, y);
-            colorData.push_back(tileColor.x);
-            colorData.push_back(tileColor.y);
-            colorData.push_back(tileColor.z);
+            for (int a = 0; a < this->socket.numberOfClients(); a++) {
+                glm::vec3 tileColor = this->players[a].game.tileColor(x, y);
+                std::vector<float> colorVec;
+                
+                colorVec.push_back(tileColor.x);
+                colorVec.push_back(tileColor.y);
+                colorVec.push_back(tileColor.z);
+                
+                colorDataVec.push_back(colorVec);
+            }
             
             damageData.push_back(this->board.get(x, y).damage());
             
@@ -176,7 +182,9 @@ void Host::update() {
     if (!this->socket.allReceived("creatureDataReceived"))
         throw std::runtime_error("Creature data not received");
     
-    this->socket.broadcast(Host::storeVectorOfFloats(colorData));
+    for (int a = 0; a < this->socket.numberOfClients(); a++) {
+        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
+    }
     if (!this->socket.allReceived("colorDataReceived"))
         throw std::runtime_error("Color data not received");
     

@@ -14,7 +14,7 @@
 
 // ***Resizeability does not work currently*** 
 //To make the window resizable
-//#define RESIZEABLE
+#define RESIZEABLE
 
 //To make the inset of the inner box for display bars the same on both x and y axes
 #define EQUAL_BORDERED_DISPLAY_BARS
