@@ -61,7 +61,7 @@
 class Player {
 public:
     //Constructor
-    Player(Board* board);
+    Player(Board* board, unsigned int num);
     
     //Public properties
     
@@ -125,6 +125,9 @@ public:
 private:
     
     //Private properties
+    
+    //Player Ddya
+    unsigned int playerNum;
     
     //Board data
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);

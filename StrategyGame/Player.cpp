@@ -10,7 +10,7 @@
 
 //Constructor
 
-Player::Player(Board* board) : board(board) {
+Player::Player(Board* board, unsigned int num) : board(board), playerNum(playerNum) {
     for (int x = 0; x < this->board->width(); x++) {
         std::vector<std::array<int, 2> > boardColumnInfo;
         for (int y = 0; y < this->board->height(x); y++) {

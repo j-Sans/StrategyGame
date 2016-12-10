@@ -24,8 +24,9 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     if (!this->socket.allReceived("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
     
+    int playerNum = 0;
     while (this->players.size() < numberOfPlayers) {
-        this->players.push_back(Player(&board));
+        this->players.push_back(Player(&board, playerNum++));
     }
     
     this->programStartTime = (float)clock() / (float)CLOCKS_PER_SEC;
