@@ -141,6 +141,11 @@ private:
     
     //Private member functions
     
+    /*!
+     * Reset the style of all tiles.
+     */
+    void resetAllTiles();
+    
     bool moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime);
     
     /*!

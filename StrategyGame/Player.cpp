@@ -130,154 +130,104 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int ac
     
     if (mouseDown) {
         if (mousePos == NO_SELECTION) {
-            //Reset all tiles if the mouse clicked out of the screen
-            for (int x = 0; x < this->board->width(); x++) {
-                for (int y = 0; y < this->board->height(x); y++) {
-                    this->boardInfo[x][y][TILE_STYLE] = REGULAR;
-                }
-            }
-        }
-        
-        //Reset the tile (and others) if the current tile is clicked again
-        else if (mousePos == this->selectedTile) {
-            
-            //Goes through all tiles and sets them to REGULAR
-            for (int x = 0; x < this->board->width(); x++) {
-                for (int y = 0; y < this->board->height(x); y++) {
-                    this->boardInfo[x][y][TILE_STYLE] = REGULAR;
-                }
-            }
+            this->resetAllTiles();
+        } else if (mousePos == this->selectedTile) { //Reset the tile (and others) if the current tile is clicked again
+            this->resetAllTiles();
             
             //Set selectedTile to null results
             this->selectedTile = NO_SELECTION;
-        }
-        
-        //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
-        else if (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] == REGULAR) {
-            
-            //Reset all tiles (this one is highlighted after)
-            for (int x = 0; x < this->board->width(); x++) {
-                for (int y = 0; y < this->board->height(x); y++) {
-                    this->boardInfo[x][y][TILE_STYLE] = REGULAR;
-                }
-            }
-            
-            //Select this new tile
-            this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
-            
-            //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
-            
-            if (this->board->get(mousePos.x, mousePos.y).creature() != nullptr && this->board->get(mousePos.x, mousePos.y).creature()->controller() == activePlayer) {
-                std::vector<Tile> reachableTiles = getReachableTiles(this->board->get(mousePos.x, mousePos.y));
-                
-                Creature creature = *this->board->get(mousePos.x, mousePos.y).creature();
-                for (int a = 0; a < reachableTiles.size(); a++) {
-                    if (this->board->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                        this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
-                    }
-                }
-                
-                std::vector<Tile> attackableTiles = getAttackableTiles(this->board->get(mousePos.x, mousePos.y));
-                
-                for (int a = 0; a < attackableTiles.size(); a++) {
+        } else {
+            switch (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE]) {
                     
-                    //If there is a creature on the tile, controlled by an opponent, make it attackable
-                    if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer)
-                        
-                        if (creature.energy() > 0)
-                            this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
+                case REGULAR: { //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
+                    this->resetAllTiles();
                     
-                    //If there is a building on the tile, controlled by an opponent, make it attackable
-                    if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer)
+                    //Select this new tile
+                    this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
+                    
+                    Creature* creature = this->board->get(mousePos.x, mousePos.y).creature();
+                    
+                    //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
+                    if (creature != nullptr && creature->controller() == activePlayer && activePlayer == this->playerNum) {
+                        std::vector<Tile> reachableTiles = getReachableTiles(this->board->get(mousePos.x, mousePos.y));
                         
-                        if (creature.energy() > 0)
-                            this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
-                }
-            }
-            
-            this->selectedTile = mousePos;
-        }
-        
-        //Selecting selectable tiles
-        else if (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] == REACHABLE) {
-            
-            //Move the creature to the selected tile
-            if (this->board->get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) {
-                std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
-                
-                for (int a = 0; a < directions.size(); a++) {
-                    this->board->get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
-                    if (a == 0)
-                        this->board->setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
-                }
-                
-                //Reset all tiles
-                for (int x = 0; x < this->board->width(); x++) {
-                    for (int y = 0; y < this->board->height(x); y++) {
-                        this->boardInfo[x][y][TILE_STYLE] = REGULAR;
+                        for (int a = 0; a < reachableTiles.size(); a++) {
+                            if (this->board->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(*creature)) {
+                                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
+                            }
+                        }
+                        
+                        if (creature->energy() > 0) {
+                            std::vector<Tile> attackableTiles = getAttackableTiles(this->board->get(mousePos.x, mousePos.y));
+                            
+                            for (int a = 0; a < attackableTiles.size(); a++) {
+                                //If there is a creature or building on the tile, controlled by an opponent, make it attackable
+                                if ((this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer) || (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer))
+                                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
+                            }
+                        }
                     }
-                }
-                
-                this->selectedTile = NO_SELECTION;
-            }
-            
-            //Create the creature from the building
-            else if (this->board->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) {
-                Creature newCreature(mousePos.x, mousePos.y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, activePlayer);
-                
-                if (this->board->get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
-                    this->board->setCreature(mousePos.x, mousePos.y, newCreature);
-                }
-                
-                //Reset all tiles
-                for (int x = 0; x < this->board->width(); x++) {
-                    for (int y = 0; y < this->board->height(x); y++) {
-                        this->boardInfo[x][y][TILE_STYLE] = REGULAR;
+                    this->selectedTile = mousePos;
+                    break;
+                    
+                } case REACHABLE: {
+                    if (this->board->get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) { //Move selected creature to the tile
+                        std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, mousePos.x, mousePos.y);
+                        
+                        for (int a = 0; a < directions.size(); a++) {
+                            this->board->get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
+                            if (a == 0)
+                                this->board->setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
+                        }
+                        
+                        this->resetAllTiles();
+                        this->selectedTile = NO_SELECTION;
+                    } else if (this->board->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) { //Create a creature from building
+                        Creature newCreature(mousePos.x, mousePos.y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, activePlayer);
+                        
+                        if (this->board->get(mousePos.x, mousePos.y).passableByCreature(newCreature)) {
+                            this->board->setCreature(mousePos.x, mousePos.y, newCreature);
+                        }
+                        
+                        this->resetAllTiles();
+                        this->selectedTile = NO_SELECTION;
                     }
-                }
                 
-                this->selectedTile = NO_SELECTION;
-            }
-        }
-        
-        //Attacking
-        else if (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] == ATTACKABLE) {
-            
-            glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
-            glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
-            
-            if (this->board->tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board->get(attacker.x, attacker.y).creature()->range()) {
-                
-                int attackDamage = 0;
-                int defendDamage = 0;
-                
-                this->board->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
-                
-                //Set the damage data on the defending square equal to damage dealt by the attacker
-                this->board->setDamage(defender.x, defender.y, attackDamage, glfwGetTime());
-                
-                //Set the damage data on the attacking square equal to damage dealt by the defender
-                this->board->setDamage(attacker.x, attacker.y, defendDamage, glfwGetTime());
-                
-                //Reset all tiles
-                for (int x = 0; x < this->board->width(); x++) {
-                    for (int y = 0; y < this->board->height(x); y++) {
-                        this->boardInfo[x][y][TILE_STYLE] = REGULAR;
-                    }
-                }
-                
-                this->selectedTile = NO_SELECTION;
-                
+                } case ATTACKABLE: {
+                    glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
+                    glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
+                    
+                    if (this->board->tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board->get(attacker.x, attacker.y).creature()->range()) {
+                        
+                        int attackDamage = 0, defendDamage = 0;
+                        
+                        this->board->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+                        this->board->setDamage(defender.x, defender.y, attackDamage, glfwGetTime()); //Make the damage visible
+                        this->board->setDamage(attacker.x, attacker.y, defendDamage, glfwGetTime()); //For attacker and defender
+                        
+                        this->resetAllTiles();
+                        this->selectedTile = NO_SELECTION;
+                        
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                //If the attacker died, nothing will happen and the function will return false
-                this->selectCreature(attacker.x, attacker.y, activePlayer);
+                        //If the attacker died, nothing will happen and the function will return false
+                        this->selectCreature(attacker.x, attacker.y, activePlayer);
 #endif
+                    }
+                }
             }
         }
     }
 }
 
 //Private member functions
+
+void Player::resetAllTiles() {
+    for (int x = 0; x < this->board->width(); x++) {
+        for (int y = 0; y < this->board->height(x); y++) {
+            this->boardInfo[x][y][TILE_STYLE] = REGULAR;
+        }
+    }
+}
 
 bool Player::moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime) {
     //Return false if there is no creature at the designated spot to move
