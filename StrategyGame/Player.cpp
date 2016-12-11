@@ -146,15 +146,6 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int ac
             //Set selectedTile to null results
             this->selectedTile = NO_SELECTION;
         } else {
-            int i = this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE];
-            
-            if (i == REGULAR)
-                std::cout << "REGULAR tile selected" << std::endl;
-            else if (i == REACHABLE)
-                std::cout << "REACHABLE tile selected" << std::endl;
-            else if (i == ATTACKABLE)
-                std::cout << "ATTACKABLE tile selected" << std::endl;
-            
             switch (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE]) {
                     
                 case REGULAR: { //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
@@ -188,10 +179,9 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int ac
                     }
                     this->selectedTile = mousePos;
                     break;
-                    
                 } case REACHABLE: {
                     this->resolveTileAction(mousePos.x, mousePos.y);
-                
+                    break;
                 } case ATTACKABLE: {
                     glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
                     glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
@@ -206,12 +196,13 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int ac
                         
                         this->resetAllTiles();
                         this->selectedTile = NO_SELECTION;
-                        
+                    
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
                         //If the attacker died, nothing will happen and the function will return false
                         this->selectCreature(attacker.x, attacker.y, activePlayer);
 #endif
                     }
+                    break;
                 }
             }
         }
