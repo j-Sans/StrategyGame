@@ -53,7 +53,7 @@ void Creature::setDirection(unsigned int direction) {
 }
 
 bool Creature::incrementOffset(float deltaTime) {
-    float displacement = this->movementAnimationSpeed * deltaTime;
+    float displacement = Creature::movementAnimationSpeed * deltaTime;
     
     if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
         //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
@@ -98,7 +98,7 @@ bool Creature::incrementOffset(float deltaTime) {
 
 void Creature::initiateMovementOffset(float deltaTime) {
     if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
-        this->creatureOffset += deltaTime * this->movementAnimationSpeed;
+        this->creatureOffset += deltaTime * Creature::movementAnimationSpeed;
     } else if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
         this->creatureOffset = -0.4;
     }

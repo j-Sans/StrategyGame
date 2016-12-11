@@ -409,7 +409,7 @@ private:
     unsigned int creatureY;
     
     //The speed that the creature moves when it is animated.
-    const float movementAnimationSpeed = 15.0f;
+    constexpr static const float movementAnimationSpeed = 2.0f;
     
     //Private member functions
 };

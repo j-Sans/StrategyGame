@@ -10,7 +10,7 @@
 #define Host_hpp
 
 //Standard library includes
-#include <time.h>
+#include <chrono>
 #include <vector>
 #include <exception>
 
@@ -50,9 +50,9 @@ private:
     //Private properties
     
     //Time
-    float programStartTime = 0.0f;
+    std::chrono::time_point<std::chrono::steady_clock> programStartTime;
+    std::chrono::duration<float> lastFrame;
     float deltaTime = 0.0f;
-    float lastFrame = 0.0f;
     
     //Turn
     unsigned int activePlayer = 0;

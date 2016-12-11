@@ -62,7 +62,7 @@ public:
     /*!
      * Time before deletion of damage boxes, in seconds.
      */
-    constexpr static const float damageBoxTime = 3.0f;
+    constexpr static const float damageScreenTime = 4.0f;
     
     //Public member functions
     
@@ -180,8 +180,8 @@ private:
     //The damage to be shown on the creature at this tile.
     unsigned int tileDamage;
     
-    //The time the damage was first shown, so that after 3 seconds the damage will no longer be displayed.
-    float damageHitTime;
+    //The time the damage was first shown, so that after a given number of seconds (Tile::DamageScreenTime) the damage will no longer be displayed.
+    float damageHitTime = 0;
     
     //Private member functions
 };

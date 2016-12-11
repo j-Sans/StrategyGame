@@ -8,7 +8,7 @@
 
 //C library includes
 #include <stdlib.h>
-#include <time.h>
+#include <ctime>
 
 //Standard library includes
 #include <iostream>
@@ -35,7 +35,7 @@
 
 int main(int argc, const char * argv[]) {
 //Set up:
-    srand((int)time(NULL));
+    srand((int)std::time(NULL));
     
     bool host;
     

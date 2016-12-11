@@ -96,8 +96,9 @@ public:
      * @param mouseDown A boolean representing if the mouse is down. 
      * @param mousePos A glm::ivec2 representing the tile the mouse is currently at. This should be calculated on the client side and sent to the server.
      * @param activePlayer An unsigned int representing the index of the active player.
+     * @param currentTime An unsigned int representing the time of the current grame.
      */
-    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer);
+    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer, unsigned int currentTime);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.

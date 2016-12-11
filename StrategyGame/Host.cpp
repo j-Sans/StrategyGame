@@ -29,7 +29,8 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         this->players.push_back(Player(&board, playerNum++));
     }
     
-    this->programStartTime = (float)clock() / (float)CLOCKS_PER_SEC;
+    this->programStartTime = std::chrono::steady_clock::now();
+    this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
     
     std::vector<int> terrainData;
     std::vector<int> creatureData;
@@ -118,10 +119,20 @@ std::string Host::Host::storeVectorOfFloats(std::vector<float> vec) {
 
 void Host::update() {
     //Update frame information first
-    GLfloat currentFrame = ((float)clock() / (float)CLOCKS_PER_SEC) - this->programStartTime;
-    this->deltaTime = currentFrame - this->lastFrame;
-    this->lastFrame = currentFrame;
+    std::chrono::duration<float> currentFrame = std::chrono::steady_clock::now() - this->programStartTime;
+    this->deltaTime = currentFrame.count() - this->lastFrame.count();
     
+    //Go through all tiles' damage and reset them if enough time has passed
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            if (this->board.get(x, y).damage() > 0) {
+                if (currentFrame.count() - this->board.get(x, y).timeOfDamage() > Tile::damageScreenTime)
+                    this->board.setDamage(x, y, 0, currentFrame.count());
+            }
+        }
+    }
+    
+    //Get info from the clients about mouse position
     std::vector<std::string> clientInfo;
     
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
@@ -224,12 +235,15 @@ void Host::update() {
         
         bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
         
-        this->players[a].updateSelected(mouseDown, selectedTile, this->activePlayer);
+        this->players[a].updateSelected(mouseDown, selectedTile, this->activePlayer, currentFrame.count());
         
         this->players[a].updateCreatures(this->deltaTime, this->activePlayer);
     }
     
     this->socket.broadcast("End of frame");
+    
+    //Set the tiem of the previous frame to currentTime
+    this->lastFrame = currentFrame;
 }
 
 void Host::incrementActivePlayer() {

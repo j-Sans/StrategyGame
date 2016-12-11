@@ -126,7 +126,7 @@ void Player::updateCreatures(float deltaTime, unsigned int activePlayer) {
     }
 }
 
-void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer) {
+void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer, unsigned int currentTime) {
     //Update all tiles other than the one where the mouse is to have no hovering
     for (int x = 0; x < this->board->width(); x++) {
         for (int y = 0; y < this->board->height(x); y++) {
@@ -191,8 +191,8 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int ac
                         int attackDamage = 0, defendDamage = 0;
                         
                         this->board->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
-                        this->board->setDamage(defender.x, defender.y, attackDamage, glfwGetTime()); //Make the damage visible
-                        this->board->setDamage(attacker.x, attacker.y, defendDamage, glfwGetTime()); //For attacker and defender
+                        this->board->setDamage(defender.x, defender.y, attackDamage, currentTime); //Make the damage visible
+                        this->board->setDamage(attacker.x, attacker.y, defendDamage, currentTime); //For attacker and defender
                         
                         this->resetAllTiles();
                         this->selectedTile = NO_SELECTION;
