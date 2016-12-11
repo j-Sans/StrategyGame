@@ -66,6 +66,18 @@ private:
     //Private member functions
     
     /*!
+     * Fill given std::vectors with OpenGL data.
+     *
+     * @param terrainData A pointer to an empty std::vector<int> to be filled with terrain data. 1 index per tile: [type].
+     * @param creatureData A pointer to an empty std::vector<int> to be filled with creature data. 3 indices per tile: [type, direction, controller].
+     * @param colorDataVec A pointer to an std::vector<std::vector<float> > to be filled with color data. The outer std::vector should contain an empty std::vector<float> for each client. For each client, there will be 3 indices per tile: [red, green, blue].
+     * @param damageData A pointer to an empty std::vector<int> to be filled with damage data. 1 index per tile: [damage].
+     * @param offsetData A pointer to an empty std::vector<float> to be filled with offset data. 1 index per tile: [offset].
+     * @param buildingData A pointer to an empty std::vector<int> to be filled with building data. 2 indices per tile: [type, controller].
+     */
+    void getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<std::vector<float> >* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData);
+    
+    /*!
      * Changes the active player to the next one in the turn cycle.
      */
     void incrementActivePlayer();

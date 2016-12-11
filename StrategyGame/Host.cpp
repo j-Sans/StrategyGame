@@ -32,45 +32,11 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
     
-    std::vector<int> terrainData;
-    std::vector<int> creatureData;
-    std::vector<float> colorData;
-    std::vector<int> damageData;
+    std::vector<int> terrainData, creatureData, damageData, buildingData;
+    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
     std::vector<float> offsetData;
-    std::vector<int> buildingData;
     
-    for (int x = 0; x < this->board.width(); x++) {
-        for (int y = 0; y < this->board.height(x); y++) {
-            terrainData.push_back(this->board.get(x, y).terrain());
-            
-            creatureData.push_back(this->board.get(x, y).creatureType());
-            if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
-                creatureData.push_back(this->board.get(x, y).creature()->direction());
-                creatureData.push_back(this->board.get(x, y).creature()->controller());
-            } else {
-                creatureData.push_back(0);
-                creatureData.push_back(0);
-            }
-            
-            glm::vec3 tileColor = this->players[0].tileColor(x, y);
-            colorData.push_back(tileColor.x);
-            colorData.push_back(tileColor.y);
-            colorData.push_back(tileColor.z);
-            
-            damageData.push_back(this->board.get(x, y).damage());
-            
-            if (this->board.get(x, y).creature() != nullptr)
-                offsetData.push_back(this->board.get(x, y).creature()->offset());
-            else
-                offsetData.push_back(0);
-            
-            buildingData.push_back(this->board.get(x, y).buildingType());
-            if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
-                buildingData.push_back(this->board.get(x, y).building()->controller());
-            else
-                buildingData.push_back(0);
-        }
-    }
+    this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
     
     this->socket.broadcast(Host::storeVectorOfInts(terrainData));
     if (!this->socket.allReceived("terrainDataReceived"))
@@ -80,7 +46,9 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     if (!this->socket.allReceived("creatureDataReceived"))
         throw std::runtime_error("Creature data not received");
     
-    this->socket.broadcast(Host::storeVectorOfFloats(colorData));
+    for (int a = 0; a < this->socket.numberOfClients(); a++) {
+        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
+    }
     if (!this->socket.allReceived("colorDataReceived"))
         throw std::runtime_error("Color data not received");
     
@@ -125,10 +93,8 @@ void Host::update() {
     //Go through all tiles' damage and reset them if enough time has passed
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
-            if (this->board.get(x, y).damage() > 0) {
-                if (currentFrame.count() - this->board.get(x, y).timeOfDamage() > Tile::damageScreenTime)
-                    this->board.setDamage(x, y, 0, currentFrame.count());
-            }
+            if (this->board.get(x, y).damage() > 0 && currentFrame.count() - this->board.get(x, y).timeOfDamage() > Tile::damageScreenTime)
+                this->board.setDamage(x, y, 0, currentFrame.count());
         }
     }
     
@@ -140,47 +106,11 @@ void Host::update() {
     }
     this->socket.broadcast("clientDataReceived");
     
-    std::vector<int> terrainData;
-    std::vector<int> creatureData;
-    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //2D vectors because each player should have different data
-    std::vector<int> damageData;
+    std::vector<int> terrainData, creatureData, damageData, buildingData;
+    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
     std::vector<float> offsetData;
-    std::vector<int> buildingData;
     
-    for (int x = 0; x < this->board.width(); x++) {
-        for (int y = 0; y < this->board.height(x); y++) {
-            terrainData.push_back(this->board.get(x, y).terrain());
-            
-            creatureData.push_back(this->board.get(x, y).creatureType());
-            if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
-                creatureData.push_back(this->board.get(x, y).creature()->direction());
-                creatureData.push_back(this->board.get(x, y).creature()->controller());
-            } else {
-                creatureData.push_back(0);
-                creatureData.push_back(0);
-            }
-            
-            for (int a = 0; a < this->socket.numberOfClients(); a++) {
-                glm::vec3 tileColor = this->players[a].tileColor(x, y);
-                colorDataVec[a].push_back(tileColor.x);
-                colorDataVec[a].push_back(tileColor.y);
-                colorDataVec[a].push_back(tileColor.z);
-            }
-            
-            damageData.push_back(this->board.get(x, y).damage());
-            
-            if (this->board.get(x, y).creature() != nullptr)
-                offsetData.push_back(this->board.get(x, y).creature()->offset());
-            else
-                offsetData.push_back(0);
-            
-            buildingData.push_back(this->board.get(x, y).buildingType());
-            if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
-                buildingData.push_back(this->board.get(x, y).building()->controller());
-            else
-                buildingData.push_back(0);
-        }
-    }
+    this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
     
     this->socket.broadcast(Host::storeVectorOfInts(terrainData));
     if (!this->socket.allReceived("terrainDataReceived"))
@@ -244,6 +174,47 @@ void Host::update() {
     
     //Set the tiem of the previous frame to currentTime
     this->lastFrame = currentFrame;
+}
+
+void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<std::vector<float> >* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
+    
+    if (colorDataVec->size() < this->socket.numberOfClients())
+        throw std::invalid_argument("Argument colorDataVec too small");
+    
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            (*terrainData).push_back(this->board.get(x, y).terrain());
+            
+            (*creatureData).push_back(this->board.get(x, y).creatureType());
+            if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
+                (*creatureData).push_back(this->board.get(x, y).creature()->direction());
+                (*creatureData).push_back(this->board.get(x, y).creature()->controller());
+            } else {
+                (*creatureData).push_back(0);
+                (*creatureData).push_back(0);
+            }
+            
+            for (int a = 0; a < this->socket.numberOfClients(); a++) {
+                glm::vec3 tileColor = this->players[a].tileColor(x, y);
+                (*colorDataVec)[a].push_back(tileColor.x);
+                (*colorDataVec)[a].push_back(tileColor.y);
+                (*colorDataVec)[a].push_back(tileColor.z);
+            }
+            
+            (*damageData).push_back(this->board.get(x, y).damage());
+            
+            if (this->board.get(x, y).creature() != nullptr)
+                (*offsetData).push_back(this->board.get(x, y).creature()->offset());
+            else
+                (*offsetData).push_back(0);
+            
+            (*buildingData).push_back(this->board.get(x, y).buildingType());
+            if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
+                (*buildingData).push_back(this->board.get(x, y).building()->controller());
+            else
+                (*buildingData).push_back(0);
+        }
+    }
 }
 
 void Host::incrementActivePlayer() {
