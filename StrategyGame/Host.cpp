@@ -165,6 +165,14 @@ void Host::update() {
         
         bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
         
+        //Now extract the actions sent from the client
+        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Set the string to the contain only the list of actions, starting with the first action string
+        
+        while (clientInfo.size() > 1) { //If there is more than just the semicolon at the end of the last
+            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';')), a); //Process the next action string
+            clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
+        }
+        
         this->players[a].updateSelected(mouseDown, selectedTile, this->activePlayer, currentFrame.count());
         
         this->players[a].updateCreatures(this->deltaTime, this->activePlayer);
@@ -174,6 +182,14 @@ void Host::update() {
     
     //Set the tiem of the previous frame to currentTime
     this->lastFrame = currentFrame;
+}
+
+//Private member functions
+
+void Host::processAction(std::string action, unsigned int playerNum) {
+    
+    //Process actions here
+    
 }
 
 void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<std::vector<float> >* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {

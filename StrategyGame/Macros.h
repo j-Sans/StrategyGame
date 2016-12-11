@@ -33,6 +33,6 @@
 
     //Other
 #define FONT_PATH "Resources/Palatino.ttc"
-#define MAXIMUM_SOCKET_MESSAGE_SIZE 10000
+#define MAXIMUM_SOCKET_MESSAGE_SIZE 65535 //Arbitrary, but 65535 = 2^16 - 1
 
 #endif /* Macros_h */

@@ -14,6 +14,7 @@
 //Standard library includes
 #include <math.h>
 #include <vector>
+#include <list>
 #include <map>
 #include <exception>
 
@@ -222,6 +223,9 @@ private:
     
     //Font
     Font font;
+    
+    //Information for host
+    std::list<std::string> actionsForClientInfo;
     
     //Transformations
     glm::mat4 model; //Makes model isometric

@@ -12,6 +12,7 @@
 //Standard library includes
 #include <chrono>
 #include <vector>
+#include <list>
 #include <exception>
 
 //Local includes
@@ -64,6 +65,14 @@ private:
     std::vector<Player> players;
     
     //Private member functions
+    
+    /*!
+     * Follow an action based on a std::string sent from the client. The string comes from the clientInfo string.
+     *
+     * @param action The string telling what action to do.
+     * @param playerNum The number of the player who sent the action.
+     */
+    void processAction(std::string action, unsigned int playerNum);
     
     /*!
      * Fill given std::vectors with OpenGL data.

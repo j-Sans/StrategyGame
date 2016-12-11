@@ -356,7 +356,7 @@ float Board::calculateWeaknessDebuff(Tile combatTile) {
 
 //Calculate flanking bonus for melee combat
 float Board::calculateFlankingBonus(Tile attacker, Tile defender) {
-    int adjacentEnemies = 0;
+//    int adjacentEnemies = 0;
     
     //North
     

@@ -138,7 +138,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
     
-    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
+//    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
     //Set the selected tile if the mouse is pressing
 //    if (mousePressed)
@@ -266,7 +266,17 @@ std::string Visualizer::getClientInfo() {
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
-    return std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown ? '1' : '0');
+    std::string clientInfo = std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown ? '1' : '0');
+    
+    clientInfo += ";"; //Separate the previous mouse information from the actions with a semicolon
+    
+    //Add the button actions
+    for (auto str = this->actionsForClientInfo.begin(); str != this->actionsForClientInfo.end(); str++) {
+        clientInfo += *str + ";"; //Add the action string separated by a semicolon
+        str = this->actionsForClientInfo.erase(str);
+    }
+    
+    return clientInfo;
 }
 
 void Visualizer::startFrame() {
