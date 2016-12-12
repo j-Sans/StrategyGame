@@ -80,7 +80,7 @@ int main(int argc, const char * argv[]) {
                     
                     Host H(numPlayers, 3000, Board(board));
                     
-                    //      Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
+                    //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller)
                     
                     H.board.setCreature(3, 3, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 1, 1, NORTH, 0));
                     

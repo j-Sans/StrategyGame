@@ -34,5 +34,6 @@
     //Other
 #define FONT_PATH "Resources/Palatino.ttc"
 #define MAXIMUM_SOCKET_MESSAGE_SIZE 65535 //Arbitrary, but 65535 = 2^16 - 1
+#define MAX_NUMBER_OF_CONNECTIONS 5 //5 is the max for most systems, so 5 should be set
 
 #endif /* Macros_h */

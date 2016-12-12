@@ -74,17 +74,17 @@ void ServerSocket::setSocket(int portNum) {
      
      The first argument is the socket, by its simple integer reference.
      
-     The second argument is the size of the "backlog queue", or the number of connections that can be waiting as another connection is handled. 5 is the max for most systems, so 5 should be set.
+     The second argument is the size of the "backlog queue", or the number of connections that can be waiting as another connection is handled.
      
      This function cannot fail, as long as the socket is valid, so there is no error code.
      */
-    listen(this->hostSocket, 5);
+    listen(this->hostSocket, MAX_NUMBER_OF_CONNECTIONS);
     
     this->setUp = true;
 }
 
 void ServerSocket::addClient() {
-    if (this->connectedClients >= 5)
+    if (this->connectedClients >= MAX_NUMBER_OF_CONNECTIONS)
         throw std::range_error("Cannot connect more than five socekts");
     
     //this->connectedClients represents the number of connected clients, and also the next open index of sockets

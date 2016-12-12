@@ -23,13 +23,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-/*
- Make it so it broadcasts not only to itself
- Multiple people can run from same port
- 
- Set up queue (FIFO)
- */
-
 class ServerSocket {
 public:
     //Constructor
@@ -61,9 +54,9 @@ private:
     
     //These are "file descriptors", which store values from both the socket system call and the accept system call
     int hostSocket;
-    int clientSockets[5];
+    int clientSockets[MAX_NUMBER_OF_CONNECTIONS];
     int portNumber; //The port nubmer where connections are accepted
-    socklen_t clientAddressSizes[5]; //The size of the address of the client, for the accept system call
+    socklen_t clientAddressSizes[MAX_NUMBER_OF_CONNECTIONS]; //The size of the address of the client, for the accept system call
     
     /* struct sockaddr_in
      
@@ -79,7 +72,7 @@ private:
     
     //These are objects of the struct "sockaddr_in", which contain internet addresses
     sockaddr_in serverAddress;
-    sockaddr_in clientAddresses[5];
+    sockaddr_in clientAddresses[MAX_NUMBER_OF_CONNECTIONS];
     
     bool setUp = false; //Represents if the socket has already been set. If not, reading and writing will cause errors
     
