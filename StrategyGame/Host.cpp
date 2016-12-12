@@ -106,6 +106,10 @@ void Host::update() {
     }
     this->socket.broadcast("clientDataReceived");
     
+    this->socket.broadcast(std::to_string(this->activePlayer));
+    if (!this->socket.allReceived("activePlayerReceived"))
+        throw std::runtime_error("Active player not received");
+    
     std::vector<int> terrainData, creatureData, damageData, buildingData;
     std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
     std::vector<float> offsetData;
@@ -193,12 +197,12 @@ void Host::processAction(std::string action, unsigned int playerNum) {
     //The following has been copied from Visualizer::processButton(). It needs to be updated for host side
     
     if (action == "end_turn") { //Process the button indicating to move to the next turn
-        
-        for (int a = 0; a < this->players.size(); a++) {
-            this->players[a].resetAllTiles();
-            this->incrementActivePlayer();
+        if (playerNum == activePlayer) {
+            for (int a = 0; a < this->players.size(); a++) {
+                this->players[a].resetAllTiles();
+                this->incrementActivePlayer();
+            }
         }
-        
     } else if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
         
         glm::ivec2 selectedTile = this->players[playerNum].tileSelected();
@@ -217,8 +221,8 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
             Race race = Human;
             AttackStyle attackStyle = LightMelee;
-            GLuint values[] = {0, 0, 0, 0, 0, 0};
-            GLuint direction;
+            int values[] = {0, 0, 0, 0, 0, 0};
+            int direction;
 
             action.erase(0, 14); //Gets rid of the "make_creature," from the string
 
@@ -251,12 +255,12 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
             //Extract the numerical values of the creature
 
-            for (GLuint valueNum = 0; valueNum < 6; valueNum++) {
+            for (int valueNum = 0; valueNum < 6; valueNum++) {
                 //Find the position of the next comma, which is the number of digits before that comma
-                GLuint numDigits = (GLuint)action.find(',');
+                int numDigits = (int)action.find(',');
 
-                for (GLint place = numDigits - 1; place >= 0; place--) {
-                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                for (int place = numDigits - 1; place >= 0; place--) {
+                    values[valueNum] += ((int)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
                     action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
                 }
 
@@ -299,19 +303,19 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
         //Extract the building position
 
-        GLuint numDigits = (GLuint)action.find(',');
+        int numDigits = (int)action.find(',');
 
-        for (GLint place = numDigits - 1; place >= 0; place--) {
-            buildingPos.x += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+        for (int place = numDigits - 1; place >= 0; place--) {
+            buildingPos.x += ((int)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
             action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
         }
 
         action.erase(0, 1); //Get rid of the comma
 
-        numDigits = (GLuint)action.find(')');
+        numDigits = (int)action.find(')');
 
-        for (GLint place = numDigits - 1; place >= 0; place--) {
-            buildingPos.y += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+        for (int place = numDigits - 1; place >= 0; place--) {
+            buildingPos.y += ((int)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
             action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
         }
 
@@ -358,17 +362,17 @@ void Host::processAction(std::string action, unsigned int playerNum) {
              *
              * This function goes through the string and extracts those values and constructs a building based on them.
              */
-            GLuint values[] = {0, 0};
+            int values[] = {0, 0};
 
             action.erase(0, 14); //Gets rid of the "make_building," from the string
 
             //Extract the numerical values of the building
 
-            for (GLuint valueNum = 0; valueNum < 2; valueNum++) {
+            for (int valueNum = 0; valueNum < 2; valueNum++) {
                 //Find the position of the next comma, which is the number of digits before that comma
                 GLuint numDigits = (GLuint)action.find(',');
 
-                for (GLint place = numDigits - 1; place >= 0; place--) {
+                for (int place = numDigits - 1; place >= 0; place--) {
                     values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
                     action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
                 }

@@ -115,6 +115,10 @@ public:
      */
     static GLfloat getDistance(glm::vec2 point1, glm::vec2 point2);
     
+    //Game info, to be set from Client
+    unsigned int playerNum;
+    unsigned int activePlayer;
+    
     /*!
      * A function that sets the initial information of the visualizer
      *

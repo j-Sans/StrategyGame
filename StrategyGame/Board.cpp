@@ -155,7 +155,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
     
     if (x >= this->gameBoard.size())
         throw std::range_error("X out of range: " + std::to_string(x));
-    if (y >= this->gameBoard[0].size())
+    if (y >= this->gameBoard[x].size())
         throw std::range_error("Y out of range: " + std::to_string(y));
     
     if (direction == NORTH) {

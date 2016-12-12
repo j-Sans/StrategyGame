@@ -18,10 +18,11 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     //std::stoi converts from string to int
     
     unsigned int boardWidth = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
-    
-    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-    
+    initialInfo.erase(0, 1); //Erase the next comma
     unsigned int boardHeight = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
+    initialInfo.erase(0, 1);
+    
+    this->visualizer.playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
     
     std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("terrainDataReceived");
@@ -88,7 +89,10 @@ void Client::render() {
     this->socket.send(this->visualizer.getClientInfo());
     if (this->socket.receive() != "clientDataReceived")
         throw std::runtime_error("Client data not received");
-
+    
+    this->visualizer.activePlayer = std::stoi(this->socket.receive());
+    this->socket.send("activePlayerReceived");
+    
     std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("terrainDataReceived");
     
