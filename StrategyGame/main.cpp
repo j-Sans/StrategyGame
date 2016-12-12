@@ -56,50 +56,52 @@ int main(int argc, const char * argv[]) {
             
             C.terminate();
         } else {
+            int numPlayers;
             try {
-                int numPlayers = std::stoi(input);
+                numPlayers = std::stoi(input);
+            } catch (std::invalid_argument e) {
+                repeat = true;
+                std::cout << "There was an error processing your answer. Please try another input" << std::endl;
+                continue;
+            }
+            
+            if (numPlayers >= 1 && numPlayers <= 5) {
                 
-                if (numPlayers >= 1 && numPlayers <= 5) {
-                    
-                    //Run as host
-                    
-                    //Gameboard:
-                    std::vector<std::vector<Tile> > board;
-                    for (GLuint x = 0; x < BOARD_WIDTH; x++) {
-                        std::vector<Tile> row;
-                        for (GLuint y = 0; y < BOARD_WIDTH; y++) {
-                            if (x + (2 * y) < 5)
-                                row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-                            else if (x + y > 15)
-                                row.push_back(Tile(FOREST_TERRAIN, x, y));
-                            else
-                                row.push_back(Tile(OPEN_TERRAIN, x, y));
-                        }
-                        board.push_back(row);
+                //Run as host
+                
+                //Gameboard:
+                std::vector<std::vector<Tile> > board;
+                for (GLuint x = 0; x < BOARD_WIDTH; x++) {
+                    std::vector<Tile> row;
+                    for (GLuint y = 0; y < BOARD_WIDTH; y++) {
+                        if (x + (2 * y) < 5)
+                            row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
+                        else if (x + y > 15)
+                            row.push_back(Tile(FOREST_TERRAIN, x, y));
+                        else
+                            row.push_back(Tile(OPEN_TERRAIN, x, y));
                     }
-                    
-                    Host H(numPlayers, 3000, Board(board));
-                    
-                    //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller)
-                    
-                    H.board.setCreature(3, 3, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 1, 1, NORTH, 0));
-                    
-                    H.board.setCreature(2, 2, Creature(2, 2, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 1));
-                    
-                    H.board.setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
-                    
-                    H.board.setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1, 1));
-                    
-                    while (true)
-                        H.update();
-                    
-                    return 0;
-                    
-                } else {
-                    repeat = true;
-                    std::cout << "There was an error processing your answer. Please try another input" << std::endl;
+                    board.push_back(row);
                 }
-            } catch (std::invalid_argument i) {
+                
+                Host H(numPlayers, 3000, Board(board));
+                
+                //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller)
+                
+                H.board.setCreature(3, 3, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 1, 1, NORTH, 0));
+                
+                H.board.setCreature(2, 2, Creature(2, 2, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 1));
+                
+                H.board.setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
+                
+                H.board.setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1, 1));
+                
+                while (true)
+                    H.update();
+                
+                return 0;
+                
+            } else {
                 repeat = true;
                 std::cout << "There was an error processing your answer. Please try another input" << std::endl;
             }
