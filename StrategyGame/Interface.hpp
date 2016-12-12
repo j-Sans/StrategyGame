@@ -31,7 +31,9 @@
 
 //A unique type for use in storing the interfaces. They are stored in an std::map, with the keys being an interfaceType
 enum interfaceType {
-    default_left, //The default left interface, where game options are
+    active_left, //The default left interface, where game options are, for when the player is the active player
+    inactive_left, //The default left interface, where game options are, for when the player is not the active player
+    
     default_bottom, //The default bottom interface, where buying options are
     default_right, //The default right interface, initially empty
     

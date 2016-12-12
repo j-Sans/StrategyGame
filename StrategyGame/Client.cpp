@@ -18,9 +18,9 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     //std::stoi converts from string to int
     
     unsigned int boardWidth = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
-    initialInfo.erase(0, 1); //Erase the next comma
+    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
     unsigned int boardHeight = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
-    initialInfo.erase(0, 1);
+    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
     
     this->visualizer.playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
     

@@ -20,7 +20,9 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     initialData += std::to_string(this->board.width()) + ",";
     initialData += std::to_string(this->board.height(0)) + ",";
     
-    this->socket.broadcast(initialData);
+    for (int a = 0; a < numberOfPlayers; a++) {
+        this->socket.send(initialData + std::to_string(a) + ",", a);
+    }
     if (!this->socket.allReceived("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
     
