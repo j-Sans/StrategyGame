@@ -72,15 +72,31 @@ public:
     //Public member functions
     
     /*!
+     * Reset the style of all tiles.
+     */
+    void resetAllTiles();
+    
+    /*!
      * A function to set the selected tile. If the x or y is out of range and the input isn't NO_SELECTION or INTERFACE_BOX_SELECTION, then nothing will happen and false will be returned. To pass NO_SELECTION or other glm::ivec2 macros as arguments, do this: selectTile(NO_SELECTION.x, NO_SELECTION.y);
      *
-     * @param x An int representing the x location of the tile on the board.
-     * @param y An int representing the y location of the tile on the board.
+     * @param x An unsigned int representing the x location of the tile on the board.
+     * @param y An unsigned int representing the y location of the tile on the board.
+     * @param activePlayer An unsigned int representing the index of the active player.
      *
      * @return Whether the tile was successfully selected.
-     * @param activePlayer An unsigned int representing the index of the active player.
      */
-    bool selectTile(int x, int y, unsigned int activePlayer);
+    bool selectTile(unsigned int x, unsigned int y, unsigned int activePlayer);
+    
+    /*!
+     * A function to set the style tile. If the x or y is out of range, then nothing will happen and false will be returned.
+     *
+     * @param x An unsigned int representing the x location of the tile on the board.
+     * @param y An unsigned int representing the y location of the tile on the board.
+     * @param style An unsigned int representing the style to set for the given tile.
+     *
+     * @return Whether the tile was successfully given the new style.
+     */
+    bool setStyle(unsigned int x, unsigned int y, unsigned int style);
     
     /*!
      * A function that updates the offset of each creature to cause movement animation. This should be called once every frame.
@@ -144,11 +160,6 @@ private:
     std::vector<std::vector<std::queue<std::string> > > tileActions; //For each tile, contains a queue of action strings, the first to be done when the tile is clicked if it is reachable
     
     //Private member functions
-    
-    /*!
-     * Reset the style of all tiles.
-     */
-    void resetAllTiles();
     
     /*!
      * Resolve the next tile action at the given location

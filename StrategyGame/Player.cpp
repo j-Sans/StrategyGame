@@ -33,18 +33,28 @@ Player::Player(Board* board, unsigned int num) : board(board), playerNum(num) {
 
 //Public member functions
 
-//GLfloat Player::getDistance(glm::vec2 point1, glm::vec2 point2) {
-//    return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
-//}
 
-bool Player::selectTile(int x, int y, unsigned int activePlayer) {
+void Player::resetAllTiles() {
+    for (int x = 0; x < this->board->width(); x++) {
+        for (int y = 0; y < this->board->height(x); y++) {
+            //Set all tile styles to regular
+            this->boardInfo[x][y][TILE_STYLE] = REGULAR;
+            
+            //Empty all queues of action for each tile
+            while (this->tileActions[x][y].size() > 0)
+                this->tileActions[x][y].pop();
+        }
+    }
+}
+
+bool Player::selectTile(unsigned int x, unsigned int y, unsigned int activePlayer) {
     glm::ivec2 passedInTile = glm::ivec2(x, y);
     
     if (passedInTile == NO_SELECTION) {
         this->selectedTile = NO_SELECTION;
     } else if (passedInTile == INTERFACE_BOX_SELECTION) {
         this->selectedTile = INTERFACE_BOX_SELECTION;
-    } else if (x >= 0 && x < this->board->width() && y >= 0 && y < this->board->height(x)) { //Make sure the passed in tile is on the board
+    } else if (x < this->board->width() && y < this->board->height(x)) { //Make sure the passed in tile is on the board
         
         //If there is a creature at that spot, properly select it. Otherwise just set it normally
         if (this->board->get(x, y).creature() != nullptr)
@@ -57,6 +67,13 @@ bool Player::selectTile(int x, int y, unsigned int activePlayer) {
     }
     
     return true;
+}
+
+bool Player::setStyle(unsigned int x, unsigned int y, unsigned int style) {
+    if (x < this->board->width() && y < this->board->height(x)) {
+        this->boardInfo[x][y][TILE_STYLE] = style;
+        return true;
+    } else return false;
 }
 
 //Public get functions
@@ -210,23 +227,6 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int ac
 }
 
 //Private member functions
-
-void Player::resetAllTiles() {
-    //Set all tile styles to regular
-    for (int x = 0; x < this->board->width(); x++) {
-        for (int y = 0; y < this->board->height(x); y++) {
-            this->boardInfo[x][y][TILE_STYLE] = REGULAR;
-        }
-    }
-    
-    //Empty all queues for each tile
-    for (int x = 0; x < this->tileActions.size(); x++) {
-        for (int y = 0; y < this->tileActions[x].size(); y++) {
-            while (this->tileActions[x][y].size() > 0)
-                this->tileActions[x][y].pop();
-        }
-    }
-}
 
 void Player::resolveTileAction(unsigned int x, unsigned int y) {
     if (x > this->tileActions.size())
