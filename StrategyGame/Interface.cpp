@@ -38,18 +38,18 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
         case default_left: {
             this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.9, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings"));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "next turn", "End turn"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "end_turn", "End turn"));
             
             //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.6, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.6, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged"));
             
             break;
             
         } case default_bottom: {
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building,300,1", "New Building"));
+            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_building,300,1", "New Building"));
             
             break;
         
