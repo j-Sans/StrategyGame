@@ -35,10 +35,27 @@ public:
     //Public properties
     
     //Public member functions
+    
+    /*!
+     * A function to initialize the socket. This must be done before the socket can be used. Will throw an error if the socket cannot be opened or if the port is occupied.
+     *
+     * @param hostName A std::string indicating the name of the host to whom to connect. "localhost" specifies that the host is on the same machine. Otherwise, use the name of the client.
+     * @param portNum The number of the port on the host at which clients should connect.
+     */
     void setSocket(std::string hostName, int portNum);
     
+    /*!
+     * A function that sends a message to the host. An error will be thrown if the socket is not set or if an error occurs in sending the message.
+     *
+     * @param message A std::string of the message to be sent.
+     */
     void send(std::string message);
     
+    /*!
+     * A function that receives a message from the host. The function will wait for a short period for the client to send the message, and if the message is not received it will throw an error. An error is also thrown if the socket is not set.
+     *
+     * @return The received message from the host.
+     */
     std::string receive();
     
 private:
