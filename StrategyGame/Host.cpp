@@ -106,7 +106,7 @@ void Host::update() {
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
         clientInfo.push_back(this->socket.receive(a));
     }
-    this->socket.broadcast("clientDataReceived");
+//    this->socket.broadcast("clientDataReceived");
     
     this->socket.broadcast(std::to_string(this->activePlayer));
     if (!this->socket.allReceived("activePlayerReceived"))

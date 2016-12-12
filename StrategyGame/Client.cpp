@@ -87,8 +87,8 @@ void Client::render() {
     this->visualizer.startFrame();
     
     this->socket.send(this->visualizer.getClientInfo());
-    if (this->socket.receive() != "clientDataReceived")
-        throw std::runtime_error("Client data not received");
+//    if (this->socket.receive() != "clientDataReceived")
+//        throw std::runtime_error("Client data not received");
     
     this->visualizer.activePlayer = std::stoi(this->socket.receive());
     this->socket.send("activePlayerReceived");
