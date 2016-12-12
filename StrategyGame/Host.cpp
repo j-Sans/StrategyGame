@@ -175,7 +175,7 @@ void Host::update() {
         clientInfo[a].erase(0, 1); //Set the string to the contain only the list of actions, starting with the first action string. This erases the preceeding ';'
         
         while (clientInfo[a].size() > 1) { //If there is more than just the semicolon at the end of the last
-            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';')), a); //Process the next action string
+            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1), a); //Process the next action string
             clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
         }
         
@@ -194,16 +194,18 @@ void Host::update() {
 
 void Host::processAction(std::string action, unsigned int playerNum) {
     
+    std::cout << "action: " << action << std::endl;
+    
     //Process actions here
     
-    //The following has been copied from Visualizer::processButton(). It needs to be updated for host side
-    
-    if (action == "end_turn") { //Process the button indicating to move to the next turn
+    if (action.find("end_turn") != std::string::npos) { //Process the button indicating to move to the next turn
         if (playerNum == activePlayer) {
             for (int a = 0; a < this->players.size(); a++) {
                 this->players[a].resetAllTiles();
-                this->incrementActivePlayer();
             }
+            
+            this->incrementActivePlayer();
+            std::cout << "Next turn" << std::endl;
         }
     } else if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
         
