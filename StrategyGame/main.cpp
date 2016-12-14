@@ -55,6 +55,7 @@ int main(int argc, const char * argv[]) {
                 C.render();
             
             C.terminate();
+            //send message to other clients that the player has left the game.
         } else {
             int numPlayers;
             try {
@@ -88,9 +89,9 @@ int main(int argc, const char * argv[]) {
                 
                 //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller)
                 
-                H.board.setCreature(3, 3, Creature(3, 3, Human, 300, 3, 40, LightMelee, 1, 1, 1, NORTH, 0));
-                
-                H.board.setCreature(2, 2, Creature(2, 2, Human, 300, 3, 40, LightMelee, 1, 2, 1, NORTH, 1));
+                for(int a = 0; a < numPlayers; a++) {
+                    H.board.setCreature(a+2, a+2, Creature(3, 3, Human, 300, 3, 40, Melee, 1, 1, 1, NORTH, a));
+                }
                 
                 H.board.setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
                 

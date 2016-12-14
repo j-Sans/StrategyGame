@@ -256,7 +256,7 @@ void Player::resolveTileAction(unsigned int x, unsigned int y) {
         }
     } else if (action == "make_creature") {
         if (this->board->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) { //Create a creature from building
-            Creature newCreature(x, y, Human, 100, 4, 30, LightMelee, 1, 1, 1, NORTH, this->playerNum);
+            Creature newCreature(x, y, Human, 100, 4, 30, Melee, 1, 1, 1, NORTH, this->playerNum);
             
             if (this->board->get(x, y).passableByCreature(newCreature)) {
                 this->board->setCreature(x, y, newCreature);
@@ -656,4 +656,14 @@ glm::vec3 Player::tileColor(unsigned int x, unsigned int y) {
     
     //Something went wrong. Return White to have an unaltered color
     return WHITE;
+}
+
+void Player::beginUpkeep(int playerNumber) {
+    
+    for (auto listIter = this->board->getCreatures().begin(); listIter != this->board->getCreatures().end(); listIter++) {
+        if(listIter->controller() == playerNumber) {
+            listIter->resetEnergy();
+        }
+    }
+    
 }

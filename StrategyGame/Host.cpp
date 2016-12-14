@@ -203,8 +203,8 @@ void Host::processAction(std::string action, unsigned int playerNum) {
             for (int a = 0; a < this->players.size(); a++) {
                 this->players[a].resetAllTiles();
             }
-            
             this->incrementActivePlayer();
+            //players[playerNum].beginUpkeep(activePlayer);    //This crashes when ending turn. Probably because I am not sending the information through sockets. How to implement this with sockets?
             std::cout << "Next turn" << std::endl;
         }
     } else if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
@@ -224,7 +224,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
              */
 
             Race race = Human;
-            AttackStyle attackStyle = LightMelee;
+            AttackStyle attackStyle = Melee;
             int values[] = {0, 0, 0, 0, 0, 0};
             int direction;
 

@@ -141,6 +141,8 @@ public:
      */
     glm::vec3 tileColor(unsigned int x, unsigned int y);
     
+    void beginUpkeep(int playerNum);
+    
 private:
     
     //Private properties
@@ -203,7 +205,6 @@ private:
     std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
     
     //Private get functions
-    
 };
 
 #endif /* Player_hpp */

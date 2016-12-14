@@ -436,7 +436,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
 #endif
                 
                 //Flanking:        (Only occurs on melee)
-                if (attacker->creature()->attackStyle() == LightMelee || attacker->creature()->attackStyle() == HeavyMelee) {
+                if (attacker->creature()->attackStyle() == Melee) {
                     attackerCombatModifier += calculateFlankingBonus(*attacker, *defender);
                 }
                 //Terrain:
@@ -464,7 +464,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
 #endif
                     
                     //Flanking:        (Only occurs on melee)
-                    if (defender->creature()->attackStyle() == LightMelee || defender->creature()->attackStyle() == HeavyMelee) {
+                    if (defender->creature()->attackStyle() == Melee) {
                         defenderCombatModifier += calculateFlankingBonus(*defender, *attacker);
                         //defenderCombatModifier += defender->creature().getFortificationBonus();
                     }
@@ -700,4 +700,8 @@ unsigned int Board::width() {
 
 unsigned int Board::height(unsigned int x) {
     return (unsigned int)this->gameBoard[x].size();
+}
+
+std::list<Creature> Board::getCreatures() {
+    return this->creatures;
 }
