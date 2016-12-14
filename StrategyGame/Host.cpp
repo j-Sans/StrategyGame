@@ -194,8 +194,6 @@ void Host::update() {
 
 void Host::processAction(std::string action, unsigned int playerNum) {
     
-    std::cout << "action: " << action << std::endl;
-    
     //Process actions here
     
     if (action.find("end_turn") != std::string::npos) { //Process the button indicating to move to the next turn
@@ -204,8 +202,11 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 this->players[a].resetAllTiles();
             }
             this->incrementActivePlayer();
+<<<<<<< Updated upstream
             //players[playerNum].beginUpkeep(activePlayer);    //This crashes when ending turn. Probably because I am not sending the information through sockets. How to implement this with sockets?
             std::cout << "Next turn" << std::endl;
+=======
+>>>>>>> Stashed changes
         }
     } else if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
         

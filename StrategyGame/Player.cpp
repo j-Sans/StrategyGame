@@ -104,7 +104,8 @@ void Player::updateCreatures(float deltaTime, unsigned int activePlayer) {
                                 creatureLoc.y -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                this->selectCreature(x, y - 1, activePlayer);
+                                if (creature->controller() == this->playerNum)
+                                    this->selectCreature(x, y - 1, activePlayer);
 #endif
                             }
                         } else if (direction == EAST) {
@@ -112,7 +113,8 @@ void Player::updateCreatures(float deltaTime, unsigned int activePlayer) {
                                 creatureLoc.x -= 1;
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                this->selectCreature(x - 1, y, activePlayer);
+                                if (creature->controller() == this->playerNum)
+                                    this->selectCreature(x - 1, y, activePlayer);
 #endif
                             }
                         }
@@ -123,7 +125,8 @@ void Player::updateCreatures(float deltaTime, unsigned int activePlayer) {
                     if (creature->incrementOffset(deltaTime)) {
                         
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                        this->selectCreature(x, y, activePlayer);
+                        if (creature->controller() == this->playerNum)
+                            this->selectCreature(x, y, activePlayer);
 #endif
                     }
                 }
