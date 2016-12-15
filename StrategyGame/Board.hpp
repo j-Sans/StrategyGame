@@ -109,6 +109,13 @@ public:
     unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
     
     /*!
+     * Resets all energy values of creatures controlled by a certain player.
+     *
+     * @param The number associated with the player whose creatures to update.
+     */
+    void resetEnergy(unsigned int player);
+    
+    /*!
      * Set a creature in the designated spot on the board.
      * Possible errors include if the coordinates are outside of the range of the board.
      *

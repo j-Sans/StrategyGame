@@ -660,13 +660,3 @@ glm::vec3 Player::tileColor(unsigned int x, unsigned int y) {
     //Something went wrong. Return White to have an unaltered color
     return WHITE;
 }
-
-void Player::beginUpkeep(int playerNumber) {
-    
-    for (auto listIter = this->board->getCreatures().begin(); listIter != this->board->getCreatures().end(); listIter++) {
-        if(listIter->controller() == playerNumber) {
-            listIter->resetEnergy();
-        }
-    }
-    
-}

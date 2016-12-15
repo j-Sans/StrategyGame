@@ -564,6 +564,14 @@ unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int
     return xDisplacement + yDisplacement;
 }
 
+void Board::resetEnergy(unsigned int player) {
+    for (auto creature = this->creatures.begin(); creature != this->creatures.end(); creature++) {
+        if (creature->controller() == player) {
+            creature->resetEnergy();
+        }
+    }
+}
+
 void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
