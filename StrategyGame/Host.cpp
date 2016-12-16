@@ -108,9 +108,9 @@ void Host::update() {
     }
 //    this->socket.broadcast("clientDataReceived");
     
-    this->socket.broadcast(std::to_string(this->activePlayer));
-    if (!this->socket.allReceived("activePlayerReceived"))
-        throw std::runtime_error("Active player not received");
+//    this->socket.broadcast(std::to_string(this->activePlayer));
+//    if (!this->socket.allReceived("activePlayerReceived"))
+//        throw std::runtime_error("Active player not received");
     
     std::vector<int> terrainData, creatureData, damageData, buildingData;
     std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
@@ -179,9 +179,9 @@ void Host::update() {
             clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
         }
         
-        this->players[a].updateSelected(mouseDown, selectedTile, this->activePlayer, currentFrame.count());
+        this->players[a].updateSelected(mouseDown, selectedTile, a, currentFrame.count());
         
-        this->players[a].updateCreatures(this->deltaTime, this->activePlayer);
+        this->players[a].updateCreatures(this->deltaTime, a);
     }
     
     this->socket.broadcast("End of frame");
@@ -195,18 +195,7 @@ void Host::update() {
 void Host::processAction(std::string action, unsigned int playerNum) {
     
     //Process actions here
-    
-    if (action.find("end_turn") != std::string::npos) { //Process the button indicating to move to the next turn
-        if (playerNum == activePlayer) {
-            for (int a = 0; a < this->players.size(); a++) {
-                this->players[a].resetAllTiles();
-            }
-            this->board.resetEnergy(this->activePlayer);
-            this->incrementActivePlayer();
-            
-            std::cout << "Next turn" << std::endl;
-        }
-    } else if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
+    if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
         
         glm::ivec2 selectedTile = this->players[playerNum].tileSelected();
         
@@ -286,14 +275,14 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 throw std::invalid_argument("Error adding creature: unreadable creature direction");
             }
 
-            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], values[5], direction, this->activePlayer);
+            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], values[5], direction, playerNum);
 
             if (this->board.get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
                 this->board.setCreature(selectedTile.x, selectedTile.y, newCreature);
 
                 this->players[playerNum].resetAllTiles();
                 
-                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y, this->activePlayer);
+                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y, playerNum);
             }
         }
     } else if (action.find("building_new_creature") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
@@ -327,7 +316,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         //If the position is within the board
         if (buildingPos.x >= 0 && buildingPos.x < this->board.width() && buildingPos.y >= 0 && buildingPos.y < this->board.height(buildingPos.x)) {
 
-            if (this->board.get(buildingPos.x, buildingPos.y).building() != nullptr && this->activePlayer == this->board.get(buildingPos.x, buildingPos.y).building()->controller() && this->activePlayer == playerNum) {
+            if (this->board.get(buildingPos.x, buildingPos.y).building() != nullptr && playerNum == this->board.get(buildingPos.x, buildingPos.y).building()->controller()) {
 
                 //North
                 if (buildingPos.y > 0) {
@@ -383,7 +372,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 action.erase(0, 1); //Get rid of the comma
             }
             
-            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], this->activePlayer);
+            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], playerNum);
             
             if (!this->board.get(selectedTile.x, selectedTile.y).occupied()) {
                 this->board.setBuilding(selectedTile.x, selectedTile.y, newBuilding);
@@ -391,7 +380,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 //Reset all tiles to be unselected now that the creature has been added
                 this->players[playerNum].resetAllTiles();
                 
-                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y, this->activePlayer);
+                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y, playerNum);
             }
         }
     }
@@ -439,11 +428,3 @@ void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatu
     }
 }
 
-void Host::incrementActivePlayer() {
-    this->activePlayer++;
-    
-    //Make sure the active player isn't greater than the largest index of players (size - 1)
-    if (this->activePlayer >= this->players.size()) {
-        this->activePlayer = 0;
-    }
-}

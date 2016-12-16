@@ -55,9 +55,6 @@ private:
     std::chrono::duration<float> lastFrame;
     float deltaTime = 0.0f;
     
-    //Turn
-    unsigned int activePlayer = 0;
-    
     //Clients
     ServerSocket socket;
     
