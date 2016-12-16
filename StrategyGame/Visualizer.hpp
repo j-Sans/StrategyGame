@@ -77,9 +77,6 @@ class Visualizer {
 public:
     //Constructors
     
-    //Default constructor. Don't use this, it is only to allow shader objects to exist in classes without being declared first
-    //Visualizer();
-    
     /*!
      * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
      *

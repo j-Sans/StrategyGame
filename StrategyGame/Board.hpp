@@ -201,8 +201,6 @@ public:
      */
     unsigned int height(unsigned int x);
     
-    std::list<Creature> getCreatures();
-    
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;

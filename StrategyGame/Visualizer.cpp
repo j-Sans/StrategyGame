@@ -26,14 +26,10 @@ bool mouseUp = false;
 //A boolean representing if the escape button has been clicked, for use with the settings menu. This boolean is set in the key callback function and is reset when used.
 bool escClicked = false;
 
-//Only so that Client.hpp can have a shader property without declaring it initially. No other purpose
-//Visualizer::Visualizer() {}
-
 //Constructor
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath) {
     
     this->initWindow(); //Create the GLFW window and set the window property
-//    this->setData(); //Set the data arrays with information from the board
     
     this->camMaxDisplacement = this->boardWidth / 10.0f;
     
@@ -117,8 +113,6 @@ void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> t
     
     this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
     
-//    this->setBuffers(initialInfo); //Set up all of the OpenGL buffers with the vertex data
-    
     this->isSet = true;
 }
 
@@ -138,15 +132,6 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
     
-//    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
-    
-    //Set the selected tile if the mouse is pressing
-//    if (mousePressed)
-//        this->selectedTile = mouseTile;
-//    else
-//        this->selectedTile = NO_SELECTION;
-
-//    this->updateBuffers(boardInfo);
     this->updateBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
     
     this->updateInterfaces();
@@ -296,42 +281,6 @@ void Visualizer::endFrame() {
         mouseDown = false;
     }
 }
-    
-    
-    
-    /*
-    
-    //If the mouse was clicked, set the color of the tile that was clicked
-    if (mousePressed) {
-        //Set mousePressed to false because this next function deals with the mouse and updates accordingly.
-        mousePressed = false;
-        
-        glm::dvec2 cursorPos;
-        glm::ivec2 windowSize;
-        
-        glfwGetCursorPos(this->gameWindow, &cursorPos.x, &cursorPos.y);
-        glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
-        
-        glm::vec4 tileCenters[this->numberOfTiles]; //Representing the center point of all of the map squares
-        
-        for (GLuint index = 0; index < this->numberOfTiles; index++) {
-            //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-            tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
-        }
-    
-        //This function deals with mouse clicks. If the mouse was clicked in an interface box, mousePressed is returned to true so that the buttons can check if there is any click. This only updates if the settings menu is not up.
-        
-    }
-    
-    this->game.updateCreatures(this->deltaTime);
-    
-    //Update the buffers that need updating.
-    this->updateBuffers();
-    
-    this->updateInterfaces();
-    
-    //Set the camera-translation vector based on arrowkey inputs
-   */
 
 //Close the window
 void Visualizer::closeWindow() {
@@ -429,289 +378,7 @@ void Visualizer::initWindow() {
     glfwSetMouseButtonCallback(this->gameWindow, this->mouseButtonCallback);
 }
 
-////Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-//void Visualizer::setData() {
-//    //Distance between each seed point
-//    GLfloat pointDistance = 0.2f;
-//    
-//    GLfloat locationOfFirstPoint = 0.0f;
-//    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
-//    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
-//    
-//    //Vertex data
-//    GLuint numberOfIndices = this->numberOfTiles * INDICES_PER_TILES;
-//    
-//    GLuint index = 0;
-//    
-//    GLfloat vertices[numberOfIndices];
-//    
-//    for (GLuint x = 0; x < this->boardWidth; x++) {
-//        for (GLuint y = 0; y < this->boardHeight; y++) {
-//            if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
-//                
-//                //Sets the point location based on the location in the board and on the modifiers above.
-//                vertices[index] = locationOfFirstPoint - (x * pointDistance);
-//                index++;
-//                
-//                vertices[index] = locationOfFirstPoint - (y * pointDistance);
-//                index++;
-//            }
-//        }
-//    }
-//    
-//    for (int a = 0; a < this->numberOfTiles * 2; a++) { //2 for each tile to hold both an x and y coordinate
-//        this->vertexData[a] = vertices[a];
-//    }
-//    
-//    //Terrain and creature data. One for each tile
-//    numberOfIndices = this->numberOfTiles;
-//    
-//    GLint terrains[numberOfIndices];
-//    GLint creatures[numberOfIndices];
-//    GLint directions[numberOfIndices];
-//    GLint creatureControllers[numberOfIndices];
-//    GLfloat colors[3 * numberOfIndices];
-//    GLint buildings[numberOfIndices];
-//    GLint buildingControllers[numberOfIndices];
-//    
-//    index = 0;
-//    
-//    for (GLuint x = 0; x < this->boardWidth; x++) {
-//        for (GLuint y = 0; y < this->boardHeight; y++) {
-//            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
-//                if (setTerrainData)
-//                    //Gets the terrain of the tile
-//                    terrains[index] = this->game.board()->get(x, y).terrain();
-//                
-//                if (setCreatureData) {
-//                    //Gets the creature on the tile
-//                    creatures[index] = this->game.board()->get(x, y).creatureType();
-//                    
-//                    //Gets the direction if there is a creature there
-//                    if (this->game.board()->get(x, y).creature() != nullptr) {
-//                        directions[index] = this->game.board()->get(x, y).creature()->direction();
-//                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
-//                    } else {
-//                        directions[index] = NORTH;
-//                        creatureControllers[index] = 0;
-//                    }
-//                }
-//                if (setColorData) {
-//                    //Gets the color alteration of the tile
-//                    colors[3 * index] = this->game.board()->get(x, y).color().x;
-//                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
-//                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
-//                }
-//                if (setBuildingData) {
-//                    //Gets the building of the tile
-//                    buildings[index] = this->game.board()->get(x, y).buildingType();
-//                    
-//                    //Gets the direction if there is a creature there
-//                    if (this->game.board()->get(x, y).building() != nullptr) {
-//                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
-//                    } else {
-//                        buildingControllers[index] = 0;
-//                    }
-//                }
-//                
-//                //Increment
-//                index++;
-//            }
-//        }
-//    }
-//    
-//    for (int a = 0; a < this->numberOfTiles; a++) {
-//        if (setTerrainData)
-//            this->terrainData[a] = terrains[a];
-//        if (setCreatureData) {
-//            this->creatureData[3 * a] = creatures[a];
-//            this->creatureData[(3 * a) + 1] = directions[a];
-//            this->creatureData[(3 * a) + 2] = creatureControllers[a];
-//        }
-//        if (setColorData) {
-//            this->colorData[3 * a] = colors[3 * a];
-//            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
-//            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
-//        }
-//        if (setDamageData) {
-//            this->damageData[a] = 0;
-//        }
-//        if (setOffsetData) {
-//            this->offsetData[a] = 0;
-//        }
-//        if (setBuildingData) {
-//            this->buildingData[2 * a] = buildings[a];
-//            this->buildingData[(2 * a) + 1] = buildingControllers[a];
-//        }
-//    }
-//}
-//
-////Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-//void Visualizer::setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData) {
-//    //Distance between each seed point
-//    GLfloat pointDistance = 0.2f;
-//    
-//    GLfloat locationOfFirstPoint = 0.0f;
-//    locationOfFirstPoint += (this->game.board()->width() * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
-//    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
-//    
-//    //Vertex data
-//    GLuint numberOfIndices = this->numberOfTiles * INDICES_PER_TILES;
-//    
-//    GLuint index = 0;
-//    
-//    if (setVertexData) {
-//        GLfloat vertices[numberOfIndices];
-//        
-//        for (GLuint x = 0; x < this->game.board()->width(); x++) {
-//            for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-//                if (index + 1 < numberOfIndices) { //Plus 1 because it is checked twice, so it will be incrimented twice. Checks to make sure no data outside of the array is accessed.
-//                    
-//                    //Sets the point location based on the location in the board and on the modifiers above.
-//                    vertices[index] = locationOfFirstPoint - (x * pointDistance);
-//                    index++;
-//                    
-//                    vertices[index] = locationOfFirstPoint - (y * pointDistance);
-//                    index++;
-//                }
-//            }
-//        }
-//        
-//        for (int a = 0; a < this->numberOfTiles * INDICES_PER_TILES; a++) {
-//            this->vertexData[a] = vertices[a];
-//        }
-//    }
-//    
-//    //Terrain and creature data. One for each tile
-//    numberOfIndices = this->numberOfTiles;
-//    
-//    GLint terrains[numberOfIndices];
-//    GLint creatures[numberOfIndices];
-//    GLint directions[numberOfIndices];
-//    GLint creatureControllers[numberOfIndices];
-//    GLfloat colors[3 * numberOfIndices];
-//    GLint buildings[numberOfIndices];
-//    GLint buildingControllers[numberOfIndices];
-//    
-//    index = 0;
-//    
-//    for (GLuint x = 0; x < this->game.board()->width(); x++) {
-//        for (GLuint y = 0; y < this->game.board()->height(x); y++) {
-//            if (index < numberOfIndices) { //Checks to make sure no data outside of the array is accessed.
-//                if (setTerrainData)
-//                    //Gets the terrain of the tile
-//                    terrains[index] = this->game.board()->get(x, y).terrain();
-//                
-//                if (setCreatureData) {
-//                    //Gets the creature on the tile
-//                    creatures[index] = this->game.board()->get(x, y).creatureType();
-//                    
-//                    //Gets the direction if there is a creature there
-//                    if (this->game.board()->get(x, y).creature() != nullptr) {
-//                        directions[index] = this->game.board()->get(x, y).creature()->direction();
-//                        creatureControllers[index] = this->game.board()->get(x, y).creature()->controller();
-//                    } else {
-//                        directions[index] = NORTH;
-//                        creatureControllers[index] = 0;
-//                    }
-//                }
-//                if (setColorData) {
-//                    //Gets the color alteration of the tile
-//                    colors[3 * index] = this->game.board()->get(x, y).color().x;
-//                    colors[(3 * index) + 1] = this->game.board()->get(x, y).color().y;
-//                    colors[(3 * index) + 2] = this->game.board()->get(x, y).color().z;
-//                }
-//                if (setBuildingData) {
-//                    //Gets the building of the tile
-//                    buildings[index] = this->game.board()->get(x, y).buildingType();
-//                    
-//                    //Gets the direction if there is a creature there
-//                    if (this->game.board()->get(x, y).building() != nullptr) {
-//                        buildingControllers[index] = this->game.board()->get(x, y).building()->controller();
-//                    } else {
-//                        buildingControllers[index] = 0;
-//                    }
-//                }
-//                
-//                //Increment
-//                index++;
-//            }
-//        }
-//    }
-//    
-//    for (int a = 0; a < this->numberOfTiles; a++) {
-//        if (setTerrainData)
-//            this->terrainData[a] = terrains[a];
-//        if (setCreatureData) {
-//            this->creatureData[3 * a] = creatures[a];
-//            this->creatureData[(3 * a) + 1] = directions[a];
-//            this->creatureData[(3 * a) + 2] = creatureControllers[a];
-//        }
-//        if (setColorData) {
-//            this->colorData[3 * a] = colors[3 * a];
-//            this->colorData[(3 * a) + 1] = colors[(3 * a) + 1];
-//            this->colorData[(3 * a) + 2] = colors[(3 * a) + 2];
-//        }
-//        if (setDamageData) {
-//            this->damageData[a] = 0;
-//        }
-//        if (setOffsetData) {
-//            this->offsetData[a] = 0;
-//        }
-//        if (setBuildingData) {
-//            this->buildingData[2 * a] = buildings[a];
-//            this->buildingData[(2 * a) + 1] = buildingControllers[a];
-//        }
-//    }
-//}
-
-////Initialize OpenGL buffers with the object's vertex data.
-//void Visualizer::setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
-//
-//    //The data arrays that hold ints are converted implicitly directly from chars
-//    //The data arrays that hold floats are converted by dividing the char by 100. This means the float can have at most 2 decimal places, and must be between -1.28 and 1.27
-//    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-//        this->terrainData[tile] = boardInfo[TerrainData][tile]; //char -> int
-//        this->creatureData[tile] = boardInfo[CreatureData][tile]; //char -> int
-//        this->colorData[tile] = boardInfo[ColorData][tile] / 100; //char / 100 -> int
-//        this->damageData[tile] = boardInfo[DamageData][tile]; //char -> int
-//        this->offsetData[tile] = boardInfo[OffsetData][tile] / 100; //char / 100 -> int
-//        this->buildingData[tile] = boardInfo[BuildingData][tile]; //char -> int
-//    }
-    
-
-
 void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
-    
-    //Calculate an evenly spaced board of vertices
-    
-//    GLfloat pointDistance = 0.2f;
-//
-//    GLfloat locationOfFirstPoint = 0.0f;
-//    locationOfFirstPoint += (this->boardWidth * pointDistance / 2.0f); //Sets the board halfway behind 0 and halfway in front
-//    locationOfFirstPoint += (pointDistance / 2.0f); //Otherwise the 0.2 distance would be after each point (as if they were right-aligned). Instead they are center-aligned essentially.
-//    
-//    std::vector<GLfloat> vertexDataVec;
-//    
-//    std::cout << "vectorData: " << std::endl << "(";
-//    
-//    for (GLuint x = 0; x < this->boardWidth; x++) {
-//        for (GLuint y = 0; y < this->boardHeight; y++) {
-//            //Sets the point location based on the location in the board and on the modifiers above.
-//            vertexDataVec.push_back(locationOfFirstPoint - (x * pointDistance));
-//            
-//            std::cout << vertexDataVec.back() << ", ";
-//            
-//            vertexDataVec.push_back(locationOfFirstPoint - (y * pointDistance));
-//            
-//            std::cout << vertexDataVec.back() << ")" << std::endl << "(";
-//        }
-//    }
-//    
-//    std::cout << std::endl;
-    
-    
-    
     
     glm::vec2 pointDistance;
     pointDistance.x = 2.0 / this->boardWidth;
@@ -856,69 +523,6 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(6);
     
-    /*
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Vertex VBO:
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertexData.data()), this->vertexData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData.data()), this->terrainData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(2);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(3);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData.data()), this->damageData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(4);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData.data()), this->offsetData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(5);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(6);
-     */
-    
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
@@ -939,7 +543,6 @@ void Visualizer::setInterface() {
     this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
     
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
-    //this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
     //Left-Side Game UI (brown rectangle)
     this->interfaces[active_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, active_left);
@@ -1010,7 +613,6 @@ void Visualizer::presetTransformations() {
 }
 
 //A function to update all of the buffers that need to be updated. Should be called every frame.
-//void Visualizer::updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo) {
 void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
     
     this->terrainData = terrainDataVec;
@@ -1114,192 +716,11 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
     glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
     glEnableVertexAttribArray(6);
     
-    /*
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->terrainData.data()), this->terrainData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData.data()), this->creatureData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(2);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData.data()), this->colorData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(3);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData.data()), this->damageData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(4);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData.data()), this->offsetData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(5);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData.data()), this->buildingData.data(), GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(6);
-    */
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
 }
-
-    /*
-    
-    
-    
-    //Set the offset VBO
-    
-    //Update creature data array and buildings
-    this->setData(false, false, true, false, false, false, true);
-    
-    //Goes through all tiles and continues moving any that are moving
-    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        
-        glm::ivec2 boardLoc;
-        boardLoc.x = tile / this->game.board()->width();
-        boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
-        
-        Creature* creature = this->game.board()->get(boardLoc.x, boardLoc.y).creature();
-        
-        if (creature != nullptr) {
-            this->offsetData[tile] = creature->offset();
-        } else {
-            this->offsetData[tile] = 0.0;
-        }
-    }
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->offsetData), this->offsetData, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(5);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-    glBindVertexArray(0);
-    
-    //Now set the creature VBO
-    
-    //Update creature data array. This is done again so that if the offset was adjusted and the creature moved, that is reflected in the creature VBO and rendered. Otherwise, the creature would momentarily blink and flash back to its previous location
-    this->setData(false, false, true, false, false, false, false);
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Bind the creature VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->creatureData), this->creatureData, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(2);
-    
-    //Bind the building VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->buildingData), this->buildingData, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(6);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-    glBindVertexArray(0);
-    
-    //Update creature data array
-    this->setData(false, false, true, false, false, false, true);
-    
-    //Update creature data array
-    this->setData(false, false, false, true, false, false, true);
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->colorData), this->colorData, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(3);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-    glBindVertexArray(0);
-    
-    //Goes through existence times and updates them based on glfwGetTime()
-    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
-        glm::ivec2 boardLoc;
-        boardLoc.x = tile / this->game.board()->width();
-        boardLoc.y = tile - (this->game.board()->width() * boardLoc.x);
-        
-        Tile currentTile = this->game.board()->get(boardLoc.x, boardLoc.y);
-        
-        if (glfwGetTime() - currentTile.timeOfDamage() > Tile::damageBoxTime) { //Don't show the damage if it is not new
-            this->damageData[tile] = 0;
-        } else {
-            this->damageData[tile] = currentTile.damage();
-        }
-    }
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->damageData), this->damageData, GL_STATIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(4);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-    glBindVertexArray(0);
-}*/
 
 void Visualizer::updateInterfaces() {
     this->leftInterface = this->playerNum == this->activePlayer ? &this->interfaces[active_left] : &this->interfaces[inactive_left];
@@ -1316,7 +737,7 @@ void Visualizer::updateInterfaces() {
 //            this->rightInterface = &this->interfaces[creature];
 //            
 //            //Update the boxes to display creature stats
-//            if (this->interfaces[creature].boxes.size() > 0) {
+//            if (this->interfaces[creature].boxes.size() > 0) { 
 //                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
 //                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
 //                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
@@ -1470,11 +891,6 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     
     //So that -1 is the bottom of the screen, not the top
     mousePos.y = -mousePos.y;
-    
-    /*for (GLuint index = 0; index < NUMBER_OF_TILES; index++) {
-     //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-     tileCenters[index] = this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f);
-     }*/
     
     //The distance from one point to the horizontal point and the vertical point:
     

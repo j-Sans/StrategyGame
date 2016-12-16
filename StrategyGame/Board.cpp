@@ -709,7 +709,3 @@ unsigned int Board::width() {
 unsigned int Board::height(unsigned int x) {
     return (unsigned int)this->gameBoard[x].size();
 }
-
-std::list<Creature> Board::getCreatures() {
-    return this->creatures;
-}
