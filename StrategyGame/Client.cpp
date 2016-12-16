@@ -90,8 +90,8 @@ void Client::render() {
 //    if (this->socket.receive() != "clientDataReceived")
 //        throw std::runtime_error("Client data not received");
     
-//    this->visualizer.activePlayer = std::stoi(this->socket.receive());
-//    this->socket.send("activePlayerReceived");
+    this->visualizer.activePlayer = std::stoi(this->socket.receive());
+    this->socket.send("activePlayerReceived");
     
     std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
     this->socket.send("terrainDataReceived");

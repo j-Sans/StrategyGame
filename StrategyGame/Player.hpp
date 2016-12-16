@@ -38,7 +38,6 @@
 
 #define TILE_STYLE 0
 #define TILE_HOVER 1
-#define TILE_VISION 2
 
 #define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
 #define GREY glm::vec3(0.625f, 0.625f, 0.625f)
@@ -60,11 +59,6 @@
 //HOVER
 #define NO_HOVERING 0
 #define HOVERING 1
-
-//VISION
-#define UNEXPLORED 0
-#define PREVIOUSLY_EXPLORED 1
-#define VISIBLE 2
 
 class Player {
 public:
