@@ -38,6 +38,7 @@
 
 #define TILE_STYLE 0
 #define TILE_HOVER 1
+#define TILE_VISION 2
 
 #define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
 #define GREY glm::vec3(0.625f, 0.625f, 0.625f)
@@ -59,6 +60,11 @@
 //HOVER
 #define NO_HOVERING 0
 #define HOVERING 1
+
+//VISION
+#define UNEXPLORED 0
+#define EXPLORED 1
+#define VISIBLE 2
 
 class Player {
 public:
@@ -148,7 +154,7 @@ private:
     //Board data
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
-    std::vector<std::vector<std::array<int, 2> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
+    std::vector<std::vector<std::array<int, 3> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
     /*
      * [0]: Tile style (whether it is selected, attackable, reachable, etc...)
      * [1]: Whether the mouse is hovering, either as TRUE or FALSE

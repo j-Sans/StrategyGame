@@ -12,9 +12,9 @@
 
 Player::Player(Board* board, unsigned int num) : board(board), playerNum(num) {
     for (int x = 0; x < this->board->width(); x++) {
-        std::vector<std::array<int, 2> > boardColumnInfo;
+        std::vector<std::array<int, 3> > boardColumnInfo;
         for (int y = 0; y < this->board->height(x); y++) {
-            std::array<int, 2> tileData = { REGULAR, NO_HOVERING };
+            std::array<int, 3> tileData = { REGULAR, NO_HOVERING, UNEXPLORED };
             
             boardColumnInfo.push_back(tileData);
         }
