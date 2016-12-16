@@ -38,8 +38,6 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
         case active_left: {
             this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.9, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings"));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "end_turn", "End turn"));
-            
             //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
             this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
             
