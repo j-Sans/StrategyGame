@@ -81,11 +81,10 @@ public:
      *
      * @param x An unsigned int representing the x location of the tile on the board.
      * @param y An unsigned int representing the y location of the tile on the board.
-     * @param activePlayer An unsigned int representing the index of the active player.
      *
      * @return Whether the tile was successfully selected.
      */
-    bool selectTile(unsigned int x, unsigned int y, unsigned int activePlayer);
+    bool selectTile(unsigned int x, unsigned int y);
     
     /*!
      * A function to set the style tile. If the x or y is out of range, then nothing will happen and false will be returned.
@@ -102,19 +101,17 @@ public:
      * A function that updates the offset of each creature to cause movement animation. This should be called once every frame.
      *
      * @param deltaTime The time since the last fram, to multiply by the velocity to get a constant distance. This keeps animation speed constant on different machines.
-     * @param activePlayer An unsigned int representing the index of the active player.
      */
-    void updateCreatures(float deltaTime, unsigned int activePlayer);
+    void updateCreatures(float deltaTime);
     
     /*!
      * A function to update the selected tile based on mouse clicks.
      *
      * @param mouseDown A boolean representing if the mouse is down. 
      * @param mousePos A glm::ivec2 representing the tile the mouse is currently at. This should be calculated on the client side and sent to the server.
-     * @param activePlayer An unsigned int representing the index of the active player.
      * @param currentTime An unsigned int representing the time of the current grame.
      */
-    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int activePlayer, unsigned int currentTime);
+    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
@@ -176,11 +173,10 @@ private:
      *
      * @param x An unsigned int representing the x location of the creature on the board.
      * @param y An unsigned int representing the y location of the creature on the board.
-     * @param activePlayer An unsigned int representing the index of the active player.
      *
      * @return Whether the creature was successfully selected or if an error prevented this. Errors include if x or y is out of range, or if there is no creature at the designated spot.
      */
-    bool selectCreature(unsigned int x, unsigned int y, unsigned int activePlayer);
+    bool selectCreature(unsigned int x, unsigned int y);
     
     /*!
      * A function that gets all of the tiles that a creature can reach.

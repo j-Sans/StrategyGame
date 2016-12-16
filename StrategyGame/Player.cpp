@@ -47,7 +47,7 @@ void Player::resetAllTiles() {
     }
 }
 
-bool Player::selectTile(unsigned int x, unsigned int y, unsigned int activePlayer) {
+bool Player::selectTile(unsigned int x, unsigned int y) {
     glm::ivec2 passedInTile = glm::ivec2(x, y);
     
     if (passedInTile == NO_SELECTION) {
@@ -58,7 +58,7 @@ bool Player::selectTile(unsigned int x, unsigned int y, unsigned int activePlaye
         
         //If there is a creature at that spot, properly select it. Otherwise just set it normally
         if (this->board->get(x, y).creature() != nullptr)
-            this->selectCreature(x, y, activePlayer);
+            this->selectCreature(x, y);
         else
             this->selectedTile = passedInTile;
         
@@ -82,7 +82,7 @@ glm::ivec2 Player::tileSelected() {
     return this->selectedTile;
 }
 
-void Player::updateCreatures(float deltaTime, unsigned int thisPlayer) {
+void Player::updateCreatures(float deltaTime) {
     for (int x = 0; x < this->board->width(); x++) {
         for (int y = 0; y < this->board->height(x); y++) {
             
@@ -105,7 +105,7 @@ void Player::updateCreatures(float deltaTime, unsigned int thisPlayer) {
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
                                 if (creature->controller() == this->playerNum)
-                                    this->selectCreature(x, y - 1, thisPlayer);
+                                    this->selectCreature(x, y - 1);
 #endif
                             }
                         } else if (direction == EAST) {
@@ -114,7 +114,7 @@ void Player::updateCreatures(float deltaTime, unsigned int thisPlayer) {
                                 
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
                                 if (creature->controller() == this->playerNum)
-                                    this->selectCreature(x - 1, y, thisPlayer);
+                                    this->selectCreature(x - 1, y);
 #endif
                             }
                         }
@@ -126,7 +126,7 @@ void Player::updateCreatures(float deltaTime, unsigned int thisPlayer) {
                         
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
                         if (creature->controller() == this->playerNum)
-                            this->selectCreature(x, y, thisPlayer);
+                            this->selectCreature(x, y);
 #endif
                     }
                 }
@@ -146,7 +146,7 @@ void Player::updateCreatures(float deltaTime, unsigned int thisPlayer) {
     }
 }
 
-void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int thisPlayer, unsigned int currentTime) {
+void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime) {
     //Update all tiles other than the one where the mouse is to have no hovering
     for (int x = 0; x < this->board->width(); x++) {
         for (int y = 0; y < this->board->height(x); y++) {
@@ -177,7 +177,7 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int th
                     Creature* creature = this->board->get(mousePos.x, mousePos.y).creature();
                     
                     //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
-                    if (creature != nullptr && creature->controller() == thisPlayer && thisPlayer == this->playerNum) {
+                    if (creature != nullptr && creature->controller() == this->playerNum) {
                         std::vector<Tile> reachableTiles = getReachableTiles(this->board->get(mousePos.x, mousePos.y));
                         
                         for (int a = 0; a < reachableTiles.size(); a++) {
@@ -192,7 +192,7 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int th
                             
                             for (int a = 0; a < attackableTiles.size(); a++) {
                                 //If there is a creature or building on the tile, controlled by an opponent, make it attackable
-                                if ((this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != thisPlayer) || (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != thisPlayer))
+                                if ((this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum) || (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum))
                                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
                             }
                         }
@@ -219,7 +219,7 @@ void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int th
                     
 #ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
                         //If the attacker died, nothing will happen and the function will return false
-                        this->selectCreature(attacker.x, attacker.y, thisPlayer);
+                        this->selectCreature(attacker.x, attacker.y);
 #endif
                     }
                     break;
@@ -340,7 +340,7 @@ bool Player::moveAdjacent(unsigned int x, unsigned int y, int direction, float d
     return true;
 }
 
-bool Player::selectCreature(unsigned int x, unsigned int y, unsigned int activePlayer) {
+bool Player::selectCreature(unsigned int x, unsigned int y) {
     if (x >= this->board->width()) //No selecting happens if the x is out of range
         return false;
     
@@ -372,13 +372,13 @@ bool Player::selectCreature(unsigned int x, unsigned int y, unsigned int activeP
         for (int a = 0; a < attackableTiles.size(); a++) {
             
             //If there is a creature on the tile, controlled by an opponent, make it attackable
-            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != activePlayer)
+            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum)
                 
                 if (creature.energy() > 0)
                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
             
             //If there is a building on the tile, controlled by an opponent, make it attackable
-            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != activePlayer)
+            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum)
                 
                 if (creature.energy() > 0)
                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;

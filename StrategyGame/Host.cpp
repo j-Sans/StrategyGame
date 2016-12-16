@@ -179,9 +179,9 @@ void Host::update() {
             clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
         }
         
-        this->players[a].updateSelected(mouseDown, selectedTile, a, currentFrame.count());
+        this->players[a].updateSelected(mouseDown, selectedTile, currentFrame.count());
         
-        this->players[a].updateCreatures(this->deltaTime, a);
+        this->players[a].updateCreatures(this->deltaTime);
     }
     
     this->socket.broadcast("End of frame");
@@ -282,7 +282,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
                 this->players[playerNum].resetAllTiles();
                 
-                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y, playerNum);
+                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y);
             }
         }
     } else if (action.find("building_new_creature") != std::string::npos) { //Basically if the string action contains "building", the button follows the building instructions
@@ -380,7 +380,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 //Reset all tiles to be unselected now that the creature has been added
                 this->players[playerNum].resetAllTiles();
                 
-                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y, playerNum);
+                this->players[playerNum].selectTile(NO_SELECTION.x, NO_SELECTION.y);
             }
         }
     }
