@@ -545,9 +545,7 @@ void Visualizer::setInterface() {
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
     //Left-Side Game UI (brown rectangle)
-    this->interfaces[active_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, active_left);
-    
-    this->interfaces[inactive_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, inactive_left);
+    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
     
     //Bottom Game UI (brown rectangle)
     this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
@@ -723,7 +721,7 @@ void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int>
 }
 
 void Visualizer::updateInterfaces() {
-    this->leftInterface = this->playerNum == this->activePlayer ? &this->interfaces[active_left] : &this->interfaces[inactive_left];
+    this->leftInterface = &this->interfaces[default_left];
     this->bottomInterface = &this->interfaces[default_bottom];
     this->rightInterface = &this->interfaces[default_right];
     
