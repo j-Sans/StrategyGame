@@ -108,9 +108,9 @@ void Host::update() {
     }
 //    this->socket.broadcast("clientDataReceived");
     
-    this->socket.broadcast(std::to_string(this->activePlayer));
-    if (!this->socket.allReceived("activePlayerReceived"))
-        throw std::runtime_error("Active player not received");
+   // this->socket.broadcast(std::to_string(this->activePlayer));
+   // if (!this->socket.allReceived("activePlayerReceived"))
+   //    throw std::runtime_error("Active player not received");
     
     std::vector<int> terrainData, creatureData, damageData, buildingData;
     std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
@@ -179,7 +179,7 @@ void Host::update() {
             clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
         }
         
-        this->players[a].updateSelected(mouseDown, selectedTile, this->activePlayer, currentFrame.count());
+        this->players[a].updateSelected(mouseDown, selectedTile, currentFrame.count());
         
         this->players[a].updateCreatures(this->deltaTime, this->activePlayer);
     }
