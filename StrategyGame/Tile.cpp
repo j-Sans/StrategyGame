@@ -129,6 +129,11 @@ bool Tile::passableByAttackStyle(Creature creature) {
     return true;
 }
 
+bool Tile::passableByVision(Creature creature) {
+    //This function will be used for later functionality. DO NOT REMOVE.
+    return true;
+}
+
 unsigned int Tile::damage() {
     return this->tileDamage;
 }
