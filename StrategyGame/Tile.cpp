@@ -138,6 +138,6 @@ float Tile::timeOfDamage() {
 }
 
 std::string Tile::serialize() {
-    return "Tile:" + std::to_string(tileX) + "," + std::to_string(tileY) + "," + std::to_string(tileTerrain) + "," + std::to_string(damageHitTime);
+    return "Tile:" + std::to_string(tileX) + "," + std::to_string(tileY) + "," + std::to_string(tileTerrain) + "," + std::to_string(damageHitTime) + ",";
     
 }

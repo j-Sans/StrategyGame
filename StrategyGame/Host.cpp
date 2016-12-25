@@ -191,10 +191,10 @@ void Host::update() {
 }
 
 std::string Host::serialize() {
-    std::string str = "Host:" + this->board.serialize() + "," + this->deltaTime + ",";
-    for (int a = 0; a << this->players.size(); a++) {
-        str += this->players[a].serialize() + ",";
-    }
+    std::string str = "Host:" + this->board.serialize() + "," + std::to_string(this->deltaTime) + ",";
+//    for (int a = 0; a << this->players.size(); a++) {
+//        str += this->players[a].serialize() + ",";
+//    }
     return str;
 }
 
@@ -212,7 +212,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
             //Interpret the string to find out what kind of creature
 
             /* The contents of the button string are:
-             * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[cost],[start direction]
+             * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[start direction]
              *
              * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
              *
@@ -255,7 +255,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
             //Extract the numerical values of the creature
 
-            for (int valueNum = 0; valueNum < 6; valueNum++) {
+            for (int valueNum = 0; valueNum < 5; valueNum++) {
                 //Find the position of the next comma, which is the number of digits before that comma
                 int numDigits = (int)action.find(',');
 
@@ -283,7 +283,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 throw std::invalid_argument("Error adding creature: unreadable creature direction");
             }
 
-            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], values[5], direction, playerNum);
+            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], direction, playerNum);
 
             if (this->board.get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
                 this->board.setCreature(selectedTile.x, selectedTile.y, newCreature);

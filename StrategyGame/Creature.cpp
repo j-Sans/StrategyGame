@@ -209,42 +209,44 @@ std::string Creature::serialize() {
     if (this->creatureRace == Human) {
         str += "Human,";
     } else if (this->creatureRace == Elf) {
-        str += "Elf,"
+        str += "Elf,";
     } else if (this->creatureRace == Dwarf) {
         str += "Dwarf,";
-    } else if (this->creatureRace == Orc) == 0) {
+    } else if (this->creatureRace == Orc) {
         str += "Orc,";
-    } else if (this->creatureRace == Goblin) == 0) {
+    } else if (this->creatureRace == Goblin) {
         str += "Goblin,";
-    } else if (this->creatureRace == Undead) == 0) {
+    } else if (this->creatureRace == Undead) {
         str += "Undead,";
-    } else if (this->creatureRace == Vampire) == 0) {
+    } else if (this->creatureRace == Vampire) {
         str += "Vampire,";
     } else {
         throw std::invalid_argument("Error serializing creature: unknown creature race");
     }
     if (this->creatureAttackStyle == Melee) {
         str += "Melee,";
-    } else if (this->creatureRace == Ranged) {
-        str += "Ranged,"
-    } else if (this->creatureRace == TerrainIgnoring) == 0) {
+    } else if (this->creatureAttackStyle == Ranged) {
+        str += "Ranged,";
+    } else if (this->creatureAttackStyle == TerrainIgnoring) {
         str += "TerrainIgnoring,";
     } else {
         throw std::invalid_argument("Error serializing creature: unknown creature attack style");
     }
     
-    return str + std::to_string(creatureMaxHealth) + "," + std::to_string(creatureMaxEnergy) + "," + std::to_string(creatureAttack) + "," + std::to_string(creatureVision) + "," + std::to_string(creatureRange) + "," + std::to_string;
+    str += std::to_string(creatureMaxHealth) + "," + std::to_string(creatureMaxEnergy) + "," + std::to_string(creatureAttack) + "," + std::to_string(creatureVision) + "," + std::to_string(creatureRange) + "," + std::to_string(creatureHealth) + "," + std::to_string(creatureEnergy) + ",";
+    
+    if (this->creatureDirection == NORTH) {
+        str += "NORTH,";
+    } else if (this->creatureDirection == EAST) {
+        str += "EAST,";
+    } else if (this->creatureDirection == SOUTH) {
+        str += "SOUTH,";
+    } else if (this->creatureDirection == WEST) {
+        str += "WEST,";
+    } else {
+        throw std::invalid_argument("Error serializing creature: unknown creature direction");
+    }
+    
+    return str + std::to_string(creatureOffset) + "," + std::to_string(creatureX) + "," + std::to_string(creatureY) + ",";
     
 }
-
-
-const unsigned int creatureRange;
-
-unsigned int creatureHealth;
-unsigned int creatureEnergy;
-int creatureDirection;
-float creatureOffset = 0.0;
-
-//Location
-unsigned int creatureX;
-unsigned int creatureY;

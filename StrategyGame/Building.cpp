@@ -56,3 +56,7 @@ const unsigned int Building::y() {
 const unsigned int Building::controller() {
     return this->buildingController;
 }
+
+std::string Building::serialize() {
+    return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->buildingMaxHealth) + "," + std::to_string(this->buildingCost) + "," + std::to_string(this->buildingController) + "," + std::to_string(this->buildingX) + "," + std::to_string(this->buildingY) + "," + std::to_string(this->buildingHealth) + ",";
+}

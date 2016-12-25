@@ -259,7 +259,7 @@ void Player::resolveTileAction(unsigned int x, unsigned int y) {
         }
     } else if (action == "make_creature") {
         if (this->board->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) { //Create a creature from building
-            Creature newCreature(x, y, Human, 100, 4, 30, Melee, 1, 1, 1, NORTH, this->playerNum);
+            Creature newCreature(x, y, Human, 100, 4, 30, Melee, 1, 1, NORTH, this->playerNum);
             
             if (this->board->get(x, y).passableByCreature(newCreature)) {
                 this->board->setCreature(x, y, newCreature);
