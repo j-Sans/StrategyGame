@@ -201,6 +201,13 @@ public:
      */
     unsigned int height(unsigned int x);
     
+    /*!
+     * Serialize this object as a string that can be sent through sockets.
+     *
+     * @return The serialized string.
+     */
+    std::string serialize();
+    
 private:
     //Private properties
     std::vector<std::vector<Tile> > gameBoard;

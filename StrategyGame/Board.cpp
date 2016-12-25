@@ -709,3 +709,22 @@ unsigned int Board::width() {
 unsigned int Board::height(unsigned int x) {
     return (unsigned int)this->gameBoard[x].size();
 }
+
+std::string Board::serialize() {
+    std::string str = "Board:width=" + std::to_string(this->gameBoard.size()) + ",";
+    for (int x = 0; x < this->gameBoard.size(); x++) {
+        str += "height=" + std::to_string(this->gameBoard[x].size()) + ",";
+        for (int y = 0; y < this->gameBoard[x].size(); y++) {
+            str += this->gameBoard[x][y].serialize() + ",";
+        }
+    }
+    str += "creatures=" + std::to_string(this->creatures.size()) + ",";
+    for (auto a = this->creatures.begin(); a != this->creatures.end(); a++) {
+        str += a->serialize() + ",";
+    }
+    str += "buildings=" + std::to_string(this->buildings.size()) + ",";
+    for (auto a = this->buildings.begin(); a != this->buildings.end(); a++) {
+        str += a->serialize() + ",";
+    }
+    return str;
+}

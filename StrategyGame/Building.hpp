@@ -77,6 +77,13 @@ public:
      */
     const unsigned int controller();
     
+    /*!
+     * Serialize this object as a string that can be sent through sockets.
+     *
+     * @return The serialized string.
+     */
+    std::string serialize();
+    
 private:
     //Private properties
     const std::string buildingButtonText;

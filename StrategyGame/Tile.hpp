@@ -159,6 +159,13 @@ public:
      */
     float timeOfDamage();
     
+    /*!
+     * Serialize this object as a string that can be sent through sockets.
+     *
+     * @return The serialized string.
+     */
+    std::string serialize();
+    
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }
     //const bool rough() { return this->isRoughTerrain; }

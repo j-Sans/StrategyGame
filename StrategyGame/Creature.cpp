@@ -11,7 +11,7 @@
 
 //Constructors
 
-Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle,  unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller) : creatureX(x), creatureY(y), creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureAttackStyle(attackStyle), creatureVision(vision), creatureRange(range), creatureCost(cost), creatureController(controller) {
+Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle,  unsigned int vision, unsigned int range, unsigned int startDirection, unsigned int controller) : creatureX(x), creatureY(y), creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureAttackStyle(attackStyle), creatureVision(vision), creatureRange(range),  creatureController(controller) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
     
@@ -172,10 +172,6 @@ const unsigned int Creature::range() {
     return this->creatureRange;
 }
 
-const unsigned int Creature::cost() {
-    return this->creatureCost;
-}
-
 const bool Creature::melee() {
     return this->creatureRange > 1 ? false : true;
 }
@@ -207,3 +203,48 @@ unsigned int Creature::x() {
 unsigned int Creature::y() {
     return this->creatureY;
 }
+
+std::string Creature::serialize() {
+    std::string str = "Creature:" + std::to_string(this->creatureController) + ",";
+    if (this->creatureRace == Human) {
+        str += "Human,";
+    } else if (this->creatureRace == Elf) {
+        str += "Elf,"
+    } else if (this->creatureRace == Dwarf) {
+        str += "Dwarf,";
+    } else if (this->creatureRace == Orc) == 0) {
+        str += "Orc,";
+    } else if (this->creatureRace == Goblin) == 0) {
+        str += "Goblin,";
+    } else if (this->creatureRace == Undead) == 0) {
+        str += "Undead,";
+    } else if (this->creatureRace == Vampire) == 0) {
+        str += "Vampire,";
+    } else {
+        throw std::invalid_argument("Error serializing creature: unknown creature race");
+    }
+    if (this->creatureAttackStyle == Melee) {
+        str += "Melee,";
+    } else if (this->creatureRace == Ranged) {
+        str += "Ranged,"
+    } else if (this->creatureRace == TerrainIgnoring) == 0) {
+        str += "TerrainIgnoring,";
+    } else {
+        throw std::invalid_argument("Error serializing creature: unknown creature attack style");
+    }
+    
+    return str + std::to_string(creatureMaxHealth) + "," + std::to_string(creatureMaxEnergy) + "," + std::to_string(creatureAttack) + "," + std::to_string(creatureVision) + "," + std::to_string(creatureRange) + "," + std::to_string;
+    
+}
+
+
+const unsigned int creatureRange;
+
+unsigned int creatureHealth;
+unsigned int creatureEnergy;
+int creatureDirection;
+float creatureOffset = 0.0;
+
+//Location
+unsigned int creatureX;
+unsigned int creatureY;

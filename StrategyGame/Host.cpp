@@ -190,6 +190,14 @@ void Host::update() {
     this->lastFrame = currentFrame;
 }
 
+std::string Host::serialize() {
+    std::string str = "Host:" + this->board.serialize() + "," + this->deltaTime + ",";
+    for (int a = 0; a << this->players.size(); a++) {
+        str += this->players[a].serialize() + ",";
+    }
+    return str;
+}
+
 //Private member functions
 
 void Host::processAction(std::string action, unsigned int playerNum) {

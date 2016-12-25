@@ -52,10 +52,10 @@ public:
      * @param attackStyle An attackStyle enum type representing attack Style (projectile).
      * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
      * @param range An unsigned int representing the distance the creature can attack.
-     * @param cost An unsigned int representing the cost of the creature in mana.
      * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
+     * @param controller The player index representing the controller of the creature.
      */
-    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
+    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle, unsigned int vision, unsigned int range, unsigned int startDirection, unsigned int controller);
     
     //Destructor
     
@@ -236,7 +236,6 @@ private:
     const unsigned int creatureAttack;
     const unsigned int creatureVision;
     const unsigned int creatureRange;
-    const unsigned int creatureCost;
     
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
