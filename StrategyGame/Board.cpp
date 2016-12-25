@@ -711,9 +711,9 @@ unsigned int Board::height(unsigned int x) {
 }
 
 std::string Board::serialize() {
-    std::string str = "Board:width=" + std::to_string(this->gameBoard.size()) + ",";
+    std::string str = "Board:" + std::to_string(this->gameBoard.size()) + ",";
     for (int x = 0; x < this->gameBoard.size(); x++) {
-        str += "height=" + std::to_string(this->gameBoard[x].size()) + ",";
+        str += std::to_string(this->gameBoard[x].size()) + ",";
         for (int y = 0; y < this->gameBoard[x].size(); y++) {
             str += this->gameBoard[x][y].serialize() + ",";
         }
@@ -727,4 +727,43 @@ std::string Board::serialize() {
         str += a->serialize() + ",";
     }
     return str;
+}
+
+Board Board::deserialize(std::string str) {
+    str.erase(0, 6); //To erase "Board:"
+    int width = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    std::vector<std::vector<Tile> > tiles (width);
+    for (int x = 0; x < width; x++) {
+        int height = std::stoi(str.substr(0, str.find_first_of(',')));
+        str = str.substr(str.find_first_of(',') + 1);
+        for (int y = 0; y < height; y++) {
+            tiles[x].push_back(Tile::deserialize(str.substr(0, str.find_first_of(','))));
+            str = str.substr(str.find_first_of(',') + 1);
+        }
+    }
+    
+    Board board(tiles);
+    
+    str.erase(0, 10); //To erase "creatures="
+    std::list<Creature> creatures;
+    int numCreatures = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    for (int a = 0; a < numCreatures; a++) {
+        Creature c = Creature::deserialize(str.substr(0, str.find_first_of(',')));
+        board.setCreature(c.x(), c.y(), c);
+        str = str.substr(str.find_first_of(',') + 1);
+    }
+    
+    str.erase(0, 10); //To erase "buildings="
+    std::list<Building> buildings;
+    int numBuildings = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    for (int a = 0; a < numBuildings; a++) {
+        Building b = Building::deserialize(str.substr(0, str.find_first_of(',')));
+        board.setBuilding(b.x(), b.y(), b);
+        str = str.substr(str.find_first_of(',') + 1);
+    }
+    
+    return board;
 }
