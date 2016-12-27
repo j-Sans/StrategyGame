@@ -10,7 +10,7 @@
 
 //Constructor
 
-Building::Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int cost, unsigned int controller) : buildingX(x), buildingY(y), buildingButtonText(buttonText), buildingAction(action), buildingMaxHealth(maxHealth), buildingCost(cost), buildingController(controller) {
+Building::Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int controller) : buildingX(x), buildingY(y), buildingButtonText(buttonText), buildingAction(action), buildingMaxHealth(maxHealth), buildingController(controller) {
     this->buildingHealth = this->buildingMaxHealth;
 }
 
@@ -41,10 +41,6 @@ unsigned int Building::health() {
     return this->buildingHealth;
 }
 
-const unsigned int Building::cost() {
-    return this->buildingCost;
-}
-
 const unsigned int Building::x() {
     return this->buildingX;
 }
@@ -58,5 +54,28 @@ const unsigned int Building::controller() {
 }
 
 std::string Building::serialize() {
-    return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->buildingMaxHealth) + "," + std::to_string(this->buildingCost) + "," + std::to_string(this->buildingController) + "," + std::to_string(this->buildingX) + "," + std::to_string(this->buildingY) + "," + std::to_string(this->buildingHealth) + ",";
+    return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->buildingMaxHealth) + "," + std::to_string(this->buildingController) + "," + std::to_string(this->buildingX) + "," + std::to_string(this->buildingY) + "," + std::to_string(this->buildingHealth) + ",";
+}
+
+Building Building::deserialize(std::string str) {
+    str.erase(0, 9); //To erase "Building:"
+    std::string buttonText = str.substr(0, str.find_first_of(','));
+    str = str.substr(str.find_first_of(',') + 1);
+    std::string action = str.substr(0, str.find_first_of(','));
+    str = str.substr(str.find_first_of(',') + 1);
+    int maxHealth = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int controller = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int x = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int y = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int health = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    Building building(x, y, buttonText, action, maxHealth, controller);
+    building.takeDamage(maxHealth - health);
+    
+    return building;
 }

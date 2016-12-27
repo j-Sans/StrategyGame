@@ -18,7 +18,7 @@ class Building {
 public:
     //Constructor
     
-    Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int cost, unsigned int controller);
+    Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int controller);
     
     //Destructor
     
@@ -58,11 +58,6 @@ public:
     unsigned int health();
     
     /*!
-     * @return The cost of this building
-     */
-    const unsigned int cost();
-    
-    /*!
      * @return The x location of this creature on the board.
      */
     const unsigned int x();
@@ -84,12 +79,20 @@ public:
      */
     std::string serialize();
     
+    /*!
+     * Create an object from a serialized string that can be sent through sockets.
+     *
+     * @param str The string to convert into an object.
+     *
+     * @return The object created.
+     */
+    static Building deserialize(std::string str);
+    
 private:
     //Private properties
     const std::string buildingButtonText;
     const std::string buildingAction;
     const unsigned int buildingMaxHealth;
-    const unsigned int buildingCost;
     const unsigned int buildingController;
     
     //Location
