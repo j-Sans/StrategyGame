@@ -37,8 +37,6 @@ int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
     
-    bool host = false;
-    
     bool repeat = true;
     while (repeat) {
         repeat = false;

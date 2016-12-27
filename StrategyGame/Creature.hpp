@@ -231,6 +231,15 @@ public:
      */
     std::string serialize();
     
+    /*!
+     * Create an object from a serialized string that can be sent through sockets.
+     *
+     * @param str The string to convert into an object.
+     *
+     * @return The object created.
+     */
+    static Creature deserialize(std::string str);
+    
 private:
     //Private properties
     const unsigned int creatureController;
