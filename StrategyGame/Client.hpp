@@ -14,6 +14,7 @@
 #include <map>
 
 //Local includes
+#include "Board.hpp"
 #include "Visualizer.hpp"
 
 class Client {
@@ -24,22 +25,29 @@ public:
     
     //Public member functions
     
-    static std::vector<int> parseVectorOfInt(std::string str);
-
-    static std::vector<float> parseVectorOfFloat(std::string str);
-    
     void render();
     void terminate();
     
     bool windowShouldClose();
     
 private:
+    //Private properties
     
-    //Socket, to receive information and give to the visualizer
-    ClientSocket socket;
+    //Board info
+    int boardWidth;
+    int boardHeight;
+    Board board;
+    
+    //Info unique to clinet
+    unsigned int playerNum;
+    std::vector<std::vector<float> > offsets;
+    
     
     //Visualizer, to render the window
     Visualizer visualizer;
+    
+    //Private member functions
+    void updateCreatures(float deltaTime);
 };
 
 #endif /* Client_hpp */

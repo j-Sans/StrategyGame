@@ -356,31 +356,29 @@ void Host::processAction(std::string action, unsigned int playerNum) {
             //Interpret the string to find out what kind of building
 
             /* The contents of the button string are:
-             * building,[maxHealth],[cost]
+             * building,[maxHealth]
              *
              * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
              *
              * This function goes through the string and extracts those values and constructs a building based on them.
              */
-            int values[] = {0, 0};
+            int maxHealth;
 
             action.erase(0, 14); //Gets rid of the "make_building," from the string
 
             //Extract the numerical values of the building
-
-            for (int valueNum = 0; valueNum < 2; valueNum++) {
-                //Find the position of the next comma, which is the number of digits before that comma
-                GLuint numDigits = (GLuint)action.find(',');
-
-                for (int place = numDigits - 1; place >= 0; place--) {
-                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-                }
-
-                action.erase(0, 1); //Get rid of the comma
-            }
             
-            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], playerNum);
+            //Find the position of the next comma, which is the number of digits before that comma
+            GLuint numDigits = (GLuint)action.find(',');
+            
+            for (int place = numDigits - 1; place >= 0; place--) {
+                maxHealth += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+            }
+
+            action.erase(0, 1); //Get rid of the comma
+            
+            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", maxHealth, playerNum);
             
             if (!this->board.get(selectedTile.x, selectedTile.y).occupied()) {
                 this->board.setBuilding(selectedTile.x, selectedTile.y, newBuilding);
