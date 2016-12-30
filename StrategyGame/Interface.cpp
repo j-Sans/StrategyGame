@@ -11,7 +11,7 @@
 //Only so that Visualizer.hpp can have properly initialized interfaces. No other purpose.
 Interface::Interface() {}
 
-Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
+Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
     this->interfaceWindow = window;
     this->interfaceShader = shader;
     this->buttonShader = shaderForButtons;
@@ -22,7 +22,6 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     this->lowerLeftY = y;
     this->boxWidth = width;
     this->boxHeight = height;
-    glfwGetFramebufferSize(this->interfaceWindow, &this->viewportWidth, &this->viewportHeight);
     
     GLfloat data[] = {
         -1.0, -1.0,

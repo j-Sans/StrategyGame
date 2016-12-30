@@ -11,7 +11,7 @@
 //Only so that Interface.hpp can have properly initialized display bars. No other purpose.
 DisplayBar::DisplayBar() {}
 
-DisplayBar::DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), currentMaxValue(maxVal), text(barText), barType(type), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
+DisplayBar::DisplayBar(Shader* shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), currentMaxValue(maxVal), text(barText), barType(type), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
     
     this->currentValue = this->currentMaxValue;
     

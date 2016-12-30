@@ -12,11 +12,11 @@
 //Declared here so it can work with static function keyCallback. That function needs to be static
 bool keys[1024];
 
-//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
+//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function. Don't use this to see if the mouse was pressed, use the other boolean
 //This is only true right after the mouse is pressed
 bool mouseJustPressed = false;
 
-//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function
+//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function. Use this to see if the mouse was pressed
 //This is true as long as the mouse is down
 bool mouseDown = false;
 
@@ -33,11 +33,8 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     
     this->camMaxDisplacement = this->boardWidth / 10.0f;
     
-    glm::ivec2 windowSize;
-    glm::ivec2 framebufferSize;
-    
-    glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
-    glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
+    glm::ivec2 windowSize = this->window.windowSize();
+    glm::ivec2 framebufferSize = this->window.framebufferSize();
     
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
@@ -119,11 +116,8 @@ void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> t
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 //void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
 void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
-    glm::dvec2 mousePos;
-    glm::ivec2 windowSize;
-    
-    glfwGetCursorPos(this->gameWindow, &mousePos.x, &mousePos.y);
-    glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+    glm::dvec2 mousePos = this->window.cursorPos();
+    glm::ivec2 windowSize = this->window.windowSize();
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
@@ -232,15 +226,12 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
 //        mousePressed = false;
     
     //Swap buffers so as to properly render without flickering
-    glfwSwapBuffers(this->gameWindow);
+    this->window.updateScreen();
 }
 
 std::string Visualizer::getClientInfo() {
-    glm::dvec2 mousePos;
-    glm::ivec2 windowSize;
-    
-    glfwGetCursorPos(this->gameWindow, &mousePos.x, &mousePos.y);
-    glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
+    glm::dvec2 mousePos = this->window.cursorPos();
+    glm::ivec2 windowSize = this->window.windowSize();
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
@@ -284,7 +275,7 @@ void Visualizer::endFrame() {
 
 //Close the window
 void Visualizer::closeWindow() {
-    glfwSetWindowShouldClose(this->gameWindow, GL_TRUE);
+    this->window.close();
 }
 
 //Terminate the window
@@ -309,9 +300,8 @@ const void Visualizer::setClearColor(GLfloat red, GLfloat green, GLfloat blue) {
     this->clearColor = glm::vec3(red, green, blue);
 }
 
-//Get a pointer to the window
-GLFWwindow* Visualizer::window() {
-    return this->gameWindow;
+bool Visualizer::mousePressed() {
+    return mouseDown;
 }
 
 //Get the time since the previous frame
@@ -323,59 +313,18 @@ const GLfloat Visualizer::timeSinceLastFrame() {
 
 //Initialize GLFW, GLEW, the key callback function, and the window itself.
 void Visualizer::initWindow() {
-    //Initiate GLFW
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //Version 3.3 of OpenGL
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Error with accidental use of legacy functions
-    
-#ifdef RESIZEABLE
-    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-#endif
-#ifndef RESIZEABLE
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-#endif
-    
-#ifndef _win32
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //On OS X
-#endif
-    
-    //Make a window object
-    this->gameWindow = glfwCreateWindow(this->windowWidth, this->windowHeight, "Game", nullptr, nullptr);
-    
-#ifdef FULL_SCREEN //Makes the window take up the entire screen but still be within a moveable window
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    
-    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-    
-    glfwSetWindowMonitor(this->gameWindow, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
-#endif
-    
-    if (this->gameWindow == nullptr) { //If the window isn't created, return an error
-        glfwTerminate();
-        throw std::runtime_error("Failed to create GLFW Window.");
-    }
-    
-    glfwMakeContextCurrent(this->gameWindow);
-    
-    //Initialize GLEW
-    glewExperimental = GL_TRUE; //Allows the use of more modern OpenGL functionality
-    if (glewInit() != GLEW_OK) { //If GLEW isn't properly initialized, return an error
-        throw std::runtime_error("Failed to initialize GLEW.\n");
-    }
+    //Make a window object. May throw an error, which will be thrown through this function
+    this->window.init(this->windowWidth, this->windowHeight, "Game", false, true);
     
     //Tell OpenGL window information
-    int viewportWidth, viewportHeight;
-    glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
-    glViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, viewportWidth - this->leftInterfaceStats.width - this->rightInterfaceStats.width, viewportHeight - this->bottomInterfaceStats.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
-    
-    this->viewportSize = glm::ivec2(viewportWidth - this->leftInterfaceStats.width - this->rightInterfaceStats.width, viewportHeight - this->bottomInterfaceStats.height);
+    glm::vec2 framebufferSize = this->window.framebufferSize();
+    this->window.setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
-    glfwSetKeyCallback(this->gameWindow, this->keyCallback);
+    this->window.setKeyCallback(this->keyCallback);
     
     //Set mouse button click callback function
-    glfwSetMouseButtonCallback(this->gameWindow, this->mouseButtonCallback);
+    this->window.setMouseButtonCallback(this->mouseButtonCallback);
 }
 
 void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
@@ -530,13 +479,12 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
 }
 
 void Visualizer::setInterface() {
-    int viewportWidth, viewportHeight;
-    glfwGetFramebufferSize(this->gameWindow, &viewportWidth, &viewportHeight);
+    glm::ivec2 framebufferSize = this->window.framebufferSize();
     
-    this->leftInterfaceStats = interfaceStat(0.0, 0.0, viewportWidth / 6.0, viewportHeight);
-    this->bottomInterfaceStats = interfaceStat(viewportWidth * 1.0 / 6.0, 0.0, viewportWidth * 2.0 / 3.0, viewportHeight / 4.0);
-    this->rightInterfaceStats = interfaceStat(viewportWidth * 5.0 / 6.0, 0.0, viewportWidth / 6.0, viewportHeight);
-    this->settingsMenuStats = interfaceStat(viewportWidth/ 3.0, viewportHeight / 6.0, viewportWidth / 3.0, viewportHeight * 2.0 / 3.0);
+    this->leftInterfaceStats = interfaceStat(0.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
+    this->bottomInterfaceStats = interfaceStat(framebufferSize.x * 1.0 / 6.0, 0.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.y / 4.0);
+    this->rightInterfaceStats = interfaceStat(framebufferSize.x * 5.0 / 6.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
+    this->settingsMenuStats = interfaceStat(framebufferSize.x / 3.0, framebufferSize.y / 6.0, framebufferSize.x / 3.0, framebufferSize.y * 2.0 / 3.0);
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     
@@ -545,24 +493,24 @@ void Visualizer::setInterface() {
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
     //Left-Side Game UI (brown rectangle)
-    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
+    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
     
     //Bottom Game UI (brown rectangle)
-    this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
+    this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
     
     //Right-Side Game UI (brown rectangle)
-    this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
+    this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
     
     //Interface for selected creatures
-    this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
+    this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
     
     //Interface for selected buildings
-    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
+    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
     
     //Settings popup menu
-    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, this->gameWindow, this->settingsMenuStats.x, this->settingsMenuStats.y, this->settingsMenuStats.width, this->settingsMenuStats.height, settings);
+    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->settingsMenuStats.x, this->settingsMenuStats.y, this->settingsMenuStats.width, this->settingsMenuStats.height, settings);
     
-    this->darkenBox = Box(this->buttonShader, this->gameWindow, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
+    this->darkenBox = Box(this->buttonShader, &this->window, 0, 0, this->windowWidth, this->windowHeight, 0, 0, &this->window, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -787,11 +735,6 @@ void Visualizer::renderDamageText() {
     for (GLuint tile = 0; tile < this->numberOfTiles ; tile++) {
         
         if (this->damageData[tile] != 0) { //Don't show the damage if it is not new
-        
-            glm::ivec2 windowSize;
-            glm::ivec2 framebufferSize;
-            glfwGetWindowSize(this->gameWindow, &windowSize.x, &windowSize.y);
-            glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
 
             glm::vec2 damageTileCoords = tileCenters[tile];
             
@@ -802,7 +745,9 @@ void Visualizer::renderDamageText() {
             
             glm::vec2 fontSize = this->font.getSize(std::to_string(this->damageData[tile]), 1.0);
             
-            this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * this->viewportSize.y - (fontSize.y / 2), 1.0, glm::vec3(1.0, 1.0, 1.0), this->viewportSize.x, this->viewportSize.y);
+            glm::vec2 viewportSize = this->window.viewportSize();
+            
+            this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * viewportSize.y - (fontSize.y / 2), 1.0, glm::vec3(1.0, 1.0, 1.0), viewportSize.x, viewportSize.y);
         }
     }
 }

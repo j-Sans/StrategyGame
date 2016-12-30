@@ -27,6 +27,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Window.hpp"
 
 enum DisplayBoxType {
     //Creature info boxes
@@ -62,7 +63,7 @@ public:
      * @param boxText An std::string representing the text to display on the box as its name.
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
-    Box(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type);
+    Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type);
     
     /*!
      * A class representing a box on an interface block. This creates a box with the given button color
@@ -81,7 +82,7 @@ public:
      * @param boxText An std::string representing the text to display on the box as its name.
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
-    Box(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, DisplayBoxType type);
+    Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, DisplayBoxType type);
     
     //Static properties
     constexpr static float defaultColor = 0.33; //Set in constructor
@@ -115,7 +116,7 @@ private:
     glm::vec4 boxColor;
     
     //OpenGL and GLFW properties
-    GLFWwindow* boxWindow;
+    Window* boxWindow;
     Shader boxShader; //A compiled shader to render this box
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO

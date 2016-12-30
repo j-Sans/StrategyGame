@@ -40,6 +40,7 @@
 #include "Font.hpp"
 
 #include "Interface.hpp"
+#include "Window.hpp"
 
 //For when no tile is being selected
 #define NO_SELECTION glm::ivec2(-1, -1)
@@ -116,6 +117,8 @@ public:
     unsigned int playerNum;
     unsigned int activePlayer;
     
+    Window window;
+    
     /*!
      * A function that sets the initial information of the visualizer
      *
@@ -178,9 +181,9 @@ public:
     //Get functions
     
     /*!
-     * @return A pointer to the GLFWwindow object.
+     * @return Whether the mouse is has been pressed.
      */
-    GLFWwindow* window();
+    bool mousePressed();
     
     /*!
      * @return A GLfloat representing the time (in seconds) since the last frame.
@@ -198,7 +201,7 @@ private:
     unsigned int numberOfTiles;
     
     //OpenGL and GLFW properties
-    GLFWwindow* gameWindow;
+//    GLFWwindow* gameWindow;
     Shader gameShader; //Compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
@@ -242,7 +245,7 @@ private:
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::ivec2 viewportSize;
+//    glm::ivec2 viewportSize;
     glm::ivec2 selectedTile = NO_SELECTION;
     
     //Interfaces

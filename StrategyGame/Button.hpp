@@ -27,6 +27,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Window.hpp"
 
 class Button {
 public:
@@ -48,7 +49,7 @@ public:
      * @param buttonAction An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
      * @param buttonText An std::string representing the text to display on the button as its name.
      */
-    Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText);
+    Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText);
     
     //Public properties
     
@@ -90,7 +91,7 @@ private:
     bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
     
     //OpenGL and GLFW properties
-    GLFWwindow* buttonWindow;
+    Window* buttonWindow;
     Shader buttonShader; //A compiled shader to render this button
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
