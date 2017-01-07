@@ -110,7 +110,7 @@ private:
     GLfloat currentMaxValue;
     
     //OpenGL and GLFW properties
-    Window* barWindow;
+    Window* window;
     Shader barShader; //A compiled shader to render this display bar
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO

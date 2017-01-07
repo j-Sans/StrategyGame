@@ -26,6 +26,10 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     if (!this->socket.allReceived("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
     
+    this->socket.broadcast(this->board.serialize());
+    if (!this->socket.allReceived("boardReceived"))
+        throw std::runtime_error("Board not received");
+    
     int playerNum = 0;
     while (this->players.size() < numberOfPlayers) {
         this->players.push_back(Player(&board, playerNum++));
@@ -40,31 +44,31 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     
     this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
     
-    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
-    if (!this->socket.allReceived("terrainDataReceived"))
-        throw std::runtime_error("Terrain data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
-    if (!this->socket.allReceived("creatureDataReceived"))
-        throw std::runtime_error("Creature data not received");
-    
-    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
-    }
-    if (!this->socket.allReceived("colorDataReceived"))
-        throw std::runtime_error("Color data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(damageData));
-    if (!this->socket.allReceived("damageDataReceived"))
-        throw std::runtime_error("Damage data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
-    if (!this->socket.allReceived("offsetDataReceived"))
-        throw std::runtime_error("Offset data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
-    if (!this->socket.allReceived("buildingDataReceived"))
-        throw std::runtime_error("Building data not received");
+//    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
+//    if (!this->socket.allReceived("terrainDataReceived"))
+//        throw std::runtime_error("Terrain data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
+//    if (!this->socket.allReceived("creatureDataReceived"))
+//        throw std::runtime_error("Creature data not received");
+//    
+//    for (int a = 0; a < this->socket.numberOfClients(); a++) {
+//        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
+//    }
+//    if (!this->socket.allReceived("colorDataReceived"))
+//        throw std::runtime_error("Color data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfInts(damageData));
+//    if (!this->socket.allReceived("damageDataReceived"))
+//        throw std::runtime_error("Damage data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
+//    if (!this->socket.allReceived("offsetDataReceived"))
+//        throw std::runtime_error("Offset data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
+//    if (!this->socket.allReceived("buildingDataReceived"))
+//        throw std::runtime_error("Building data not received");
 }
 
 std::string Host::Host::storeVectorOfInts(std::vector<int> vec) {
@@ -104,7 +108,7 @@ void Host::update() {
     std::vector<std::string> clientInfo;
     
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        clientInfo.push_back(this->socket.receive(a));
+//        clientInfo.push_back(this->socket.receive(a));
     }
 //    this->socket.broadcast("clientDataReceived");
     
@@ -118,31 +122,31 @@ void Host::update() {
     
     this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
     
-    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
-    if (!this->socket.allReceived("terrainDataReceived"))
-        throw std::runtime_error("Terrain data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
-    if (!this->socket.allReceived("creatureDataReceived"))
-        throw std::runtime_error("Creature data not received");
-    
-    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
-    }
-    if (!this->socket.allReceived("colorDataReceived"))
-        throw std::runtime_error("Color data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(damageData));
-    if (!this->socket.allReceived("damageDataReceived"))
-        throw std::runtime_error("Damage data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
-    if (!this->socket.allReceived("offsetDataReceived"))
-        throw std::runtime_error("Offset data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
-    if (!this->socket.allReceived("buildingDataReceived"))
-        throw std::runtime_error("Building data not received");
+//    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
+//    if (!this->socket.allReceived("terrainDataReceived"))
+//        throw std::runtime_error("Terrain data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
+//    if (!this->socket.allReceived("creatureDataReceived"))
+//        throw std::runtime_error("Creature data not received");
+//    
+//    for (int a = 0; a < this->socket.numberOfClients(); a++) {
+//        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
+//    }
+//    if (!this->socket.allReceived("colorDataReceived"))
+//        throw std::runtime_error("Color data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfInts(damageData));
+//    if (!this->socket.allReceived("damageDataReceived"))
+//        throw std::runtime_error("Damage data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
+//    if (!this->socket.allReceived("offsetDataReceived"))
+//        throw std::runtime_error("Offset data not received");
+//    
+//    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
+//    if (!this->socket.allReceived("buildingDataReceived"))
+//        throw std::runtime_error("Building data not received");
 
     
     /* Each index of clientInfo stores information:
@@ -184,7 +188,7 @@ void Host::update() {
         this->players[a].updateCreatures(this->deltaTime);
     }
     
-    this->socket.broadcast("End of frame");
+//    this->socket.broadcast("End of frame");
     
     //Set the tiem of the previous frame to currentTime
     this->lastFrame = currentFrame;

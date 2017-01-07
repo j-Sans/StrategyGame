@@ -11,7 +11,7 @@
 //Constructor
 Window::Window() {}
 
-void Window::init(int width, int height, std::string name, bool resizable, bool fillScreen, bool scissor) {
+void Window::init(int width, int height, std::string name, bool resizable, bool fillScreen) {
     this->set = true;
     
     //Initiate GLFW
@@ -38,10 +38,6 @@ void Window::init(int width, int height, std::string name, bool resizable, bool 
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
         
         glfwSetWindowMonitor(this->window, nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
-    }
-    
-    if (scissor) {
-        glEnable(GL_SCISSOR_TEST);
     }
 
     if (this->window == nullptr) { //If the window isn't created, return an error

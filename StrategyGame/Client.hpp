@@ -112,6 +112,28 @@ private:
      */
     std::vector<Tile> getAttackableTiles(Tile creatureTile);
     
+    /*!
+     * Fill given std::vectors with OpenGL data.
+     *
+     * @param terrainData A pointer to an empty std::vector<int> to be filled with terrain data. 1 index per tile: [type].
+     * @param creatureData A pointer to an empty std::vector<int> to be filled with creature data. 3 indices per tile: [type, direction, controller].
+     * @param colorDataVec A pointer to an empty std::vector<float> to be filled with coloro data. 3 indices per tile: [red, green, blue].
+     * @param damageData A pointer to an empty std::vector<int> to be filled with damage data. 1 index per tile: [damage].
+     * @param offsetData A pointer to an empty std::vector<float> to be filled with offset data. 1 index per tile: [offset].
+     * @param buildingData A pointer to an empty std::vector<int> to be filled with building data. 2 indices per tile: [type, controller].
+     */
+    void getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<float>* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData);
+    
+    /*!
+     * Get the color of a specific tile from the board. An error may be thrown if the passed in location is out of bounds.
+     *
+     * @param x The x location of the tile.
+     * @param y The y location of the tile.
+     *
+     * @return The color of the tile at the specified location, with colors being in RGB from 0 to 1 as floats.
+     */
+    glm::vec3 tileColor(unsigned int x, unsigned int y);
+    
     void resolveTileAction(int x, int y);
 };
 

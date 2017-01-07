@@ -15,7 +15,7 @@ Box::Box() {}
 
 Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec4(Box::defaultColor, Box::defaultColor, Box::defaultColor, 1.0)), text(boxText), boxType(type) {
     
-    this->boxWindow = window;
+    this->window = window;
     this->boxShader = shader;
     
     this->font = Font(FONT_PATH);
@@ -66,7 +66,7 @@ Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLf
 
 Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, DisplayBoxType type) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(color), text(boxText), boxType(type) {
     
-    this->boxWindow = window;
+    this->window = window;
     this->boxShader = shader;
     
     this->font = Font(FONT_PATH);

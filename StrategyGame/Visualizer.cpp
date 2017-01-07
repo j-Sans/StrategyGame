@@ -48,7 +48,7 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     //Allow for multiple windows
-    glEnable(GL_SCISSOR_TEST);
+    this->window.setScissor(true);
     
     //Load textures
     //Exception only thrown if there are 32 textures already present
@@ -115,7 +115,7 @@ void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> t
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 //void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
-void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
+void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
     glm::dvec2 mousePos = this->window.cursorPos();
     glm::ivec2 windowSize = this->window.windowSize();
     
@@ -126,7 +126,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
     }
     
-    this->updateBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+//    this->updateBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
     
     this->updateInterfaces();
     
@@ -145,7 +145,7 @@ void Visualizer::render(std::vector<int> terrainDataVec, std::vector<int> creatu
     glClear(GL_COLOR_BUFFER_BIT);
     
     //So multiple windows exist again
-    glEnable(GL_SCISSOR_TEST);
+    this->window.setScissor(true);
     
     //Use the shader
     this->gameShader.use();
@@ -510,7 +510,7 @@ void Visualizer::setInterface() {
     //Settings popup menu
     this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->settingsMenuStats.x, this->settingsMenuStats.y, this->settingsMenuStats.width, this->settingsMenuStats.height, settings);
     
-    this->darkenBox = Box(this->buttonShader, &this->window, 0, 0, this->windowWidth, this->windowHeight, 0, 0, &this->window, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
+    Box(this->buttonShader, &this->window, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.

@@ -12,7 +12,7 @@
 Interface::Interface() {}
 
 Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
-    this->interfaceWindow = window;
+    this->window = window;
     this->interfaceShader = shader;
     this->buttonShader = shaderForButtons;
     this->displayBarShader = shaderForDisplayBars;
@@ -35,58 +35,58 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     
     switch (type) {
         case default_left: {
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.9, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, 0.9, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings"));
             
             //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, 0.7, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged"));
             
             break;
             
         } case default_bottom: {
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_building,300,1", "New Building"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_building,300,1", "New Building"));
             
             break;
         
         } case creature: {
             
             //Create the box for attack info that will be added to the map
-            Box attackBox(*this->buttonShader, this->interfaceWindow, 0.05, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack);
+            Box attackBox(*this->buttonShader, this->window, 0.05, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack);
             
             //Insert the box into with the key creature_
             this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_attack, attackBox));
             
             //Create the box for range info that will be added to the map
-            Box rangeBox(*this->buttonShader, this->interfaceWindow, 0.525, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range);
+            Box rangeBox(*this->buttonShader, this->window, 0.525, 0.7, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range);
             
             //Insert the box into with the key creature_range
             this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_range, rangeBox));
             
             
             //Create the box for vision info that will be added to the map
-            Box visionBox(*this->buttonShader, this->interfaceWindow, 0.05, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
+            Box visionBox(*this->buttonShader, this->window, 0.05, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
             
             //Insert the box into with the key creature_vision
             this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_vision, visionBox));
             
             //Create the box for race info that will be added to the map
-            Box raceBox(*this->buttonShader, this->interfaceWindow, 0.525, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
+            Box raceBox(*this->buttonShader, this->window, 0.525, 0.6, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
             
             //Insert the box into with the key creature_race
             this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_race, raceBox));
             
             
             //Create the displayBar for health that will be added to the map
-            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", HealthBar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar healthBar(this->displayBarShader, this->window, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", HealthBar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Inserts a display bar into the map with the key health
             this->displayBars.insert(std::pair<DisplayBarType, DisplayBar>(HealthBar, healthBar));
             
             
             //Create the displayBar for energy that will be added to the map
-            DisplayBar energyBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", EnergyBar, glm::vec3(0.2, 0.2, 0.4), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar energyBar(this->displayBarShader, this->window, 0.125, 0.8, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Energy: ", EnergyBar, glm::vec3(0.2, 0.2, 0.4), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Insert the display bar into the map with the key energy
             this->displayBars.insert(std::pair<DisplayBarType, DisplayBar>(EnergyBar, energyBar));
@@ -96,12 +96,12 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
         } case building: {
             
             //Create the displayBar for health that will be added to the map
-            DisplayBar healthBar(this->displayBarShader, this->interfaceWindow, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", HealthBar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
+            DisplayBar healthBar(this->displayBarShader, this->window, 0.125, 0.9, 0.75, 0.05, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, 0, "Health: ", HealthBar, glm::vec3(0.2, 0.4, 0.2), glm::vec3(0.67, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5));
             
             //Inserts a display bar into the map with the key health
             this->displayBars.insert(std::pair<DisplayBarType, DisplayBar>(HealthBar, healthBar));
             
-            this->buttons.push_back(Button(*this->buttonShader, this->interfaceWindow, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building_new_creature", "Make Melee"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, 0.8, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "building_new_creature", "Make Melee"));
             
             break;
             
@@ -131,7 +131,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
 void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     if (active) {
         //Get updated information about the viewport
-        this->updateViewport();
+//        this->updateViewport();
         
         glViewport(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
         
@@ -157,29 +157,30 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
             displayBar->second.render();
         }
         
+        glm::ivec2 framebufferSize = this->window->framebufferSize();
+        
         //Reset window information for game rendering
-        glScissor(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0);
-        glViewport(viewportWidth / 6.0, viewportHeight / 4.0, viewportWidth * 2.0 / 3.0, viewportHeight * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfaces
+        this->window->setViewport(framebufferSize.x / 6.0, framebufferSize.y / 4.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.x * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfaces
     }
 }
 
-void Interface::updateViewport() {
-    GLuint oldViewportWidth = this->viewportWidth;
-    GLuint oldViewportHeight = this->viewportHeight;
-    
-    glfwGetFramebufferSize(this->interfaceWindow, &this->viewportWidth, &this->viewportHeight);
-    
-    //If the viewport size has changed, update the interface viewports by multiplying them by the ratio
-    
-    //Update the width
-    if (oldViewportWidth != this->viewportWidth) {
-        this->lowerLeftX *= (this->viewportWidth / oldViewportWidth);
-        this->boxWidth *= (this->viewportWidth / oldViewportWidth);
-    }
-    
-    //Update the height
-    if (oldViewportHeight != this->viewportHeight) {
-        this->lowerLeftY *= (this->viewportHeight / oldViewportHeight);
-        this->boxHeight *= (this->viewportHeight / oldViewportHeight);
-    }
-}
+//void Interface::updateViewport() {
+//    GLuint oldViewportWidth = this->viewportWidth;
+//    GLuint oldViewportHeight = this->viewportHeight;
+//    
+//    glfwGetFramebufferSize(this->window, &this->viewportWidth, &this->viewportHeight);
+//    
+//    //If the viewport size has changed, update the interface viewports by multiplying them by the ratio
+//    
+//    //Update the width
+//    if (oldViewportWidth != this->viewportWidth) {
+//        this->lowerLeftX *= (this->viewportWidth / oldViewportWidth);
+//        this->boxWidth *= (this->viewportWidth / oldViewportWidth);
+//    }
+//    
+//    //Update the height
+//    if (oldViewportHeight != this->viewportHeight) {
+//        this->lowerLeftY *= (this->viewportHeight / oldViewportHeight);
+//        this->boxHeight *= (this->viewportHeight / oldViewportHeight);
+//    }
+//}

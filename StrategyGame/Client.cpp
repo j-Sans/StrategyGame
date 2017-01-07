@@ -25,7 +25,7 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     this->playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
     
     this->board = Board::deserialize(this->socket.receive());
-    
+    this->socket.send("boardReceived");
     
     
     
@@ -52,20 +52,11 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
 }
 
 void Client::render() {
+    this->visualizer.startFrame();
+    
     this->updateSelected(this->visualizer.mousePressed(), this->visualizer.window.cursorPos(), glfwGetTime());
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    this->visualizer.startFrame();
+    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
     std::string clientInfo = this->visualizer.getClientInfo() + ";";
     
@@ -74,7 +65,7 @@ void Client::render() {
         a = this->actionsForClientInfo.erase(a);
     }
     
-    this->socket.send(clientInfo);
+//    this->socket.send(clientInfo);
 //    if (this->socket.receive() != "clientDataReceived")
 //        throw std::runtime_error("Client data not received");
 //    
@@ -101,8 +92,8 @@ void Client::render() {
 //    
 //    if (this->socket.receive() != "End of frame")
 //        throw std::runtime_error("Waiting on host to move to next frame");
-//    
-//    this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+
+    this->visualizer.render(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
     
     this->visualizer.endFrame();
 }
@@ -358,6 +349,64 @@ std::vector<Tile> Client::getAttackableTiles(Tile creatureTile) {
         
         return attackableTiles;
     }
+}
+
+void Client::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<float>* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
+    
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            (*terrainData).push_back(this->board.get(x, y).terrain());
+            
+            (*creatureData).push_back(this->board.get(x, y).creatureType());
+            if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
+                (*creatureData).push_back(this->board.get(x, y).creature()->direction());
+                (*creatureData).push_back(this->board.get(x, y).creature()->controller());
+            } else {
+                (*creatureData).push_back(0);
+                (*creatureData).push_back(0);
+            }
+            
+            glm::vec3 tileColor = this->tileColor(x, y);
+            (*colorDataVec).push_back(tileColor.x);
+            (*colorDataVec).push_back(tileColor.y);
+            (*colorDataVec).push_back(tileColor.z);
+            
+            (*damageData).push_back(this->board.get(x, y).damage());
+            
+            if (this->board.get(x, y).creature() != nullptr)
+                (*offsetData).push_back(this->board.get(x, y).creature()->offset());
+            else
+                (*offsetData).push_back(0);
+            
+            (*buildingData).push_back(this->board.get(x, y).buildingType());
+            if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
+                (*buildingData).push_back(this->board.get(x, y).building()->controller());
+            else
+                (*buildingData).push_back(0);
+        }
+    }
+}
+
+glm::vec3 Client::tileColor(unsigned int x, unsigned int y) {
+    if (x >= this->board.width())
+        throw std::range_error("X out of range");
+    if (y >= this->board.height(x))
+        throw std::range_error("Y out of range");
+    
+    int style = this->boardInfo[x][y][TILE_STYLE];
+    int hover = this->boardInfo[x][y][TILE_HOVER];
+    
+    if (style == REGULAR)
+        return hover == NO_HOVERING ? WHITE : WHITE * HOVER_EFFECT;
+    else if (style == SELECTED)
+        return hover == NO_HOVERING ? GREY : GREY * HOVER_EFFECT;
+    else if (style == ATTACKABLE)
+        return hover == NO_HOVERING ? RED : RED * HOVER_EFFECT;
+    else if (style == REACHABLE)
+        return hover == NO_HOVERING ? GREEN : GREEN * HOVER_EFFECT;
+    
+    //Something went wrong. Return White to have an unaltered color
+    return WHITE;
 }
 
 void Client::resolveTileAction(int x, int y) {

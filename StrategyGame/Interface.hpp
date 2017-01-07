@@ -99,7 +99,7 @@ public:
     
 private:
     //OpenGL and GLFW properties
-    Window* interfaceWindow;
+    Window* window;
     Shader *interfaceShader; //Compiled shader
     Shader *buttonShader; //Shader for the buttons
     Shader *displayBarShader; //Shader for the display bars
@@ -121,7 +121,7 @@ private:
     /*!
      * Update the viewport information of this object. This functino would be relevant with resizing, but for now do not use this function! The function works, but there is no substitute with the buttons!
      */
-    void updateViewport();
+//    void updateViewport();
     
 };
 

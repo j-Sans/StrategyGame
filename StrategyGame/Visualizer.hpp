@@ -119,6 +119,15 @@ public:
     
     Window window;
     
+    //Array data to be sent to respective VBO's
+    std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
+    std::vector<GLint> terrainData; //[NUMBER_OF_TILES];
+    std::vector<GLint> creatureData; //[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
+    std::vector<GLfloat> colorData; //[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
+    std::vector<GLint> damageData; //[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
+    std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
+    std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
+    
     /*!
      * A function that sets the initial information of the visualizer
      *
@@ -134,7 +143,7 @@ public:
      * @param boardInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for updating openGL buffers.
      */
 //    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void render(/* std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
     
     /*!
      * A functino to return a string conatining the following.
@@ -212,15 +221,6 @@ private:
     GLuint damageVBO;
     GLuint offsetVBO;
     GLuint buildingVBO;
-    
-    //Array data to be sent to respective VBO's
-    std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
-    std::vector<GLint> terrainData; //[NUMBER_OF_TILES];
-    std::vector<GLint> creatureData; //[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
-    std::vector<GLfloat> colorData; //[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
-    std::vector<GLint> damageData; //[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
-    std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
-    std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
     
     //Textures
     std::vector<Texture> textures;

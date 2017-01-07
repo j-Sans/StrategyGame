@@ -15,7 +15,7 @@ DisplayBar::DisplayBar(Shader* shader, Window* window, GLfloat x, GLfloat y, GLf
     
     this->currentValue = this->currentMaxValue;
     
-    this->barWindow = window;
+    this->window = window;
     this->barShader = *shader;
     
     this->font = Font(FONT_PATH);

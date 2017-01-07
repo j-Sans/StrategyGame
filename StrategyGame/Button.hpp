@@ -91,7 +91,7 @@ private:
     bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
     
     //OpenGL and GLFW properties
-    Window* buttonWindow;
+    Window* window;
     Shader buttonShader; //A compiled shader to render this button
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
