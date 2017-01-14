@@ -128,18 +128,7 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
 //        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
 //    }
     
-    this->updateBuffers(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
     
-    this->updateInterfaces();
-    
-    GLfloat currentFrame = glfwGetTime();
-    this->deltaTime = currentFrame - this->lastFrame;
-    this->lastFrame = currentFrame;
-    
-    //Prepare all of the textures
-    for (auto tex = textures.begin(); tex != textures.end(); tex++) {
-        tex->use(this->gameShader);
-    }
     
 //    if (!this->showSettings)
 //        this->game.updateSelected(&mousePressed, cursorPos, windowSize, tileCenters);
@@ -165,7 +154,18 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
 //        escClicked = false;
 //    }
     
+    GLfloat currentFrame = glfwGetTime();
+    this->deltaTime = currentFrame - this->lastFrame;
+    this->lastFrame = currentFrame;
+    
+    //Prepare all of the textures
+    for (auto tex = textures.begin(); tex != textures.end(); tex++) {
+        tex->use(this->gameShader);
+    }
+    
     this->moveCamera();
+    
+    this->updateBuffers(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
     
     //Reset the view matrix
     this->view = glm::mat4();
@@ -184,6 +184,8 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
     glBindVertexArray(0);
     
     this->renderDamageText();
+    
+    this->updateInterfaces();
     
     //Render the left, bottom, and right interfaces
     

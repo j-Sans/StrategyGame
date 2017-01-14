@@ -29,7 +29,9 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     
     for (int x = 0; x < this->board.width(); x++) {
         std::vector<std::array<int, 2> > boardInfoColumn(this->board.height(x));
+        std::vector<std::queue<std::string> > tileActionColumn(this->board.height(x));
         this->boardInfo.push_back(boardInfoColumn);
+        this->tileActions.push_back(tileActionColumn);
     }
     
     this->visualizer.set(boardWidth, boardHeight);
@@ -141,6 +143,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
     if (mouseDown) {
         if (mousePos == NO_SELECTION) {
             this->resetAllTiles();
+        } else if (mousePos == INTERFACE_BOX_SELECTION) {
         } else if (mousePos == this->selectedTile) { //Reset the tile (and others) if the current tile is clicked again
             this->resetAllTiles();
             
