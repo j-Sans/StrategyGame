@@ -247,7 +247,7 @@ std::string Creature::serialize() {
         throw std::invalid_argument("Error serializing creature: unknown creature direction");
     }
     
-    return str + std::to_string(creatureOffset) + "," + std::to_string(creatureX) + "," + std::to_string(creatureY) + ",";
+    return str + std::to_string(creatureOffset) + "," + std::to_string(creatureX) + "," + std::to_string(creatureY) + "-Creature-";
     
 }
 

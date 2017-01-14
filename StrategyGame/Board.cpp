@@ -715,18 +715,18 @@ std::string Board::serialize() {
     for (int x = 0; x < this->gameBoard.size(); x++) {
         str += std::to_string(this->gameBoard[x].size()) + ",";
         for (int y = 0; y < this->gameBoard[x].size(); y++) {
-            str += this->gameBoard[x][y].serialize() + ",";
+            str += this->gameBoard[x][y].serialize();
         }
     }
     str += "creatures=" + std::to_string(this->creatures.size()) + ",";
     for (auto a = this->creatures.begin(); a != this->creatures.end(); a++) {
-        str += a->serialize() + ",";
+        str += a->serialize();
     }
     str += "buildings=" + std::to_string(this->buildings.size()) + ",";
     for (auto a = this->buildings.begin(); a != this->buildings.end(); a++) {
-        str += a->serialize() + ",";
+        str += a->serialize();
     }
-    return str;
+    return str + "-Board-";
 }
 
 Board Board::deserialize(std::string str) {
@@ -738,8 +738,9 @@ Board Board::deserialize(std::string str) {
         int height = std::stoi(str.substr(0, str.find_first_of(',')));
         str = str.substr(str.find_first_of(',') + 1);
         for (int y = 0; y < height; y++) {
-            tiles[x].push_back(Tile::deserialize(str.substr(0, str.find_first_of(','))));
-            str = str.substr(str.find_first_of(',') + 1);
+            std::cout << "str in for loop: " << str << std::endl;
+            tiles[x].push_back(Tile::deserialize(str.substr(0, str.find("-Tile-"))));
+            str = str.substr(str.find("-Tile-") + 6);
         }
     }
     
@@ -750,9 +751,9 @@ Board Board::deserialize(std::string str) {
     int numCreatures = std::stoi(str.substr(0, str.find_first_of(',')));
     str = str.substr(str.find_first_of(',') + 1);
     for (int a = 0; a < numCreatures; a++) {
-        Creature c = Creature::deserialize(str.substr(0, str.find_first_of(',')));
+        Creature c = Creature::deserialize(str.substr(0, str.find("-Creature-")));
         board.setCreature(c.x(), c.y(), c);
-        str = str.substr(str.find_first_of(',') + 1);
+        str = str.substr(str.find("-Creature-") + 10);
     }
     
     str.erase(0, 10); //To erase "buildings="
@@ -760,9 +761,9 @@ Board Board::deserialize(std::string str) {
     int numBuildings = std::stoi(str.substr(0, str.find_first_of(',')));
     str = str.substr(str.find_first_of(',') + 1);
     for (int a = 0; a < numBuildings; a++) {
-        Building b = Building::deserialize(str.substr(0, str.find_first_of(',')));
+        Building b = Building::deserialize(str.substr(0, str.find("-Building")));
         board.setBuilding(b.x(), b.y(), b);
-        str = str.substr(str.find_first_of(',') + 1);
+        str = str.substr(str.find("-Building-") + 10);
     }
     
     return board;

@@ -138,12 +138,11 @@ float Tile::timeOfDamage() {
 }
 
 std::string Tile::serialize() {
-    return "Tile:" + std::to_string(this->tileX) + "," + std::to_string(this->tileY) + "," + std::to_string(this->tileTerrain) + "," + std::to_string(this->tileDamage) + "," + std::to_string(this->damageHitTime) + ",";
+    return "Tile:" + std::to_string(this->tileX) + "," + std::to_string(this->tileY) + "," + std::to_string(this->tileTerrain) + "," + std::to_string(this->tileDamage) + "," + std::to_string(this->damageHitTime) + "-Tile-";
 }
 
 Tile Tile::deserialize(std::string str) {
     str.erase(0, 5); //To erase "Tile:"
-    
     std::string num = str.substr(0, str.find_first_of(','));
     std::cout << "str: " << str << " substr: " << num << std::endl;
     int x = std::stoi(num);
