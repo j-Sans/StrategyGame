@@ -133,9 +133,8 @@ public:
      *
      * @param width An unsigned int representing the number of tiles along the x axis on the board.
      * @param height An unsigned int representing the number of tiles along the y axis on the board.
-     * @param initialInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for initially setting openGL buffers.
      */
-    void set(unsigned int width, unsigned int height, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void set(unsigned int width, unsigned int height/*, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
     
     /*!
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
@@ -301,6 +300,8 @@ private:
 //    void setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
     void setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
     
+    void setVertexBuffer();
+    
     /*!
      * Initialize the interface
      */
@@ -370,7 +371,7 @@ private:
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
-     * (-1, -1) is returned if the selection was outside of the board.
+     * (-1, -1) is returned if the selection was outside of the board. This is refered to as NO_SELECTION.
      * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
      *
      * @param mousePos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.

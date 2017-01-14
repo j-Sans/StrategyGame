@@ -102,13 +102,14 @@ GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
 }
 
-void Visualizer::set(unsigned int width, unsigned int height, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
+void Visualizer::set(unsigned int width, unsigned int height/*, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
     this->boardWidth = width;
     this->boardHeight = height;
     
     this->numberOfTiles = this->boardWidth * this->boardHeight;
     
-    this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    this->setVertexBuffer();
+//    this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
     
     this->isSet = true;
 }
@@ -261,6 +262,8 @@ glm::ivec2 Visualizer::getMouseTile() {
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
+    
+    
     for (GLuint index = 0; index < this->numberOfTiles; index++) {
         //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
         tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
@@ -339,6 +342,80 @@ void Visualizer::initWindow() {
     
     //Set mouse button click callback function
     this->window.setMouseButtonCallback(this->mouseButtonCallback);
+}
+
+void Visualizer::setVertexBuffer() {
+    
+    glm::vec2 pointDistance;
+    pointDistance.x = 2.0 / this->boardWidth;
+    pointDistance.y = 2.0 / this->boardHeight;
+    
+    glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
+    locationOfFirstPoint.x += pointDistance.x / 2.0; //Half of the distance between points is before the first point and after the last
+    locationOfFirstPoint.y += pointDistance.y / 2.0;
+    
+    std::vector<GLfloat> vertexDataVec;
+    
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+    std::cout << "vectorData: " << std::endl;
+#endif
+    
+    for (GLuint x = 0; x < this->boardWidth; x++) {
+        for (GLuint y = 0; y < this->boardHeight; y++) {
+            //Sets the point location based on the location in the board and on the modifiers above.
+            vertexDataVec.push_back(locationOfFirstPoint.x - (x * pointDistance.x));
+            
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+            std::cout << "(" << vertexDataVec.back() << ", ";
+#endif
+            
+            vertexDataVec.push_back(locationOfFirstPoint.y - (y * pointDistance.y));
+            
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+            std::cout << vertexDataVec.back() << ")" << std::endl;
+#endif
+        }
+    }
+    
+#ifdef VERTEX_DATA_CONSOLE_OUTPUT
+    std::cout << std::endl;
+#endif
+    
+    this->vertexData = vertexDataVec;
+    
+    //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
+    //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
+    glGenVertexArrays(1, &this->VAO);
+    glGenBuffers(1, &this->vertexVBO);
+    glGenBuffers(1, &this->terrainVBO);
+    glGenBuffers(1, &this->creatureVBO);
+    glGenBuffers(1, &this->colorVBO);
+    glGenBuffers(1, &this->damageVBO);
+    glGenBuffers(1, &this->offsetVBO);
+    glGenBuffers(1, &this->buildingVBO);
+    
+    GLfloat vertices[2 * this->numberOfTiles];
+    
+    for (int a = 0; a < this->numberOfTiles; a++) {
+        vertices[2 * a] = this->vertexData[2 * a];
+        vertices[(2 * a) + 1] = this->vertexData[(2 * a) + 1];
+    }
+    
+    //First we bind the VAO
+    glBindVertexArray(this->VAO);
+    
+    //Bind the VBO with the data
+    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //And finally we unbind the VAO so we don't do any accidental misconfiguring
+    glBindVertexArray(0);
 }
 
 void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {

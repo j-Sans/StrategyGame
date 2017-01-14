@@ -32,7 +32,9 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
         this->boardInfo.push_back(boardInfoColumn);
     }
     
+    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
+    this->visualizer.set(boardWidth, boardHeight);
     
     
 //    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
@@ -133,7 +135,6 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
     }
     
     if (this->validTile(mousePos)) {
-        std::cout << "mousePos: (" << mousePos.x << "," << mousePos.y << ")" << std::endl;
         this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
     }
     
