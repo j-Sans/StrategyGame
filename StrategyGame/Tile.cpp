@@ -144,7 +144,6 @@ std::string Tile::serialize() {
 Tile Tile::deserialize(std::string str) {
     str.erase(0, 5); //To erase "Tile:"
     std::string num = str.substr(0, str.find_first_of(','));
-    std::cout << "str: " << str << " substr: " << num << std::endl;
     int x = std::stoi(num);
     str = str.substr(str.find_first_of(',') + 1);
     int y = std::stoi(str.substr(0, str.find_first_of(',')));

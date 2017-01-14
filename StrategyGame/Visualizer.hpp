@@ -146,7 +146,7 @@ public:
     void render(/* std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
     
     /*!
-     * A functino to return a string conatining the following.
+     * A function to return a string conatining the following.
      *  mouse_x_position,mouse_y_position,t
      *  mouse_x_position,mouse_y_position,f
      * The first one if the mouse is down, the second if the mouse is not down.
@@ -155,6 +155,11 @@ public:
      * @return The string to send to the host as described above.
      */
     std::string getClientInfo();
+    
+    /*!
+     * @return The coordinates of the tile where the mouse is located.
+     */
+    glm::ivec2 getMouseTile();
     
     /*!
      * A function that should be called at the beginning of each frame from the larger class, in this case client.

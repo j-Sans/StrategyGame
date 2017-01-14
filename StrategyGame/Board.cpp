@@ -738,7 +738,6 @@ Board Board::deserialize(std::string str) {
         int height = std::stoi(str.substr(0, str.find_first_of(',')));
         str = str.substr(str.find_first_of(',') + 1);
         for (int y = 0; y < height; y++) {
-            std::cout << "str in for loop: " << str << std::endl;
             tiles[x].push_back(Tile::deserialize(str.substr(0, str.find("-Tile-"))));
             str = str.substr(str.find("-Tile-") + 6);
         }

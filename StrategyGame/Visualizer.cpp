@@ -255,6 +255,20 @@ std::string Visualizer::getClientInfo() {
     return clientInfo;
 }
 
+glm::ivec2 Visualizer::getMouseTile() {
+    glm::dvec2 mousePos = this->window.cursorPos();
+    glm::ivec2 windowSize = this->window.windowSize();
+    
+    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
+    
+    for (GLuint index = 0; index < this->numberOfTiles; index++) {
+        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
+    }
+    
+    return this->mouseTile(mousePos, windowSize, tileCenters);
+}
+
 void Visualizer::startFrame() {
     //At the start of each frame, if the mouse has been clicked, then mouseDown will be set to true
     if (mouseJustPressed) {

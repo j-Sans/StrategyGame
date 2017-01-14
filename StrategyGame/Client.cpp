@@ -27,6 +27,11 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     this->board = Board::deserialize(this->socket.receive());
     this->socket.send("boardReceived");
     
+    for (int x = 0; x < this->board.width(); x++) {
+        std::vector<std::array<int, 2> > boardInfoColumn(this->board.height(x));
+        this->boardInfo.push_back(boardInfoColumn);
+    }
+    
     
     
     
@@ -54,7 +59,7 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
 void Client::render() {
     this->visualizer.startFrame();
     
-    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.window.cursorPos(), glfwGetTime());
+    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
@@ -127,8 +132,10 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
         }
     }
     
-    if (mousePos != NO_SELECTION)
+    if (this->validTile(mousePos)) {
+        std::cout << "mousePos: (" << mousePos.x << "," << mousePos.y << ")" << std::endl;
         this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
+    }
     
     if (mouseDown) {
         if (mousePos == NO_SELECTION) {
@@ -423,4 +430,11 @@ void Client::resolveTileAction(int x, int y) {
     this->tileActions[x][y].pop();
     
     this->actionsForClientInfo.push_back(std::to_string(x) + "," + std::to_string(y) + "," + action);
+}
+
+bool Client::validTile(glm::ivec2 tilePos) {
+    if (tilePos.x >= 0 && tilePos.x < this->board.width() && tilePos.y >= 0 && tilePos.y < this->board.height(tilePos.x))
+        return true;
+    else
+        return false;
 }
