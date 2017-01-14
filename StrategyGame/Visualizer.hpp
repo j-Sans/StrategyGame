@@ -337,7 +337,7 @@ private:
      * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
 //    void updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void updateBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void updateBuffers(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
     
     /*!
      * Set the correct interfaces to render based on the selected tile. Should be called every frame.

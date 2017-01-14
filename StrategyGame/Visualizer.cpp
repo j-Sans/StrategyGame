@@ -31,6 +31,9 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     
     this->initWindow(); //Create the GLFW window and set the window property
     
+
+    this->window.setClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z);
+    
     this->camMaxDisplacement = this->boardWidth / 10.0f;
     
     glm::ivec2 windowSize = this->window.windowSize();
@@ -48,7 +51,7 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     //Allow for multiple windows
-    this->window.setScissor(true);
+//    this->window.setScissor(true);
     
     //Load textures
     //Exception only thrown if there are 32 textures already present
@@ -108,7 +111,7 @@ void Visualizer::set(unsigned int width, unsigned int height/*, std::vector<int>
     
     this->numberOfTiles = this->boardWidth * this->boardHeight;
     
-    this->setVertexBuffer();
+    this->setVertexBuffer(); 
 //    this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
     
     this->isSet = true;
@@ -117,39 +120,21 @@ void Visualizer::set(unsigned int width, unsigned int height/*, std::vector<int>
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
 //void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
 void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
-    glm::dvec2 mousePos = this->window.cursorPos();
-    glm::ivec2 windowSize = this->window.windowSize();
     
-    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
+//    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
+//    
+//    for (GLuint index = 0; index < this->numberOfTiles; index++) {
+//        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+//        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
+//    }
     
-    for (GLuint index = 0; index < this->numberOfTiles; index++) {
-        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
-    }
-    
-//    this->updateBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    this->updateBuffers(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
     
     this->updateInterfaces();
     
     GLfloat currentFrame = glfwGetTime();
     this->deltaTime = currentFrame - this->lastFrame;
     this->lastFrame = currentFrame;
-    
-    //GLFW gets any events that have occurred
-    glfwPollEvents();
-    
-    //So the whole screen is cleared
-    glDisable(GL_SCISSOR_TEST);
-    
-    //Clears the screen after each rendering
-    glClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    //So multiple windows exist again
-    this->window.setScissor(true);
-    
-    //Use the shader
-    this->gameShader.use();
     
     //Prepare all of the textures
     for (auto tex = textures.begin(); tex != textures.end(); tex++) {
@@ -189,6 +174,10 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
     this->view = glm::translate(this->view, cameraCenter);
     this->gameShader.uniformMat4("view", this->view);
     
+    this->gameShader.use();
+    
+//    this->window.setScissor(false);
+    
     //Bind the VAO and draw shapes
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_POINTS, 0, this->numberOfTiles);
@@ -226,8 +215,14 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
 //    if (mousePressed)
 //        mousePressed = false;
     
+    //So the whole screen is cleared
+//    this->window.setScissor(false);
+    
     //Swap buffers so as to properly render without flickering
     this->window.updateScreen();
+    
+    //So multiple windows exist again
+//    this->window.setScissor(true);
 }
 
 std::string Visualizer::getClientInfo() {
@@ -650,19 +645,14 @@ void Visualizer::presetTransformations() {
 }
 
 //A function to update all of the buffers that need to be updated. Should be called every frame.
-void Visualizer::updateBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
+void Visualizer::updateBuffers(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
     
-    this->terrainData = terrainDataVec;
-    
-    this->creatureData = creatureDataVec;
-    
-    this->colorData = colorDataVec;
-    
-    this->damageData = damageDataVec;
-    
-    this->offsetData = offsetDataVec;
-    
-    this->buildingData = buildingDataVec;
+//    this->terrainData = terrainDataVec;
+//    this->creatureData = creatureDataVec;
+//    this->colorData = colorDataVec;
+//    this->damageData = damageDataVec;
+//    this->offsetData = offsetDataVec;
+//    this->buildingData = buildingDataVec;
     
     GLfloat vertices[2 * this->numberOfTiles];
     GLint terrains[this->numberOfTiles];
@@ -883,7 +873,7 @@ void Visualizer::processButton(std::string action) {
 
 void Visualizer::renderSettingsMenu(bool mouseUp, bool mousePressed) {
     glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
-    glScissor(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
+//    glScissor(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
     
     this->darkenBox.render();
     

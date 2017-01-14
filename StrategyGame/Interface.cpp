@@ -133,10 +133,10 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
         //Get updated information about the viewport
 //        this->updateViewport();
         
-        glViewport(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
+        this->window->setViewport(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
         
         //Set the box where OpenGL can draw
-        glScissor(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
+//        glScissor(this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight);
         
         //Bind the VAO and draw shapes
         this->interfaceShader->use();

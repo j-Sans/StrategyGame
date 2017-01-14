@@ -32,9 +32,9 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
         this->boardInfo.push_back(boardInfoColumn);
     }
     
-    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
-    
     this->visualizer.set(boardWidth, boardHeight);
+    
+    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
     
 //    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
@@ -63,14 +63,18 @@ void Client::render() {
     
     this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     
-    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
-    
     std::string clientInfo = this->visualizer.getClientInfo() + ";";
     
     for (auto a = this->actionsForClientInfo.begin(); a != this->actionsForClientInfo.end(); a++) {
         clientInfo += *a + ";";
         a = this->actionsForClientInfo.erase(a);
     }
+    
+    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
+    
+    this->visualizer.render(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
+    
+    this->visualizer.endFrame();
     
 //    this->socket.send(clientInfo);
 //    if (this->socket.receive() != "clientDataReceived")
@@ -99,10 +103,6 @@ void Client::render() {
 //    
 //    if (this->socket.receive() != "End of frame")
 //        throw std::runtime_error("Waiting on host to move to next frame");
-
-    this->visualizer.render(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
-    
-    this->visualizer.endFrame();
 }
 
 void Client::terminate() {
