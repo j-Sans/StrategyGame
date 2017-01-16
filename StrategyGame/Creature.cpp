@@ -326,7 +326,7 @@ Creature Creature::deserialize(std::string str) {
         throw std::invalid_argument("Error deserializing creature: unreadable creature direction");
     }
     
-    int offset = std::stof(str.substr(0, str.find_first_of(',')));
+    float offset = std::stof(str.substr(0, str.find_first_of(',')));
     str = str.substr(str.find_first_of(',') + 1);
     int x = std::stoi(str.substr(0, str.find_first_of(',')));
     str = str.substr(str.find_first_of(',') + 1);
@@ -336,5 +336,11 @@ Creature Creature::deserialize(std::string str) {
     Creature creature(x, y, race, maxHealth, maxEnergy, attack, attackStyle, vision, range, direction, controller);
     creature.takeDamage(maxHealth - health);
     creature.decrementEnergy(maxEnergy - energy);
+    creature.setOffset(offset);
+    std::cout << creature.offset() << std::endl;
     return creature;
+}
+
+void Creature::setOffset(float offset) {
+    this->creatureOffset = offset;
 }

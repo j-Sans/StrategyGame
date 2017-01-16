@@ -266,6 +266,13 @@ private:
     constexpr static const float movementAnimationSpeed = 2.0f;
     
     //Private member functions
+    
+    /*!
+     * A function to set the offset of this creature. Used within the deserialization function.
+     *
+     * @param offset A float representing the offset with which to override the previous value.
+     */
+    void setOffset(float offset);
 };
 
 #endif /* Creature_hpp */
