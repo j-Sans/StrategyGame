@@ -104,6 +104,8 @@ void Visualizer::set(unsigned int width, unsigned int height) {
     
     this->setBuffers();
     
+    this->updateBuffers();
+    
     this->isSet = true;
 }
 

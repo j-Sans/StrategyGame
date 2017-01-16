@@ -314,7 +314,15 @@ std::vector<Tile> Client::getAttackableTiles(Tile creatureTile) {
     }
 }
 
-void Client::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<float>* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
+void Client::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<float>* colorData, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
+    
+    //Empty the vectors before pushing them back
+    (*terrainData).clear();
+    (*creatureData).clear();
+    (*colorData).clear();
+    (*damageData).clear();
+    (*offsetData).clear();
+    (*buildingData).clear();
     
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
@@ -330,9 +338,9 @@ void Client::getBufferData(std::vector<int>* terrainData, std::vector<int>* crea
             }
             
             glm::vec3 tileColor = this->tileColor(x, y);
-            (*colorDataVec).push_back(tileColor.x);
-            (*colorDataVec).push_back(tileColor.y);
-            (*colorDataVec).push_back(tileColor.z);
+            (*colorData).push_back(tileColor.x);
+            (*colorData).push_back(tileColor.y);
+            (*colorData).push_back(tileColor.z);
             
             (*damageData).push_back(this->board.get(x, y).damage());
             
