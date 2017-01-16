@@ -243,7 +243,7 @@ private:
     glm::mat4 rectRotation;
     
     glm::vec3 cameraCenter;
-    GLfloat camMaxDisplacement;
+    glm::vec2 camMaxDisplacement;
     
     //Window data
     GLfloat deltaTime = 0.0f;

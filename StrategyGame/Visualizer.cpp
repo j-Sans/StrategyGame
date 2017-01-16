@@ -104,7 +104,7 @@ void Visualizer::set(unsigned int width, unsigned int height) {
     
     this->updateBuffers();
     
-    this->camMaxDisplacement = this->boardWidth / 10.0f;
+    this->camMaxDisplacement = glm::vec2(this->boardWidth / 10.0f, this->boardHeight / 10.0f);
     this->cameraCenter = glm::vec3(0.0f, 0.0f, 0.0f);
     
     this->isSet = true;
@@ -606,14 +606,14 @@ void Visualizer::moveCamera() {
     }
     
     //Guarantees that the camera won't move too far from the board center
-    if (this->cameraCenter.x > this->camMaxDisplacement)
-        this->cameraCenter.x = this->camMaxDisplacement;
-    if (this->cameraCenter.x < -this->camMaxDisplacement)
-        this->cameraCenter.x = -this->camMaxDisplacement;
-    if (this->cameraCenter.y > this->camMaxDisplacement)
-        this->cameraCenter.y = this->camMaxDisplacement;
-    if (this->cameraCenter.y < -this->camMaxDisplacement)
-        this->cameraCenter.y = -this->camMaxDisplacement;
+    if (this->cameraCenter.x > this->camMaxDisplacement.x)
+        this->cameraCenter.x = this->camMaxDisplacement.x;
+    if (this->cameraCenter.x < -this->camMaxDisplacement.x)
+        this->cameraCenter.x = -this->camMaxDisplacement.x;
+    if (this->cameraCenter.y > this->camMaxDisplacement.y)
+        this->cameraCenter.y = this->camMaxDisplacement.y;
+    if (this->cameraCenter.y < -this->camMaxDisplacement.y)
+        this->cameraCenter.y = -this->camMaxDisplacement.y;
 }
 
 void Visualizer::processButton(std::string action) {
