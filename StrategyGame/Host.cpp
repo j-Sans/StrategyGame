@@ -14,61 +14,22 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         this->socket.addClient();
     }
     
-    //Send initial info to the visualizer saying the width and height of the board
-    
-    std::string initialData;
-    initialData += std::to_string(this->board.width()) + ",";
-    initialData += std::to_string(this->board.height(0)) + ",";
-    
+    //Send to each player that player's number and the board
     for (int a = 0; a < numberOfPlayers; a++) {
-        this->socket.send(initialData + std::to_string(a) + ",", a);
+        this->socket.send(std::to_string(a) + "," + this->board.serialize(), a);
     }
     if (!this->socket.allReceived("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
     
-    this->socket.broadcast(this->board.serialize());
-    if (!this->socket.allReceived("boardReceived"))
-        throw std::runtime_error("Board not received");
-    
+    //Initialize each player with the board and that player's number
     int playerNum = 0;
     while (this->players.size() < numberOfPlayers) {
         this->players.push_back(Player(&board, playerNum++));
     }
     
+    //Initialize time
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
-    
-    std::vector<int> terrainData, creatureData, damageData, buildingData;
-    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
-    std::vector<float> offsetData;
-    
-    this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
-    
-//    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
-//    if (!this->socket.allReceived("terrainDataReceived"))
-//        throw std::runtime_error("Terrain data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
-//    if (!this->socket.allReceived("creatureDataReceived"))
-//        throw std::runtime_error("Creature data not received");
-//    
-//    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-//        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
-//    }
-//    if (!this->socket.allReceived("colorDataReceived"))
-//        throw std::runtime_error("Color data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfInts(damageData));
-//    if (!this->socket.allReceived("damageDataReceived"))
-//        throw std::runtime_error("Damage data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
-//    if (!this->socket.allReceived("offsetDataReceived"))
-//        throw std::runtime_error("Offset data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
-//    if (!this->socket.allReceived("buildingDataReceived"))
-//        throw std::runtime_error("Building data not received");
 }
 
 std::string Host::Host::storeVectorOfInts(std::vector<int> vec) {
@@ -104,90 +65,64 @@ void Host::update() {
         }
     }
     
-    //Get info from the clients about mouse position
-    std::vector<std::string> clientInfo;
-    
-    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-//        clientInfo.push_back(this->socket.receive(a));
-    }
-//    this->socket.broadcast("clientDataReceived");
-    
-//    this->socket.broadcast(std::to_string(this->activePlayer));
-//    if (!this->socket.allReceived("activePlayerReceived"))
-//        throw std::runtime_error("Active player not received");
-    
-    std::vector<int> terrainData, creatureData, damageData, buildingData;
-    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
-    std::vector<float> offsetData;
-    
-    this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
-    
-//    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
-//    if (!this->socket.allReceived("terrainDataReceived"))
-//        throw std::runtime_error("Terrain data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
-//    if (!this->socket.allReceived("creatureDataReceived"))
-//        throw std::runtime_error("Creature data not received");
-//    
-//    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-//        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
-//    }
-//    if (!this->socket.allReceived("colorDataReceived"))
-//        throw std::runtime_error("Color data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfInts(damageData));
-//    if (!this->socket.allReceived("damageDataReceived"))
-//        throw std::runtime_error("Damage data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
-//    if (!this->socket.allReceived("offsetDataReceived"))
-//        throw std::runtime_error("Offset data not received");
-//    
-//    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
-//    if (!this->socket.allReceived("buildingDataReceived"))
-//        throw std::runtime_error("Building data not received");
-
-    
-    /* Each index of clientInfo stores information:
-     1) Current mouse position's x coordinate on the board.
-     2) Current mouse position's y coordinate on the board.
-            -1 for either (1) or (2) represents NO_SELECTION
-     3) Whether the mouse is down or not. '0' represents up (false), and '1' represents down (true).
-     
-     Any other input should be done here. That hasn't been implimented.
-     */
-    
-    for (int a = 0; a < clientInfo.size(); a++) {
-        glm::ivec2 selectedTile;
-        
-        selectedTile.x = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
-        
-        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        
-        selectedTile.y = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
-        
-        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        
-        if (selectedTile.x < 0 || selectedTile.y < 0) {
-            selectedTile = NO_SELECTION;
-        }
-        
-        bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
-        
-        //Now extract the actions sent from the client
-        clientInfo[a].erase(0, 1); //Set the string to the contain only the list of actions, starting with the first action string. This erases the preceeding ';'
-        
-        while (clientInfo[a].size() > 1) { //If there is more than just the semicolon at the end of the last
-            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1), a); //Process the next action string
-            clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
-        }
-        
-        this->players[a].updateSelected(mouseDown, selectedTile, currentFrame.count());
-        
+    for (int a = 0; a < this->players.size(); a++) {
         this->players[a].updateCreatures(this->deltaTime);
     }
     
+    this->socket.broadcast(this->board.serialize());
+
+    for (int a = 0; a < this->socket.numberOfClients(); a++) {
+        std::string clientInfo = this->socket.receive(a);
+        while (clientInfo.size() > 0) {
+            this->processAction(clientInfo.substr(0, clientInfo.find_first_of(',')), a); //Process the action
+    
+            clientInfo = clientInfo.substr(clientInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+        }
+    }
+
+//    this->socket.broadcast(std::to_string(this->activePlayer));
+//    if (!this->socket.allReceived("activePlayerReceived"))
+//        throw std::runtime_error("Active player not received");
+//
+//    /* Each index of clientInfo stores information:
+//     1) Current mouse position's x coordinate on the board.
+//     2) Current mouse position's y coordinate on the board.
+//            -1 for either (1) or (2) represents NO_SELECTION
+//     3) Whether the mouse is down or not. '0' represents up (false), and '1' represents down (true).
+//     
+//     Any other input should be done here. That hasn't been implimented.
+//     */
+//    
+//    for (int a = 0; a < clientInfo.size(); a++) {
+//        glm::ivec2 selectedTile;
+//        
+//        selectedTile.x = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
+//        
+//        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+//        
+//        selectedTile.y = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
+//        
+//        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+//        
+//        if (selectedTile.x < 0 || selectedTile.y < 0) {
+//            selectedTile = NO_SELECTION;
+//        }
+//        
+//        bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
+//        
+//        //Now extract the actions sent from the client
+//        clientInfo[a].erase(0, 1); //Set the string to the contain only the list of actions, starting with the first action string. This erases the preceeding ';'
+//        
+//        while (clientInfo[a].size() > 1) { //If there is more than just the semicolon at the end of the last
+//            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1), a); //Process the next action string
+//            clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
+//        }
+//        
+//        this->players[a].updateSelected(mouseDown, selectedTile, currentFrame.count());
+//        
+//        this->players[a].updateCreatures(this->deltaTime);
+//    }
+//
 //    this->socket.broadcast("End of frame");
     
     //Set the tiem of the previous frame to currentTime
@@ -205,6 +140,33 @@ std::string Host::serialize() {
 //Private member functions
 
 void Host::processAction(std::string action, unsigned int playerNum) {
+    if (action.find("move_creature_at_") != std::string::npos) {
+        
+        //Parse the destination tile from the string
+        glm::ivec2 destination;
+        destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        
+        //Erase the "move_creature_at_"
+        action.erase(0, 17);
+        
+        //Parse the original tile from the string
+        glm::ivec2 currentTile;
+        currentTile.x = std::stoi(action.substr(0, action.find_first_of('_')));
+        action = action.substr(action.find_first_of('_') + 1);
+        currentTile.y = std::stoi(action);
+        
+        if (this->board.get(destination.x, destination.y).creature() != nullptr) {
+            
+        }
+    }
+    
+    
+    
+    
+    
     
     //Process actions here
     if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature

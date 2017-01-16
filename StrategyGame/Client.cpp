@@ -15,17 +15,10 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     std::string initialInfo = this->socket.receive();
     this->socket.send("initialDataReceived");
     
-    //Read in the board size
-    int boardWidth = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
-    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-    
-    int boardHeight = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
-    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-    
     this->playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
+    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
     
-    this->board = Board::deserialize(this->socket.receive());
-    this->socket.send("boardReceived");
+    this->board = Board::deserialize(initialInfo);
     
     //Initialize the various 2D vectors that hold information for each tile
     for (int x = 0; x < this->board.width(); x++) {
@@ -45,14 +38,26 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
 void Client::render() {
     this->visualizer.startFrame();
     
-    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
+    this->board = Board::deserialize(this->socket.receive());
     
-    std::string clientInfo = this->visualizer.getClientInfo() + ";";
+//    std::string clientInfo = this->visualizer.getClientInfo() + ";";
+    
+    std::string clientInfo = "";
     
     for (auto a = this->actionsForClientInfo.begin(); a != this->actionsForClientInfo.end(); a++) {
         clientInfo += *a + ";";
         a = this->actionsForClientInfo.erase(a);
     }
+    
+    this->socket.send(clientInfo);
+
+//    while (hostInfo.size() > 0) {
+//        this->processHostInfo(hostInfo.substr(0, hostInfo.find_first_of(',')); //Process the action
+//        
+//        hostInfo = hostInfo.substr(hostInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+//    }
+    
+    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
@@ -171,6 +176,13 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
         }
     }
 }
+
+//void Client::processHostInfo(std::string action) {
+//    if (action.find("move_creature") != std::string::npos) {
+//        action.erase(0, 14); //Erases "move_creature_"
+//        glm::ivec2 oldPos;
+//    }
+//}
 
 std::vector<Tile> Client::getReachableTiles(Tile creatureTile) {
     //Set the selected tile as the one inputted
