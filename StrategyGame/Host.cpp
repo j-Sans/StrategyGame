@@ -167,6 +167,36 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                     this->board.setDirection(currentTile.x, currentTile.y, directions[a]);
             }
         }
+    } else if (action.find("attack_from_") != std::string::npos) {
+        //Parse the destination tile from the string
+        glm::ivec2 destination;
+        destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        
+        //Erase the "move_creature_at_"
+        action.erase(0, 17);
+        
+        //Parse the original tile from the string
+        glm::ivec2 currentTile;
+        currentTile.x = std::stoi(action.substr(0, action.find_first_of('_')));
+        action = action.substr(action.find_first_of('_') + 1);
+        currentTile.y = std::stoi(action);
+        
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->players[playerNum].attackInRange(destination, currentTile)) {
+            glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
+            glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
+            
+            if (this->board.tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board.get(attacker.x, attacker.y).creature()->range()) {
+                
+                int attackDamage = 0, defendDamage = 0;
+                
+                this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+                this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
+                this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
+            }
+        }
     }
     
     

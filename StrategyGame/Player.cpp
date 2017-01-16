@@ -131,6 +131,35 @@ bool Player::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     return false;
 }
 
+bool Player::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+    if (!this->board->validTile(destination)) {
+        throw std::range_error("Invalid destination");
+    } else if (!this->board->validTile(currentLoc)) {
+        throw std::range_error("Invalid currentLoc");
+    }
+    
+    Creature *creature = this->board->get(currentLoc.x, currentLoc.y).creature();
+    
+    if (creature == nullptr) {
+        throw std::invalid_argument("No creature at currentLoc");
+    } else if (!this->board->get(destination.x, destination.y).passableByCreature(*creature)) {
+        throw std::invalid_argument("Destination not passable by creature");
+    } else if (creature->energy() <= 0) {
+        throw std::logic_error("Creature has no energy with which to attack");
+    }
+    
+    std::vector<Tile> tiles = this->getAttackableTiles(this->board->get(currentLoc.x, currentLoc.y));
+    
+    for (int a = 0; a < tiles.size(); a++) {
+        if (destination.x == tiles[a].x() && destination.y == tiles[a].y()) { //If the destination is within the reachable tiles, return true
+            return true;
+        }
+    }
+    
+    //If it could not be found, return false
+    return false;
+}
+
 std::vector<GLuint> Player::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
     if (x >= this->board->width()) {
         std::vector<GLuint> emptyVector;

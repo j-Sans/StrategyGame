@@ -146,33 +146,19 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                     this->resolveTileAction(mousePos.x, mousePos.y);
                     this->resetAllTiles();
                     this->selectedTile = NO_SELECTION;
+//#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+//                    //If the attacker died, nothing will happen and the function will return false
+//                    this->selectedCreature = glm::ivec2(mousePos.x, mousePos.y);
+//#endif
                     break;
                 } case ATTACKABLE: {
-                    /*
-                     glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
-                    glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
-                    
-                    if (this->board->tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board->get(attacker.x, attacker.y).creature()->range()) {
-                        
-                        int attackDamage = 0, defendDamage = 0;
-                        
-                        this->board->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
-                        this->board->setDamage(defender.x, defender.y, attackDamage, currentTime); //Make the damage visible
-                        this->board->setDamage(attacker.x, attacker.y, defendDamage, currentTime); //For attacker and defender
-                        
-                        this->resetAllTiles();
-                        this->selectedTile = NO_SELECTION;
-                        
-#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                        //If the attacker died, nothing will happen and the function will return false
-                        this->selectCreature(attacker.x, attacker.y);
-#endif
-                    }
-                    break;
-                     */
                     this->resolveTileAction(mousePos.x, mousePos.y);
                     this->resetAllTiles();
                     this->selectedTile = NO_SELECTION;
+//#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+//                    //If the attacker died, nothing will happen and the function will return false
+//                    this->selectCreature(attacker.x, attacker.y);
+//#endif
                 }
             }
         }
@@ -401,7 +387,7 @@ void Client::resolveTileAction(int x, int y) {
         throw std::logic_error("No board size");
     if (y > this->tileActions[x].size())
         throw std::range_error("Y out of bounds");
-    if (this->tileActions[x][y].size() < 1)
+    if (this->tileActions[x][y].size() > 0)
         throw std::logic_error("No actions to call");
     
     std::string action = this->tileActions[x][y].front();

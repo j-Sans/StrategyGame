@@ -148,6 +148,16 @@ public:
      */
     bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
     
+    /*!
+     * A function to check if a creature can attack the destination from its current location. An invalid_argument exception will be thrown if there is no creature, a range_error if either set of coordinates is not on the board, and a logic_error if the creature has no energy.
+     *
+     * @param destination A glm::ivec2 representing the board coordinates of the defender's tile.
+     * @param currentLoc A glm::ivec2 representing the board coordinates of the creature's current location.
+     *
+     * @return Whether the creature is able to attack.
+     */
+    bool attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    
     std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
     
 private:
