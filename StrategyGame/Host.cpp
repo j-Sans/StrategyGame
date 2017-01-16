@@ -399,4 +399,3 @@ void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatu
         }
     }
 }
-

@@ -702,6 +702,13 @@ Tile Board::get(unsigned int x, unsigned int y) {
     return this->gameBoard[x][y];
 }
 
+bool Board::validTile(glm::ivec2 tilePos) {
+    if (tilePos.x >= 0 && tilePos.x < this->board.width() && tilePos.y >= 0 && tilePos.y < this->board.height(tilePos.x))
+        return true;
+    else
+        return false;
+}
+
 unsigned int Board::width() {
     return (unsigned int)this->gameBoard.size();
 }

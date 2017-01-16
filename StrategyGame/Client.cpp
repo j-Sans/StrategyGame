@@ -95,7 +95,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
         }
     }
     
-    if (this->validTile(mousePos)) {
+    if (this->board.validTile(mousePos)) {
         this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
     }
     
@@ -406,11 +406,4 @@ void Client::resolveTileAction(int x, int y) {
     this->tileActions[x][y].pop();
     
     this->actionsForClientInfo.push_back(std::to_string(x) + "," + std::to_string(y) + "," + action);
-}
-
-bool Client::validTile(glm::ivec2 tilePos) {
-    if (tilePos.x >= 0 && tilePos.x < this->board.width() && tilePos.y >= 0 && tilePos.y < this->board.height(tilePos.x))
-        return true;
-    else
-        return false;
 }

@@ -190,6 +190,15 @@ public:
     Tile get(unsigned int x, unsigned int y);
     
     /*!
+     * A function to check the validity of tile coordinates.
+     *
+     * @param tilePos The coordinates of the tile to check.
+     *
+     * @return True if the given location exists on the board, false otherwise.
+     */
+    bool validTile(glm::ivec2 tilePos);
+    
+    /*!
      * @return The x-side width of the board.
      */
     unsigned int width();

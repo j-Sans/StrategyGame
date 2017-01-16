@@ -155,15 +155,6 @@ private:
     glm::vec3 tileColor(unsigned int x, unsigned int y);
     
     void resolveTileAction(int x, int y);
-    
-    /*!
-     * A function to check the validity of tile coordinates.
-     *
-     * @param tilePos The coordinates of the tile to check.
-     *
-     * @return True if the given location exists on the board, false otherwise.
-     */
-    bool validTile(glm::ivec2 tilePos);
 };
 
 #endif /* Client_hpp */

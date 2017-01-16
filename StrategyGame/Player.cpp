@@ -82,6 +82,55 @@ glm::ivec2 Player::tileSelected() {
     return this->selectedTile;
 }
 
+glm::vec3 Player::tileColor(unsigned int x, unsigned int y) {
+    if (x >= this->board->width())
+        throw std::range_error("X out of range");
+    if (y >= this->board->height(x))
+        throw std::range_error("Y out of range");
+    
+    int style = this->boardInfo[x][y][TILE_STYLE];
+    int hover = this->boardInfo[x][y][TILE_HOVER];
+    
+    if (style == REGULAR)
+        return hover == NO_HOVERING ? WHITE : WHITE * HOVER_EFFECT;
+    else if (style == SELECTED)
+        return hover == NO_HOVERING ? GREY : GREY * HOVER_EFFECT;
+    else if (style == ATTACKABLE)
+        return hover == NO_HOVERING ? RED : RED * HOVER_EFFECT;
+    else if (style == REACHABLE)
+        return hover == NO_HOVERING ? GREEN : GREEN * HOVER_EFFECT;
+    
+    //Something went wrong. Return White to have an unaltered color
+    return WHITE;
+}
+
+bool Player::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+    if (!this->board->validTile(destination)) {
+        throw std::range_error("Invalid destination");
+    } else if (!this->board->validTile(currentLoc)) {
+        throw std::range_error("Invalid currentLoc");
+    }
+    
+    Creature *creature = this->board->get(currentLoc.x, currentLoc.y).creature();
+    
+    if (creature) {
+        throw std::invalid_argument("No creature at currentLoc");
+    } else if (this->board->get(destination.x, destination.y).passableByCreature(*creature)) {
+        throw std::invalid_argument("Destination not passable by creature");
+    }
+    
+    std::vector<Tile> tiles = this->getReachableTiles(this->board->get(currentLoc.x, currentLoc.y));
+    
+    for (int a = 0; a < tiles.size(); a++) {
+        if (destination.x == tiles[a].x() && destination.y == tiles[a].y()) { //If the destination is within the reachable tiles, return true
+            return true;
+        }
+    }
+    
+    //If it could not be found, return false
+    return false;
+}
+
 void Player::updateCreatures(float deltaTime) {
     for (int x = 0; x < this->board->width(); x++) {
         for (int y = 0; y < this->board->height(x); y++) {
@@ -637,26 +686,4 @@ std::vector<GLuint> Player::getPath(GLuint x, GLuint y, GLuint destinationX, GLu
     }
     
     return directions;
-}
-
-glm::vec3 Player::tileColor(unsigned int x, unsigned int y) {
-    if (x >= this->board->width())
-        throw std::range_error("X out of range");
-    if (y >= this->board->height(x))
-        throw std::range_error("Y out of range");
-    
-    int style = this->boardInfo[x][y][TILE_STYLE];
-    int hover = this->boardInfo[x][y][TILE_HOVER];
-    
-    if (style == REGULAR)
-        return hover == NO_HOVERING ? WHITE : WHITE * HOVER_EFFECT;
-    else if (style == SELECTED)
-        return hover == NO_HOVERING ? GREY : GREY * HOVER_EFFECT;
-    else if (style == ATTACKABLE)
-        return hover == NO_HOVERING ? RED : RED * HOVER_EFFECT;
-    else if (style == REACHABLE)
-        return hover == NO_HOVERING ? GREEN : GREEN * HOVER_EFFECT;
-    
-    //Something went wrong. Return White to have an unaltered color
-    return WHITE;
 }

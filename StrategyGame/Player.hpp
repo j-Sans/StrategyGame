@@ -138,6 +138,16 @@ public:
      */
     glm::vec3 tileColor(unsigned int x, unsigned int y);
     
+    /*!
+     * A function to check if a creature can be moved to the destination from its current location. An invalid_argument exception will be thrown if there is no creature, and a range_error if either set of coordinates is not on the board.
+     *
+     * @param destination A glm::ivec2 representing the board coordinates of the destination tile.
+     * @param currentLoc A glm::ivec2 representing the board coordinates of the creature's current location.
+     *
+     * @return Whether the creature is able to move there.
+     */
+    bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    
 private:
     
     //Private properties
@@ -197,8 +207,6 @@ private:
     std::vector<Tile> getAttackableTiles(Tile creatureTile);
     
     std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
-    
-    //Private get functions
 };
 
 #endif /* Player_hpp */
