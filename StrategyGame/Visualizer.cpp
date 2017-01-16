@@ -288,21 +288,20 @@ void Visualizer::initWindow() {
 }
 
 void Visualizer::setVertexData() {
-    glm::vec2 pointDistance;
-    pointDistance.x = 2.0 / this->boardWidth;
-    pointDistance.y = 2.0 / this->boardHeight;
+    GLfloat pointDistance;
+    pointDistance = 2.0 / this->boardWidth;
     
     glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
-    locationOfFirstPoint.x -= pointDistance.x / 2.0; //Half of the distance between points is before the first point and after the last
-    locationOfFirstPoint.y -= pointDistance.y / 2.0;
+    locationOfFirstPoint.x -= pointDistance / 2.0; //Half of the distance between points is before the first point and after the last
+    locationOfFirstPoint.y -= pointDistance / 2.0;
     
     std::vector<GLfloat> vertexDataVec;
     
     for (GLuint x = 0; x < this->boardWidth; x++) {
         for (GLuint y = 0; y < this->boardHeight; y++) {
             //Sets the point location based on the location in the board and on the modifiers above.
-            vertexDataVec.push_back(locationOfFirstPoint.x - (x * pointDistance.x));
-            vertexDataVec.push_back(locationOfFirstPoint.y - (y * pointDistance.y));
+            vertexDataVec.push_back(locationOfFirstPoint.x - (x * pointDistance));
+            vertexDataVec.push_back(locationOfFirstPoint.y - (y * pointDistance));
         }
     }
     

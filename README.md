@@ -15,6 +15,7 @@ Each unit has multiple attributes, including:
 
 * Units and damage circles appear lower than they should, below the center of the tile.
 * After one player moves, the creature is deselcted for that player and selected for at least one other player. That player can then make the creature move or attack.
+* When the board is not square, errors with rendering terrain textures, centering the board, and calculating the tile at which the mouse is located occur.
 
 ## Authors
 
