@@ -29,8 +29,6 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     
     this->window.setClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z);
     
-    this->camMaxDisplacement = this->boardWidth / 10.0f;
-    
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
     this->font = Font(FONT_PATH);
@@ -106,6 +104,9 @@ void Visualizer::set(unsigned int width, unsigned int height) {
     
     this->updateBuffers();
     
+    this->camMaxDisplacement = this->boardWidth / 10.0f;
+    this->cameraCenter = glm::vec3(0.0f, 0.0f, 0.0f);
+    
     this->isSet = true;
 }
 
@@ -120,9 +121,15 @@ void Visualizer::render() {
         tex->use(this->gameShader);
     }
     
+    glm::ivec2 framebufferSize = this->window.framebufferSize();
+//    this->window.setViewport(0.0, 0.0, framebufferSize.x, framebufferSize.x * 3.0 / 4.0);
+    this->window.setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height);
+    
     this->moveCamera();
     
     this->updateBuffers();
+    
+    this->gameShader.use();
     
     //Reset the view matrix
     this->view = glm::mat4();
@@ -130,8 +137,6 @@ void Visualizer::render() {
     //Affect the camera position and send the view matrix to the shader
     this->view = glm::translate(this->view, cameraCenter);
     this->gameShader.uniformMat4("view", this->view);
-    
-    this->gameShader.use();
     
     //Bind the VAO and draw shapes
     glBindVertexArray(this->VAO);

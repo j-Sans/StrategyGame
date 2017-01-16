@@ -160,7 +160,8 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
         glm::ivec2 framebufferSize = this->window->framebufferSize();
         
         //Reset window information for game rendering
-        this->window->setViewport(framebufferSize.x / 6.0, framebufferSize.y / 4.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.x * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfaces
+//        this->window->setViewport(0.0, 0.0, framebufferSize.x, framebufferSize.y);
+//        this->window->setViewport(framebufferSize.x / 6.0, framebufferSize.y / 4.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.x * 3.0 / 4.0); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfaces
     }
 }
 
