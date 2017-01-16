@@ -703,7 +703,7 @@ Tile Board::get(unsigned int x, unsigned int y) {
 }
 
 bool Board::validTile(glm::ivec2 tilePos) {
-    if (tilePos.x >= 0 && tilePos.x < this->board.width() && tilePos.y >= 0 && tilePos.y < this->board.height(tilePos.x))
+    if (tilePos.x >= 0 && tilePos.x < this->width() && tilePos.y >= 0 && tilePos.y < this->height(tilePos.x))
         return true;
     else
         return false;

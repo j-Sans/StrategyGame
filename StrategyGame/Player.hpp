@@ -148,6 +148,8 @@ public:
      */
     bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
     
+    std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
+    
 private:
     
     //Private properties
@@ -205,8 +207,6 @@ private:
      * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
      */
     std::vector<Tile> getAttackableTiles(Tile creatureTile);
-    
-    std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
 };
 
 #endif /* Player_hpp */

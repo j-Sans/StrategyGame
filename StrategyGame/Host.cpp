@@ -74,9 +74,10 @@ void Host::update() {
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
         std::string clientInfo = this->socket.receive(a);
         while (clientInfo.size() > 0) {
-            this->processAction(clientInfo.substr(0, clientInfo.find_first_of(',')), a); //Process the action
+            std::cout << "processAction(" << clientInfo.substr(0, clientInfo.find_first_of(';')) << ", " << a << ");" << std::endl;
+            this->processAction(clientInfo.substr(0, clientInfo.find_first_of(';')), a); //Process the action
     
-            clientInfo = clientInfo.substr(clientInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+            clientInfo = clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
         }
     }
 
@@ -140,7 +141,10 @@ std::string Host::serialize() {
 //Private member functions
 
 void Host::processAction(std::string action, unsigned int playerNum) {
+    std::cout << "action: " << action << std::endl;
+
     if (action.find("move_creature_at_") != std::string::npos) {
+        std::cout << "Moving creature" << std::endl;
         
         //Parse the destination tile from the string
         glm::ivec2 destination;
@@ -158,8 +162,16 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        if (this->board.get(destination.x, destination.y).creature() != nullptr) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->players[playerNum].destinationInRange(destination, currentTile)) {
+            std::vector<unsigned int> directions = this->players[playerNum].getPath(currentTile.x, currentTile.y, destination.x, destination.y);
             
+            std::cout << "Creature in range" << std::endl;
+            
+            for (int a = 0; a < directions.size(); a++) {
+                this->board.get(currentTile.x, currentTile.y).creature()->directions.push(directions[a]);
+                if (a == 0)
+                    this->board.setDirection(currentTile.x, currentTile.y, directions[a]);
+            }
         }
     }
     

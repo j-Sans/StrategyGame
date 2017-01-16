@@ -105,14 +105,13 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
         } else if (mousePos == INTERFACE_BOX_SELECTION) {
         } else if (mousePos == this->selectedTile) { //Reset the tile (and others) if the current tile is clicked again
             this->resetAllTiles();
-            
-            //Set selectedTile to null results
             this->selectedTile = NO_SELECTION;
         } else {
             switch (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE]) {
                     
                 case REGULAR: { //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
                     this->resetAllTiles();
+                    this->selectedTile = mousePos;
                     
                     //Select this new tile
                     this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
@@ -126,7 +125,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                         for (int a = 0; a < reachableTiles.size(); a++) {
                             if (this->board.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(*creature)) {
                                 this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
-                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature_at_" + std::to_string(reachableTiles[a].x()) + "_" + std::to_string(reachableTiles[a].y()));
+                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature_at_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.x));
                             }
                         }
                         
@@ -142,10 +141,11 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                             }
                         }
                     }
-                    this->selectedTile = mousePos;
                     break;
                 } case REACHABLE: {
                     this->resolveTileAction(mousePos.x, mousePos.y);
+                    this->resetAllTiles();
+                    this->selectedTile = NO_SELECTION;
                     break;
                 } case ATTACKABLE: {
                     /*
@@ -171,6 +171,8 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                     break;
                      */
                     this->resolveTileAction(mousePos.x, mousePos.y);
+                    this->resetAllTiles();
+                    this->selectedTile = NO_SELECTION;
                 }
             }
         }
