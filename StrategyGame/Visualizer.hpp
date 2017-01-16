@@ -265,12 +265,6 @@ private:
     interfaceStat leftInterfaceStats;
     interfaceStat bottomInterfaceStats;
     interfaceStat rightInterfaceStats;
-    interfaceStat settingsMenuStats;
-    
-    //Settings menu
-    Box darkenBox; //A box to render to darken the entire screen
-    bool showSettings = false; //A boolean representing whether or not to display the settings menu
-    
     
     //Private member functions
     
@@ -279,28 +273,22 @@ private:
      */
     void initWindow();
     
-//    /*!
-//     * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-//     *
-//     * @param setVertexData A boolean indicating whether to update the vertex data array.
-//     * @param setTerrainData A boolean indicating whether to update the terrain data array.
-//     * @param setCreatureData A boolean indicating whether to update the creature data array.
-//     * @param setColorData A boolean indicating whether to update the color data array.
-//     * @param setDamageData A boolean indicating whether to update the damage data array.
-//     * @param setOffsetData A boolean indicating whether to update the offset data array.
-//     * @param setBuildingData A boolean indicating whether to update the building data array.
-//     */
-//    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData);
+    /*!
+     * Initialize OpenGL buffers with the object's vertex data. Should be called after the data vectors have been filled.
+     */
+    void setBuffers();
     
     /*!
-     * Initialize OpenGL buffers with the object's vertex data.
+     * A function to update all of the buffers that need to be updated. Should be called every frame.
      *
      * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
-//    void setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void updateBuffers();
     
-    void setVertexBuffer();
+    /*!
+     * Fill the vertex data vector property of this class with the vertex data based on the size of the board. Should be called after set().
+     */
+    void setVertexData();
     
     /*!
      * Initialize the interface
@@ -332,14 +320,6 @@ private:
     void presetTransformations();
     
     /*!
-     * A function to update all of the buffers that need to be updated. Should be called every frame.
-     *
-     * @param boardInfo An std::string representing the information directly received from the server, through the socket.
-     */
-//    void updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void updateBuffers(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
-    
-    /*!
      * Set the correct interfaces to render based on the selected tile. Should be called every frame.
      */
     void updateInterfaces();
@@ -360,14 +340,6 @@ private:
      * @param action An std::string representing the button action to do.
      */
     void processButton(std::string action);
-    
-    /*!
-     * A function to render a display menu interface in the center of the screen. This can be useful as an "esc" settings menu (when escape is clicked). This also darkens the rest of the screen.
-     *
-     * @param mouseUp A bool representing if the mouse was just released.
-     * @param mouseDown A bool representing if the mouse is currently clicking.
-     */
-    void renderSettingsMenu(bool mouseUp, bool mouseDown);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.

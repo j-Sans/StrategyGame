@@ -34,30 +34,9 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
         this->tileActions.push_back(tileActionColumn);
     }
     
-    this->visualizer.set(boardWidth, boardHeight);
-    
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
-    
-//    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("terrainDataReceived");
-//    
-//    std::vector<int> creatureDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("creatureDataReceived");
-//    
-//    std::vector<float> colorDataVec = Client::parseVectorOfFloat(this->socket.receive());
-//    this->socket.send("colorDataReceived");
-//    
-//    std::vector<int> damageDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("damageDataReceived");
-//    
-//    std::vector<float> offsetDataVec = Client::parseVectorOfFloat(this->socket.receive());
-//    this->socket.send("offsetDataReceived");
-//    
-//    std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("buildingDataReceived");
-//    
-//    this->visualizer.set(boardWidth, boardHeight, terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    this->visualizer.set(boardWidth, boardHeight);
 }
 
 void Client::render() {
@@ -74,37 +53,9 @@ void Client::render() {
     
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
-    this->visualizer.render(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
+    this->visualizer.render();
     
     this->visualizer.endFrame();
-    
-//    this->socket.send(clientInfo);
-//    if (this->socket.receive() != "clientDataReceived")
-//        throw std::runtime_error("Client data not received");
-//    
-//    this->visualizer.activePlayer = std::stoi(this->socket.receive());
-//    this->socket.send("activePlayerReceived");
-//    
-//    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("terrainDataReceived");
-//    
-//    std::vector<int> creatureDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("creatureDataReceived");
-//    
-//    std::vector<float> colorDataVec = Client::parseVectorOfFloat(this->socket.receive());
-//    this->socket.send("colorDataReceived");
-//    
-//    std::vector<int> damageDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("damageDataReceived");
-//    
-//    std::vector<float> offsetDataVec = Client::parseVectorOfFloat(this->socket.receive());
-//    this->socket.send("offsetDataReceived");
-//    
-//    std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
-//    this->socket.send("buildingDataReceived");
-//    
-//    if (this->socket.receive() != "End of frame")
-//        throw std::runtime_error("Waiting on host to move to next frame");
 }
 
 void Client::terminate() {

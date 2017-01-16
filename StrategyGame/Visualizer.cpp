@@ -23,21 +23,13 @@ bool mouseDown = false;
 //A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
 bool mouseUp = false;
 
-//A boolean representing if the escape button has been clicked, for use with the settings menu. This boolean is set in the key callback function and is reset when used.
-bool escClicked = false;
-
 //Constructor
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath) {
-    
     this->initWindow(); //Create the GLFW window and set the window property
     
-
     this->window.setClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z);
     
     this->camMaxDisplacement = this->boardWidth / 10.0f;
-    
-    glm::ivec2 windowSize = this->window.windowSize();
-    glm::ivec2 framebufferSize = this->window.framebufferSize();
     
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
@@ -49,9 +41,6 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    //Allow for multiple windows
-//    this->window.setScissor(true);
     
     //Load textures
     //Exception only thrown if there are 32 textures already present
@@ -105,55 +94,21 @@ GLfloat Visualizer::getDistance(glm::vec2 point1, glm::vec2 point2) {
     return sqrtf(powf(point1.x - point2.x, 2.0) + powf(point1.y - point2.y, 2.0));
 }
 
-void Visualizer::set(unsigned int width, unsigned int height/*, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
+void Visualizer::set(unsigned int width, unsigned int height) {
     this->boardWidth = width;
     this->boardHeight = height;
     
     this->numberOfTiles = this->boardWidth * this->boardHeight;
     
-    this->setVertexBuffer(); 
-//    this->setBuffers(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    this->setVertexData();
+    
+    this->setBuffers();
     
     this->isSet = true;
 }
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
-//void Visualizer::render(std::map<BoardInfoDataTypes, std::string> boardInfo) {
-void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
-    
-//    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
-//    
-//    for (GLuint index = 0; index < this->numberOfTiles; index++) {
-//        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-//        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
-//    }
-    
-    
-    
-//    if (!this->showSettings)
-//        this->game.updateSelected(&mousePressed, cursorPos, windowSize, tileCenters);
-//
-//    this->updateInterfaces();
-//    
-//    //If the mouse clicks outside of the settings menu when it's open, close the menu
-//    if (this->showSettings) {
-//        
-//        glm::ivec2 framebufferSize;
-//        
-//        glfwGetFramebufferSize(this->gameWindow, &framebufferSize.x, &framebufferSize.y);
-//        
-//        glm::vec2 cursorPosFramebufferCoords = cursorPos * (glm::dvec2)framebufferSize / (glm::dvec2)windowSize;
-//        
-//        if (cursorPosFramebufferCoords.x < this->settingsMenuStats.x || cursorPosFramebufferCoords.x > this->settingsMenuStats.x + this->settingsMenuStats.width || cursorPosFramebufferCoords.y < this->settingsMenuStats.y || cursorPosFramebufferCoords.y > this->settingsMenuStats.y + this->settingsMenuStats.height) {
-//            this->showSettings = false;
-//        }
-//    }
-//    
-//    if (escClicked) { //When escape is clicked change whether the settings menu is shown or not
-//        this->showSettings = !this->showSettings;
-//        escClicked = false;
-//    }
-    
+void Visualizer::render() {
     GLfloat currentFrame = glfwGetTime();
     this->deltaTime = currentFrame - this->lastFrame;
     this->lastFrame = currentFrame;
@@ -165,7 +120,7 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
     
     this->moveCamera();
     
-    this->updateBuffers(/*terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec*/);
+    this->updateBuffers();
     
     //Reset the view matrix
     this->view = glm::mat4();
@@ -175,8 +130,6 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
     this->gameShader.uniformMat4("view", this->view);
     
     this->gameShader.use();
-    
-//    this->window.setScissor(false);
     
     //Bind the VAO and draw shapes
     glBindVertexArray(this->VAO);
@@ -199,9 +152,6 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
         else if (a == 2)
             interface = this->rightInterface;
         
-        //This renders the interface and its buttons
-        interface->render(mouseDown, mouseUp, !this->showSettings);
-        
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
             if (button->isPressed()) {
@@ -210,21 +160,8 @@ void Visualizer::render(/*std::vector<int> terrainDataVec, std::vector<int> crea
         }
     }
     
-//    if (this->showSettings)
-//        this->renderSettingsMenu(mouseUp, mousePressed);
-    
-    //mousePressed is likely set to false above, but not if the mouse was clicked in an interface box. In that case, the above for loop deals with it, and now it is no longer needed to be true, so it is reset
-//    if (mousePressed)
-//        mousePressed = false;
-    
-    //So the whole screen is cleared
-//    this->window.setScissor(false);
-    
     //Swap buffers so as to properly render without flickering
     this->window.updateScreen();
-    
-    //So multiple windows exist again
-//    this->window.setScissor(true);
 }
 
 std::string Visualizer::getClientInfo() {
@@ -341,8 +278,7 @@ void Visualizer::initWindow() {
     this->window.setMouseButtonCallback(this->mouseButtonCallback);
 }
 
-void Visualizer::setVertexBuffer() {
-    
+void Visualizer::setVertexData() {
     glm::vec2 pointDistance;
     pointDistance.x = 2.0 / this->boardWidth;
     pointDistance.y = 2.0 / this->boardHeight;
@@ -353,33 +289,18 @@ void Visualizer::setVertexBuffer() {
     
     std::vector<GLfloat> vertexDataVec;
     
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-    std::cout << "vectorData: " << std::endl;
-#endif
-    
     for (GLuint x = 0; x < this->boardWidth; x++) {
         for (GLuint y = 0; y < this->boardHeight; y++) {
             //Sets the point location based on the location in the board and on the modifiers above.
             vertexDataVec.push_back(locationOfFirstPoint.x - (x * pointDistance.x));
-            
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-            std::cout << "(" << vertexDataVec.back() << ", ";
-#endif
-            
             vertexDataVec.push_back(locationOfFirstPoint.y - (y * pointDistance.y));
-            
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-            std::cout << vertexDataVec.back() << ")" << std::endl;
-#endif
         }
     }
     
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-    std::cout << std::endl;
-#endif
-    
     this->vertexData = vertexDataVec;
-    
+}
+
+void Visualizer::setBuffers() {
     //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     glGenVertexArrays(1, &this->VAO);
@@ -405,73 +326,14 @@ void Visualizer::setVertexBuffer() {
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
     
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     //And finally we unbind the VAO so we don't do any accidental misconfiguring
     glBindVertexArray(0);
 }
 
-void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec) {
-    
-    glm::vec2 pointDistance;
-    pointDistance.x = 2.0 / this->boardWidth;
-    pointDistance.y = 2.0 / this->boardHeight;
-    
-    glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
-    locationOfFirstPoint.x += pointDistance.x / 2.0; //Half of the distance between points is before the first point and after the last
-    locationOfFirstPoint.y += pointDistance.y / 2.0;
-    
-    std::vector<GLfloat> vertexDataVec;
-    
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-    std::cout << "vectorData: " << std::endl;
-#endif
-    
-    for (GLuint x = 0; x < this->boardWidth; x++) {
-        for (GLuint y = 0; y < this->boardHeight; y++) {
-            //Sets the point location based on the location in the board and on the modifiers above.
-            vertexDataVec.push_back(locationOfFirstPoint.x - (x * pointDistance.x));
-            
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-            std::cout << "(" << vertexDataVec.back() << ", ";
-#endif
-            
-            vertexDataVec.push_back(locationOfFirstPoint.y - (y * pointDistance.y));
-            
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-            std::cout << vertexDataVec.back() << ")" << std::endl;
-#endif
-        }
-    }
-    
-#ifdef VERTEX_DATA_CONSOLE_OUTPUT
-    std::cout << std::endl;
-#endif
-    
-    this->vertexData = vertexDataVec;
-    this->terrainData = terrainDataVec;
-    this->creatureData = creatureDataVec;
-    this->colorData = colorDataVec;
-    this->damageData = damageDataVec;
-    this->offsetData = offsetDataVec;
-    this->buildingData = buildingDataVec;
-    
-    //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
-    //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
-    glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &this->vertexVBO);
-    glGenBuffers(1, &this->terrainVBO);
-    glGenBuffers(1, &this->creatureVBO);
-    glGenBuffers(1, &this->colorVBO);
-    glGenBuffers(1, &this->damageVBO);
-    glGenBuffers(1, &this->offsetVBO);
-    glGenBuffers(1, &this->buildingVBO);
-    
-    GLfloat vertices[2 * this->numberOfTiles];
+//A function to update all of the buffers that need to be updated. Should be called every frame.
+void Visualizer::updateBuffers() {
     GLint terrains[this->numberOfTiles];
     GLint creatures[3 * this->numberOfTiles];
     GLfloat colors[3 * this->numberOfTiles];
@@ -480,9 +342,6 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     GLint buildings[2 * this->numberOfTiles];
     
     for (int a = 0; a < this->numberOfTiles; a++) {
-        vertices[2 * a] = this->vertexData[2 * a];
-        vertices[(2 * a) + 1] = this->vertexData[(2 * a) + 1];
-        
         terrains[a] = this->terrainData[a];
         
         creatures[3 * a] = this->creatureData[3 * a];
@@ -503,14 +362,6 @@ void Visualizer::setBuffers(std::vector<int> terrainDataVec, std::vector<int> cr
     
     //First we bind the VAO
     glBindVertexArray(this->VAO);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
@@ -572,7 +423,6 @@ void Visualizer::setInterface() {
     this->leftInterfaceStats = interfaceStat(0.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
     this->bottomInterfaceStats = interfaceStat(framebufferSize.x * 1.0 / 6.0, 0.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.y / 4.0);
     this->rightInterfaceStats = interfaceStat(framebufferSize.x * 5.0 / 6.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
-    this->settingsMenuStats = interfaceStat(framebufferSize.x / 3.0, framebufferSize.y / 6.0, framebufferSize.x / 3.0, framebufferSize.y * 2.0 / 3.0);
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     
@@ -594,11 +444,6 @@ void Visualizer::setInterface() {
     
     //Interface for selected buildings
     this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
-    
-    //Settings popup menu
-    this->interfaces[settings] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->settingsMenuStats.x, this->settingsMenuStats.y, this->settingsMenuStats.width, this->settingsMenuStats.height, settings);
-    
-    Box(this->buttonShader, &this->window, 0, 0, this->windowWidth, this->windowHeight, 0, 0, this->windowWidth, this->windowHeight, glm::vec4(0.0, 0.0, 0.0, 0.5), "", other); //Set the box that will darken the screen while a settings menu is up
 }
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -636,7 +481,7 @@ void Visualizer::presetTransformations() {
     //Counteract the y-scaling down of model
     this->rectRotation = glm::scale(this->rectRotation, glm::vec3(1.0f, 2.0f, 1.0f));
     
-    //Send the model matrix to the shader
+    //Send the recrRotation matrix to the shader
     this->gameShader.uniformMat4("rectRotation", this->rectRotation);
     
     //Orthographic (non-3D projection) added so that different window sizes don't distort the scale
@@ -644,111 +489,6 @@ void Visualizer::presetTransformations() {
     
     //Send the projection matrix to the shader
     this->gameShader.uniformMat4("ortho", this->projection);
-}
-
-//A function to update all of the buffers that need to be updated. Should be called every frame.
-void Visualizer::updateBuffers(/*std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/) {
-    
-//    this->terrainData = terrainDataVec;
-//    this->creatureData = creatureDataVec;
-//    this->colorData = colorDataVec;
-//    this->damageData = damageDataVec;
-//    this->offsetData = offsetDataVec;
-//    this->buildingData = buildingDataVec;
-    
-    GLfloat vertices[2 * this->numberOfTiles];
-    GLint terrains[this->numberOfTiles];
-    GLint creatures[3 * this->numberOfTiles];
-    GLfloat colors[3 * this->numberOfTiles];
-    GLint damages[this->numberOfTiles];
-    GLfloat offsets[this->numberOfTiles];
-    GLint buildings[2 * this->numberOfTiles];
-    
-    for (int a = 0; a < this->numberOfTiles; a++) {
-        vertices[2 * a] = this->vertexData[2 * a];
-        vertices[(2 * a) + 1] = this->vertexData[(2 * a) + 1];
-        
-        terrains[a] = this->terrainData[a];
-        
-        creatures[3 * a] = this->creatureData[3 * a];
-        creatures[(3 * a) + 1] = this->creatureData[(3 * a) + 1];
-        creatures[(3 * a) + 2] = this->creatureData[(3 * a) + 2];
-        
-        colors[3 * a] = this->colorData[3 * a];
-        colors[(3 * a) + 1] = this->colorData[(3 * a) + 1];
-        colors[(3 * a) + 2] = this->colorData[(3 * a) + 2];
-        
-        damages[a] = this->damageData[a];
-        
-        offsets[a] = this->offsetData[a];
-        
-        buildings[2 * a] = this->buildingData[2 * a];
-        buildings[(2 * a) + 1] = this->buildingData[(2 * a) + 1];
-    }
-    
-    //First we bind the VAO
-    glBindVertexArray(this->VAO);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->terrainVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(terrains), terrains, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->creatureVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(creatures), creatures, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(2);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(3);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->damageVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(damages), damages, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(4);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->offsetVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(offsets), offsets, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(5);
-    
-    //Bind the VBO with the data
-    glBindBuffer(GL_ARRAY_BUFFER, this->buildingVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(buildings), buildings, GL_DYNAMIC_DRAW);
-    
-    //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLint), (GLvoid*)0);
-    glEnableVertexAttribArray(6);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //And finally we unbind the VAO so we don't do any accidental misconfiguring
-    glBindVertexArray(0);
 }
 
 void Visualizer::updateInterfaces() {
@@ -871,16 +611,6 @@ void Visualizer::processButton(std::string action) {
     } else {
         this->actionsForClientInfo.push_back(action);
     }
-}
-
-void Visualizer::renderSettingsMenu(bool mouseUp, bool mousePressed) {
-    glViewport(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
-//    glScissor(0, 0, this->leftInterfaceStats.width + this->bottomInterfaceStats.width + this->rightInterfaceStats.width, this->leftInterfaceStats.height);
-    
-    this->darkenBox.render();
-    
-    this->interfaces[settings].render(mouseUp, mousePressed, true);
-    
 }
 
 glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters) {
@@ -1016,10 +746,6 @@ void Visualizer::keyCallback(GLFWwindow *window, int key, int scancode, int acti
     
     if (key == GLFW_KEY_W && action == GLFW_PRESS && mods == GLFW_MOD_SUPER) { //Command-W: close the application
         glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-    
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { //Escape: open settings menu
-        escClicked = true;
     }
     
     if (key >= 0 && key < 1024) {
