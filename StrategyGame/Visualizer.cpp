@@ -286,8 +286,8 @@ void Visualizer::setVertexData() {
     pointDistance.y = 2.0 / this->boardHeight;
     
     glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
-    locationOfFirstPoint.x += pointDistance.x / 2.0; //Half of the distance between points is before the first point and after the last
-    locationOfFirstPoint.y += pointDistance.y / 2.0;
+    locationOfFirstPoint.x -= pointDistance.x / 2.0; //Half of the distance between points is before the first point and after the last
+    locationOfFirstPoint.y -= pointDistance.y / 2.0;
     
     std::vector<GLfloat> vertexDataVec;
     
@@ -326,7 +326,11 @@ void Visualizer::setBuffers() {
     
     //Bind the VBO with the data
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
