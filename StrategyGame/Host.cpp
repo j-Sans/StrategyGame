@@ -141,11 +141,7 @@ std::string Host::serialize() {
 //Private member functions
 
 void Host::processAction(std::string action, unsigned int playerNum) {
-    std::cout << "action: " << action << std::endl;
-
     if (action.find("move_creature_at_") != std::string::npos) {
-        std::cout << "Moving creature" << std::endl;
-        
         //Parse the destination tile from the string
         glm::ivec2 destination;
         destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
@@ -164,8 +160,6 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         
         if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->players[playerNum].destinationInRange(destination, currentTile)) {
             std::vector<unsigned int> directions = this->players[playerNum].getPath(currentTile.x, currentTile.y, destination.x, destination.y);
-            
-            std::cout << "Creature in range" << std::endl;
             
             for (int a = 0; a < directions.size(); a++) {
                 this->board.get(currentTile.x, currentTile.y).creature()->directions.push(directions[a]);

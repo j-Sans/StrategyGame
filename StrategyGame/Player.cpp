@@ -124,8 +124,6 @@ bool Player::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     for (int a = 0; a < tiles.size(); a++) {
         if (destination.x == tiles[a].x() && destination.y == tiles[a].y()) { //If the destination is within the reachable tiles, return true
             return true;
-        } else {
-            std::cout << "Destination: (" << destination.x << ", " << destination.y << "). Tile: (" << tiles[a].x() << ", " << tiles[a].y() << ")" << std::endl;
         }
     }
     
