@@ -27,6 +27,7 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     this->board = Board::deserialize(this->socket.receive());
     this->socket.send("boardReceived");
     
+    //Initialize the various 2D vectors that hold information for each tile
     for (int x = 0; x < this->board.width(); x++) {
         std::vector<std::array<int, 2> > boardInfoColumn(this->board.height(x));
         std::vector<std::queue<std::string> > tileActionColumn(this->board.height(x));
@@ -34,9 +35,11 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
         this->tileActions.push_back(tileActionColumn);
     }
     
+    //Give the buffer data to the visualizer
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
-    this->visualizer.set(boardWidth, boardHeight);
+    //Set the visualizer
+    this->visualizer.set(this->board.width(), this->board.height(0));
 }
 
 void Client::render() {
@@ -246,8 +249,6 @@ std::vector<Tile> Client::getReachableTiles(Tile creatureTile) {
 
 
 //This function needs to be reworked for longer ranges. Perhaps, for each tile, check if there is a blocking obstacle in the way. Draw a line from origin to attack point, if it intersects with the boundaries of an obstacle the attack is not possible. Currently, projectiles can navigate around obstacles.
-
-
 std::vector<Tile> Client::getAttackableTiles(Tile creatureTile) {
     if (creatureTile.creature() == nullptr) {
         std::vector<Tile> emptyTileVector;

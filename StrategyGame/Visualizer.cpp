@@ -152,6 +152,8 @@ void Visualizer::render() {
         else if (a == 2)
             interface = this->rightInterface;
         
+        interface->render(mouseDown, mouseUp, true);
+        
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
             if (button->isPressed()) {
