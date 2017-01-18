@@ -143,6 +143,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                     }
                     break;
                 } case REACHABLE: {
+                    std::cout << "Tile action at (" << mousePos.x << ", " << mousePos.y << "): " << this->tileActions[mousePos.x][mousePos.y].front() << std::endl;
                     this->resolveTileAction(mousePos.x, mousePos.y);
                     this->resetAllTiles();
                     this->selectedTile = NO_SELECTION;
@@ -152,6 +153,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
 //#endif
                     break;
                 } case ATTACKABLE: {
+                    std::cout << "Tile action at (" << mousePos.x << ", " << mousePos.y << "): " << this->tileActions[mousePos.x][mousePos.y].front() << std::endl;
                     this->resolveTileAction(mousePos.x, mousePos.y);
                     this->resetAllTiles();
                     this->selectedTile = NO_SELECTION;
@@ -387,7 +389,7 @@ void Client::resolveTileAction(int x, int y) {
         throw std::logic_error("No board size");
     if (y > this->tileActions[x].size())
         throw std::range_error("Y out of bounds");
-    if (this->tileActions[x][y].size() > 0)
+    if (this->tileActions[x][y].size() == 0)
         throw std::logic_error("No actions to call");
     
     std::string action = this->tileActions[x][y].front();

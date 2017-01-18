@@ -423,7 +423,7 @@ void Player::resolveTileAction(unsigned int x, unsigned int y) {
         throw std::logic_error("No board size");
     if (y > this->tileActions[x].size())
         throw std::range_error("Y out of bounds");
-    if (this->tileActions[x][y].size() < 1)
+    if (this->tileActions[x][y].size() == 0)
         throw std::logic_error("No actions to call");
     
     std::string action = this->tileActions[x][y].front();

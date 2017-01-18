@@ -337,7 +337,6 @@ Creature Creature::deserialize(std::string str) {
     creature.takeDamage(maxHealth - health);
     creature.decrementEnergy(maxEnergy - energy);
     creature.setOffset(offset);
-    std::cout << creature.offset() << std::endl;
     return creature;
 }
 
