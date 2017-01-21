@@ -175,8 +175,8 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
         action = action.substr(action.find_first_of(',') + 1);
         
-        //Erase the "move_creature_at_"
-        action.erase(0, 17);
+        //Erase the "attack_from_"
+        action.erase(0, 12);
         
         //Parse the original tile from the string
         glm::ivec2 currentTile;

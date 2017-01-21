@@ -142,8 +142,8 @@ bool Player::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     
     if (creature == nullptr) {
         throw std::invalid_argument("No creature at currentLoc");
-    } else if (!this->board->get(destination.x, destination.y).passableByCreature(*creature)) {
-        throw std::invalid_argument("Destination not passable by creature");
+    } else if (this->board->get(destination.x, destination.y).creature() == nullptr) {
+        throw std::invalid_argument("No cerature at attack location");
     } else if (creature->energy() <= 0) {
         throw std::logic_error("Creature has no energy with which to attack");
     }

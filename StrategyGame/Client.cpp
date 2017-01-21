@@ -136,7 +136,8 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                                 //If there is a creature or building on the tile, controlled by an opponent, make it attackable
                                 if ((this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum) || (this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum)) {
                                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
-                                    this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("attack_from_" + std::to_string(reachableTiles[a].x()) + "_" + std::to_string(reachableTiles[a].y()));
+                                    this->tileActions[attackableTiles[a].x()][attackableTiles[a].y()].push("attack_from_" + std::to_string(attackableTiles[a].x()) + "_" + std::to_string(attackableTiles[a].y()));
+                                    std::cout << "Tile action added at (" << attackableTiles[a].x() << ", " << attackableTiles[a].y() << "): " << this->tileActions[attackableTiles[a].x()][attackableTiles[a].y()].front() << std::endl;
                                 }
                             }
                         }
