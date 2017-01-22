@@ -124,13 +124,7 @@ void main() {
         makeTerrain(position, MOUNTAIN_TERRAIN);
     } else if (terrain[0] == FOREST_TERRAIN) {
         makeTerrain(position, FOREST_TERRAIN);
-    } /*else if (terrain[0] == HILL_TERRAIN) {
-        makeHill(position);
-    } else if (terrain[0] == SWAMP_TERRAIN) {
-        makeSwamp(position);
-    } else if (terrain[0] == ROAD_TERRAIN) {
-        makeRoad(position);
-    }*/
+    }
     
     //Draw present building
     drawBuilding(position, building[0], square);

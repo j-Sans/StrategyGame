@@ -184,6 +184,8 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
+        std::cout << "attackInRange(): " << this->players[playerNum].attackInRange(destination, currentTile) << std::endl;
+        
         if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->players[playerNum].attackInRange(destination, currentTile)) {
             glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
             glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
@@ -195,6 +197,8 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
                 this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
                 this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
+                
+                std::cout << "attack damage: " << attackDamage << ", defend damage: " << defendDamage << std::endl;
             }
         }
     }

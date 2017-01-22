@@ -144,13 +144,12 @@ bool Player::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
         throw std::invalid_argument("No creature at currentLoc");
     } else if (this->board->get(destination.x, destination.y).creature() == nullptr) {
         throw std::invalid_argument("No cerature at attack location");
-    } else if (creature->energy() <= 0) {
-        throw std::logic_error("Creature has no energy with which to attack");
     }
     
     std::vector<Tile> tiles = this->getAttackableTiles(this->board->get(currentLoc.x, currentLoc.y));
     
     for (int a = 0; a < tiles.size(); a++) {
+        std::cout << "distination: (" << destination.x << "," << destination.y << "), tiles[" << a << "]: (" << tiles[a].x() << "," << tiles[a].y() << ")" << std::endl;
         if (destination.x == tiles[a].x() && destination.y == tiles[a].y()) { //If the destination is within the reachable tiles, return true
             return true;
         }
@@ -659,6 +658,11 @@ std::vector<Tile> Player::getAttackableTiles(Tile creatureTile) {
     } else {
         Creature creature = *creatureTile.creature();
         
+        if (creature.energy() <= 0) {
+            std::vector<Tile> emptyTileVector;
+            return emptyTileVector;
+        }
+        
         std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
         
         std::vector<Tile> attackableTiles; //A vector of the tiles that can be attacked
@@ -711,6 +715,10 @@ std::vector<Tile> Player::getAttackableTiles(Tile creatureTile) {
                     }
                 }
             }
+        }
+        
+        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            attackableTiles.push_back(reachedTiles[tileIterator].first);
         }
         
         return attackableTiles;

@@ -567,9 +567,9 @@ void Visualizer::renderDamageText() {
     }
     
     //Goes through existence times and updates them based on glfwGetTime()
-    for (GLuint tile = 0; tile < this->numberOfTiles ; tile++) {
+    for (GLuint tile = 0; tile < this->numberOfTiles; tile++) {
         
-        if (this->damageData[tile] != 0) { //Don't show the damage if it is not new
+        if (this->damageData[tile] != 0) { //Don't show the damage if it is not new. 0 is used to represent null or old values
 
             glm::vec2 damageTileCoords = tileCenters[tile];
             

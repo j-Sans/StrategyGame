@@ -61,13 +61,7 @@ void main() {
             color = TileColor * texture(mountainTex, TexCoords);
         } else if (TexType.y == FOREST_TERRAIN) {
             color = TileColor * texture(forestTex, TexCoords);
-        } /*else if (TexType.y == HILL_TERRAIN) {
-            color = TileColor * texture(hillTex, TexCoords);
-        } else if (TexType.y == SWAMP_TERRAIN) {
-            color = TileColor * texture(swampTex, TexCoords);
-        } else if (TexType.y == ROAD_TERRAIN) {
-            color = TileColor * texture(roadTex, TexCoords);
-        }*/
+        }
         
     } else if (TexType.x == CREATURE) {
         //Draw the creature
