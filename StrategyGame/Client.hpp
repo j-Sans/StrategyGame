@@ -102,24 +102,6 @@ private:
 //    void processHostInfo(std::string hostInfo);
     
     /*!
-     * A function that gets all of the tiles that a creature can reach.
-     *
-     * @param creature The tile containing the specified creature that is going to be moving.
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
-     */
-    std::vector<Tile> getReachableTiles(Tile creatureTile);
-    
-    /*!
-     * A function that gets all of the tiles that a creature can attack.
-     *
-     * @param creature The tile containing the specified creature that is going to be moving.
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
-     */
-    std::vector<Tile> getAttackableTiles(Tile creatureTile);
-    
-    /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
      * (-1, -1) is returned if the selection was outside of the board. This is refered to as NO_SELECTION.
      * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.

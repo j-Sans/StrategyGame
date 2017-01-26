@@ -74,7 +74,6 @@ void Host::update() {
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
         std::string clientInfo = this->socket.receive(a);
         while (clientInfo.size() > 0) {
-            std::cout << "processAction(" << clientInfo.substr(0, clientInfo.find_first_of(';')) << ", " << a << ");" << std::endl;
             this->processAction(clientInfo.substr(0, clientInfo.find_first_of(';')), a); //Process the action
     
             clientInfo = clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
@@ -158,7 +157,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->players[playerNum].destinationInRange(destination, currentTile)) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.destinationInRange(destination, currentTile)) {
             std::vector<unsigned int> directions = this->players[playerNum].getPath(currentTile.x, currentTile.y, destination.x, destination.y);
             
             for (int a = 0; a < directions.size(); a++) {
@@ -184,9 +183,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        std::cout << "attackInRange(): " << this->players[playerNum].attackInRange(destination, currentTile) << std::endl;
-        
-        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->players[playerNum].attackInRange(destination, currentTile)) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile)) {
             glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
             glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
             
@@ -197,8 +194,6 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
                 this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
                 this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
-                
-                std::cout << "attack damage: " << attackDamage << ", defend damage: " << defendDamage << std::endl;
             }
         }
     }

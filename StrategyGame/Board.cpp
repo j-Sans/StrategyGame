@@ -447,6 +447,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                 int damageDealtByAttacker = round( (float)attacker->creature()->attack() * attackerCombatModifier );
                 
                 bool defenderDied = defender->creature()->takeDamage(damageDealtByAttacker);
+                
                 attacker->creature()->useAllEnergy();
                 
                 if (attackDamage != nullptr)
@@ -700,6 +701,280 @@ Tile Board::get(unsigned int x, unsigned int y) {
     }
     
     return this->gameBoard[x][y];
+}
+
+bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+    if (!this->validTile(destination)) {
+        throw std::range_error("Invalid destination");
+    } else if (!this->validTile(currentLoc)) {
+        throw std::range_error("Invalid currentLoc");
+    }
+    
+    Creature *creature = this->get(currentLoc.x, currentLoc.y).creature();
+    
+    if (creature == nullptr) {
+        throw std::invalid_argument("No creature at currentLoc");
+    } else if (!this->get(destination.x, destination.y).passableByCreature(*creature)) {
+        throw std::invalid_argument("Destination not passable by creature");
+    }
+    
+    std::vector<Tile> tiles = this->getReachableTiles(this->get(currentLoc.x, currentLoc.y));
+    
+    for (int a = 0; a < tiles.size(); a++) {
+        if (destination.x == tiles[a].x() && destination.y == tiles[a].y()) { //If the destination is within the reachable tiles, return true
+            return true;
+        }
+    }
+    
+    //If it could not be found, return false
+    return false;
+}
+
+bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+    if (!this->validTile(destination)) {
+        throw std::range_error("Invalid destination");
+    } else if (!this->validTile(currentLoc)) {
+        throw std::range_error("Invalid currentLoc");
+    }
+    
+    Creature *creature = this->get(currentLoc.x, currentLoc.y).creature();
+    
+    if (creature == nullptr) {
+        throw std::invalid_argument("No creature at currentLoc");
+    } else if (this->get(destination.x, destination.y).creature() == nullptr) {
+        throw std::invalid_argument("No cerature at attack location");
+    }
+    
+    std::vector<Tile> tiles = this->getAttackableTiles(this->get(currentLoc.x, currentLoc.y));
+    
+    for (int a = 0; a < tiles.size(); a++) {
+        if (destination.x == tiles[a].x() && destination.y == tiles[a].y()) { //If the destination is within the reachable tiles, return true
+            return true;
+        }
+    }
+    
+    //If it could not be found, return false
+    return false;
+}
+
+std::vector<Tile> Board::getReachableTiles(Tile creatureTile) {
+    //Set the selected tile as the one inputted
+    //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
+    
+    if (creatureTile.creature() == nullptr) {
+        std::vector<Tile> emptyTileVector;
+        return emptyTileVector;
+    } else {
+        Creature creature = *creatureTile.creature();
+        
+        std::vector<std::pair<Tile, int> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
+        
+        //Gets the tiles that are reachable by the creature
+        reachedTiles.push_back(std::pair<Tile, int>(creatureTile, creatureTile.creature()->energy()));
+        
+#ifdef PATHFINDING_CONSOLE_OUTPUT
+        std::cout << "pathfind" << std::endl;
+#endif
+        
+        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
+        for (int tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
+                
+                Tile tile = reachedTiles[tileIterator].first;
+                
+                //North
+                if (tile.y() > 0) {
+                    if (this->get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1))) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    }
+                }
+                
+                //East
+                if (tile.x() > 0) {
+                    if (this->get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y()))) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    }
+                }
+                
+                //South
+                if (tile.y() < this->height(tile.x()) - 1) {
+                    if (this->get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1))) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    }
+                }
+                
+                //West
+                if (tile.x() < this->width() - 1) {
+                    if (this->get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y()))) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
+                    }
+                }
+            }
+        }
+        
+        //Now turn the reached tile vector of pairs into a vector of just tiles
+        std::vector<Tile> reachedTileReturnVector;
+        
+        for (int tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
+        }
+        
+#ifdef PATHFINDING_CONSOLE_OUTPUT
+        std::cout << "return success" << std::endl;
+#endif
+        return reachedTileReturnVector;
+    }
+}
+
+/*
+ * TO ADD:
+ *
+ * CHECK IF THE OCCUPYING CREATURE ON REACHABLE SQUARES ARE ATTACKABLE SPECIFICALLY BY THE CREATURE.
+ */
+
+
+//This function needs to be reworked for longer ranges. Perhaps, for each tile, check if there is a blocking obstacle in the way. Draw a line from origin to attack point, if it intersects with the boundaries of an obstacle the attack is not possible. Currently, projectiles can navigate around obstacles.
+std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
+    if (creatureTile.creature() == nullptr) {
+        std::vector<Tile> emptyTileVector;
+        return emptyTileVector;
+    } else {
+        Creature creature = *creatureTile.creature();
+        
+        if (creature.energy() <= 0) {
+            std::vector<Tile> emptyTileVector;
+            return emptyTileVector;
+        }
+        
+        std::vector<std::pair<Tile, int> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
+        
+        std::vector<Tile> attackableTiles; //A vector of the tiles that can be attacked
+        
+        reachedTiles.push_back(std::pair<Tile, int>(creatureTile, creatureTile.creature()->range()));
+        
+        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
+        for (int tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            if (reachedTiles[tileIterator].second > 0) { //If an attack at this spot would be able to continue to move further, expand in the four directions from that tile.
+                
+                Tile tile = reachedTiles[tileIterator].first;
+                
+                //North
+                if (tile.y() > 0) {
+                    if (this->get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x(), tile.y() - 1).occupied()) {
+                        attackableTiles.push_back(this->get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+                
+                //East
+                if (tile.x() > 0) {
+                    if (this->get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x() - 1, tile.y()).occupied()) {
+                        attackableTiles.push_back(this->get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+                
+                //South
+                if (tile.y() < this->height(tile.x()) - 1) {
+                    if (this->get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x(), tile.y() + 1).occupied()) {
+                        attackableTiles.push_back(this->get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+                
+                //West
+                if (tile.x() < this->width() - 1) {
+                    if (this->get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x() + 1, tile.y()).occupied()) {
+                        attackableTiles.push_back(this->get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+            }
+        }
+        
+        for (int tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            attackableTiles.push_back(reachedTiles[tileIterator].first);
+        }
+        
+        return attackableTiles;
+    }
+    
+    /*if (creatureTile.creature() == nullptr) {
+     std::vector<Tile> emptyTileVector;
+     return emptyTileVector;
+     } else {
+     Creature creature = *creatureTile.creature();
+     
+     if (creature.energy() <= 0) {
+     std::vector<Tile> emptyTileVector;
+     return emptyTileVector;
+     }
+     
+     std::vector<std::pair<Tile, int> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
+     
+     std::vector<Tile> attackableTiles; //A vector of the tiles that can be attacked
+     
+     reachedTiles.push_back(std::pair<Tile, int>(creatureTile, creatureTile.creature()->range()));
+     
+     //Keep pushing the vector back with new tiles, that the for loop will eventually go through
+     for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+     if (reachedTiles[tileIterator].second > 0) { //If an attack at this spot would be able to continue to move further, expand in the four directions from that tile.
+     
+     Tile tile = reachedTiles[tileIterator].first;
+     
+     //North
+     if (tile.y() > 0) {
+     if (this->board.get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
+     reachedTiles.push_back(std::pair<Tile, int>(this->board.get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->board.getTerrainAttackCost(this->board.get(tile.x(), tile.y()), this->board.get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+     }
+     if (this->board.get(tile.x(), tile.y() - 1).occupied()) {
+     attackableTiles.push_back(this->board.get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
+     }
+     }
+     
+     //East
+     if (tile.x() > 0) {
+     if (this->board.get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
+     reachedTiles.push_back(std::pair<Tile, int>(this->board.get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->board.getTerrainAttackCost(this->board.get(tile.x(), tile.y()), this->board.get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+     }
+     if (this->board.get(tile.x() - 1, tile.y()).occupied()) {
+     attackableTiles.push_back(this->board.get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
+     }
+     }
+     
+     //South
+     if (tile.y() < this->board.height(tile.x()) - 1) {
+     if (this->board.get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
+     reachedTiles.push_back(std::pair<Tile, int>(this->board.get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->board.getTerrainAttackCost(this->board.get(tile.x(), tile.y()), this->board.get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+     }
+     if (this->board.get(tile.x(), tile.y() + 1).occupied()) {
+     attackableTiles.push_back(this->board.get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
+     }
+     }
+     
+     //West
+     if (tile.x() < this->board.width() - 1) {
+     if (this->board.get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
+     reachedTiles.push_back(std::pair<Tile, int>(this->board.get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->board.getTerrainAttackCost(this->board.get(tile.x(), tile.y()), this->board.get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+     }
+     if (this->board.get(tile.x() + 1, tile.y()).occupied()) {
+     attackableTiles.push_back(this->board.get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
+     }
+     }
+     }
+     }
+     
+     return attackableTiles;
+     }
+     */
 }
 
 bool Board::validTile(glm::ivec2 tilePos) {
