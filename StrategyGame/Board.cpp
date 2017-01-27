@@ -515,7 +515,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                     *attackDamage = damageDealtByAttacker;
                 
                 if (defenderDied) {
-                    this->deleteBuilding(defender->x(), defender->y()); //Remove the dead creature
+                    this->deleteBuilding(defender->x(), defender->y()); //Remove the dead building
                 }
                 
                 return true; //Combat occurs
@@ -531,7 +531,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                 *attackDamage = damageDealtByAttacker;
             
             if (defenderDied) {
-                this->deleteBuilding(defender->x(), defender->y()); //Remove the dead creature
+                this->deleteBuilding(defender->x(), defender->y()); //Remove the dead building
             }
             
             return true;
