@@ -141,12 +141,6 @@ public:
     bool passableByAttackStyle(Creature creature);
     
     /*!
-     * @return A boolean representing whether a creature can see through this tile.
-     */
-    
-    bool passableByVision(Creature creature);
-    
-    /*!
      * @return The damage amount at this tile.
      */
     unsigned int damage();

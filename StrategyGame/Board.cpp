@@ -96,31 +96,45 @@ float Board::getTerrainMovementCost(Tile origin, Tile destination) {
 //The cost is in range, it deducts cost from range.
 float Board::getTerrainAttackCost (Tile origin, Tile destination) {
     
-    if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
+    if (destination.terrain() == OPEN_TERRAIN) {
+        
         return 1;
-    }
-    else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        
+    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        
         return 999;
+        
+    } else if (destination.terrain() == WATER_TERRAIN) {
+        
+        return 1;
+        
+    } else if (destination.terrain() == FOREST_TERRAIN) {
+        if (origin.terrain() == HILL_TERRAIN) {
+            return 1;
+        }
+        
+        else return 999; //need to figure out how to make this return (remaining energy when it hits the forest - 1) for light ranged.
+        
+    } else if (destination.terrain() == HILL_TERRAIN) {
+        
+        if (origin.terrain() == HILL_TERRAIN) {
+            return 1;
+        }
+        
+        return 999;
+        
+    } else if (destination.terrain() == SWAMP_TERRAIN) {
+        
+        return 1;
+        
+    } else if (destination.terrain() == ROAD_TERRAIN) {
+        
+        return 1;
+        
     }
-    else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
-        return 2;
-    }
-    else return 1;
+    
+    return 1;
 }
-
-//The cost is in range, it deducts cost from range.
-float Board::getTerrainVisionCost (Tile origin, Tile destination) {
-    if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
-        return 1;
-    }
-    else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        return 999;
-    }
-    else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
-        return 2;
-    }
-    else return 1;
-   }
 
 //Public member functions
 bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {

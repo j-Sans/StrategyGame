@@ -47,9 +47,6 @@ public:
     //Terrain Costs of Attack
     float getTerrainAttackCost (Tile origin, Tile destination);
     
-    //Terrain Costs of Vision
-    float getTerrainVisionCost (Tile origin, Tile destination);
-    
     /*!
      * Move a creature from the designated spot in the designated direction.
      * Possible errors include if the destination is off of the board.
