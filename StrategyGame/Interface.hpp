@@ -25,6 +25,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Window.hpp"
 #include "Box.hpp"
 #include "Button.hpp"
 #include "DisplayBar.hpp"
@@ -61,7 +62,7 @@ public:
      * @param height The height of the interface box, in GLFW screen coordinates.
      * @param type What type of interface should be created, using an interfaceType enum. (See Interface.hpp)
      */
-    Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, GLFWwindow* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type);
+    Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type);
     
     //Public properties
     
@@ -98,7 +99,7 @@ public:
     
 private:
     //OpenGL and GLFW properties
-    GLFWwindow* interfaceWindow;
+    Window* window;
     Shader *interfaceShader; //Compiled shader
     Shader *buttonShader; //Shader for the buttons
     Shader *displayBarShader; //Shader for the display bars
@@ -112,15 +113,15 @@ private:
     GLuint boxWidth;
     GLuint boxHeight;
     
-    int viewportWidth;
-    int viewportHeight;
+//    int viewportWidth;
+//    int viewportHeight;
     
     //Private member functions
     
     /*!
      * Update the viewport information of this object. This functino would be relevant with resizing, but for now do not use this function! The function works, but there is no substitute with the buttons!
      */
-    void updateViewport();
+//    void updateViewport();
     
 };
 

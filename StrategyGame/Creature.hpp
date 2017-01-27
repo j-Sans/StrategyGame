@@ -52,10 +52,10 @@ public:
      * @param attackStyle An attackStyle enum type representing attack Style (projectile).
      * @param vision An unsigned int representing the radius of squares around the creature that it can reveal.
      * @param range An unsigned int representing the distance the creature can attack.
-     * @param cost An unsigned int representing the cost of the creature in mana.
      * @param startDirection A macro representing the initial direction that the creature faces. Includes: NORTH, EAST, SOUTH, and WEST.
+     * @param controller The player index representing the controller of the creature.
      */
-    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle, unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller);
+    Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle, unsigned int vision, unsigned int range, unsigned int startDirection, unsigned int controller);
     
     //Destructor
     
@@ -224,6 +224,22 @@ public:
      */
     const unsigned int controller();
     
+    /*!
+     * Serialize this object as a string that can be sent through sockets.
+     *
+     * @return The serialized string.
+     */
+    std::string serialize();
+    
+    /*!
+     * Create an object from a serialized string that can be sent through sockets.
+     *
+     * @param str The string to convert into an object.
+     *
+     * @return The object created.
+     */
+    static Creature deserialize(std::string str);
+    
 private:
     //Private properties
     const unsigned int creatureController;
@@ -236,7 +252,6 @@ private:
     const unsigned int creatureAttack;
     const unsigned int creatureVision;
     const unsigned int creatureRange;
-    const unsigned int creatureCost;
     
     unsigned int creatureHealth;
     unsigned int creatureEnergy;
@@ -251,6 +266,13 @@ private:
     constexpr static const float movementAnimationSpeed = 2.0f;
     
     //Private member functions
+    
+    /*!
+     * A function to set the offset of this creature. Used within the deserialization function.
+     *
+     * @param offset A float representing the offset with which to override the previous value.
+     */
+    void setOffset(float offset);
 };
 
 #endif /* Creature_hpp */

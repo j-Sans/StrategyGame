@@ -8,113 +8,60 @@
 
 #include "Client.hpp"
 
-Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag")) {
+Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag")), board(Board(std::vector<std::vector<Tile> >(0))) {
     
     this->socket.setSocket(hostName, portNum);
     
     std::string initialInfo = this->socket.receive();
     this->socket.send("initialDataReceived");
     
-    //std::stoi converts from string to int
-    
-    unsigned int boardWidth = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
-    initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-    unsigned int boardHeight = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(','))); //Convert the substring to an int
+    this->playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
     initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
     
-    this->visualizer.playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
+    this->board = Board::deserialize(initialInfo);
     
-    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("terrainDataReceived");
-    
-    std::vector<int> creatureDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("creatureDataReceived");
-    
-    std::vector<float> colorDataVec = Client::parseVectorOfFloat(this->socket.receive());
-    this->socket.send("colorDataReceived");
-    
-    std::vector<int> damageDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("damageDataReceived");
-    
-    std::vector<float> offsetDataVec = Client::parseVectorOfFloat(this->socket.receive());
-    this->socket.send("offsetDataReceived");
-    
-    std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("buildingDataReceived");
-    
-    this->visualizer.set(boardWidth, boardHeight, terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
-}
-
-std::vector<int> Client::parseVectorOfInt(std::string str) {
-    std::vector<int> vec;
-    
-    while (str.length() > 0) {
-        int nextCommaPos = (int)str.find_first_of(',');
-        
-        //If there are no more commas or a comma is at the end, the last element has been found
-        if (nextCommaPos == std::string::npos || nextCommaPos == str.length() - 1) {
-            vec.push_back(std::stoi(str));
-            break;
-        } else {
-            vec.push_back(std::stoi(str.substr(0, nextCommaPos))); //Convert the substring to an int and add it to the vector
-            str = str.substr(nextCommaPos + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        }
+    //Initialize the various 2D vectors that hold information for each tile
+    for (int x = 0; x < this->board.width(); x++) {
+        std::vector<std::array<int, 2> > boardInfoColumn(this->board.height(x));
+        std::vector<std::queue<std::string> > tileActionColumn(this->board.height(x));
+        this->boardInfo.push_back(boardInfoColumn);
+        this->tileActions.push_back(tileActionColumn);
     }
     
-    return vec;
-}
-
-std::vector<float> Client::parseVectorOfFloat(std::string str) {
-    std::vector<float> vec;
+    //Give the buffer data to the visualizer
+    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
-    while (str.length() > 0) {
-        int nextCommaPos = (int)str.find_first_of(',');
-        
-        //If there are no more commas or a comma is at the end, the last element has been found
-        if (nextCommaPos == std::string::npos || nextCommaPos == str.length() - 1) {
-            vec.push_back(std::stof(str));
-            break;
-        } else {
-            vec.push_back(std::stof(str.substr(0, nextCommaPos))); //Convert the substring to an int and add it to the vectors
-            str = str.substr(nextCommaPos + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        }
-    }
-    
-    return vec;
+    //Set the visualizer
+    this->visualizer.set(this->board.width(), this->board.height(0));
 }
 
 void Client::render() {
     this->visualizer.startFrame();
     
-    this->socket.send(this->visualizer.getClientInfo());
-//    if (this->socket.receive() != "clientDataReceived")
-//        throw std::runtime_error("Client data not received");
+    this->board = Board::deserialize(this->socket.receive());
     
-    //this->visualizer.activePlayer = std::stoi(this->socket.receive());
-    //this->socket.send("activePlayerReceived");
+//    std::string clientInfo = this->visualizer.getClientInfo() + ";";
     
-    std::vector<int> terrainDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("terrainDataReceived");
+    std::string clientInfo = "";
     
-    std::vector<int> creatureDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("creatureDataReceived");
+    for (auto a = this->actionsForClientInfo.begin(); a != this->actionsForClientInfo.end(); a++) {
+        clientInfo += *a + ";";
+        a = this->actionsForClientInfo.erase(a);
+    }
     
-    std::vector<float> colorDataVec = Client::parseVectorOfFloat(this->socket.receive());
-    this->socket.send("colorDataReceived");
+    this->socket.send(clientInfo);
+
+//    while (hostInfo.size() > 0) {
+//        this->processHostInfo(hostInfo.substr(0, hostInfo.find_first_of(',')); //Process the action
+//        
+//        hostInfo = hostInfo.substr(hostInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+//    }
     
-    std::vector<int> damageDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("damageDataReceived");
+    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     
-    std::vector<float> offsetDataVec = Client::parseVectorOfFloat(this->socket.receive());
-    this->socket.send("offsetDataReceived");
+    this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
-    std::vector<int> buildingDataVec = Client::parseVectorOfInt(this->socket.receive());
-    this->socket.send("buildingDataReceived");
-    
-    if (this->socket.receive() != "End of frame")
-        throw std::runtime_error("Waiting on host to move to next frame");
-    
-    this->visualizer.render(terrainDataVec, creatureDataVec, colorDataVec, damageDataVec, offsetDataVec, buildingDataVec);
+    this->visualizer.render();
     
     this->visualizer.endFrame();
 }
@@ -124,5 +71,185 @@ void Client::terminate() {
 }
 
 bool Client::windowShouldClose() {
-    return glfwWindowShouldClose(this->visualizer.window());
+    return this->visualizer.window.shouldClose();
+}
+
+void Client::resetAllTiles() {
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            //Set all tile styles to regular
+            this->boardInfo[x][y][TILE_STYLE] = REGULAR;
+            
+            //Empty all queues of action for each tile
+            while (this->tileActions[x][y].size() > 0)
+                this->tileActions[x][y].pop();
+        }
+    }
+}
+
+void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime) {
+    //Update all tiles other than the one where the mouse is to have no hovering
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            this->boardInfo[x][y][TILE_HOVER] = NO_HOVERING;
+        }
+    }
+    
+    if (this->board.validTile(mousePos)) {
+        this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
+    }
+    
+    if (mouseDown) {
+        if (mousePos == NO_SELECTION) {
+            this->resetAllTiles();
+        } else if (mousePos == INTERFACE_BOX_SELECTION) {
+        } else if (mousePos == this->selectedTile) { //Reset the tile (and others) if the current tile is clicked again
+            this->resetAllTiles();
+            this->selectedTile = NO_SELECTION;
+        } else {
+            switch (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE]) {
+                    
+                case REGULAR: { //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
+                    this->resetAllTiles();
+                    this->selectedTile = mousePos;
+                    
+                    //Select this new tile
+                    this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
+                    
+                    Creature* creature = this->board.get(mousePos.x, mousePos.y).creature();
+                    
+                    //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
+                    if (creature != nullptr && creature->controller() == this->playerNum) {
+                        std::vector<Tile> reachableTiles = this->board.getReachableTiles(this->board.get(mousePos.x, mousePos.y));
+                        
+                        for (int a = 0; a < reachableTiles.size(); a++) {
+                            if (this->board.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(*creature)) {
+                                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
+                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature_at_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.x));
+                            }
+                        }
+                        
+                        if (creature->energy() > 0) {
+                            std::vector<Tile> attackableTiles = this->board.getAttackableTiles(this->board.get(mousePos.x, mousePos.y));
+                            
+                            for (int a = 0; a < attackableTiles.size(); a++) {
+                                //If there is a creature or building on the tile, controlled by an opponent, make it attackable
+                                if ((this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum) || (this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum)) {
+                                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
+                                    this->tileActions[attackableTiles[a].x()][attackableTiles[a].y()].push("attack_from_" + std::to_string(selectedTile.x) + "_" + std::to_string(selectedTile.y));
+                                }
+                            }
+                        }
+                    }
+                    break;
+                } case REACHABLE: {
+                    this->resolveTileAction(mousePos.x, mousePos.y);
+                    this->resetAllTiles();
+                    this->selectedTile = NO_SELECTION;
+//#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+//                    //If the attacker died, nothing will happen and the function will return false
+//                    this->selectedCreature = glm::ivec2(mousePos.x, mousePos.y);
+//#endif
+                    break;
+                } case ATTACKABLE: {
+                    this->resolveTileAction(mousePos.x, mousePos.y);
+                    this->resetAllTiles();
+                    this->selectedTile = NO_SELECTION;
+//#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+//                    //If the attacker died, nothing will happen and the function will return false
+//                    this->selectCreature(attacker.x, attacker.y);
+//#endif
+                }
+            }
+        }
+    }
+}
+
+//void Client::processHostInfo(std::string action) {
+//    if (action.find("move_creature") != std::string::npos) {
+//        action.erase(0, 14); //Erases "move_creature_"
+//        glm::ivec2 oldPos;
+//    }
+//}
+
+void Client::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<float>* colorData, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
+    
+    //Empty the vectors before pushing them back
+    (*terrainData).clear();
+    (*creatureData).clear();
+    (*colorData).clear();
+    (*damageData).clear();
+    (*offsetData).clear();
+    (*buildingData).clear();
+    
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            (*terrainData).push_back(this->board.get(x, y).terrain());
+            
+            (*creatureData).push_back(this->board.get(x, y).creatureType());
+            if (this->board.get(x, y).creature() != nullptr) { //If there is a creature set the data properly, otherwise as 0
+                (*creatureData).push_back(this->board.get(x, y).creature()->direction());
+                (*creatureData).push_back(this->board.get(x, y).creature()->controller());
+            } else {
+                (*creatureData).push_back(0);
+                (*creatureData).push_back(0);
+            }
+            
+            glm::vec3 tileColor = this->tileColor(x, y);
+            (*colorData).push_back(tileColor.x);
+            (*colorData).push_back(tileColor.y);
+            (*colorData).push_back(tileColor.z);
+            
+            (*damageData).push_back(this->board.get(x, y).damage());
+            
+            if (this->board.get(x, y).creature() != nullptr)
+                (*offsetData).push_back(this->board.get(x, y).creature()->offset());
+            else
+                (*offsetData).push_back(0);
+            
+            (*buildingData).push_back(this->board.get(x, y).buildingType());
+            if (this->board.get(x, y).building() != nullptr) //If there is a building set the data properly, otherwise as 0
+                (*buildingData).push_back(this->board.get(x, y).building()->controller());
+            else
+                (*buildingData).push_back(0);
+        }
+    }
+}
+
+glm::vec3 Client::tileColor(unsigned int x, unsigned int y) {
+    if (x >= this->board.width())
+        throw std::range_error("X out of range");
+    if (y >= this->board.height(x))
+        throw std::range_error("Y out of range");
+    
+    int style = this->boardInfo[x][y][TILE_STYLE];
+    int hover = this->boardInfo[x][y][TILE_HOVER];
+    
+    if (style == REGULAR)
+        return hover == NO_HOVERING ? WHITE : WHITE * HOVER_EFFECT;
+    else if (style == SELECTED)
+        return hover == NO_HOVERING ? GREY : GREY * HOVER_EFFECT;
+    else if (style == ATTACKABLE)
+        return hover == NO_HOVERING ? RED : RED * HOVER_EFFECT;
+    else if (style == REACHABLE)
+        return hover == NO_HOVERING ? GREEN : GREEN * HOVER_EFFECT;
+    
+    //Something went wrong. Return White to have an unaltered color
+    return WHITE;
+}
+
+void Client::resolveTileAction(int x, int y) {
+    if (x > this->tileActions.size())
+        throw std::range_error("X out of bounds");
+    if (this->tileActions.size() < 1)
+        throw std::logic_error("No board size");
+    if (y > this->tileActions[x].size())
+        throw std::range_error("Y out of bounds");
+    if (this->tileActions[x][y].size() == 0)
+        throw std::logic_error("No actions to call");
+    
+    std::string action = this->tileActions[x][y].front();
+    this->tileActions[x][y].pop();
+    
+    this->actionsForClientInfo.push_back(std::to_string(x) + "," + std::to_string(y) + "," + action);
 }

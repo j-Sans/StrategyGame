@@ -14,57 +14,22 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
         this->socket.addClient();
     }
     
-    //Send initial info to the visualizer saying the width and height of the board
-    
-    std::string initialData;
-    initialData += std::to_string(this->board.width()) + ",";
-    initialData += std::to_string(this->board.height(0)) + ",";
-    
+    //Send to each player that player's number and the board
     for (int a = 0; a < numberOfPlayers; a++) {
-        this->socket.send(initialData + std::to_string(a) + ",", a);
+        this->socket.send(std::to_string(a) + "," + this->board.serialize(), a);
     }
     if (!this->socket.allReceived("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
     
+    //Initialize each player with the board and that player's number
     int playerNum = 0;
     while (this->players.size() < numberOfPlayers) {
         this->players.push_back(Player(&board, playerNum++));
     }
     
+    //Initialize time
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
-    
-    std::vector<int> terrainData, creatureData, damageData, buildingData;
-    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
-    std::vector<float> offsetData;
-    
-    this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
-    
-    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
-    if (!this->socket.allReceived("terrainDataReceived"))
-        throw std::runtime_error("Terrain data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
-    if (!this->socket.allReceived("creatureDataReceived"))
-        throw std::runtime_error("Creature data not received");
-    
-    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
-    }
-    if (!this->socket.allReceived("colorDataReceived"))
-        throw std::runtime_error("Color data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(damageData));
-    if (!this->socket.allReceived("damageDataReceived"))
-        throw std::runtime_error("Damage data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
-    if (!this->socket.allReceived("offsetDataReceived"))
-        throw std::runtime_error("Offset data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
-    if (!this->socket.allReceived("buildingDataReceived"))
-        throw std::runtime_error("Building data not received");
 }
 
 std::string Host::Host::storeVectorOfInts(std::vector<int> vec) {
@@ -100,99 +65,143 @@ void Host::update() {
         }
     }
     
-    //Get info from the clients about mouse position
-    std::vector<std::string> clientInfo;
-    
-    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        clientInfo.push_back(this->socket.receive(a));
-    }
-//    this->socket.broadcast("clientDataReceived");
-    
-//    this->socket.broadcast(std::to_string(this->activePlayer));
-//    if (!this->socket.allReceived("activePlayerReceived"))
-//        throw std::runtime_error("Active player not received");
-    
-    std::vector<int> terrainData, creatureData, damageData, buildingData;
-    std::vector<std::vector<float> > colorDataVec(this->socket.numberOfClients()); //Vector of color data for each player
-    std::vector<float> offsetData;
-    
-    this->getBufferData(&terrainData, &creatureData, &colorDataVec, &damageData, &offsetData, &buildingData);
-    
-    this->socket.broadcast(Host::storeVectorOfInts(terrainData));
-    if (!this->socket.allReceived("terrainDataReceived"))
-        throw std::runtime_error("Terrain data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(creatureData));
-    if (!this->socket.allReceived("creatureDataReceived"))
-        throw std::runtime_error("Creature data not received");
-    
-    for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        this->socket.send(Host::storeVectorOfFloats(colorDataVec[a]), a);
-    }
-    if (!this->socket.allReceived("colorDataReceived"))
-        throw std::runtime_error("Color data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(damageData));
-    if (!this->socket.allReceived("damageDataReceived"))
-        throw std::runtime_error("Damage data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfFloats(offsetData));
-    if (!this->socket.allReceived("offsetDataReceived"))
-        throw std::runtime_error("Offset data not received");
-    
-    this->socket.broadcast(Host::storeVectorOfInts(buildingData));
-    if (!this->socket.allReceived("buildingDataReceived"))
-        throw std::runtime_error("Building data not received");
-
-    
-    /* Each index of clientInfo stores information:
-     1) Current mouse position's x coordinate on the board.
-     2) Current mouse position's y coordinate on the board.
-            -1 for either (1) or (2) represents NO_SELECTION
-     3) Whether the mouse is down or not. '0' represents up (false), and '1' represents down (true).
-     
-     Any other input should be done here. That hasn't been implimented.
-     */
-    
-    for (int a = 0; a < clientInfo.size(); a++) {
-        glm::ivec2 selectedTile;
-        
-        selectedTile.x = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
-        
-        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        
-        selectedTile.y = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
-        
-        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        
-        if (selectedTile.x < 0 || selectedTile.y < 0) {
-            selectedTile = NO_SELECTION;
-        }
-        
-        bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
-        
-        //Now extract the actions sent from the client
-        clientInfo[a].erase(0, 1); //Set the string to the contain only the list of actions, starting with the first action string. This erases the preceeding ';'
-        
-        while (clientInfo[a].size() > 1) { //If there is more than just the semicolon at the end of the last
-            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1), a); //Process the next action string
-            clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
-        }
-        
-        this->players[a].updateSelected(mouseDown, selectedTile, currentFrame.count());
-        
+    for (int a = 0; a < this->players.size(); a++) {
         this->players[a].updateCreatures(this->deltaTime);
     }
     
-    this->socket.broadcast("End of frame");
+    this->socket.broadcast(this->board.serialize());
+
+    for (int a = 0; a < this->socket.numberOfClients(); a++) {
+        std::string clientInfo = this->socket.receive(a);
+        while (clientInfo.size() > 0) {
+            this->processAction(clientInfo.substr(0, clientInfo.find_first_of(';')), a); //Process the action
+    
+            clientInfo = clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+        }
+    }
+
+//    this->socket.broadcast(std::to_string(this->activePlayer));
+//    if (!this->socket.allReceived("activePlayerReceived"))
+//        throw std::runtime_error("Active player not received");
+//
+//    /* Each index of clientInfo stores information:
+//     1) Current mouse position's x coordinate on the board.
+//     2) Current mouse position's y coordinate on the board.
+//            -1 for either (1) or (2) represents NO_SELECTION
+//     3) Whether the mouse is down or not. '0' represents up (false), and '1' represents down (true).
+//     
+//     Any other input should be done here. That hasn't been implimented.
+//     */
+//    
+//    for (int a = 0; a < clientInfo.size(); a++) {
+//        glm::ivec2 selectedTile;
+//        
+//        selectedTile.x = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
+//        
+//        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+//        
+//        selectedTile.y = std::stoi(clientInfo[a].substr(0, clientInfo[a].find_first_of(','))); //Convert the substring to an int
+//        
+//        clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+//        
+//        if (selectedTile.x < 0 || selectedTile.y < 0) {
+//            selectedTile = NO_SELECTION;
+//        }
+//        
+//        bool mouseDown = (clientInfo[a][0] - 48 == 0 ? false : true); //The first character in the string should be whether the mouse is up or down because the two parts before it, the mouse's x and y locations, were extracted and removed
+//        
+//        //Now extract the actions sent from the client
+//        clientInfo[a].erase(0, 1); //Set the string to the contain only the list of actions, starting with the first action string. This erases the preceeding ';'
+//        
+//        while (clientInfo[a].size() > 1) { //If there is more than just the semicolon at the end of the last
+//            this->processAction(clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1), a); //Process the next action string
+//            clientInfo[a] = clientInfo[a].substr(clientInfo[a].find_first_of(';') + 1, std::string::npos); //Delete the processed action
+//        }
+//        
+//        this->players[a].updateSelected(mouseDown, selectedTile, currentFrame.count());
+//        
+//        this->players[a].updateCreatures(this->deltaTime);
+//    }
+//
+//    this->socket.broadcast("End of frame");
     
     //Set the tiem of the previous frame to currentTime
     this->lastFrame = currentFrame;
 }
 
+std::string Host::serialize() {
+    std::string str = "Host:" + this->board.serialize() + "," + std::to_string(this->deltaTime) + ",";
+//    for (int a = 0; a << this->players.size(); a++) {
+//        str += this->players[a].serialize() + ",";
+//    }
+    return str;
+}
+
 //Private member functions
 
 void Host::processAction(std::string action, unsigned int playerNum) {
+    if (action.find("move_creature_at_") != std::string::npos) {
+        //Parse the destination tile from the string
+        glm::ivec2 destination;
+        destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        
+        //Erase the "move_creature_at_"
+        action.erase(0, 17);
+        
+        //Parse the original tile from the string
+        glm::ivec2 currentTile;
+        currentTile.x = std::stoi(action.substr(0, action.find_first_of('_')));
+        action = action.substr(action.find_first_of('_') + 1);
+        currentTile.y = std::stoi(action);
+        
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.destinationInRange(destination, currentTile)) {
+            std::vector<unsigned int> directions = this->players[playerNum].getPath(currentTile.x, currentTile.y, destination.x, destination.y);
+            
+            for (int a = 0; a < directions.size(); a++) {
+                this->board.get(currentTile.x, currentTile.y).creature()->directions.push(directions[a]);
+                if (a == 0)
+                    this->board.setDirection(currentTile.x, currentTile.y, directions[a]);
+            }
+        }
+    } else if (action.find("attack_from_") != std::string::npos) {
+        //Parse the destination tile from the string
+        glm::ivec2 destination;
+        destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
+        action = action.substr(action.find_first_of(',') + 1);
+        
+        //Erase the "attack_from_"
+        action.erase(0, 12);
+        
+        //Parse the original tile from the string
+        glm::ivec2 currentTile;
+        currentTile.x = std::stoi(action.substr(0, action.find_first_of('_')));
+        action = action.substr(action.find_first_of('_') + 1);
+        currentTile.y = std::stoi(action);
+        
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile)) {
+            glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
+            glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
+            
+            if (this->board.tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board.get(attacker.x, attacker.y).creature()->range()) {
+                
+                int attackDamage = 0, defendDamage = 0;
+                
+                this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+                this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
+                this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
+            }
+        }
+    }
+    
+    
+    
+    
+    
     
     //Process actions here
     if (action.find("make_creature,") != std::string::npos) { //Basically if the string action contains "make_creature", the button makes a creature
@@ -204,7 +213,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
             //Interpret the string to find out what kind of creature
 
             /* The contents of the button string are:
-             * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[cost],[start direction]
+             * creature,[race],[maxHealth],[maxEnergy],[attack],[vision],[range],[start direction]
              *
              * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
              *
@@ -247,7 +256,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
             //Extract the numerical values of the creature
 
-            for (int valueNum = 0; valueNum < 6; valueNum++) {
+            for (int valueNum = 0; valueNum < 5; valueNum++) {
                 //Find the position of the next comma, which is the number of digits before that comma
                 int numDigits = (int)action.find(',');
 
@@ -275,7 +284,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 throw std::invalid_argument("Error adding creature: unreadable creature direction");
             }
 
-            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], values[5], direction, playerNum);
+            Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], direction, playerNum);
 
             if (this->board.get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
                 this->board.setCreature(selectedTile.x, selectedTile.y, newCreature);
@@ -348,31 +357,29 @@ void Host::processAction(std::string action, unsigned int playerNum) {
             //Interpret the string to find out what kind of building
 
             /* The contents of the button string are:
-             * building,[maxHealth],[cost]
+             * building,[maxHealth]
              *
              * Each value in brackets indicates a number or enum that represents that value. Each of these values are separated by commas.
              *
              * This function goes through the string and extracts those values and constructs a building based on them.
              */
-            int values[] = {0, 0};
+            int maxHealth;
 
             action.erase(0, 14); //Gets rid of the "make_building," from the string
 
             //Extract the numerical values of the building
-
-            for (int valueNum = 0; valueNum < 2; valueNum++) {
-                //Find the position of the next comma, which is the number of digits before that comma
-                GLuint numDigits = (GLuint)action.find(',');
-
-                for (int place = numDigits - 1; place >= 0; place--) {
-                    values[valueNum] += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
-                    action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
-                }
-
-                action.erase(0, 1); //Get rid of the comma
-            }
             
-            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", values[0], values[1], playerNum);
+            //Find the position of the next comma, which is the number of digits before that comma
+            GLuint numDigits = (GLuint)action.find(',');
+            
+            for (int place = numDigits - 1; place >= 0; place--) {
+                maxHealth += ((GLuint)action[0] - 48) * pow(10, place); //Converts the digit to an int and multiplies it by the right power of 10
+                action.erase(0, 1); //Get the next digit, correctly add it to the value, and delete it from the string
+            }
+
+            action.erase(0, 1); //Get rid of the comma
+            
+            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", maxHealth, playerNum);
             
             if (!this->board.get(selectedTile.x, selectedTile.y).occupied()) {
                 this->board.setBuilding(selectedTile.x, selectedTile.y, newBuilding);
@@ -427,4 +434,3 @@ void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatu
         }
     }
 }
-

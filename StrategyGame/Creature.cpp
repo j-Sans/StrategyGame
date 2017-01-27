@@ -11,7 +11,7 @@
 
 //Constructors
 
-Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle,  unsigned int vision, unsigned int range, unsigned int cost, unsigned int startDirection, unsigned int controller) : creatureX(x), creatureY(y), creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureAttackStyle(attackStyle), creatureVision(vision), creatureRange(range), creatureCost(cost), creatureController(controller) {
+Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle,  unsigned int vision, unsigned int range, unsigned int startDirection, unsigned int controller) : creatureX(x), creatureY(y), creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureAttackStyle(attackStyle), creatureVision(vision), creatureRange(range),  creatureController(controller) {
     this->creatureHealth = maxHealth;
     this->creatureEnergy = maxEnergy;
     
@@ -40,6 +40,7 @@ void Creature::decrementEnergy(unsigned int energy) {
 }
 
 void Creature::useAllEnergy() {
+    std::cout << "Energy used. Controller: " << this->controller() << std::endl;
     this->creatureEnergy = 0;
 }
 
@@ -172,10 +173,6 @@ const unsigned int Creature::range() {
     return this->creatureRange;
 }
 
-const unsigned int Creature::cost() {
-    return this->creatureCost;
-}
-
 const bool Creature::melee() {
     return this->creatureRange > 1 ? false : true;
 }
@@ -206,4 +203,144 @@ unsigned int Creature::x() {
 
 unsigned int Creature::y() {
     return this->creatureY;
+}
+
+std::string Creature::serialize() {
+    std::string str = "Creature:" + std::to_string(this->creatureController) + ",";
+    if (this->creatureRace == Human) {
+        str += "Human,";
+    } else if (this->creatureRace == Elf) {
+        str += "Elf,";
+    } else if (this->creatureRace == Dwarf) {
+        str += "Dwarf,";
+    } else if (this->creatureRace == Orc) {
+        str += "Orc,";
+    } else if (this->creatureRace == Goblin) {
+        str += "Goblin,";
+    } else if (this->creatureRace == Undead) {
+        str += "Undead,";
+    } else if (this->creatureRace == Vampire) {
+        str += "Vampire,";
+    } else {
+        throw std::invalid_argument("Error serializing creature: unknown creature race");
+    }
+    if (this->creatureAttackStyle == Melee) {
+        str += "Melee,";
+    } else if (this->creatureAttackStyle == Ranged) {
+        str += "Ranged,";
+    } else if (this->creatureAttackStyle == TerrainIgnoring) {
+        str += "TerrainIgnoring,";
+    } else {
+        throw std::invalid_argument("Error serializing creature: unknown creature attack style");
+    }
+    
+    str += std::to_string(creatureMaxHealth) + "," + std::to_string(creatureMaxEnergy) + "," + std::to_string(creatureAttack) + "," + std::to_string(creatureVision) + "," + std::to_string(creatureRange) + "," + std::to_string(creatureHealth) + "," + std::to_string(creatureEnergy) + ",";
+    
+    if (this->creatureDirection == NORTH) {
+        str += "NORTH,";
+    } else if (this->creatureDirection == EAST) {
+        str += "EAST,";
+    } else if (this->creatureDirection == SOUTH) {
+        str += "SOUTH,";
+    } else if (this->creatureDirection == WEST) {
+        str += "WEST,";
+    } else {
+        throw std::invalid_argument("Error serializing creature: unknown creature direction");
+    }
+    
+    return str + std::to_string(creatureOffset) + "," + std::to_string(creatureX) + "," + std::to_string(creatureY) + "-Creature-";
+    
+}
+
+Creature Creature::deserialize(std::string str) {
+    str.erase(0, 9); //To erase "Creature:"
+    
+    Race race = Human;
+    AttackStyle attackStyle = Melee;
+    int direction;
+    
+    
+    int controller = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    //Extract the race of the creature
+    
+    if (str.substr(0, str.find_first_of(',')) == "Human") {
+        race = Human;
+    } else if (str.substr(0, str.find_first_of(',')) == "Elf") {
+        race = Elf;
+    } else if (str.substr(0, str.find_first_of(',')) == "Dwarf") {
+        race = Dwarf;
+    } else if (str.substr(0, str.find_first_of(',')) == "Orc") {
+        race = Orc;
+    } else if (str.substr(0, str.find_first_of(',')) == "Goblin") {
+        race = Goblin;
+    } else if (str.substr(0, str.find_first_of(',')) == "Undead") {
+        race = Undead;
+    } else if (str.substr(0, str.find_first_of(',')) == "Vampire") {
+        race = Vampire;
+    } else {
+        throw std::invalid_argument("Error deserializing creature: unreadable creature race");
+    }
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    if (str.substr(0, str.find_first_of(',')) == "Melee") {
+        attackStyle = Melee;
+    } else if (str.substr(0, str.find_first_of(',')) == "Ranged") {
+        attackStyle = Ranged;
+    } else if (str.substr(0, str.find_first_of(',')) == "TerrainIgnoring") {
+        attackStyle = TerrainIgnoring;
+    } else {
+        throw std::invalid_argument("Error deserializing creature: unreadable creature race");
+    }
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    //Extract the numerical values of the creature
+    int maxHealth = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int maxEnergy = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int attack = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int vision = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int range = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int health = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int energy = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    if (str.substr(0, str.find_first_of(',')) == "NORTH") {
+        direction = NORTH;
+        str = str.substr(str.find_first_of(',') + 1);
+    } else if (str.substr(0, str.find_first_of(',')) == "EAST") {
+        direction = EAST;
+        str = str.substr(str.find_first_of(',') + 1);
+    } else if (str.substr(0, str.find_first_of(',')) == "SOUTH") {
+        direction = SOUTH;
+        str = str.substr(str.find_first_of(',') + 1);
+    } else if (str.substr(0, str.find_first_of(',')) == "WEST") {
+        direction = WEST;
+        str = str.substr(str.find_first_of(',') + 1);
+    } else {
+        throw std::invalid_argument("Error deserializing creature: unreadable creature direction");
+    }
+    
+    float offset = std::stof(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int x = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int y = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    Creature creature(x, y, race, maxHealth, maxEnergy, attack, attackStyle, vision, range, direction, controller);
+    creature.takeDamage(maxHealth - health);
+    creature.decrementEnergy(maxEnergy - energy);
+    creature.setOffset(offset);
+    return creature;
+}
+
+void Creature::setOffset(float offset) {
+    this->creatureOffset = offset;
 }

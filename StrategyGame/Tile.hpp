@@ -45,17 +45,8 @@ class Tile {
 public:
     //Constructors
     
-    /*!
-     * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
-     *
-     * @param vertexPath A c-string which is the path to the text file that contains vertex shader GLSL code.
-     * @param geometryPath An optional c-string which is the path to the text file that contains geometry shader GLSL code. This parameter is not necessary.
-     * @param fragmentPath A c-string which is the path to the text file that contains fragment shader GLSL code.
-     * @param board A 2D vector of Tiles representing the game board.
-     */
-    Tile(float terrain, unsigned int x, unsigned int y);
-    
-    //Destructor
+    Tile(int terrain, unsigned int x, unsigned int y);
+
     
     //Public properties
     
@@ -164,6 +155,22 @@ public:
      * @return The time the damage was added to this tile.
      */
     float timeOfDamage();
+    
+    /*!
+     * Serialize this object as a string that can be sent through sockets.
+     *
+     * @return The serialized string.
+     */
+    std::string serialize();
+    
+    /*!
+     * Create an object from a serialized string that can be sent through sockets.
+     *
+     * @param str The string to convert into an object.
+     *
+     * @return The object created.
+     */
+    static Tile deserialize(std::string str);
     
     //I think we should impliment these later because they may be complex to program without that much reward
     //const bool vision() { return this->blocksVision; }

@@ -82,535 +82,27 @@ glm::ivec2 Player::tileSelected() {
     return this->selectedTile;
 }
 
-void Player::updateCreatures(float deltaTime) {
-    for (int x = 0; x < this->board->width(); x++) {
-        for (int y = 0; y < this->board->height(x); y++) {
-            
-            Creature* creature = this->board->get(x, y).creature();
-            
-            if (creature != nullptr) {
-                
-                glm::ivec2 creatureLoc = glm::ivec2(x, y);
-                
-                unsigned int direction = creature->direction();
-                
-                if (direction == NORTH || direction == EAST) {
-                    //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
-                    
-                    //If the creature is in the process of moving currently, continue to move it
-                    if (creature->incrementOffset(deltaTime)) {
-                        if (direction == NORTH) {
-                            if (this->board->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
-                                creatureLoc.y -= 1;
-                                
-#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                if (creature->controller() == this->playerNum)
-                                    this->selectCreature(x, y - 1);
-#endif
-                            }
-                        } else if (direction == EAST) {
-                            if (this->board->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
-                                creatureLoc.x -= 1;
-                                
-#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                                if (creature->controller() == this->playerNum)
-                                    this->selectCreature(x - 1, y);
-#endif
-                            }
-                        }
-                        
-                    }
-                } else if (direction == SOUTH || direction == WEST) {
-                    
-                    if (creature->incrementOffset(deltaTime)) {
-                        
-#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                        if (creature->controller() == this->playerNum)
-                            this->selectCreature(x, y);
-#endif
-                    }
-                }
-                
-                if (creature->directions.size() > 0 && creature->offset() == 0.0) {
-                    
-                    //Get the new direction that the creature will be travelling in.
-                    unsigned int newDirection = creature->directions.front();
-                    
-                    //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
-                    creature->directions.pop();
-                    
-                    this->moveAdjacent(creatureLoc.x, creatureLoc.y, newDirection, deltaTime);
-                }
-            }
-        }
-    }
+glm::vec3 Player::tileColor(unsigned int x, unsigned int y) {
+    if (x >= this->board->width())
+        throw std::range_error("X out of range");
+    if (y >= this->board->height(x))
+        throw std::range_error("Y out of range");
+    
+    int style = this->boardInfo[x][y][TILE_STYLE];
+    int hover = this->boardInfo[x][y][TILE_HOVER];
+    
+    if (style == REGULAR)
+        return hover == NO_HOVERING ? WHITE : WHITE * HOVER_EFFECT;
+    else if (style == SELECTED)
+        return hover == NO_HOVERING ? GREY : GREY * HOVER_EFFECT;
+    else if (style == ATTACKABLE)
+        return hover == NO_HOVERING ? RED : RED * HOVER_EFFECT;
+    else if (style == REACHABLE)
+        return hover == NO_HOVERING ? GREEN : GREEN * HOVER_EFFECT;
+    
+    //Something went wrong. Return White to have an unaltered color
+    return WHITE;
 }
-
-void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime) {
-    //Update all tiles other than the one where the mouse is to have no hovering
-    for (int x = 0; x < this->board->width(); x++) {
-        for (int y = 0; y < this->board->height(x); y++) {
-            this->boardInfo[x][y][TILE_HOVER] = NO_HOVERING;
-        }
-    }
-    
-    if (mousePos != NO_SELECTION)
-        this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
-    
-    if (mouseDown) {
-        if (mousePos == NO_SELECTION) {
-            this->resetAllTiles();
-        } else if (mousePos == this->selectedTile) { //Reset the tile (and others) if the current tile is clicked again
-            this->resetAllTiles();
-            
-            //Set selectedTile to null results
-            this->selectedTile = NO_SELECTION;
-        } else {
-            switch (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE]) {
-                    
-                case REGULAR: { //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
-                    this->resetAllTiles();
-                    
-                    //Select this new tile
-                    this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
-                    
-                    Creature* creature = this->board->get(mousePos.x, mousePos.y).creature();
-                    
-                    //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
-                    if (creature != nullptr && creature->controller() == this->playerNum) {
-                        std::vector<Tile> reachableTiles = getReachableTiles(this->board->get(mousePos.x, mousePos.y));
-                        
-                        for (int a = 0; a < reachableTiles.size(); a++) {
-                            if (this->board->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(*creature)) {
-                                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
-                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature");
-                            }
-                        }
-                        
-                        if (creature->energy() > 0) {
-                            std::vector<Tile> attackableTiles = getAttackableTiles(this->board->get(mousePos.x, mousePos.y));
-                            
-                            for (int a = 0; a < attackableTiles.size(); a++) {
-                                //If there is a creature or building on the tile, controlled by an opponent, make it attackable
-                                if ((this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum) || (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum))
-                                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
-                            }
-                        }
-                    }
-                    this->selectedTile = mousePos;
-                    break;
-                } case REACHABLE: {
-                    this->resolveTileAction(mousePos.x, mousePos.y);
-                    break;
-                } case ATTACKABLE: {
-                    glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
-                    glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
-                    
-                    if (this->board->tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board->get(attacker.x, attacker.y).creature()->range()) {
-                        
-                        int attackDamage = 0, defendDamage = 0;
-                        
-                        this->board->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
-                        this->board->setDamage(defender.x, defender.y, attackDamage, currentTime); //Make the damage visible
-                        this->board->setDamage(attacker.x, attacker.y, defendDamage, currentTime); //For attacker and defender
-                        
-                        this->resetAllTiles();
-                        this->selectedTile = NO_SELECTION;
-                    
-#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-                        //If the attacker died, nothing will happen and the function will return false
-                        this->selectCreature(attacker.x, attacker.y);
-#endif
-                    }
-                    break;
-                }
-            }
-        }
-    }
-}
-
-//Private member functions
-
-void Player::resolveTileAction(unsigned int x, unsigned int y) {
-    if (x > this->tileActions.size())
-        throw std::range_error("X out of bounds");
-    if (this->tileActions.size() < 1)
-        throw std::logic_error("No board size");
-    if (y > this->tileActions[x].size())
-        throw std::range_error("Y out of bounds");
-    if (this->tileActions[x][y].size() < 1)
-        throw std::logic_error("No actions to call");
-    
-    std::string action = this->tileActions[x][y].front();
-    this->tileActions[x][y].pop();
-    
-    if (action == "move_creature") {
-        if (this->board->get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) { //Move selected creature to the tile
-            std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, x, y);
-            
-            for (int a = 0; a < directions.size(); a++) {
-                this->board->get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
-                if (a == 0)
-                    this->board->setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
-            }
-            
-            this->resetAllTiles();
-            this->selectedTile = NO_SELECTION;
-        }
-    } else if (action == "make_creature") {
-        if (this->board->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) { //Create a creature from building
-            Creature newCreature(x, y, Human, 100, 4, 30, Melee, 1, 1, 1, NORTH, this->playerNum);
-            
-            if (this->board->get(x, y).passableByCreature(newCreature)) {
-                this->board->setCreature(x, y, newCreature);
-            }
-            
-            this->resetAllTiles();
-            this->selectedTile = NO_SELECTION;
-        }
-    }
-}
-
-bool Player::moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime) {
-    //Return false if there is no creature at the designated spot to move
-    if (this->board->get(x, y).creature() == nullptr)
-        return false;
-    
-    //Check if move goes beyond map
-    int newX, newY;
-    
-    if (direction == NORTH) {
-        newX = x;
-        newY = y - 1;
-        
-        if (newY < 0)
-            return false;
-    } else if (direction == WEST) {
-        newX = x + 1;
-        newY = y;
-        
-        if (newX >= this->board->width())
-            return false;
-    } else if (direction == SOUTH) {
-        newX = x;
-        newY = y + 1;
-        
-        if (newY >= this->board->height(x))
-            return false;
-    } else if (direction == EAST) {
-        newX = x - 1;
-        newY = y;
-        
-        if (newX < 0)
-            return false;
-    }
-    
-    //Passable Check
-    if (!this->board->get(newX, newY).passableByCreature(*this->board->get(x, y).creature())) {
-        return false;
-    }
-    
-    //Set the direction that was found at the selected creature
-    this->board->setDirection(x, y, direction);
-    
-    //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
-    //For these directions, the creature is moved after, in the function that updates the offset data
-    if (direction == NORTH || direction == EAST)
-        this->board->get(x, y).creature()->initiateMovementOffset(deltaTime);
-    
-    //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
-    //For these directions, the creature is moved here, and then the offset is slowly updated to follow
-    if (direction == SOUTH || direction == WEST) {
-        unsigned int tile; //The location in the data array
-        
-        if (direction == SOUTH) {
-            tile = (x * this->board->width()) + (y + 1); //One row below
-        } else if (direction == WEST) {
-            tile = ((x + 1) * this->board->width()) + y; //One tile further
-        }
-        
-        if (tile < NUMBER_OF_TILES) {
-            this->board->get(x, y).creature()->initiateMovementOffset(deltaTime);
-            
-            this->board->moveCreatureByDirection(x, y, direction);
-        } else {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool Player::selectCreature(unsigned int x, unsigned int y) {
-    if (x >= this->board->width()) //No selecting happens if the x is out of range
-        return false;
-    
-    if (y >= this->board->height(x)) //No selecting happens if the y is out of range
-        return false;
-    
-    if (this->board->get(x, y).creature() == nullptr) //No selecting happens if there is no creature at the selected location
-        return false;
-    
-    Creature* creature = this->board->get(x, y).creature();
-    
-    if (creature->directions.size() == 0) {
-        this->selectedTile = glm::vec2(x, y); //Set the selected tile to this location
-        
-        this->boardInfo[x][y][TILE_STYLE] = SELECTED;
-        
-        std::vector<Tile> reachableTiles = getReachableTiles(this->board->get(x, y));
-        
-        Creature creature = *this->board->get(x, y).creature();
-        for (int a = 0; a < reachableTiles.size(); a++) {
-            if (this->board->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
-                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
-                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature");
-            }
-        }
-        
-        std::vector<Tile> attackableTiles = getAttackableTiles(this->board->get(x, y));
-        
-        for (int a = 0; a < attackableTiles.size(); a++) {
-            
-            //If there is a creature on the tile, controlled by an opponent, make it attackable
-            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum)
-                
-                if (creature.energy() > 0)
-                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
-            
-            //If there is a building on the tile, controlled by an opponent, make it attackable
-            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum)
-                
-                if (creature.energy() > 0)
-                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
-        }
-    }
-    
-    return true;
-}
-
-std::vector<Tile> Player::getReachableTiles(Tile creatureTile) {
-    //Set the selected tile as the one inputted
-    //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
-    
-    if (creatureTile.creature() == nullptr) {
-        std::vector<Tile> emptyTileVector;
-        return emptyTileVector;
-    } else {
-        Creature creature = *creatureTile.creature();
-        
-        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
-        
-        //Gets the tiles that are reachable by the creature
-        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->energy()));
-        
-#ifdef PATHFINDING_CONSOLE_OUTPUT
-        std::cout << "pathfind" << std::endl;
-#endif
-        
-        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
-        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-            if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
-                
-                Tile tile = reachedTiles[tileIterator].first;
-                
-                //North
-                if (tile.y() > 0) {
-                    if (this->board->get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() - 1))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    }
-                }
-                
-                //East
-                if (tile.x() > 0) {
-                    if (this->board->get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() - 1, tile.y()))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    }
-                }
-                
-                //South
-                if (tile.y() < this->board->height(tile.x()) - 1) {
-                    if (this->board->get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() + 1))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    }
-                }
-                
-                //West
-                if (tile.x() < this->board->width() - 1) {
-                    if (this->board->get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() + 1, tile.y()))) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->board->getTerrainMovementCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
-                    }
-                }
-            }
-        }
-        
-        //Now turn the reached tile vector of pairs into a vector of just tiles
-        std::vector<Tile> reachedTileReturnVector;
-        
-        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-            reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
-        }
-        
-#ifdef PATHFINDING_CONSOLE_OUTPUT
-        std::cout << "return success" << std::endl;
-#endif
-        return reachedTileReturnVector;
-    }
-}
-
-/*
- * TO ADD:
- *
- * CHECK IF THE OCCUPYING CREATURE ON REACHABLE SQUARES ARE ATTACKABLE SPECIFICALLY BY THE CREATURE.
- */
-
-
-//This function needs to be reworked for longer ranges. Perhaps, for each tile, check if there is a blocking obstacle in the way. Draw a line from origin to attack point, if it intersects with the boundaries of an obstacle the attack is not possible. Currently, projectiles can navigate around obstacles.
-
-
-std::vector<Tile> Player::getAttackableTiles(Tile creatureTile) {
-    if (creatureTile.creature() == nullptr) {
-        std::vector<Tile> emptyTileVector;
-        return emptyTileVector;
-    } else {
-        Creature creature = *creatureTile.creature();
-        
-        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
-        
-        std::vector<Tile> attackableTiles; //A vector of the tiles that can be attacked
-        
-        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->range()));
-        
-        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
-        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-            if (reachedTiles[tileIterator].second > 0) { //If an attack at this spot would be able to continue to move further, expand in the four directions from that tile.
-                
-                Tile tile = reachedTiles[tileIterator].first;
-                
-                //North
-                if (tile.y() > 0) {
-                    if (this->board->get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->board->getTerrainAttackCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x(), tile.y() - 1).occupied()) {
-                        attackableTiles.push_back(this->board->get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-                
-                //East
-                if (tile.x() > 0) {
-                    if (this->board->get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->board->getTerrainAttackCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x() - 1, tile.y()).occupied()) {
-                        attackableTiles.push_back(this->board->get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-                
-                //South
-                if (tile.y() < this->board->height(tile.x()) - 1) {
-                    if (this->board->get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->board->getTerrainAttackCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x(), tile.y() + 1).occupied()) {
-                        attackableTiles.push_back(this->board->get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-                
-                //West
-                if (tile.x() < this->board->width() - 1) {
-                    if (this->board->get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->board->getTerrainAttackCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x() + 1, tile.y()).occupied()) {
-                        attackableTiles.push_back(this->board->get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-            }
-        }
-        
-        return attackableTiles;
-    }
-}
-
-std::vector<Tile> Player::getVisibleTiles(Tile creatureTile) {
-    if (creatureTile.creature() == nullptr) {
-        std::vector<Tile> emptyTileVector;
-        return emptyTileVector;
-    } else {
-        Creature creature = *creatureTile.creature();
-        
-        std::vector<std::pair<Tile, GLint> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
-        
-        std::vector<Tile> visibleTiles; //A vector of the tiles that can be attacked
-        
-        reachedTiles.push_back(std::pair<Tile, GLint>(creatureTile, creatureTile.creature()->range()));
-        
-        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
-        for (GLuint tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
-            if (reachedTiles[tileIterator].second > 0) { //If an attack at this spot would be able to continue to move further, expand in the four directions from that tile.
-                
-                Tile tile = reachedTiles[tileIterator].first;
-                
-                //North
-                if (tile.y() > 0) {
-                    if (this->board->get(tile.x(), tile.y() - 1).passableByVision(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->board->getTerrainVisionCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x(), tile.y() - 1).occupied()) {
-                        visibleTiles.push_back(this->board->get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-                
-                //East
-                if (tile.x() > 0) {
-                    if (this->board->get(tile.x() - 1, tile.y()).passableByVision(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->board->getTerrainVisionCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x() - 1, tile.y()).occupied()) {
-                        visibleTiles.push_back(this->board->get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-                
-                //South
-                if (tile.y() < this->board->height(tile.x()) - 1) {
-                    if (this->board->get(tile.x(), tile.y() + 1).passableByVision(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->board->getTerrainVisionCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x(), tile.y() + 1).occupied()) {
-                        visibleTiles.push_back(this->board->get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-                
-                //West
-                if (tile.x() < this->board->width() - 1) {
-                    if (this->board->get(tile.x() + 1, tile.y()).passableByVision(creature)) {
-                        reachedTiles.push_back(std::pair<Tile, GLint>(this->board->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->board->getTerrainVisionCost(this->board->get(tile.x(), tile.y()), this->board->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
-                    }
-                    if (this->board->get(tile.x() + 1, tile.y()).occupied()) {
-                        visibleTiles.push_back(this->board->get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
-                    }
-                }
-            }
-        }
-        
-        return visibleTiles;
-    }
-
-}
-
-/*std::vector<Tile> Player::getAllVisibleTiles() {
-    
-    for (auto creature = board->creatures.begin(); creature != this->board->creatures.end(); creature++) {
-        if (creature->controller() == playerNum) {
-            
-            //not done, but for each tile in getVisibleTiles, it gets pushed back to big vector. Then at the end all repeat tiles are removed.
-            getVisibleTiles(this->&board[creature->x()][creature->y()]);
-        }
-    }
-    
-    
-}*/
-
 
 std::vector<GLuint> Player::getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY) {
     if (x >= this->board->width()) {
@@ -719,24 +211,309 @@ std::vector<GLuint> Player::getPath(GLuint x, GLuint y, GLuint destinationX, GLu
     return directions;
 }
 
-glm::vec3 Player::tileColor(unsigned int x, unsigned int y) {
-    if (x >= this->board->width())
-        throw std::range_error("X out of range");
-    if (y >= this->board->height(x))
-        throw std::range_error("Y out of range");
+void Player::updateCreatures(float deltaTime) {
+    for (int x = 0; x < this->board->width(); x++) {
+        for (int y = 0; y < this->board->height(x); y++) {
+            
+            Creature* creature = this->board->get(x, y).creature();
+            
+            if (creature != nullptr) {
+                
+                glm::ivec2 creatureLoc = glm::ivec2(x, y);
+                
+                unsigned int direction = creature->direction();
+                
+                if (direction == NORTH || direction == EAST) {
+                    //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
+                    
+                    //If the creature is in the process of moving currently, continue to move it
+                    if (creature->incrementOffset(deltaTime)) {
+                        if (direction == NORTH) {
+                            if (this->board->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                                creatureLoc.y -= 1;
+                                
+#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+                                if (creature->controller() == this->playerNum)
+                                    this->selectCreature(x, y - 1);
+#endif
+                            }
+                        } else if (direction == EAST) {
+                            if (this->board->moveCreatureByDirection(creatureLoc.x, creatureLoc.y, direction)) {
+                                creatureLoc.x -= 1;
+                                
+#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+                                if (creature->controller() == this->playerNum)
+                                    this->selectCreature(x - 1, y);
+#endif
+                            }
+                        }
+                        
+                    }
+                } else if (direction == SOUTH || direction == WEST) {
+                    
+                    if (creature->incrementOffset(deltaTime)) {
+                        
+#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+                        if (creature->controller() == this->playerNum)
+                            this->selectCreature(x, y);
+#endif
+                    }
+                }
+                
+                if (creature->directions.size() > 0 && creature->offset() == 0.0) {
+                    
+                    //Get the new direction that the creature will be travelling in.
+                    unsigned int newDirection = creature->directions.front();
+                    
+                    //Now that this direction is being dealt with, we can get rid of it from the directions left for the creature to go in.
+                    creature->directions.pop();
+                    
+                    this->moveAdjacent(creatureLoc.x, creatureLoc.y, newDirection, deltaTime);
+                }
+            }
+        }
+    }
+}
+
+void Player::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime) {
+    //Update all tiles other than the one where the mouse is to have no hovering
+    for (int x = 0; x < this->board->width(); x++) {
+        for (int y = 0; y < this->board->height(x); y++) {
+            this->boardInfo[x][y][TILE_HOVER] = NO_HOVERING;
+        }
+    }
     
-    int style = this->boardInfo[x][y][TILE_STYLE];
-    int hover = this->boardInfo[x][y][TILE_HOVER];
+    if (mousePos != NO_SELECTION)
+        this->boardInfo[mousePos.x][mousePos.y][TILE_HOVER] = HOVERING;
     
-    if (style == REGULAR)
-        return hover == NO_HOVERING ? WHITE : WHITE * HOVER_EFFECT;
-    else if (style == SELECTED)
-        return hover == NO_HOVERING ? GREY : GREY * HOVER_EFFECT;
-    else if (style == ATTACKABLE)
-        return hover == NO_HOVERING ? RED : RED * HOVER_EFFECT;
-    else if (style == REACHABLE)
-        return hover == NO_HOVERING ? GREEN : GREEN * HOVER_EFFECT;
+    if (mouseDown) {
+        if (mousePos == NO_SELECTION) {
+            this->resetAllTiles();
+        } else if (mousePos == this->selectedTile) { //Reset the tile (and others) if the current tile is clicked again
+            this->resetAllTiles();
+            
+            //Set selectedTile to null results
+            this->selectedTile = NO_SELECTION;
+        } else {
+            switch (this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE]) {
+                    
+                case REGULAR: { //If it is an empty spot, change the selected tile to that spot and reset the old selected tile
+                    this->resetAllTiles();
+                    
+                    //Select this new tile
+                    this->boardInfo[mousePos.x][mousePos.y][TILE_STYLE] = SELECTED;
+                    
+                    Creature* creature = this->board->get(mousePos.x, mousePos.y).creature();
+                    
+                    //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
+                    if (creature != nullptr && creature->controller() == this->playerNum) {
+                        
+                        std::vector<Tile> reachableTiles = this->board->getReachableTiles(this->board->get(mousePos.x, mousePos.y));
+                        
+                        for (int a = 0; a < reachableTiles.size(); a++) {
+                            if (this->board->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(*creature)) {
+                                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
+                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature");
+                            }
+                        }
+                        
+                        if (creature->energy() > 0) {
+                            std::vector<Tile> attackableTiles = this->board->getAttackableTiles(this->board->get(mousePos.x, mousePos.y));
+                            
+                            for (int a = 0; a < attackableTiles.size(); a++) {
+                                //If there is a creature or building on the tile, controlled by an opponent, make it attackable
+                                if ((this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum) || (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum))
+                                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
+                            }
+                        }
+                    }
+                    this->selectedTile = mousePos;
+                    break;
+                } case REACHABLE: {
+                    this->resolveTileAction(mousePos.x, mousePos.y);
+                    break;
+                } case ATTACKABLE: {
+                    glm::ivec2 attacker = glm::ivec2(this->selectedTile.x, this->selectedTile.y);
+                    glm::ivec2 defender = glm::ivec2(mousePos.x, mousePos.y);
+                    
+                    if (this->board->tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board->get(attacker.x, attacker.y).creature()->range()) {
+                        
+                        int attackDamage = 0, defendDamage = 0;
+                        
+                        this->board->initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+                        this->board->setDamage(defender.x, defender.y, attackDamage, currentTime); //Make the damage visible
+                        this->board->setDamage(attacker.x, attacker.y, defendDamage, currentTime); //For attacker and defender
+                        
+                        this->resetAllTiles();
+                        this->selectedTile = NO_SELECTION;
+                    
+#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
+                        //If the attacker died, nothing will happen and the function will return false
+                        this->selectCreature(attacker.x, attacker.y);
+#endif
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
+//Private member functions
+
+void Player::resolveTileAction(unsigned int x, unsigned int y) {
+    if (x > this->tileActions.size())
+        throw std::range_error("X out of bounds");
+    if (this->tileActions.size() < 1)
+        throw std::logic_error("No board size");
+    if (y > this->tileActions[x].size())
+        throw std::range_error("Y out of bounds");
+    if (this->tileActions[x][y].size() == 0)
+        throw std::logic_error("No actions to call");
     
-    //Something went wrong. Return White to have an unaltered color
-    return WHITE;
+    std::string action = this->tileActions[x][y].front();
+    this->tileActions[x][y].pop();
+    
+    if (action == "move_creature") {
+        if (this->board->get(this->selectedTile.x, this->selectedTile.y).creature() != nullptr) { //Move selected creature to the tile
+            std::vector<unsigned int> directions = this->getPath(this->selectedTile.x, this->selectedTile.y, x, y);
+            
+            for (int a = 0; a < directions.size(); a++) {
+                this->board->get(this->selectedTile.x, this->selectedTile.y).creature()->directions.push(directions[a]);
+                if (a == 0)
+                    this->board->setDirection(this->selectedTile.x, this->selectedTile.y, directions[a]);
+            }
+            
+            this->resetAllTiles();
+            this->selectedTile = NO_SELECTION;
+        }
+    } else if (action == "make_creature") {
+        if (this->board->get(this->selectedTile.x, this->selectedTile.y).building() != nullptr) { //Create a creature from building
+            Creature newCreature(x, y, Human, 100, 4, 30, Melee, 1, 1, NORTH, this->playerNum);
+            
+            if (this->board->get(x, y).passableByCreature(newCreature)) {
+                this->board->setCreature(x, y, newCreature);
+            }
+            
+            this->resetAllTiles();
+            this->selectedTile = NO_SELECTION;
+        }
+    }
+}
+
+bool Player::moveAdjacent(unsigned int x, unsigned int y, int direction, float deltaTime) {
+    //Return false if there is no creature at the designated spot to move
+    if (this->board->get(x, y).creature() == nullptr)
+        return false;
+    
+    //Check if move goes beyond map
+    int newX, newY;
+    
+    if (direction == NORTH) {
+        newX = x;
+        newY = y - 1;
+        
+        if (newY < 0)
+            return false;
+    } else if (direction == WEST) {
+        newX = x + 1;
+        newY = y;
+        
+        if (newX >= this->board->width())
+            return false;
+    } else if (direction == SOUTH) {
+        newX = x;
+        newY = y + 1;
+        
+        if (newY >= this->board->height(x))
+            return false;
+    } else if (direction == EAST) {
+        newX = x - 1;
+        newY = y;
+        
+        if (newX < 0)
+            return false;
+    }
+    
+    //Passable Check
+    if (!this->board->get(newX, newY).passableByCreature(*this->board->get(x, y).creature())) {
+        return false;
+    }
+    
+    //Set the direction that was found at the selected creature
+    this->board->setDirection(x, y, direction);
+    
+    //If the tile is going to be moving up (visually on the screen) slowly move the tile from the previous location to the new one
+    //For these directions, the creature is moved after, in the function that updates the offset data
+    if (direction == NORTH || direction == EAST)
+        this->board->get(x, y).creature()->initiateMovementOffset(deltaTime);
+    
+    //If it's going down, instead move it to the next square and slowly move it from that spot. This keeps it from being drawn under the tile it's going to
+    //For these directions, the creature is moved here, and then the offset is slowly updated to follow
+    if (direction == SOUTH || direction == WEST) {
+        unsigned int tile; //The location in the data array
+        
+        if (direction == SOUTH) {
+            tile = (x * this->board->width()) + (y + 1); //One row below
+        } else if (direction == WEST) {
+            tile = ((x + 1) * this->board->width()) + y; //One tile further
+        }
+        
+        if (tile < NUMBER_OF_TILES) {
+            this->board->get(x, y).creature()->initiateMovementOffset(deltaTime);
+            
+            this->board->moveCreatureByDirection(x, y, direction);
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Player::selectCreature(unsigned int x, unsigned int y) {
+    if (x >= this->board->width()) //No selecting happens if the x is out of range
+        return false;
+    
+    if (y >= this->board->height(x)) //No selecting happens if the y is out of range
+        return false;
+    
+    if (this->board->get(x, y).creature() == nullptr) //No selecting happens if there is no creature at the selected location
+        return false;
+    
+    Creature* creature = this->board->get(x, y).creature();
+    
+    if (creature->directions.size() == 0) {
+        this->selectedTile = glm::vec2(x, y); //Set the selected tile to this location
+        
+        this->boardInfo[x][y][TILE_STYLE] = SELECTED;
+        
+        std::vector<Tile> reachableTiles = this->board->getReachableTiles(this->board->get(x, y));
+        
+        Creature creature = *this->board->get(x, y).creature();
+        for (int a = 0; a < reachableTiles.size(); a++) {
+            if (this->board->get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(creature)) {
+                this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
+                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature");
+            }
+        }
+        
+        std::vector<Tile> attackableTiles = this->board->getAttackableTiles(this->board->get(x, y));
+        
+        for (int a = 0; a < attackableTiles.size(); a++) {
+            
+            //If there is a creature on the tile, controlled by an opponent, make it attackable
+            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum)
+                
+                if (creature.energy() > 0)
+                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
+            
+            //If there is a building on the tile, controlled by an opponent, make it attackable
+            if (this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board->get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum)
+                
+                if (creature.energy() > 0)
+                    this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
+        }
+    }
+    
+    return true;
 }

@@ -9,7 +9,7 @@
 #include "Tile.hpp"
 
 //Constructors
-Tile::Tile(float terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
+Tile::Tile(int terrain, unsigned int x, unsigned int y) : tileX(x), tileY(y) {
     this->tileTerrain = terrain;
 }
 
@@ -140,4 +140,27 @@ unsigned int Tile::damage() {
 
 float Tile::timeOfDamage() {
     return this->damageHitTime;
+}
+
+std::string Tile::serialize() {
+    return "Tile:" + std::to_string(this->tileX) + "," + std::to_string(this->tileY) + "," + std::to_string(this->tileTerrain) + "," + std::to_string(this->tileDamage) + "," + std::to_string(this->damageHitTime) + "-Tile-";
+}
+
+Tile Tile::deserialize(std::string str) {
+    str.erase(0, 5); //To erase "Tile:"
+    std::string num = str.substr(0, str.find_first_of(','));
+    int x = std::stoi(num);
+    str = str.substr(str.find_first_of(',') + 1);
+    int y = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int terrain = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    int damage = std::stoi(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    float damageTime = std::stof(str.substr(0, str.find_first_of(',')));
+    str = str.substr(str.find_first_of(',') + 1);
+    
+    Tile tile(terrain, x, y);
+    tile.setDamage(damage, damageTime);
+    return tile;
 }

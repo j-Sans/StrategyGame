@@ -26,6 +26,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Window.hpp"
 
 enum DisplayBarType {
     HealthBar,
@@ -59,7 +60,7 @@ public:
      * @param lostColor The color of the inactive section of the bar, that represents the lost value, in the form of a glm::vec3.
      * @param backgroundColor The color of the outside section of the bar in the form of a glm::vec3.
      */
-    DisplayBar(Shader* shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
+    DisplayBar(Shader* shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
     
     //Public properties
     
@@ -109,7 +110,7 @@ private:
     GLfloat currentMaxValue;
     
     //OpenGL and GLFW properties
-    GLFWwindow* barWindow;
+    Window* window;
     Shader barShader; //A compiled shader to render this display bar
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO

@@ -40,6 +40,7 @@
 #include "Font.hpp"
 
 #include "Interface.hpp"
+#include "Window.hpp"
 
 //For when no tile is being selected
 #define NO_SELECTION glm::ivec2(-1, -1)
@@ -116,14 +117,24 @@ public:
     unsigned int playerNum;
     unsigned int activePlayer;
     
+    Window window;
+    
+    //Array data to be sent to respective VBO's
+    std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
+    std::vector<GLint> terrainData; //[NUMBER_OF_TILES];
+    std::vector<GLint> creatureData; //[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
+    std::vector<GLfloat> colorData; //[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
+    std::vector<GLint> damageData; //[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
+    std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
+    std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
+    
     /*!
      * A function that sets the initial information of the visualizer
      *
      * @param width An unsigned int representing the number of tiles along the x axis on the board.
      * @param height An unsigned int representing the number of tiles along the y axis on the board.
-     * @param initialInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for initially setting openGL buffers.
      */
-    void set(unsigned int width, unsigned int height, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void set(unsigned int width, unsigned int height/*, std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
     
     /*!
      * A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
@@ -131,10 +142,10 @@ public:
      * @param boardInfo An std::map of std::strings with enum type BoardInfoDataTypes (see Visualizer.hpp) as the keys, for updating openGL buffers.
      */
 //    void render(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void render(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void render(/* std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec*/);
     
     /*!
-     * A functino to return a string conatining the following.
+     * A function to return a string conatining the following.
      *  mouse_x_position,mouse_y_position,t
      *  mouse_x_position,mouse_y_position,f
      * The first one if the mouse is down, the second if the mouse is not down.
@@ -143,6 +154,11 @@ public:
      * @return The string to send to the host as described above.
      */
     std::string getClientInfo();
+    
+    /*!
+     * @return The coordinates of the tile where the mouse is located.
+     */
+    glm::ivec2 getMouseTile();
     
     /*!
      * A function that should be called at the beginning of each frame from the larger class, in this case client.
@@ -178,9 +194,9 @@ public:
     //Get functions
     
     /*!
-     * @return A pointer to the GLFWwindow object.
+     * @return Whether the mouse is has been pressed.
      */
-    GLFWwindow* window();
+    bool mousePressed();
     
     /*!
      * @return A GLfloat representing the time (in seconds) since the last frame.
@@ -198,7 +214,7 @@ private:
     unsigned int numberOfTiles;
     
     //OpenGL and GLFW properties
-    GLFWwindow* gameWindow;
+//    GLFWwindow* gameWindow;
     Shader gameShader; //Compiled shader
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
@@ -209,15 +225,6 @@ private:
     GLuint damageVBO;
     GLuint offsetVBO;
     GLuint buildingVBO;
-    
-    //Array data to be sent to respective VBO's
-    std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
-    std::vector<GLint> terrainData; //[NUMBER_OF_TILES];
-    std::vector<GLint> creatureData; //[3 * NUMBER_OF_TILES]; //1 value for the creature type, 1 for the direction, 1 for the controller
-    std::vector<GLfloat> colorData; //[3 * NUMBER_OF_TILES]; //3 values, one for each RGB
-    std::vector<GLint> damageData; //[NUMBER_OF_TILES]; //The damage to be displayed on this tile. If it is 0, nothing will be displayed.
-    std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
-    std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
     
     //Textures
     std::vector<Texture> textures;
@@ -236,13 +243,13 @@ private:
     glm::mat4 rectRotation;
     
     glm::vec3 cameraCenter;
-    GLfloat camMaxDisplacement;
+    glm::vec2 camMaxDisplacement;
     
     //Window data
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::ivec2 viewportSize;
+//    glm::ivec2 viewportSize;
     glm::ivec2 selectedTile = NO_SELECTION;
     
     //Interfaces
@@ -258,12 +265,6 @@ private:
     interfaceStat leftInterfaceStats;
     interfaceStat bottomInterfaceStats;
     interfaceStat rightInterfaceStats;
-    interfaceStat settingsMenuStats;
-    
-    //Settings menu
-    Box darkenBox; //A box to render to darken the entire screen
-    bool showSettings = false; //A boolean representing whether or not to display the settings menu
-    
     
     //Private member functions
     
@@ -272,26 +273,22 @@ private:
      */
     void initWindow();
     
-//    /*!
-//     * Set the data for the VBO's for vertices, terrains, and creatures. Information is taken from the board.
-//     *
-//     * @param setVertexData A boolean indicating whether to update the vertex data array.
-//     * @param setTerrainData A boolean indicating whether to update the terrain data array.
-//     * @param setCreatureData A boolean indicating whether to update the creature data array.
-//     * @param setColorData A boolean indicating whether to update the color data array.
-//     * @param setDamageData A boolean indicating whether to update the damage data array.
-//     * @param setOffsetData A boolean indicating whether to update the offset data array.
-//     * @param setBuildingData A boolean indicating whether to update the building data array.
-//     */
-//    void setData(bool setVertexData, bool setTerrainData, bool setCreatureData, bool setColorData, bool setDamageData, bool setOffsetData, bool setBuildingData);
+    /*!
+     * Initialize OpenGL buffers with the object's vertex data. Should be called after the data vectors have been filled.
+     */
+    void setBuffers();
     
     /*!
-     * Initialize OpenGL buffers with the object's vertex data.
+     * A function to update all of the buffers that need to be updated. Should be called every frame.
      *
      * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
-//    void setBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void setBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
+    void updateBuffers();
+    
+    /*!
+     * Fill the vertex data vector property of this class with the vertex data based on the size of the board. Should be called after set().
+     */
+    void setVertexData();
     
     /*!
      * Initialize the interface
@@ -323,14 +320,6 @@ private:
     void presetTransformations();
     
     /*!
-     * A function to update all of the buffers that need to be updated. Should be called every frame.
-     *
-     * @param boardInfo An std::string representing the information directly received from the server, through the socket.
-     */
-//    void updateBuffers(std::map<BoardInfoDataTypes, std::string> boardInfo);
-    void updateBuffers(std::vector<int> terrainDataVec, std::vector<int> creatureDataVec, std::vector<float> colorDataVec, std::vector<int> damageDataVec, std::vector<float> offsetDataVec, std::vector<int> buildingDataVec);
-    
-    /*!
      * Set the correct interfaces to render based on the selected tile. Should be called every frame.
      */
     void updateInterfaces();
@@ -353,16 +342,8 @@ private:
     void processButton(std::string action);
     
     /*!
-     * A function to render a display menu interface in the center of the screen. This can be useful as an "esc" settings menu (when escape is clicked). This also darkens the rest of the screen.
-     *
-     * @param mouseUp A bool representing if the mouse was just released.
-     * @param mouseDown A bool representing if the mouse is currently clicking.
-     */
-    void renderSettingsMenu(bool mouseUp, bool mouseDown);
-    
-    /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
-     * (-1, -1) is returned if the selection was outside of the board.
+     * (-1, -1) is returned if the selection was outside of the board. This is refered to as NO_SELECTION.
      * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
      *
      * @param mousePos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.

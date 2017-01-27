@@ -10,9 +10,9 @@
 
 //Public member functions
 
-Button::Button(Shader shader, GLFWwindow* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText) {
+Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText) {
     
-    this->buttonWindow = window;
+    this->window = window;
     this->buttonShader = shader;
     
     this->font = Font(FONT_PATH);
@@ -136,18 +136,9 @@ bool Button::isPressed() {
 //Private member functions
 
 void Button::updateMouse(bool mouseDown, bool mouseUp) {
-    glm::dvec2 mousePos;
-    
-    //Get the mouse position and set it to mousePos. It is relative to the upper left corner of the screen
-    glfwGetCursorPos(this->buttonWindow, &mousePos.x, &mousePos.y);
-    
-    //Get the size of the window in terms of pixels, which is what the interface coordinates are in terms of
-    glm::ivec2 frameBufferSize;
-    glfwGetFramebufferSize(this->buttonWindow, &frameBufferSize.x, &frameBufferSize.y);
-    
-    //Get the size of the window in terms of screen coordinates, which is what the mouse coordinates are in terms of
-    glm::ivec2 windowSize;
-    glfwGetWindowSize(this->buttonWindow, &windowSize.x, &windowSize.y);
+    glm::dvec2 mousePos = this->window->cursorPos();
+    glm::ivec2 frameBufferSize = this->window->framebufferSize();
+    glm::ivec2 windowSize = this->window->windowSize();
     
     //Flip the mouse's y so it is based from bottom left, not top left, corner
     mousePos.y = windowSize.y - mousePos.y;

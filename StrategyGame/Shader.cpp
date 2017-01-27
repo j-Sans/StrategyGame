@@ -62,7 +62,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexSuccess);
     if (!vertexSuccess) {
         glGetShaderInfoLog(vertexShader, 512, NULL, vertexInfoLog);
-        std::cout << "Error compiling vertex shader: " << std::endl << vertexInfoLog << std::endl;
+        std::cout << "Error compiling vertex shader (" << vertexPath << "): " << std::endl << vertexInfoLog << std::endl;
     }
     
     //Now do the same with the fragment shader
@@ -77,7 +77,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragmentSuccess);
     if (!fragmentSuccess) {
         glGetShaderInfoLog(fragmentShader, 512, NULL, fragmentInfoLog);
-        std::cout << "Error compiling fragment shader: " << std::endl << fragmentInfoLog << std::endl;
+        std::cout << "Error compiling fragment shader (" << fragmentPath << "): " << std::endl << fragmentInfoLog << std::endl;
     }
     
     //Shader program
@@ -156,7 +156,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLcha
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexSuccess);
     if (!vertexSuccess) {
         glGetShaderInfoLog(vertexShader, 512, NULL, vertexInfoLog);
-        std::cout << "Error compiling vertex shader: " << std::endl << vertexInfoLog << std::endl;
+        std::cout << "Error compiling vertex shader (" << vertexPath << "): " << std::endl << vertexInfoLog << std::endl;
     }
     
     //Now do the same with the geometry shader
@@ -171,7 +171,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLcha
     glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &geometrySuccess);
     if (!geometrySuccess) {
         glGetShaderInfoLog(geometryShader, 512, NULL, geometryInfoLog);
-        std::cout << "Error compiling geometry shader: " << std::endl << geometryInfoLog << std::endl;
+        std::cout << "Error compiling geometry shader (" << geometryPath << "): " << std::endl << geometryInfoLog << std::endl;
     }
     
     //And with the fragment shader
@@ -186,7 +186,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* geometryPath, const GLcha
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragmentSuccess);
     if (!fragmentSuccess) {
         glGetShaderInfoLog(fragmentShader, 512, NULL, fragmentInfoLog);
-        std::cout << "Error compiling fragment shader: " << std::endl << fragmentInfoLog << std::endl;
+        std::cout << "Error compiling fragment shader (" << fragmentPath << "): " << std::endl << fragmentInfoLog << std::endl;
     }
     
     //Shader program

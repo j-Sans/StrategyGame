@@ -193,6 +193,15 @@ public:
     Tile get(unsigned int x, unsigned int y);
     
     /*!
+     * A function to check the validity of tile coordinates.
+     *
+     * @param tilePos The coordinates of the tile to check.
+     *
+     * @return True if the given location exists on the board, false otherwise.
+     */
+    bool validTile(glm::ivec2 tilePos);
+    
+    /*!
      * @return The x-side width of the board.
      */
     unsigned int width();
@@ -203,6 +212,77 @@ public:
      * @return The y-side height of the board.
      */
     unsigned int height(unsigned int x);
+    
+    /*!
+     * A function to check if a creature can be moved to the destination from its current location. An invalid_argument exception will be thrown if there is no creature, and a range_error if either set of coordinates is not on the board.
+     *
+     * @param destination A glm::ivec2 representing the board coordinates of the destination tile.
+     * @param currentLoc A glm::ivec2 representing the board coordinates of the creature's current location.
+     *
+     * @return Whether the creature is able to move there.
+     */
+    bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    
+    /*!
+     * A function to check if a creature can attack the destination from its current location. An invalid_argument exception will be thrown if there is no creature at either destination or the current location, a range_error if either set of coordinates is not on the board, and a logic_error if the creature has no energy.
+     *
+     * @param destination A glm::ivec2 representing the board coordinates of the defender's tile.
+     * @param currentLoc A glm::ivec2 representing the board coordinates of the creature's current location.
+     *
+     * @return Whether the creature is able to attack.
+     */
+    bool attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    
+    /*!
+     * A function that gets all of the tiles that a creature can reach.
+     *
+     * @param creature The tile containing the specified creature that is going to be moving.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
+     */
+    std::vector<Tile> getReachableTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a creature can attack.
+     *
+     * @param creature The tile containing the specified creature that is going to be moving.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
+     */
+    std::vector<Tile> getAttackableTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a creature can see.
+     *
+     * @param creature The tile containing the specified creature that is seeing.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
+     */
+    
+    std::vector<Tile> getVisibleTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a player can see
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
+     */
+    std::vector<Tile> getAllVisibleTiles();
+    
+    /*!
+     * Serialize this object as a string that can be sent through sockets.
+     *
+     * @return The serialized string.
+     */
+    std::string serialize();
+    
+    /*!
+     * Create an object from a serialized string that can be sent through sockets.
+     *
+     * @param str The string to convert into an object.
+     *
+     * @return The object created.
+     */
+    static Board deserialize(std::string str);
     
 private:
     //Private properties

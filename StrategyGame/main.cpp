@@ -37,8 +37,6 @@ int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
     
-    bool host = false;
-    
     bool repeat = true;
     while (repeat) {
         repeat = false;
@@ -87,15 +85,15 @@ int main(int argc, const char * argv[]) {
                 
                 Host H(numPlayers, 3000, Board(board));
                 
-                //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller)
+                //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
                 
                 for(int a = 0; a < numPlayers; a++) {
-                    H.board.setCreature(a + 2, a + 2, Creature(a + 2, a + 2, Human, 300, 3, 40, Melee, 1, 1, 1, NORTH, a));
+                    H.board.setCreature(a + 2, a + 2, Creature(a + 2, a + 2, Human, 300, 3, 40, Melee, 1, 1, NORTH, a));
                 }
                 
-                H.board.setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 1, 0));
+                H.board.setBuilding(3, 5, Building(3, 5, "Make creature", "building_new_creature(3,5)", 300, 0));
                 
-                H.board.setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1, 1));
+                H.board.setBuilding(5, 3, Building(5, 3, "Make creature", "building_new_creature(5,3)", 300, 1));
                 
                 while (true)
                     H.update();
