@@ -38,6 +38,7 @@
 
 #define TILE_STYLE 0
 #define TILE_HOVER 1
+#define TILE_VISION 2
 
 #define WHITE glm::vec3(1.0f, 1.0f, 1.0f)
 #define GREY glm::vec3(0.625f, 0.625f, 0.625f)
@@ -59,6 +60,11 @@
 //HOVER
 #define NO_HOVERING 0
 #define HOVERING 1
+
+//VISION
+#define UNEXPLORED 0
+#define EXPLORED 1
+#define VISIBLE 2
 
 class Player {
 public:
@@ -150,7 +156,7 @@ private:
     //Board data
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     
-    std::vector<std::vector<std::array<int, 2> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
+    std::vector<std::vector<std::array<int, 3> > > boardInfo; //Contains an array of ints (represented by macros) that give information:
     /*
      * [0]: Tile style (whether it is selected, attackable, reachable, etc...)
      * [1]: Whether the mouse is hovering, either as TRUE or FALSE
@@ -179,6 +185,49 @@ private:
      * @return Whether the creature was successfully selected or if an error prevented this. Errors include if x or y is out of range, or if there is no creature at the designated spot.
      */
     bool selectCreature(unsigned int x, unsigned int y);
+<<<<<<< HEAD
+=======
+    
+    /*!
+     * A function that gets all of the tiles that a creature can reach.
+     *
+     * @param creature The tile containing the specified creature that is going to be moving.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
+     */
+    std::vector<Tile> getReachableTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a creature can attack.
+     *
+     * @param creature The tile containing the specified creature that is going to be attacking.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
+     */
+    std::vector<Tile> getAttackableTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a creature can see.
+     *
+     * @param creature The tile containing the specified creature that is seeing.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
+     */
+    
+    std::vector<Tile> getVisibleTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a player can see
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
+     */
+    
+    std::vector<Tile> getAllVisibleTiles();
+    
+    std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
+    
+    //Private get functions
+>>>>>>> master
 };
 
 #endif /* Player_hpp */
