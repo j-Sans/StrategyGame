@@ -963,6 +963,85 @@ std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
      */
 }
 
+std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
+    if (creatureTile.creature() == nullptr) {
+        std::vector<Tile> emptyTileVector;
+        return emptyTileVector;
+    } else {
+        Creature creature = *creatureTile.creature();
+        
+        std::vector<std::pair<Tile, int> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
+        
+        std::vector<Tile> visibleTiles; //A vector of the tiles that can be attacked
+        
+        reachedTiles.push_back(std::pair<Tile, int>(creatureTile, creatureTile.creature()->range()));
+        
+        //Keep pushing the vector back with new tiles, that the for loop will eventually go through
+        for (int tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
+            if (reachedTiles[tileIterator].second > 0) { //If an attack at this spot would be able to continue to move further, expand in the four directions from that tile.
+                
+                Tile tile = reachedTiles[tileIterator].first;
+                
+                //North
+                if (tile.y() > 0) {
+                    if (this->get(tile.x(), tile.y() - 1).passableByVision(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x(), tile.y() - 1).occupied()) {
+                        visibleTiles.push_back(this->get(tile.x(), tile.y() - 1)); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+                
+                //East
+                if (tile.x() > 0) {
+                    if (this->get(tile.x() - 1, tile.y()).passableByVision(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x() - 1, tile.y()).occupied()) {
+                        visibleTiles.push_back(this->get(tile.x() - 1, tile.y())); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+                
+                //South
+                if (tile.y() < this->height(tile.x()) - 1) {
+                    if (this->get(tile.x(), tile.y() + 1).passableByVision(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x(), tile.y() + 1).occupied()) {
+                        visibleTiles.push_back(this->get(tile.x(), tile.y() + 1)); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+                
+                //West
+                if (tile.x() < this->width() - 1) {
+                    if (this->get(tile.x() + 1, tile.y()).passableByVision(creature)) {
+                        reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
+                    }
+                    if (this->get(tile.x() + 1, tile.y()).occupied()) {
+                        visibleTiles.push_back(this->get(tile.x() + 1, tile.y())); //Add the found tile to the vector of attackable tiles
+                    }
+                }
+            }
+        }
+        
+        return visibleTiles;
+    }
+    
+}
+
+/*std::vector<Tile> Player::getAllVisibleTiles() {
+ 
+ for (auto creature = board->creatures.begin(); creature != this->board->creatures.end(); creature++) {
+ if (creature->controller() == playerNum) {
+ 
+ //not done, but for each tile in getVisibleTiles, it gets pushed back to big vector. Then at the end all repeat tiles are removed.
+ getVisibleTiles(this->&board[creature->x()][creature->y()]);
+ }
+ }
+ 
+ 
+ }*/
+
 bool Board::validTile(glm::ivec2 tilePos) {
     if (tilePos.x >= 0 && tilePos.x < this->width() && tilePos.y >= 0 && tilePos.y < this->height(tilePos.x))
         return true;

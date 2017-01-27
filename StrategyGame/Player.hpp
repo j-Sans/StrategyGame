@@ -185,49 +185,6 @@ private:
      * @return Whether the creature was successfully selected or if an error prevented this. Errors include if x or y is out of range, or if there is no creature at the designated spot.
      */
     bool selectCreature(unsigned int x, unsigned int y);
-<<<<<<< HEAD
-=======
-    
-    /*!
-     * A function that gets all of the tiles that a creature can reach.
-     *
-     * @param creature The tile containing the specified creature that is going to be moving.
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be reached.
-     */
-    std::vector<Tile> getReachableTiles(Tile creatureTile);
-    
-    /*!
-     * A function that gets all of the tiles that a creature can attack.
-     *
-     * @param creature The tile containing the specified creature that is going to be attacking.
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
-     */
-    std::vector<Tile> getAttackableTiles(Tile creatureTile);
-    
-    /*!
-     * A function that gets all of the tiles that a creature can see.
-     *
-     * @param creature The tile containing the specified creature that is seeing.
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
-     */
-    
-    std::vector<Tile> getVisibleTiles(Tile creatureTile);
-    
-    /*!
-     * A function that gets all of the tiles that a player can see
-     *
-     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
-     */
-    
-    std::vector<Tile> getAllVisibleTiles();
-    
-    std::vector<GLuint> getPath(GLuint x, GLuint y, GLuint destinationX, GLuint destinationY);
-    
-    //Private get functions
->>>>>>> master
 };
 
 #endif /* Player_hpp */

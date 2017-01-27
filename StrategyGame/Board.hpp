@@ -252,6 +252,23 @@ public:
     std::vector<Tile> getAttackableTiles(Tile creatureTile);
     
     /*!
+     * A function that gets all of the tiles that a creature can see.
+     *
+     * @param creature The tile containing the specified creature that is seeing.
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
+     */
+    
+    std::vector<Tile> getVisibleTiles(Tile creatureTile);
+    
+    /*!
+     * A function that gets all of the tiles that a player can see
+     *
+     * @return An std::vector of Tile objects containing all of the tiles that can be seen.
+     */
+    std::vector<Tile> getAllVisibleTiles();
+    
+    /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
