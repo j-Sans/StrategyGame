@@ -40,7 +40,6 @@ void Creature::decrementEnergy(unsigned int energy) {
 }
 
 void Creature::useAllEnergy() {
-    std::cout << "Energy used. Controller: " << this->controller() << std::endl;
     this->creatureEnergy = 0;
 }
 

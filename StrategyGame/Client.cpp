@@ -70,7 +70,7 @@ void Client::terminate() {
     this->visualizer.terminate();
 }
 
-bool Client::windowShouldClose() {
+bool Client::getShouldWindowClose() {
     return this->visualizer.window.shouldClose();
 }
 
