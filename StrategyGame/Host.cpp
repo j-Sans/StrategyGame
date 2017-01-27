@@ -168,20 +168,20 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         }
     } else if (action.find("attack_from_") != std::string::npos) {
         //Parse the destination tile from the string
-        glm::ivec2 currentTile;
-        currentTile.x = std::stoi(action.substr(0, action.find_first_of(',')));
+        glm::ivec2 destination;
+        destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
         action = action.substr(action.find_first_of(',') + 1);
-        currentTile.y = std::stoi(action.substr(0, action.find_first_of(',')));
+        destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
         action = action.substr(action.find_first_of(',') + 1);
         
         //Erase the "attack_from_"
         action.erase(0, 12);
         
         //Parse the original tile from the string
-        glm::ivec2 destination;
-        destination.x = std::stoi(action.substr(0, action.find_first_of('_')));
+        glm::ivec2 currentTile;
+        currentTile.x = std::stoi(action.substr(0, action.find_first_of('_')));
         action = action.substr(action.find_first_of('_') + 1);
-        destination.y = std::stoi(action);
+        currentTile.y = std::stoi(action);
         
         std::cout << "currentTile: (" << currentTile.x << "," << currentTile.y << ") destination: (" << destination.x << "," << destination.y << ")" << std::endl;
         
