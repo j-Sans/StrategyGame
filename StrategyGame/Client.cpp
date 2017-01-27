@@ -120,8 +120,6 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                     
                     //If the selected tile is a creature, highlight reachable tiles and update the creature's direction
                     if (creature != nullptr && creature->controller() == this->playerNum) {
-                        std::cout << "Creature energy: " << creature->energy() << std::endl;
-                        
                         std::vector<Tile> reachableTiles = this->board.getReachableTiles(this->board.get(mousePos.x, mousePos.y));
                         
                         for (int a = 0; a < reachableTiles.size(); a++) {
