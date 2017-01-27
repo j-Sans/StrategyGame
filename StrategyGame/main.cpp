@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
             
             Client C("localhost", 3000);
         
-            while (!C.windowShouldClose())
+            while (!C.getShouldWindowClose())
                 C.render();
             
             C.terminate();

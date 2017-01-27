@@ -100,7 +100,7 @@ float Board::getTerrainAttackCost (Tile origin, Tile destination) {
         return 1;
     }
     else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        return 999;
+        return INT_MAX;
     }
     else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
         return 2;
@@ -114,7 +114,7 @@ float Board::getTerrainVisionCost (Tile origin, Tile destination) {
         return 1;
     }
     else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        return 999;
+        return INT_MAX;
     }
     else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
         return 2;

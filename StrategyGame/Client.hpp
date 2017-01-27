@@ -60,7 +60,7 @@ public:
     void render();
     void terminate();
     
-    bool windowShouldClose();
+    bool getShouldWindowClose();
     
 private:
     //Private properties
