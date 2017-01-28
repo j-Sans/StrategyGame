@@ -70,9 +70,9 @@ int main(int argc, const char * argv[]) {
                 
                 //Gameboard:
                 std::vector<std::vector<Tile> > board;
-                for (GLuint x = 0; x < BOARD_WIDTH * 2; x++) {
+                for (GLuint x = 0; x < BOARD_WIDTH; x++) {
                     std::vector<Tile> row;
-                    for (GLuint y = 0; y < BOARD_WIDTH; y++) {
+                    for (GLuint y = 0; y < BOARD_WIDTH * 2; y++) {
                         if (x + (2 * y) < 5)
                             row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
                         else if (x + y > 15)

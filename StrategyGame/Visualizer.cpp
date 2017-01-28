@@ -320,12 +320,15 @@ void Visualizer::setInterfaces() {
 }
 
 void Visualizer::setVertexData() {
-    GLfloat pointDistance;
-    pointDistance = 2.0 / BOARD_SIZE_CONSTANT;
+    GLfloat pointDistance = 2.0 / BOARD_SIZE_CONSTANT;
     
-    glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
-    locationOfFirstPoint.x -= pointDistance / 2.0; //Half of the distance between points is before the first point and after the last
-    locationOfFirstPoint.y -= pointDistance / 2.0;
+    glm::vec2 locationOfFirstPoint;
+    locationOfFirstPoint.x += ((float)this->boardWidth / 2.0) * (pointDistance);
+    locationOfFirstPoint.y += ((float)this->boardWidth / 2.0) * (pointDistance);
+    
+//    glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
+//    locationOfFirstPoint.x -= pointDistance / 2.0; //Half of the distance between points is before the first point and after the last
+//    locationOfFirstPoint.y -= pointDistance / 2.0;
     
     std::vector<GLfloat> vertexDataVec;
     
@@ -579,8 +582,27 @@ void Visualizer::moveCamera() {
         this->cameraCenter.y = -( this->cameraCenter.x ) - (this->camMaxDisplacement.x + root2);
     }
     
+    //If it is not above the line with slope 1 and (h * sqrt(2), 0), it is too far.
+    if (this->cameraCenter.y < (this->cameraCenter.x - (this->camMaxDisplacement.x + root2))) {
+        this->cameraCenter.y = (this->cameraCenter.x - (this->camMaxDisplacement.x + root2));
+    }
+    
+    //If it is not below the line with slope 1 and (-h * sqrt(2), 0), it is too far.
+    if (this->cameraCenter.y > (this->cameraCenter.x + (this->camMaxDisplacement.x + root2))) {
+        this->cameraCenter.y = (this->cameraCenter.x + (this->camMaxDisplacement.x + root2));
+    }
+    
     //For the x coordinate, we use an altered form: x = ( ( y - k ) / slope ) + h
     
+    //If it is not left of the line with slope -1 and (0, w * sqrt(2)), it is too far.
+    if (this->cameraCenter.x > -(this->cameraCenter.y - this->camMaxDisplacement.x * root2)) {
+        this->cameraCenter.x = -(this->cameraCenter.y - this->camMaxDisplacement.x * root2);
+    }
+    
+    //If it is not right of the line with slope -1 and (0, -w * sqrt(2)), it is too far.
+    if (this->cameraCenter.x < -(this->cameraCenter.y + this->camMaxDisplacement.x * root2)) {
+        this->cameraCenter.x = -(this->cameraCenter.y + this->camMaxDisplacement.x * root2);
+    }
     
     //If it is not left of the line with slope +1 and (h * sqrt(2), 0), it is too far.
     if (this->cameraCenter.x > this->cameraCenter.y + this->camMaxDisplacement.y * root2) {
