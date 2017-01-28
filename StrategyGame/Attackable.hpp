@@ -14,6 +14,8 @@
 class Attackable {
 public:
     
+    Attackable(unsigned int maxHealth, unsigned int x, unsigned int y, unsigned int controller);
+    
     //Public member functions
     
     /*!
@@ -42,7 +44,7 @@ public:
     unsigned int controller();
     
 protected:
-    //Private properties
+    //Protected properties
     
     unsigned int maxHealthVal;
     unsigned int controllerVal;
@@ -51,7 +53,7 @@ protected:
     unsigned int xVal;
     unsigned int yVal;
     
-    unsigned int buildingHealth;
+    unsigned int healthVal;
 };
 
 #endif /* Attackable_hpp */

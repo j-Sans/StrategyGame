@@ -10,12 +10,14 @@
 #define Building_hpp
 
 #include "Macros.h"
-#include "Attackable.hpp"
 
 //Standard library includes
 #include <string>
 
-class Building : Attackable {
+//Local includes
+#include "Attackable.hpp"
+
+class Building : public Attackable {
 public:
     //Constructor
     
@@ -68,14 +70,6 @@ private:
     //Private properties
     const std::string buildingButtonText;
     const std::string buildingAction;
-    const unsigned int buildingMaxHealth;
-    const unsigned int buildingController;
-    
-    //Location
-    const unsigned int buildingX;
-    const unsigned int buildingY;
-    
-    unsigned int buildingHealth;
 };
 
 #endif /* Building_hpp */

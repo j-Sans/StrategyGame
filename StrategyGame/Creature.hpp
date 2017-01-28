@@ -11,8 +11,12 @@
 
 #include "Macros.h"
 
+//Standard library includes
 #include <string>
 #include <queue>
+
+//Local includes
+#include "Attackable.hpp"
 
 #define NORTH 0
 #define EAST 1
@@ -36,7 +40,7 @@ enum AttackStyle {
 };
 
 
-class Creature {
+class Creature : public Attackable {
 public:
     //Constructors
     
@@ -141,7 +145,7 @@ public:
     /*!
      * @return The race of this creature.
      */
-    const Race race();
+    Race race();
     
     /*!
      * @return The race of this creature, in the form of an std::string.
@@ -149,50 +153,34 @@ public:
     std::string raceString();
     
     /*!
-     * @return The maximum health of this creature.
-     */
-    const unsigned int maxHealth();
-    
-    /*!
      * @return The maximum energy (which is the number of action points including movement) of this creature.
      */
-    const unsigned int maxEnergy();
+    unsigned int maxEnergy();
     
     /*!
      * @return The attack stat of this creature.
      */
-    const unsigned int attack();
+    unsigned int attack();
     
     /*!
      * @return The attack style of this creature.
      */
-    const AttackStyle attackStyle();
-
+    AttackStyle attackStyle();
 
     /*!
      * @return The vision radius of this creature.
      */
-    const unsigned int vision();
+    unsigned int vision();
     
     /*!
      * @return The attack range of this creature.
      */
-    const unsigned int range();
-    
-    /*!
-     * @return The purchase cost of this creature.
-     */
-    const unsigned int cost();
+    unsigned int range();
     
     /*!
      * @return The combat type (if it is melee versus ranged) of this creature.
      */
     const bool melee();
-    
-    /*!
-     * @return The remaining health of this creature.
-     */
-    unsigned int health();
     
     /*!
      * @return The remaining action points of this creature.
@@ -208,21 +196,6 @@ public:
      * @return The offset of the creature from the center of its tile.
      */
     float offset();
-    
-    /*!
-     * @return The x location of this creature on the board.
-     */
-    unsigned int x();
-    
-    /*!
-     * @return The y location of this creature on the board.
-     */
-    unsigned int y();
-    
-    /*!
-     * @return An unsigned int representing the controller of the creature.
-     */
-    const unsigned int controller();
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
@@ -242,25 +215,18 @@ public:
     
 private:
     //Private properties
-    const unsigned int creatureController;
     
     //Stats
-    const Race creatureRace;
-    const AttackStyle creatureAttackStyle;
-    const unsigned int creatureMaxHealth;
-    const unsigned int creatureMaxEnergy;
-    const unsigned int creatureAttack;
-    const unsigned int creatureVision;
-    const unsigned int creatureRange;
+    Race raceVal;
+    AttackStyle attackStyleVal;
+    unsigned int maxEnergyVal;
+    unsigned int attackVal;
+    unsigned int visionVal;
+    unsigned int rangeVal;
     
-    unsigned int creatureHealth;
-    unsigned int creatureEnergy;
-    int creatureDirection;
-    float creatureOffset = 0.0;
-    
-    //Location
-    unsigned int creatureX;
-    unsigned int creatureY;
+    unsigned int energyVal;
+    int directionVal;
+    float offsetVal = 0.0;
     
     //The speed that the creature moves when it is animated.
     constexpr static const float movementAnimationSpeed = 2.0f;

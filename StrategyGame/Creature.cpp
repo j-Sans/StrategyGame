@@ -11,77 +11,77 @@
 
 //Constructors
 
-Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle,  unsigned int vision, unsigned int range, unsigned int startDirection, unsigned int controller) : creatureX(x), creatureY(y), creatureRace(race), creatureMaxHealth(maxHealth), creatureMaxEnergy(maxEnergy), creatureAttack(attack), creatureAttackStyle(attackStyle), creatureVision(vision), creatureRange(range),  creatureController(controller) {
-    this->creatureHealth = maxHealth;
-    this->creatureEnergy = maxEnergy;
+Creature::Creature(unsigned int x, unsigned int y, Race race, unsigned int maxHealth, unsigned int maxEnergy, unsigned int attack, AttackStyle attackStyle,  unsigned int vision, unsigned int range, unsigned int startDirection, unsigned int controller) : Attackable(maxHealth, x, y, controller), raceVal(race), maxEnergyVal(maxEnergy), attackVal(attack), attackStyleVal(attackStyle), visionVal(vision), rangeVal(range) {
+    this->healthVal = maxHealth;
+    this->energyVal = maxEnergy;
     
     if (startDirection > 3) //Makes sure the direction is valid, otherwise faces north. Can't be less than 0 because it is unsigned.
-        this->creatureDirection = NORTH;
+        this->directionVal = NORTH;
     else
-        this->creatureDirection = startDirection;
+        this->directionVal = startDirection;
 }
 
 //Public member functions
 
 bool Creature::takeDamage(unsigned int damage) {
-    if (damage >= this->creatureHealth)
+    if (damage >= this->healthVal)
         return true; //The creature has died
     else
-        this->creatureHealth -= damage;
+        this->healthVal -= damage;
     
     return false; //The creature is still alive
 }
 
 void Creature::decrementEnergy(unsigned int energy) {
-    if (energy < this->creatureEnergy)
-        this->creatureEnergy -= energy;
+    if (energy < this->energyVal)
+        this->energyVal -= energy;
     else
-        this->creatureEnergy = 0;
+        this->energyVal = 0;
 }
 
 void Creature::useAllEnergy() {
-    this->creatureEnergy = 0;
+    this->energyVal = 0;
 }
 
 void Creature::resetEnergy() {
-    this->creatureEnergy = this->creatureMaxEnergy;
+    this->energyVal = this->maxEnergyVal;
 }
 
 void Creature::setDirection(unsigned int direction) {
     if (direction <= 3) //If direction is NORTH, EAST, SOUTH, or WEST, because those are up to 3.
-        this->creatureDirection = direction;
+        this->directionVal = direction;
 }
 
 bool Creature::incrementOffset(float deltaTime) {
     float displacement = Creature::movementAnimationSpeed * deltaTime;
     
-    if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
+    if (this->directionVal == NORTH || this->directionVal == EAST) {
         //These two directions cause the creature to move up, visually, so they stay at the current tile until they reach the above one. If they moved tiles first, then the previous tile, which is lower, would be drawn on top
         
         //If the creature is in the process of moving currently, continue to move it
-        if (this->creatureOffset > 0.0) {
-            this->creatureOffset += displacement;
+        if (this->offsetVal > 0.0) {
+            this->offsetVal += displacement;
         }
         
         //At 0.4, it has reached the next tile
-        if (this->creatureOffset > 0.4) {
-            this->creatureOffset = 0.0;
+        if (this->offsetVal > 0.4) {
+            this->offsetVal = 0.0;
 #ifdef MOVEMENT_CONSOLE_OUTPUT
             std::cout << "Visual: arrived at next tile after moving either North or East\n";
 #endif
             
             return true;
         }
-    } else if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
+    } else if (this->directionVal == SOUTH || this->directionVal == WEST) {
         //These two directions cause the creature to move udown, visually, so they move to the lower tile first. If they moved tiles after, then the new tile, which is lower, would be drawn on top
         
         //The displacement starts at -0.4 and goes towards 0, so it gets closer to 0 as the creature gets closer to the new tile.
         //It starts at -0.4 because because the creature is moved first, but it needs to appear as though it is on the previous tile, which is -0.4 away.
-        if (this->creatureOffset < 0.0) {
-            this->creatureOffset += displacement;
+        if (this->offsetVal < 0.0) {
+            this->offsetVal += displacement;
             
-            if (this->creatureOffset > 0.0) {
-                this->creatureOffset = 0.0;
+            if (this->offsetVal > 0.0) {
+                this->offsetVal = 0.0;
 #ifdef MOVEMENT_CONSOLE_OUTPUT
                 std::cout << "Visual: arrived at next tile after moving either South or West\n";
 #endif
@@ -97,157 +97,137 @@ bool Creature::incrementOffset(float deltaTime) {
 }
 
 void Creature::initiateMovementOffset(float deltaTime) {
-    if (this->creatureDirection == NORTH || this->creatureDirection == EAST) {
-        this->creatureOffset += deltaTime * Creature::movementAnimationSpeed;
-    } else if (this->creatureDirection == SOUTH || this->creatureDirection == WEST) {
-        this->creatureOffset = -0.4;
+    if (this->directionVal == NORTH || this->directionVal == EAST) {
+        this->offsetVal += deltaTime * Creature::movementAnimationSpeed;
+    } else if (this->directionVal == SOUTH || this->directionVal == WEST) {
+        this->offsetVal = -0.4;
     }
 }
 
 void Creature::resetOffset() {
-    this->creatureOffset = 0.0;
+    this->offsetVal = 0.0;
 }
 
 void Creature::move(unsigned int direction) {
     if (direction == NORTH) {
-        this->creatureY--;
+        this->yVal--;
     } else if (direction == EAST) {
-        this->creatureX--;
+        this->xVal--;
     } else if (direction == SOUTH) {
-        this->creatureY++;
+        this->yVal++;
     } else if (direction == WEST) {
-        this->creatureX++;
+        this->xVal++;
     }
 }
 
 void Creature::setLocation(unsigned int x, unsigned int y) {
-    this->creatureX = x;
-    this->creatureY = y;
+    this->xVal = x;
+    this->yVal = y;
 }
 
-const Race Creature::race() {
-    return this->creatureRace;
+Race Creature::race() {
+    return this->raceVal;
 }
 
 std::string Creature::raceString() {
-    if (this->creatureRace == Human)
+    if (this->raceVal == Human)
         return "Human";
-    else if (this->creatureRace == Elf)
+    else if (this->raceVal == Elf)
         return "Dwarf";
-    else if (this->creatureRace == Dwarf)
+    else if (this->raceVal == Dwarf)
         return "Dwarf";
-    else if (this->creatureRace == Orc)
+    else if (this->raceVal == Orc)
         return "Orc";
-    else if (this->creatureRace == Goblin)
+    else if (this->raceVal == Goblin)
         return "Goblin";
-    else if (this->creatureRace == Undead)
+    else if (this->raceVal == Undead)
         return "Undead";
-    else if (this->creatureRace == Vampire)
+    else if (this->raceVal == Vampire)
         return "Vampire";
     else
         return "Other";
 }
 
-const unsigned int Creature::maxHealth() {
-    return this->creatureMaxHealth;
+unsigned int Creature::maxEnergy() {
+    return this->maxEnergyVal;
 }
 
-const unsigned int Creature::maxEnergy() {
-    return this->creatureMaxEnergy;
+unsigned int Creature::attack() {
+    return this->attackVal;
 }
 
-const unsigned int Creature::attack() {
-    return this->creatureAttack;
+AttackStyle Creature::attackStyle() {
+    return this->attackStyleVal;
 }
 
-const AttackStyle Creature::attackStyle() {
-    return this->creatureAttackStyle;
+unsigned int Creature::vision() {
+    return this->visionVal;
 }
 
-const unsigned int Creature::vision() {
-    return this->creatureVision;
-}
-
-const unsigned int Creature::range() {
-    return this->creatureRange;
+unsigned int Creature::range() {
+    return this->rangeVal;
 }
 
 const bool Creature::melee() {
-    return this->creatureRange > 1 ? false : true;
-}
-
-unsigned int Creature::health() {
-    return this->creatureHealth;
+    return this->rangeVal > 1 ? false : true;
 }
 
 float Creature::energy() {
-    return this->creatureEnergy;
+    return this->energyVal;
 }
 
 int Creature::direction() {
-    return this->creatureDirection;
+    return this->directionVal;
 }
 
 float Creature::offset() {
-    return this->creatureOffset;
-}
-
-const unsigned int Creature::controller() {
-    return this->creatureController;
-}
-
-unsigned int Creature::x() {
-    return this->creatureX;
-}
-
-unsigned int Creature::y() {
-    return this->creatureY;
+    return this->offsetVal;
 }
 
 std::string Creature::serialize() {
-    std::string str = "Creature:" + std::to_string(this->creatureController) + ",";
-    if (this->creatureRace == Human) {
+    std::string str = "Creature:" + std::to_string(this->controllerVal) + ",";
+    if (this->raceVal == Human) {
         str += "Human,";
-    } else if (this->creatureRace == Elf) {
+    } else if (this->raceVal == Elf) {
         str += "Elf,";
-    } else if (this->creatureRace == Dwarf) {
+    } else if (this->raceVal == Dwarf) {
         str += "Dwarf,";
-    } else if (this->creatureRace == Orc) {
+    } else if (this->raceVal == Orc) {
         str += "Orc,";
-    } else if (this->creatureRace == Goblin) {
+    } else if (this->raceVal == Goblin) {
         str += "Goblin,";
-    } else if (this->creatureRace == Undead) {
+    } else if (this->raceVal == Undead) {
         str += "Undead,";
-    } else if (this->creatureRace == Vampire) {
+    } else if (this->raceVal == Vampire) {
         str += "Vampire,";
     } else {
         throw std::invalid_argument("Error serializing creature: unknown creature race");
     }
-    if (this->creatureAttackStyle == Melee) {
+    if (this->attackStyleVal == Melee) {
         str += "Melee,";
-    } else if (this->creatureAttackStyle == Ranged) {
+    } else if (this->attackStyleVal == Ranged) {
         str += "Ranged,";
-    } else if (this->creatureAttackStyle == TerrainIgnoring) {
+    } else if (this->attackStyleVal == TerrainIgnoring) {
         str += "TerrainIgnoring,";
     } else {
         throw std::invalid_argument("Error serializing creature: unknown creature attack style");
     }
     
-    str += std::to_string(creatureMaxHealth) + "," + std::to_string(creatureMaxEnergy) + "," + std::to_string(creatureAttack) + "," + std::to_string(creatureVision) + "," + std::to_string(creatureRange) + "," + std::to_string(creatureHealth) + "," + std::to_string(creatureEnergy) + ",";
+    str += std::to_string(maxHealthVal) + "," + std::to_string(maxEnergyVal) + "," + std::to_string(attackVal) + "," + std::to_string(visionVal) + "," + std::to_string(rangeVal) + "," + std::to_string(healthVal) + "," + std::to_string(energyVal) + ",";
     
-    if (this->creatureDirection == NORTH) {
+    if (this->directionVal == NORTH) {
         str += "NORTH,";
-    } else if (this->creatureDirection == EAST) {
+    } else if (this->directionVal == EAST) {
         str += "EAST,";
-    } else if (this->creatureDirection == SOUTH) {
+    } else if (this->directionVal == SOUTH) {
         str += "SOUTH,";
-    } else if (this->creatureDirection == WEST) {
+    } else if (this->directionVal == WEST) {
         str += "WEST,";
     } else {
         throw std::invalid_argument("Error serializing creature: unknown creature direction");
     }
     
-    return str + std::to_string(creatureOffset) + "," + std::to_string(creatureX) + "," + std::to_string(creatureY) + "-Creature-";
+    return str + std::to_string(offsetVal) + "," + std::to_string(xVal) + "," + std::to_string(yVal) + "-Creature-";
     
 }
 
@@ -341,5 +321,5 @@ Creature Creature::deserialize(std::string str) {
 }
 
 void Creature::setOffset(float offset) {
-    this->creatureOffset = offset;
+    this->offsetVal = offset;
 }

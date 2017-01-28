@@ -8,12 +8,14 @@
 
 #include "Attackable.hpp"
 
+Attackable::Attackable(unsigned int maxHealth, unsigned int x, unsigned int y, unsigned int controller) : maxHealthVal(maxHealth), healthVal(maxHealth), xVal(x), yVal(y), controllerVal(controller) {}
+
 unsigned int Attackable::maxHealth() {
     return this->maxHealthVal;
 }
 
 unsigned int Attackable::health() {
-    return this->buildingHealth;
+    return this->healthVal;
 }
 
 unsigned int Attackable::x() {

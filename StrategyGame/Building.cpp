@@ -10,15 +10,15 @@
 
 //Constructor
 
-Building::Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int controller) : buildingX(x), buildingY(y), buildingButtonText(buttonText), buildingAction(action), buildingMaxHealth(maxHealth), buildingController(controller) {
-    this->buildingHealth = this->buildingMaxHealth;
+Building::Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int controller) : Attackable(maxHealth, x, y, controller), buildingButtonText(buttonText), buildingAction(action) {
+    this->healthVal = this->maxHealthVal;
 }
 
 bool Building::takeDamage(unsigned int damage) {
-    if (damage >= this->buildingHealth)
+    if (damage >= this->healthVal)
         return true; //The creature has died
     else
-        this->buildingHealth -= damage;
+        this->healthVal -= damage;
     
     return false; //The creature is still alive
 }
@@ -34,7 +34,7 @@ const std::string Building::action() {
 }
 
 std::string Building::serialize() {
-    return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->buildingMaxHealth) + "," + std::to_string(this->buildingController) + "," + std::to_string(this->buildingX) + "," + std::to_string(this->buildingY) + "," + std::to_string(this->buildingHealth) + "-Building-";
+    return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->maxHealthVal) + "," + std::to_string(this->controllerVal) + "," + std::to_string(this->xVal) + "," + std::to_string(this->yVal) + "," + std::to_string(this->healthVal) + "-Building-";
 }
 
 Building Building::deserialize(std::string str) {
