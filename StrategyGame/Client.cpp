@@ -31,6 +31,10 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
     //Give the buffer data to the visualizer
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
+    
+    this->setInterfaces();
+    this->updateInterfaces();
+    
     //Set the visualizer
     this->visualizer.set(this->board.width(), this->board.height(0));
 }
@@ -58,6 +62,8 @@ void Client::render() {
 //    }
     
     this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
+    
+    this->updateInterfaces();
     
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
@@ -160,6 +166,61 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
 //                    this->selectCreature(attacker.x, attacker.y);
 //#endif
                 }
+            }
+        }
+    }
+}
+
+void Client::setInterfaces() {
+    this->interfaces = this->visualizer.getInterfaces();
+}
+
+void Client::updateInterfaces(Tile *tile) {
+    this->leftInterface = &this->interfaces[default_left];
+    this->bottomInterface = &this->interfaces[default_bottom];
+    this->rightInterface = &this->interfaces[default_right];
+    
+    //If the selected tile is on the board
+    if (tile != nullptr) {
+        
+        if (tile.creature() != nullptr) {
+            //Set the right interface to be the creature if there is a creature at the selected tile
+            this->rightInterface = &this->interfaces[creature];
+            
+            //Update the boxes to display creature stats
+            if (this->interfaces[creature].boxes.size() > 0) {
+                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
+                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
+                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
+                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
+            }
+            
+            //Update the display bars to display the creature quantities, like health and energy, which change
+            if (this->interfaces[creature].displayBars.size() > 0) {
+                
+                this->interfaces[creature].displayBars[HealthBar].setValue(tile.creature()->health());
+                this->interfaces[creature].displayBars[HealthBar].setMaxValue(tile.creature()->maxHealth());
+                this->interfaces[creature].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
+                
+                this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
+                this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
+                this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+                
+                
+            }
+        } else if (tile.building() != nullptr) {
+            //Do the same for buildings
+            this->rightInterface = &this->interfaces[building];
+            
+            if (this->interfaces[building].displayBars.size() > 0) {
+                this->interfaces[building].displayBars[HealthBar].setValue(tile.building()->health());
+                this->interfaces[building].displayBars[HealthBar].setMaxValue(tile.building()->maxHealth());
+                this->interfaces[building].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
+            }
+            
+            if (this->interfaces[building].buttons.size() > 0) {
+                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
+                this->interfaces[building].buttons[0].action = tile.building()->action();
             }
         }
     }

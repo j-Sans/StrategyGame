@@ -33,9 +33,6 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     
     this->font = Font(FONT_PATH);
     
-    this->setInterface();
-    this->updateInterfaces();
-    
     //Allow for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -144,8 +141,6 @@ void Visualizer::render() {
     glBindVertexArray(0);
     
     this->renderDamageText();
-    
-    this->updateInterfaces();
     
     //Render the left, bottom, and right interfaces
     
@@ -269,6 +264,27 @@ const GLfloat Visualizer::timeSinceLastFrame() {
     return this->deltaTime;
 }
 
+std::map<interfaceType, Interface> Visualizer::getInterfaces() {
+    std::map<interfaceType, Interface> interfaces;
+    
+    //Left-Side Game UI
+    interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
+    
+    //Bottom Game UI
+    interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
+    
+    //Right-Side Game UI
+    interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
+    
+    //Interface for selected creatures
+    interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
+    
+    //Interface for selected buildings
+    interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
+    
+    return interfaces;
+}
+
 //Private member functions
 
 //Initialize GLFW, GLEW, the key callback function, and the window itself.
@@ -285,6 +301,20 @@ void Visualizer::initWindow() {
     
     //Set mouse button click callback function
     this->window.setMouseButtonCallback(this->mouseButtonCallback);
+}
+
+void Visualizer::setInterfaces() {
+    glm::ivec2 framebufferSize = this->window.framebufferSize();
+    
+    this->leftInterfaceStats = interfaceStat(0.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
+    this->bottomInterfaceStats = interfaceStat(framebufferSize.x * 1.0 / 6.0, 0.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.y / 4.0);
+    this->rightInterfaceStats = interfaceStat(framebufferSize.x * 5.0 / 6.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
+    
+    this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
+    
+    this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
+    
+    this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
 }
 
 void Visualizer::setVertexData() {
@@ -429,35 +459,6 @@ void Visualizer::updateBuffers() {
     glBindVertexArray(0);
 }
 
-void Visualizer::setInterface() {
-    glm::ivec2 framebufferSize = this->window.framebufferSize();
-    
-    this->leftInterfaceStats = interfaceStat(0.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
-    this->bottomInterfaceStats = interfaceStat(framebufferSize.x * 1.0 / 6.0, 0.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.y / 4.0);
-    this->rightInterfaceStats = interfaceStat(framebufferSize.x * 5.0 / 6.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
-    
-    this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
-    
-    this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
-    
-    this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
-    
-    //Left-Side Game UI (brown rectangle)
-    this->interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
-    
-    //Bottom Game UI (brown rectangle)
-    this->interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
-    
-    //Right-Side Game UI (brown rectangle)
-    this->interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
-    
-    //Interface for selected creatures
-    this->interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
-    
-    //Interface for selected buildings
-    this->interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
-}
-
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
 void Visualizer::loadTexture(const GLchar* texPath, const GLchar* texName) {
     if (textures.size() <= 32)
@@ -501,61 +502,6 @@ void Visualizer::presetTransformations() {
     
     //Send the projection matrix to the shader
     this->gameShader.uniformMat4("ortho", this->projection);
-}
-
-void Visualizer::updateInterfaces() {
-    this->leftInterface = &this->interfaces[default_left];
-    this->bottomInterface = &this->interfaces[default_bottom];
-    this->rightInterface = &this->interfaces[default_right];
-    
-    //If the selected tile is on the board
-    if (this->selectedTile.x >= 0 && this->selectedTile.x < this->boardWidth && selectedTile.y >= 0 && this->selectedTile.y < this->boardHeight) {
-        
-//        Tile tile = this->game.board()->get(selectedTile.x, selectedTile.y);
-//        
-//        if (tile.creature() != nullptr) {
-//            //Set the right interface to be the creature if there is a creature at the selected tile
-//            this->rightInterface = &this->interfaces[creature];
-//            
-//            //Update the boxes to display creature stats
-//            if (this->interfaces[creature].boxes.size() > 0) { 
-//                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
-//                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
-//                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
-//                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
-//            }
-//            
-//            //Update the display bars to display the creature quantities, like health and energy, which change
-//            if (this->interfaces[creature].displayBars.size() > 0) {
-//                
-//                this->interfaces[creature].displayBars[HealthBar].setValue(tile.creature()->health());
-//                this->interfaces[creature].displayBars[HealthBar].setMaxValue(tile.creature()->maxHealth());
-//                this->interfaces[creature].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.creature()->health()) + "/" + std::to_string((int)tile.creature()->maxHealth());
-//                
-//                this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
-//                this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
-//                this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
-//                
-//                
-//            }
-//        }
-//        
-//        if (tile.building() != nullptr) {
-//            //Do the same for buildings
-//            this->rightInterface = &this->interfaces[building];
-//            
-//            if (this->interfaces[building].displayBars.size() > 0) {
-//                this->interfaces[building].displayBars[HealthBar].setValue(tile.building()->health());
-//                this->interfaces[building].displayBars[HealthBar].setMaxValue(tile.building()->maxHealth());
-//                this->interfaces[building].displayBars[HealthBar].text = "Health: " + std::to_string((int)tile.building()->health()) + "/" + std::to_string((int)tile.building()->maxHealth());
-//            }
-//            
-//            if (this->interfaces[building].buttons.size() > 0) {
-//                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
-//                this->interfaces[building].buttons[0].action = tile.building()->action();
-//            }
-//        }
-    }
 }
 
 void Visualizer::renderDamageText() {

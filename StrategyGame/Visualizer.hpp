@@ -128,6 +128,13 @@ public:
     std::vector<GLfloat> offsetData; //[NUMBER_OF_TILES]; //For animation, the offset from the point in the given direction
     std::vector<GLint> buildingData; //[2 * NUMBER_OF_TILES]; //1 value for the building type, 1 for the controller
     
+    //Interfaces to render
+    Interface *leftInterface;
+    Interface *bottomInterface;
+    Interface *rightInterface;
+    
+    //Public member functions
+    
     /*!
      * A function that sets the initial information of the visualizer
      *
@@ -203,6 +210,11 @@ public:
      */
     const GLfloat timeSinceLastFrame();
     
+    /*!
+     * @return An std::map<interfaceType, Interface> that contains all of the different types of interfaces.
+     */
+    std::map<interfaceType, Interface> getInterfaces();
+    
 private:
     //Private properties
     
@@ -235,6 +247,15 @@ private:
     //Information for host
     std::list<std::string> actionsForClientInfo;
     
+    //Interfaces
+    Shader interfaceShader;
+    Shader buttonShader;
+    Shader displayBarShader;
+    
+    interfaceStat leftInterfaceStats;
+    interfaceStat bottomInterfaceStats;
+    interfaceStat rightInterfaceStats;
+    
     //Transformations
     glm::mat4 model; //Makes model isometric
     glm::mat4 view; //Translates camera view
@@ -250,21 +271,6 @@ private:
     GLfloat lastFrame = 0.0f;
     glm::vec3 clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
 //    glm::ivec2 viewportSize;
-    glm::ivec2 selectedTile = NO_SELECTION;
-    
-    //Interfaces
-    std::map<interfaceType, Interface> interfaces;
-    Shader interfaceShader;
-    Shader buttonShader;
-    Shader displayBarShader;
-    
-    Interface *leftInterface;
-    Interface *bottomInterface;
-    Interface *rightInterface;
-    
-    interfaceStat leftInterfaceStats;
-    interfaceStat bottomInterfaceStats;
-    interfaceStat rightInterfaceStats;
     
     //Private member functions
     
@@ -272,6 +278,16 @@ private:
      * Initialize GLFW, GLEW, the key callback function, and the window itself.
      */
     void initWindow();
+    
+    /*!
+     * Initialize the interface
+     */
+    void setInterfaces();
+    
+    /*!
+     * Fill the vertex data vector property of this class with the vertex data based on the size of the board. Should be called after set().
+     */
+    void setVertexData();
     
     /*!
      * Initialize OpenGL buffers with the object's vertex data. Should be called after the data vectors have been filled.
@@ -284,16 +300,6 @@ private:
      * @param boardInfo An std::string representing the information directly received from the server, through the socket.
      */
     void updateBuffers();
-    
-    /*!
-     * Fill the vertex data vector property of this class with the vertex data based on the size of the board. Should be called after set().
-     */
-    void setVertexData();
-    
-    /*!
-     * Initialize the interface
-     */
-    void setInterface();
     
     /*!
      * Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
@@ -318,11 +324,6 @@ private:
      * A function that sets matrix transformations to be done on the board. This sets the model matrix to rotate the board by 45º and then make it seem tilted away from the viewer. That is done by scaling so that the horizontal diagnal is double the vertical one. The projection matrix is also added, using glm::ortho, so that a non-3D orthographic projection is achieved. It is made so that regardless of window dimensions, the scaling on the board is always constant.
      */
     void presetTransformations();
-    
-    /*!
-     * Set the correct interfaces to render based on the selected tile. Should be called every frame.
-     */
-    void updateInterfaces();
     
     /*!
      * A function to render the damage text. Should be called every frame after displaying the board.

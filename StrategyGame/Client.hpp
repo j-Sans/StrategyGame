@@ -85,8 +85,12 @@ private:
     //Visualizer, to render the window
     Visualizer visualizer;
     
+    //Interfaces
+    std::map<interfaceType, Interface> interfaces;
+    
     //Information for host
     std::list<std::string> actionsForClientInfo;
+    
     
     //Private member functions
     
@@ -100,6 +104,13 @@ private:
 //     * @param hostInfo One action (separated from the rest of the string with commas) of information received from the host through the socket.
 //     */
 //    void processHostInfo(std::string hostInfo);
+    
+    void setInterfaces();
+    
+    /*!
+     * Set the correct interfaces to render based on the selected tile. Should be called every frame.
+     */
+    void updateInterfaces();
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.
