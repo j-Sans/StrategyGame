@@ -103,7 +103,7 @@ void Visualizer::set(unsigned int width, unsigned int height) {
     
     this->updateBuffers();
     
-    this->camMaxDisplacement = glm::vec2(this->boardWidth / 10.0f, this->boardHeight / 10.0f);
+    this->camMaxDisplacement = glm::vec2(this->boardWidth * .1, this->boardHeight * .1);
     this->cameraCenter = glm::vec3(0.0f, 0.0f, 0.0f);
     
     this->isSet = true;
@@ -552,15 +552,55 @@ void Visualizer::moveCamera() {
         this->cameraCenter.x -= displacement;
     }
     
-    //Guarantees that the camera won't move too far from the board center
-    if (this->cameraCenter.x > this->camMaxDisplacement.x)
-        this->cameraCenter.x = this->camMaxDisplacement.x;
-    if (this->cameraCenter.x < -this->camMaxDisplacement.x)
-        this->cameraCenter.x = -this->camMaxDisplacement.x;
-    if (this->cameraCenter.y > this->camMaxDisplacement.y)
-        this->cameraCenter.y = this->camMaxDisplacement.y;
-    if (this->cameraCenter.y < -this->camMaxDisplacement.y)
-        this->cameraCenter.y = -this->camMaxDisplacement.y;
+    /*
+     The board is rotated 45 degrees counterclockwise, so the height, which was previously up-down, now becomes upper left-lower right, and the opposite for the width
+     If we say camMaxDisplacement = (w, h):
+     The width hits the vertical side, so after rotation the vertical side becomes the one with slope = -1.
+     A point on that line should be (w / sqrt(2), w / sqrt(2)). Since the distance from the line to the center is w, another point on it should be (0, w * sqrt(2)).
+     We need to check that the point is below that line. To find the equation of that line, we can use the form
+        y = slope ( x - h ) + k, where (h, k) is a point on that line.
+     We also need to check it is above another line parallel but below. That should be the same line except a point on it would be (0, -w * sqrt(2)) instead.
+     We can do the same for h, except that the line we are going to was the top / bottom, so it will now have slope +1. A point on the line would be (h / sqrt(2), h / sqrt(2)), which would mean also (h * sqrt(2), 0) would be.
+     
+     We will also have to half all vertical distances to scale properly with the board
+     */
+    
+    float root2 = sqrtf(2.0);
+    
+    //For the y coordinate, we use y = slope ( x - h ) + k
+    
+    //If it is not below the line with slope -1 and (0, w * sqrt(2)), it is too far.
+    if (this->cameraCenter.y > -( this->cameraCenter.x ) + (this->camMaxDisplacement.x + root2)) {
+        this->cameraCenter.y = -( this->cameraCenter.x ) + (this->camMaxDisplacement.x + root2);
+    }
+    
+    //If it is not above the line with slope -1 and (0, -w * sqrt(2)), it is too far.
+    if (this->cameraCenter.y < -( this->cameraCenter.x ) - (this->camMaxDisplacement.x + root2)) {
+        this->cameraCenter.y = -( this->cameraCenter.x ) - (this->camMaxDisplacement.x + root2);
+    }
+    
+    //For the x coordinate, we use an altered form: x = ( ( y - k ) / slope ) + h
+    
+    
+    //If it is not left of the line with slope +1 and (h * sqrt(2), 0), it is too far.
+    if (this->cameraCenter.x > this->cameraCenter.y + this->camMaxDisplacement.y * root2) {
+        this->cameraCenter.x = this->cameraCenter.y + this->camMaxDisplacement.y * root2;
+    }
+    
+    //If it is not right of the line with slope +1 and (-h * sqrt(2), 0), it is too far.
+    if (this->cameraCenter.x < this->cameraCenter.y - this->camMaxDisplacement.y * root2) {
+        this->cameraCenter.x = this->cameraCenter.y - this->camMaxDisplacement.y * root2;
+    }
+    
+//    //Guarantees that the camera won't move too far from the board center
+//    if (this->cameraCenter.x > this->camMaxDisplacement.x)
+//        this->cameraCenter.x = this->camMaxDisplacement.x;
+//    if (this->cameraCenter.x < -this->camMaxDisplacement.x)
+//        this->cameraCenter.x = -this->camMaxDisplacement.x;
+//    if (this->cameraCenter.y > this->camMaxDisplacement.y)
+//        this->cameraCenter.y = this->camMaxDisplacement.y;
+//    if (this->cameraCenter.y < -this->camMaxDisplacement.y)
+//        this->cameraCenter.y = -this->camMaxDisplacement.y;
 }
 
 void Visualizer::processButton(std::string action) {
@@ -624,9 +664,6 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     
     GLfloat verticalDistance = fminf(distance1, distance2);
     GLfloat horizontalDistance = fmaxf(distance1, distance2);
-    
-    std::cout << "Vertical distance: " << verticalDistance << std::endl;
-    std::cout << "Horizontal distance: " << horizontalDistance << std::endl;
     
     //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
     
