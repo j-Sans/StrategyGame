@@ -10,8 +10,7 @@
 
 //Constructors
 
-Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {
-}
+Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {}
 
 float Board::getTerrainMovementCost(Tile origin, Tile destination) {
     

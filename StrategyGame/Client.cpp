@@ -131,7 +131,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                         for (int a = 0; a < reachableTiles.size(); a++) {
                             if (this->board.get(reachableTiles[a].x(), reachableTiles[a].y()).passableByCreature(*creature)) {
                                 this->boardInfo[reachableTiles[a].x()][reachableTiles[a].y()][TILE_STYLE] = REACHABLE;
-                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature_at_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.x));
+                                this->tileActions[reachableTiles[a].x()][reachableTiles[a].y()].push("move_creature_at_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y));
                             }
                         }
                         
@@ -142,7 +142,7 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                                 //If there is a creature or building on the tile, controlled by an opponent, make it attackable
                                 if ((this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).creature() != nullptr && this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).creature()->controller() != this->playerNum) || (this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).building() != nullptr && this->board.get(attackableTiles[a].x(), attackableTiles[a].y()).building()->controller() != this->playerNum)) {
                                     this->boardInfo[attackableTiles[a].x()][attackableTiles[a].y()][TILE_STYLE] = ATTACKABLE;
-                                    this->tileActions[attackableTiles[a].x()][attackableTiles[a].y()].push("attack_from_" + std::to_string(selectedTile.x) + "_" + std::to_string(selectedTile.y));
+                                    this->tileActions[attackableTiles[a].x()][attackableTiles[a].y()].push("attack_from_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y));
                                 }
                             }
                         }
