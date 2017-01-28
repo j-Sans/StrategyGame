@@ -97,6 +97,21 @@ public:
      */
     void render(bool mouseDown, bool mouseUp, bool buttonInteraction);
     
+    /*!
+     * A function to add a button to the interface. This increments the layer that new properties will appear at.
+     *
+     * @param action An std::string that represents the action to occur when the button is pressed.
+     * @param text An std::string that will be displayed on the button.
+     */
+    void addButton(std::string action, std::string text);
+    
+    /*!
+     * A function to remove the previous layer of properties. Nothing will happen if there are properties on the previous layer.
+     *
+     * @return True if the layer was removed. False otherwise.
+     */
+    bool removePropertyLayer();
+    
 private:
     //OpenGL and GLFW properties
     Window* window;
@@ -106,6 +121,10 @@ private:
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
+    
+    //Property information
+    float nextPropertyHeight = 0.9; //The height at which the next button or box will be added.
+    float initialPropertyHeight = 0.9;
     
     //Viewport information
     GLuint lowerLeftX;

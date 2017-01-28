@@ -206,8 +206,6 @@ void Client::updateInterfaces() {
                 this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
                 this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
                 this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
-                
-                
             }
         } else if (tile.building() != nullptr) {
             //Do the same for buildings
