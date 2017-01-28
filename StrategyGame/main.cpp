@@ -70,7 +70,7 @@ int main(int argc, const char * argv[]) {
                 
                 //Gameboard:
                 std::vector<std::vector<Tile> > board;
-                for (GLuint x = 0; x < BOARD_WIDTH; x++) {
+                for (GLuint x = 0; x < BOARD_WIDTH * 2; x++) {
                     std::vector<Tile> row;
                     for (GLuint y = 0; y < BOARD_WIDTH; y++) {
                         if (x + (2 * y) < 5)

@@ -321,7 +321,7 @@ void Visualizer::setInterfaces() {
 
 void Visualizer::setVertexData() {
     GLfloat pointDistance;
-    pointDistance = 2.0 / this->boardWidth;
+    pointDistance = 2.0 / BOARD_SIZE_CONSTANT;
     
     glm::vec2 locationOfFirstPoint = glm::vec2(1.0, 1.0);
     locationOfFirstPoint.x -= pointDistance / 2.0; //Half of the distance between points is before the first point and after the last
@@ -612,18 +612,21 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     
     //The points diagonally above and below each vertex become horizontal and vertical after rotation. To find them, find the point below the vertex and add one and subtract one.
     
-    if (this->boardWidth * this->boardWidth < this->boardWidth + 1) { //In case finding the distances (just below) would cause a bad access
+    if (this->boardWidth < 2) { //In case finding the distances (just below) would cause a bad access
         throw std::length_error("Board too small; Board size: (" + std::to_string(this->boardWidth) + ", " + std::to_string(this->boardHeight) + ")");
     }
     
-    GLfloat distance1 = Visualizer::getDistance(tileCenters[0], tileCenters[0 + this->boardWidth + 1]); //Diagonal down and to the right
-    GLfloat distance2 = Visualizer::getDistance(tileCenters[1], tileCenters[1 + this->boardWidth - 1]); //Diagonal down and to the left
+    GLfloat distance1 = Visualizer::getDistance(tileCenters[0], tileCenters[0 + this->boardHeight + 1]); //Diagonal down and to the right
+    GLfloat distance2 = Visualizer::getDistance(tileCenters[1], tileCenters[1 + this->boardHeight - 1]); //Diagonal down and to the left
     
     //Distance horizontally is double the distance of the vertical one because it was compressed vertically.
     //The horizontal distance is the max of the above distances, and the vertical distance the minimum
     
     GLfloat verticalDistance = fminf(distance1, distance2);
     GLfloat horizontalDistance = fmaxf(distance1, distance2);
+    
+    std::cout << "Vertical distance: " << verticalDistance << std::endl;
+    std::cout << "Horizontal distance: " << horizontalDistance << std::endl;
     
     //For every point, check if it is within the boundaries of the respective diamond's bounds, by finding the 4 bounding lines of that rectange
     
@@ -663,7 +666,7 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
         // y < ( slope ) ( x - h ) + k
         // (h,k) is the point above the center
         
-        h = center.x; //h stays the same
+        //h stays the same
         k = center.y + (verticalDistance / 2.0);
         
         if (mousePos.y > ( slope ) * ( mousePos.x - h ) + k) { //If it's above this line
@@ -694,9 +697,11 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     
     glm::ivec2 tileIndexVec;
     
-    tileIndexVec.x = (int)(tileIndex / this->boardWidth); //The x index in the 2D vector
+    tileIndexVec.x = (int)(tileIndex / this->boardHeight); //The x index in the 2D vector
     
-    tileIndexVec.y = tileIndex - (this->boardWidth * tileIndexVec.x); //The y index in the 2D vector
+    tileIndexVec.y = tileIndex - (this->boardHeight * tileIndexVec.x); //The y index in the 2D vector
+    
+    std::cout << "Index: " << tileIndex << " (" << tileIndexVec.x << "," << tileIndexVec.y << ")" << std::endl;
     
     return tileIndexVec;
 }

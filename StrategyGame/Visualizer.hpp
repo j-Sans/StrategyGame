@@ -48,6 +48,9 @@
 //For when no tile is being selected
 #define INTERFACE_BOX_SELECTION glm::ivec2(-2, -2)
 
+//The size to initialize the board on screen as
+#define BOARD_SIZE_CONSTANT 12
+
 enum BoardInfoDataTypes {
     TerrainData,
     CreatureData,

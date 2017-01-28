@@ -119,19 +119,6 @@ public:
      */
     void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime);
     
-    /*!
-     * A function to calculate the tile closest to the mouse location at any given point in time.
-     * (-1, -1) is returned if the selection was outside of the board.
-     * Possible errors include if the board size is below 2x2, because calculations require a board size at least that large.
-     *
-     * @param mousePos A glm::vec2 of the cursor position, in screen coordinates. Can be obtained from glfwGetCursorPos.
-     * @param windowSize A glm::ivec2 representing the window size, in screen coordinates. Can be obtained from glfwGetWindowSize.
-     * @param tileCenters An std::vector of glm::vec4 (should be length NUMBER_OF_TILES) representing the center of each tile, after transformations. This can be gotten by manipulating the vertex data and multiplying it with the transformation matrices.
-     *
-     * @return The tile indices in the board, the 2D vector. In the form of a glm vector of 2 ints (glm::ivec2).
-     */
-    glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters);
-    
     //Public get functions
     
     /*!
