@@ -10,11 +10,12 @@
 #define Building_hpp
 
 #include "Macros.h"
+#include "Attackable.hpp"
 
 //Standard library includes
 #include <string>
 
-class Building {
+class Building : Attackable {
 public:
     //Constructor
     
@@ -46,31 +47,6 @@ public:
      * @return The action string for the button on the building to be used on the building interface.
      */
     const std::string action();
-    
-    /*!
-     * @return The maximum health of this building.
-     */
-    const unsigned int maxHealth();
-    
-    /*!
-     * @return The current health of this building.
-     */
-    unsigned int health();
-    
-    /*!
-     * @return The x location of this creature on the board.
-     */
-    const unsigned int x();
-    
-    /*!
-     * @return The y location of this creature on the board.
-     */
-    const unsigned int y();
-    
-    /*!
-     * @return An unsigned int representing the controller of the building.
-     */
-    const unsigned int controller();
     
     /*!
      * Serialize this object as a string that can be sent through sockets.

@@ -33,26 +33,6 @@ const std::string Building::action() {
     return this->buildingAction;
 }
 
-const unsigned int Building::maxHealth() {
-    return this->buildingMaxHealth;
-}
-
-unsigned int Building::health() {
-    return this->buildingHealth;
-}
-
-const unsigned int Building::x() {
-    return this->buildingX;
-}
-
-const unsigned int Building::y() {
-    return this->buildingY;
-}
-
-const unsigned int Building::controller() {
-    return this->buildingController;
-}
-
 std::string Building::serialize() {
     return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->buildingMaxHealth) + "," + std::to_string(this->buildingController) + "," + std::to_string(this->buildingX) + "," + std::to_string(this->buildingY) + "," + std::to_string(this->buildingHealth) + "-Building-";
 }
