@@ -27,6 +27,8 @@ bool mouseUp = false;
 Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath) {
     this->initWindow(); //Create the GLFW window and set the window property
     
+    this->setInterfaces();
+    
     this->window.setClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z);
     
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());

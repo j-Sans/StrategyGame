@@ -175,17 +175,18 @@ void Client::setInterfaces() {
     this->interfaces = this->visualizer.getInterfaces();
 }
 
-void Client::updateInterfaces(Tile *tile) {
-    this->leftInterface = &this->interfaces[default_left];
-    this->bottomInterface = &this->interfaces[default_bottom];
-    this->rightInterface = &this->interfaces[default_right];
+void Client::updateInterfaces() {
+    this->visualizer.leftInterface = &this->interfaces[default_left];
+    this->visualizer.bottomInterface = &this->interfaces[default_bottom];
+    this->visualizer.rightInterface = &this->interfaces[default_right];
     
     //If the selected tile is on the board
-    if (tile != nullptr) {
+    if (this->board.validTile(this->selectedTile)) {
+        Tile tile = this->board.get(this->selectedTile.x, this->selectedTile.y);
         
         if (tile.creature() != nullptr) {
             //Set the right interface to be the creature if there is a creature at the selected tile
-            this->rightInterface = &this->interfaces[creature];
+            this->visualizer.rightInterface = &this->interfaces[creature];
             
             //Update the boxes to display creature stats
             if (this->interfaces[creature].boxes.size() > 0) {
@@ -210,7 +211,7 @@ void Client::updateInterfaces(Tile *tile) {
             }
         } else if (tile.building() != nullptr) {
             //Do the same for buildings
-            this->rightInterface = &this->interfaces[building];
+            this->visualizer.rightInterface = &this->interfaces[building];
             
             if (this->interfaces[building].displayBars.size() > 0) {
                 this->interfaces[building].displayBars[HealthBar].setValue(tile.building()->health());
