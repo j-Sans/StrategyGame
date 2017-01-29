@@ -53,7 +53,7 @@ class Client {
 public:
     
     //Constructor
-    Client(std::string hostName, int portNum);
+    Client(Window w, std::string hostName, int portNum, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Public member functions
     

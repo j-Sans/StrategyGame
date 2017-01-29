@@ -84,11 +84,15 @@ public:
     /*!
      * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
      *
+     * @param w The current window object.
      * @param vertexPath A string which is the path to the text file that contains vertex shader GLSL code.
      * @param geometryPath A string which is the path to the text file that contains geometry shader GLSL code.
      * @param fragmentPath A string which is the path to the text file that contains fragment shader GLSL code.
+     * @param mouseDown A pointer to the boolean that represents whether the mouse was pressed. The boolean itself should be the one being edited by the callback function.
+     * @param mouseUp A pointer to the boolean that represents whether the mouse was released. The boolean itself should be the one being edited by the callback function.
+     * @param keys A poiunter to the array of booleans that represent for each key if it is pressed. The array itself should be the one being edited by the callback function.
      */
-    Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
+    Visualizer(Window w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Destructor
     
@@ -170,17 +174,17 @@ public:
      */
     glm::ivec2 getMouseTile();
     
-    /*!
-     * A function that should be called at the beginning of each frame from the larger class, in this case client.
-     * If not, errors involving the mouse being pressed will occur.
-     */
-    void startFrame();
-    
-    /*!
-     * A function that should be called at the end of each frame from the larger class, in this case client.
-     * If not, errors involving the mouse being pressed will occur.
-     */
-    void endFrame();
+//    /*!
+//     * A function that should be called at the beginning of each frame from the larger class, in this case client.
+//     * If not, errors involving the mouse being pressed will occur.
+//     */
+//    void startFrame();
+//    
+//    /*!
+//     * A function that should be called at the end of each frame from the larger class, in this case client.
+//     * If not, errors involving the mouse being pressed will occur.
+//     */
+//    void endFrame();
     
     /*!
      * A function that closes the window. Should be called within game loop to exit the loop.
@@ -222,6 +226,12 @@ private:
     //Private properties
     
     bool isSet = false;
+    
+    //Mouse info
+    bool* mouseUp;
+    bool* mouseDown;
+    
+    bool* keys;
     
     //Board info
     unsigned int boardWidth;
@@ -358,25 +368,25 @@ private:
      */
     glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters);
     
-    /*!
-     * A function GLFW can call when a key event occurs.
-     *
-     * @param window The GLFWwindow object.
-     * @param key The macro that will represent the key pressed
-     * @param action The macro that represents if the key is being pressed, released, etc...
-     * @param mods The macro representing which, if any, modes are activated, such as shift, command, etc...
-     */
-    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
-    
-    /*!
-     * A function GLFW can call when a mouse click occurs.
-     *
-     * @param window The GLFWwindow object.
-     * @param button The macro that will represent the mouse button pressed
-     * @param action The macro that represents if the key is being pressed, released, etc...
-     * @param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
-     */
-    static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+//    /*!
+//     * A function GLFW can call when a key event occurs.
+//     *
+//     * @param window The GLFWwindow object.
+//     * @param key The macro that will represent the key pressed
+//     * @param action The macro that represents if the key is being pressed, released, etc...
+//     * @param mods The macro representing which, if any, modes are activated, such as shift, command, etc...
+//     */
+//    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+//    
+//    /*!
+//     * A function GLFW can call when a mouse click occurs.
+//     *
+//     * @param window The GLFWwindow object.
+//     * @param button The macro that will represent the mouse button pressed
+//     * @param action The macro that represents if the key is being pressed, released, etc...
+//     * @param mode The macro representing which, if any, modes are activated, such as shift, command, etc...
+//     */
+//    static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 };
 
 #endif /* Visualizer_hpp */

@@ -41,6 +41,8 @@ enum interfaceType {
     building, //The default building interface
     
     settings, //The settings popup menu
+    
+    menu, //The opening menu display
 };
 
 class Interface {

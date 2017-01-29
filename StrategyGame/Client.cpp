@@ -8,7 +8,7 @@
 
 #include "Client.hpp"
 
-Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag")), board(Board(std::vector<std::vector<Tile> >(0))) {
+Client::Client(Window w, std::string hostName, int portNum, bool* mouseDown, bool* mouseUp, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
     
     this->socket.setSocket(hostName, portNum);
     
@@ -40,8 +40,8 @@ Client::Client(std::string hostName, int portNum) : visualizer(Visualizer("Shade
 }
 
 void Client::render() {
-    this->visualizer.startFrame();
-    
+//    this->visualizer.startFrame();
+//    
     this->board = Board::deserialize(this->socket.receive());
     
     std::string clientInfo = "";
@@ -60,8 +60,8 @@ void Client::render() {
     this->getBufferData(&this->visualizer.terrainData, &this->visualizer.creatureData, &this->visualizer.colorData, &this->visualizer.damageData, &this->visualizer.offsetData, &this->visualizer.buildingData);
     
     this->visualizer.render();
-    
-    this->visualizer.endFrame();
+//    
+//    this->visualizer.endFrame();
 }
 
 void Client::terminate() {

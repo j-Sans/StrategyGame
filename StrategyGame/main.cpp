@@ -34,6 +34,32 @@
 #include "Host.hpp"
 #include "Menu.hpp"
 
+#include "Window.hpp"
+
+//An array of booleans representing if, for each key, if that key is pressed
+//Declared here so it can work with static function keyCallback. That function needs to be static
+bool keys[1024];
+
+//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function. Don't use this to see if the mouse was pressed, use the other boolean
+//This is only true right after the mouse is pressed
+bool mouseJustPressed = false;
+
+//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function. Use this to see if the mouse was pressed
+//This is true as long as the mouse is down
+bool mouseDown = false;
+
+//A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
+bool mouseUp = false;
+
+
+//Callback functions
+void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+
+
+//Functions
+void updateMouse();
+
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
@@ -55,10 +81,17 @@ int main(int argc, const char * argv[]) {
             
             //Run as client
             
-            Client C("localhost", 3000);
+            Window window;
+            window.init(800, 600, "Game", false, true);
+            window.setKeyCallback(keyCallback);
+            window.setMouseButtonCallback(mouseButtonCallback);
+            
+            Client C(window, "localhost", 3000, &mouseDown, &mouseUp, keys);
         
-            while (!C.getShouldWindowClose())
+            while (!C.getShouldWindowClose()) {
+                updateMouse();
                 C.render();
+            }
             
             C.terminate();
             //send message to other clients that the player has left the game.
@@ -116,4 +149,45 @@ int main(int argc, const char * argv[]) {
     }
 
     return 0;
+}
+
+
+void updateMouse() {
+    if (mouseJustPressed) {
+        mouseJustPressed = false;
+        mouseDown = true;
+    }
+}
+
+
+//A function GLFW can call when a key event occurs
+void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    
+    if (key == GLFW_KEY_W && action == GLFW_PRESS && mods == GLFW_MOD_SUPER) { //Command-W: close the application
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+    
+    if (key >= 0 && key < 1024) {
+        if (action == GLFW_PRESS) {
+            keys[key] = true;
+        }
+        if (action == GLFW_RELEASE) {
+            keys[key] = false;
+        }
+    }
+}
+
+//A function GLFW can call when a key event occurs
+void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+    double xPos, yPos;
+    glfwGetCursorPos(window, &xPos, &yPos);
+    
+    mouseJustPressed = false;
+    mouseUp = false;
+    
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        mouseJustPressed = true; //Indicate the mouse has just been pressed. This will then be processed at the start and end of each frame to set mouseDown
+    } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+        mouseUp = true;
+    }
 }

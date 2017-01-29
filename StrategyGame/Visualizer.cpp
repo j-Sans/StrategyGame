@@ -8,24 +8,11 @@
 
 #include "Visualizer.hpp"
 
-//An array of booleans representing if, for each key, if that key is pressed
-//Declared here so it can work with static function keyCallback. That function needs to be static
-bool keys[1024];
-
-//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function. Don't use this to see if the mouse was pressed, use the other boolean
-//This is only true right after the mouse is pressed
-bool mouseJustPressed = false;
-
-//A boolean representing if the mouse has been clicked, for use in buttons and setting active tiles. This boolean is set in the mouse button callback function. Use this to see if the mouse was pressed
-//This is true as long as the mouse is down
-bool mouseDown = false;
-
-//A boolean representing if the mouse button has been released, for use with resetting buttons. This boolean is set in the mouse button callback function
-bool mouseUp = false;
-
 //Constructor
-Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::string fragmentPath) {
-    this->initWindow(); //Create the GLFW window and set the window property
+Visualizer::Visualizer(Window w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys) {
+//    this->initWindow(); //Create the GLFW window and set the window property
+    
+    this->window = w;
     
     this->setInterfaces();
     
@@ -34,6 +21,10 @@ Visualizer::Visualizer(std::string vertexPath, std::string geometryPath, std::st
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
     this->font = Font(FONT_PATH);
+    
+    this->mouseDown = mouseDown;
+    this->mouseUp = mouseUp;
+    this->keys = keys;
     
     //Allow for transparency
     glEnable(GL_BLEND);
@@ -155,7 +146,7 @@ void Visualizer::render() {
         else if (a == 2)
             interface = this->rightInterface;
         
-        interface->render(mouseDown, mouseUp, true);
+        interface->render(*this->mouseDown, *this->mouseUp, true);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
@@ -182,7 +173,7 @@ std::string Visualizer::getClientInfo() {
     
     glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
     
-    std::string clientInfo = std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (mouseDown ? '1' : '0');
+    std::string clientInfo = std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (*this->mouseDown ? '1' : '0');
     
     clientInfo += ";"; //Separate the previous mouse information from the actions with a semicolon
     
@@ -211,23 +202,23 @@ glm::ivec2 Visualizer::getMouseTile() {
     return this->mouseTile(mousePos, windowSize, tileCenters);
 }
 
-void Visualizer::startFrame() {
-    //At the start of each frame, if the mouse has been clicked, then mouseDown will be set to true
-    if (mouseJustPressed) {
-        mouseJustPressed = false;
-        mouseDown = true;
-    }
-}
-
-void Visualizer::endFrame() {
-    //At the end of each frame, if the mouse was clicked before the frame finished, then mouseDown will be set to true, otherwise false
-    if (mouseJustPressed) {
-        mouseJustPressed = false;
-        mouseDown = true;
-    } else {
-        mouseDown = false;
-    }
-}
+//void Visualizer::startFrame() {
+//    //At the start of each frame, if the mouse has been clicked, then mouseDown will be set to true
+//    if (mouseJustPressed) {
+//        mouseJustPressed = false;
+//        mouseDown = true;
+//    }
+//}
+//
+//void Visualizer::endFrame() {
+//    //At the end of each frame, if the mouse was clicked before the frame finished, then mouseDown will be set to true, otherwise false
+//    if (mouseJustPressed) {
+//        mouseJustPressed = false;
+//        mouseDown = true;
+//    } else {
+//        mouseDown = false;
+//    }
+//}
 
 //Close the window
 void Visualizer::closeWindow() {
@@ -257,7 +248,7 @@ const void Visualizer::setClearColor(GLfloat red, GLfloat green, GLfloat blue) {
 }
 
 bool Visualizer::mousePressed() {
-    return mouseDown;
+    return *this->mouseDown;
 }
 
 //Get the time since the previous frame
@@ -298,10 +289,10 @@ void Visualizer::initWindow() {
     this->window.setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
-    this->window.setKeyCallback(this->keyCallback);
-    
-    //Set mouse button click callback function
-    this->window.setMouseButtonCallback(this->mouseButtonCallback);
+//    this->window.setKeyCallback(this->keyCallback);
+//    
+//    //Set mouse button click callback function
+//    this->window.setMouseButtonCallback(this->mouseButtonCallback);
 }
 
 void Visualizer::setInterfaces() {
@@ -768,36 +759,4 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     std::cout << "Index: " << tileIndex << " (" << tileIndexVec.x << "," << tileIndexVec.y << ")" << std::endl;
     
     return tileIndexVec;
-}
-
-//A function GLFW can call when a key event occurs
-void Visualizer::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    
-    if (key == GLFW_KEY_W && action == GLFW_PRESS && mods == GLFW_MOD_SUPER) { //Command-W: close the application
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-    
-    if (key >= 0 && key < 1024) {
-        if (action == GLFW_PRESS) {
-            keys[key] = true;
-        }
-        if (action == GLFW_RELEASE) {
-            keys[key] = false;
-        }
-    }
-}
-
-//A function GLFW can call when a key event occurs
-void Visualizer::mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-    double xPos, yPos;
-    glfwGetCursorPos(window, &xPos, &yPos);
-    
-    mouseJustPressed = false;
-    mouseUp = false;
-    
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        mouseJustPressed = true; //Indicate the mouse has just been pressed. This will then be processed at the start and end of each frame to set mouseDown
-    } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-        mouseUp = true;
-    }
 }
