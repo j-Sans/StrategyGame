@@ -60,6 +60,10 @@ private:
     //Time
     std::chrono::time_point<std::chrono::steady_clock> programStartTime;
     std::chrono::duration<float> lastFrame;
+    
+    constexpr static const float timeBetweenUpkeep = 5.0f;
+    float timeOfLastUpkeep = 0;
+    
     float deltaTime = 0.0f;
     
     //Clients
