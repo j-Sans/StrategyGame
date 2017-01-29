@@ -93,10 +93,10 @@ public:
      * @param defenderY The y index of the ∂efender in the board.
      * @param attackDamage An int to store the damage dealt by the attacker. Use nullptr if no int is needed to store this.
      * @param defendDamage An int to store the damage dealt by the defender. Use nullptr if no int is needed to store this.
-     
-     * @return Whether combat occurred or not, for various reasons.
+     *
+     * @return A std::vector of actions that should be done upon death of any of the creatures or buildings.
      */
-    bool initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
+    std::vector<std::string> initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
     
     /*!
      * Get the distance (in taxicab geometry) from one tile to another.
@@ -134,8 +134,10 @@ public:
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
+     *
+     * @return An std::string representing the action to do on when the creature dies.
      */
-    void deleteCreature(unsigned int x, unsigned int y);
+    std::string deleteCreature(unsigned int x, unsigned int y);
     
     /*!
      * Set a building in the designated spot on the board.
@@ -153,8 +155,10 @@ public:
      *
      * @param x The x index of the coordinate in the board.
      * @param y The y index of the coordinate in the board.
+     *
+     * @return An std::string representing the action to do on when the creature dies.
      */
-    void deleteBuilding(unsigned int x, unsigned int y);
+    std::string deleteBuilding(unsigned int x, unsigned int y);
     
     /*!
      * Set a direction for the creature at the designated spot on the board.

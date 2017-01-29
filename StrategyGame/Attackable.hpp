@@ -18,6 +18,9 @@ public:
     //Constructor
     Attackable(unsigned int maxHealth, unsigned int x, unsigned int y, unsigned int controller);
     
+    //Public properties
+    std::string deathAction = ""; //Initially nothing, can be modified
+    
     //Public member functions
     
     /*!

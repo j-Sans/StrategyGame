@@ -157,7 +157,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.destinationInRange(destination, currentTile)) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.destinationInRange(destination, currentTile) && this->board.get(currentTile.x, currentTile.y).creature()->controller() == playerNum) {
             std::vector<unsigned int> directions = this->players[playerNum].getPath(currentTile.x, currentTile.y, destination.x, destination.y);
             
             for (int a = 0; a < directions.size(); a++) {
@@ -183,7 +183,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile)) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile) && this->board.get(currentTile.x, currentTile.y).creature()->controller() == playerNum && this->board.get(destination.x, destination.y).creature()->controller() != playerNum) {
             glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
             glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
             
@@ -191,9 +191,13 @@ void Host::processAction(std::string action, unsigned int playerNum) {
                 
                 int attackDamage = 0, defendDamage = 0;
                 
-                this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+                std::vector<std::string> actions = this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
                 this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
                 this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
+                
+                for (int a = 0; a < actions.size(); a++) {
+                     this->processAction(actions[a], -1); //playerNum doesn't matter
+                }
             }
         }
     }

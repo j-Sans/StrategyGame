@@ -380,7 +380,7 @@ float Board::calculateTerrainModifier(Tile defender) {
 };
 
 
-bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
+std::vector<std::string> Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
     if (attackerX >= this->gameBoard.size()) {
         throw std::range_error("Attacker x out of range");
     }
@@ -393,6 +393,8 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
     if (defenderY >= this->gameBoard[defenderX].size()) {
         throw std::range_error("Defender y out of range");
     }
+    
+    std::vector<std::string> actions;
     
     //Using pointers to get tiles by reference
     Tile* attacker = &this->gameBoard[attackerX][attackerY];
@@ -409,7 +411,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
             distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY); //An error is only thrown if arguments are out of range, but that is checked above
             
             if (distanceBetweenTiles > this->gameBoard[attackerX][attackerY].creature()->range()) {
-                return false; //No combat occurs
+                //No combat occurs
             } else { //if its not melee its ranged. or terrain ignoring.
                 
                 //Calculate Attacker Modifiers
@@ -466,17 +468,17 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                         *defendDamage = damageDealtByDefender;
                     
                     if (attackerDied) {
-                        this->deleteCreature(attacker->x(), attacker->y()); //Remove the dead creature
+                        actions.push_back(this->deleteCreature(attacker->x(), attacker->y())); //Remove the dead creature, records its death action
                     }
                     
                     if (defenderDied) {
-                        this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
+                        actions.push_back(this->deleteCreature(defender->x(), defender->y())); //Remove the dead creature, records its death action
                     }
                 } else if (defenderDied) {
-                    this->deleteCreature(defender->x(), defender->y()); //Remove the dead creature
+                    actions.push_back(this->deleteCreature(defender->x(), defender->y())); //Remove the dead creature, records its death action
                 }
                 
-                return true; //Combat occurs
+                //Combat occurs
             }
             
     } else if (defender->building() != nullptr) {
@@ -488,7 +490,7 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
             distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY); //An error is only thrown if arguments are out of range, but that is checked above
             
             if (distanceBetweenTiles > this->gameBoard[attackerX][attackerY].creature()->range()) {
-                return false; //No combat occurs
+                //No combat occurs
             } else {
                 
                 int damageDealtByAttacker = attacker->creature()->attack();
@@ -500,10 +502,8 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                     *attackDamage = damageDealtByAttacker;
                 
                 if (defenderDied) {
-                    this->deleteBuilding(defender->x(), defender->y()); //Remove the dead building
-                }
-                
-                return true; //Combat occurs
+                    actions.push_back(this->deleteBuilding(defender->x(), defender->y())); //Remove the dead building, records its death action
+                }//Combat occurs
             }
             
         } else { //The attacker is a range fighter so there can be no strike back. To consider: other range units can strike back?
@@ -516,13 +516,12 @@ bool Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsig
                 *attackDamage = damageDealtByAttacker;
             
             if (defenderDied) {
-                this->deleteBuilding(defender->x(), defender->y()); //Remove the dead building
+                actions.push_back(this->deleteBuilding(defender->x(), defender->y())); //Remove the dead building, records its death action
             }
-            
-            return true;
         }
-    } else
-        return false; //No building or creature to attack
+    }
+    //No building or creature to attack
+    return actions;
 }
 
 unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
@@ -571,7 +570,7 @@ void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
     this->gameBoard[x][y].setCreature(&this->creatures.back());
 }
 
-void Board::deleteCreature(unsigned int x, unsigned int y) {
+std::string Board::deleteCreature(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
     }
@@ -592,13 +591,18 @@ void Board::deleteCreature(unsigned int x, unsigned int y) {
      * Download and add the boost library optional functionality
      */
     
+    std::string deathAction;
+    
     for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
         if (listIter->x() == x && listIter->y() == y) {
             this->gameBoard[x][y].setCreature(nullptr);
+            deathAction = listIter->deathAction;
             this->creatures.erase(listIter); //Delete the creature from the list if it is the specified creature.
             break;
         }
     }
+    
+    return deathAction;
     
     //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
 }
@@ -616,7 +620,7 @@ void Board::setBuilding(unsigned int x, unsigned int y, Building building) {
     this->gameBoard[x][y].setBuilding(&this->buildings.back());
 }
 
-void Board::deleteBuilding(unsigned int x, unsigned int y) {
+std::string Board::deleteBuilding(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
     }
@@ -637,13 +641,18 @@ void Board::deleteBuilding(unsigned int x, unsigned int y) {
      * Download and add the boost library optional functionality
      */
     
+    std::string deathAction;
+    
     for (auto listIter = this->buildings.begin(); listIter != this->buildings.end(); listIter++) {
         if (listIter->x() == x && listIter->y() == y) {
             this->gameBoard[x][y].setBuilding(nullptr);
+            deathAction = listIter->deathAction;
             this->buildings.erase(listIter); //Delete the building from the list if it is the specified creature.
             break;
         }
     }
+    
+    return deathAction;
     
     //If no building is deleted in the loop, then there was no creature at that location, which is also fine.
 }
