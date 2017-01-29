@@ -24,16 +24,15 @@
 
 class Texture {
 public:
-    //Constructor
     
     /*!
-     * An object containing a loaded texture that can directly be called to be used.
+     * A function to set the loaded texture that can directly be called to be used. The texture cannot be used if set has not been called.
      *
      * @param imagePath The path and filename of the image to be loaded in as a texture.
      * @param texNumber The texture number that the texture should be connected with. This can only be a number from 0 to 30. This is used, for example, when calling and activating it as GL_TEXTURE0, or whichever number. The 32nd texture, when texNumber = 31, is reserved for use by fonts.
      * @param uniformName The name of the sampler2D within GLSL to send the texture to when activated.
      */
-    Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName);
+    void set(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName);
     
     //Public member functions
     
@@ -50,6 +49,8 @@ private:
     GLuint texNum;
     GLuint id;
     std::string name;
+    
+    bool set = false;
 };
 
 #endif /* Texture_hpp */

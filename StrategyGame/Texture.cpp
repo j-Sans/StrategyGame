@@ -8,8 +8,8 @@
 
 #include "Texture.hpp"
 
-//Constructor
-Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName) {
+//Public member functions
+void Texture::set(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName) {
     if (texNumber >= 31) {
         texNumber = 30; //Stops bad access from accessing greater than element 30 in the because OpenGL might only be able to use 32 textures, and the last is reserved for fonts
     }
@@ -46,10 +46,15 @@ Texture::Texture(const GLchar* imagePath, GLuint texNumber, const GLchar* unifor
     //Free the memory associated with the texture and unbind it
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, this->texNum);
+    
+    this->set = true;
 }
 
 //Activate the texture and send the information to the given shader
 const void Texture::use(Shader shader) {
+    if (!this->set)
+        throw "Texture not set";
+    
     glActiveTexture(this->id);
     glBindTexture(GL_TEXTURE_2D, this->tex);
     shader.uniformTex(this->name.c_str(), this->texNum);
