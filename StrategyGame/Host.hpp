@@ -74,9 +74,9 @@ private:
      * Follow an action based on a std::string sent from the client. The string comes from the clientInfo string.
      *
      * @param action The string telling what action to do.
-     * @param playerNum The number of the player who sent the action.
+     * @param playerNum The number of the player who sent the action. -1 can be used to indicate that it is irrelevant.
      */
-    void processAction(std::string action, unsigned int playerNum);
+    void processAction(std::string action, int playerNum);
     
     /*!
      * Fill given std::vectors with OpenGL data.

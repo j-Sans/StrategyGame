@@ -98,13 +98,6 @@ private:
     
     void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime);
     
-//    /*!
-//     * Process a single action from the host info.
-//     *
-//     * @param hostInfo One action (separated from the rest of the string with commas) of information received from the host through the socket.
-//     */
-//    void processHostInfo(std::string hostInfo);
-    
     void setInterfaces();
     
     /*!

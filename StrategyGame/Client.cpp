@@ -44,8 +44,6 @@ void Client::render() {
     
     this->board = Board::deserialize(this->socket.receive());
     
-//    std::string clientInfo = this->visualizer.getClientInfo() + ";";
-    
     std::string clientInfo = "";
     
     for (auto a = this->actionsForClientInfo.begin(); a != this->actionsForClientInfo.end(); a++) {
@@ -54,12 +52,6 @@ void Client::render() {
     }
     
     this->socket.send(clientInfo);
-
-//    while (hostInfo.size() > 0) {
-//        this->processHostInfo(hostInfo.substr(0, hostInfo.find_first_of(',')); //Process the action
-//        
-//        hostInfo = hostInfo.substr(hostInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-//    }
     
     this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     
@@ -152,19 +144,11 @@ void Client::updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int cu
                     this->resolveTileAction(mousePos.x, mousePos.y);
                     this->resetAllTiles();
                     this->selectedTile = NO_SELECTION;
-//#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-//                    //If the attacker died, nothing will happen and the function will return false
-//                    this->selectedCreature = glm::ivec2(mousePos.x, mousePos.y);
-//#endif
                     break;
                 } case ATTACKABLE: {
                     this->resolveTileAction(mousePos.x, mousePos.y);
                     this->resetAllTiles();
                     this->selectedTile = NO_SELECTION;
-//#ifndef RESET_SELECTED_TILE_AFTER_MOVEMENT
-//                    //If the attacker died, nothing will happen and the function will return false
-//                    this->selectCreature(attacker.x, attacker.y);
-//#endif
                 }
             }
         }
@@ -224,13 +208,6 @@ void Client::updateInterfaces() {
         }
     }
 }
-
-//void Client::processHostInfo(std::string action) {
-//    if (action.find("move_creature") != std::string::npos) {
-//        action.erase(0, 14); //Erases "move_creature_"
-//        glm::ivec2 oldPos;
-//    }
-//}
 
 void Client::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<float>* colorData, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
     

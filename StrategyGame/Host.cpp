@@ -139,7 +139,7 @@ std::string Host::serialize() {
 
 //Private member functions
 
-void Host::processAction(std::string action, unsigned int playerNum) {
+void Host::processAction(std::string action, int playerNum) {
     if (action.find("move_creature_at_") != std::string::npos) {
         //Parse the destination tile from the string
         glm::ivec2 destination;

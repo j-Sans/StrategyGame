@@ -121,7 +121,6 @@ void Visualizer::render() {
     }
     
     glm::ivec2 framebufferSize = this->window.framebufferSize();
-//    this->window.setViewport(0.0, 0.0, framebufferSize.x, framebufferSize.x * 3.0 / 4.0);
     this->window.setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height);
     
     this->moveCamera();
