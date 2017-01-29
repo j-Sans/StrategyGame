@@ -13,6 +13,7 @@
 
 //Local includes
 #include "ClientSocket.hpp"
+#include "Texture.hpp"
 #include "Window.hpp"
 #include "TextureBox.hpp"
 
@@ -34,6 +35,11 @@ public:
     const GLuint windowHeight = 600;
     
     //Public member functions
+    
+    /*!
+     * Renders the menu screen. Should be called every frame.
+     */
+    void render();
     
 private:
     Window window;

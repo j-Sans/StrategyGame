@@ -47,12 +47,12 @@ void Texture::set(const GLchar* imagePath, GLuint texNumber, const GLchar* unifo
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, this->texNum);
     
-    this->set = true;
+    this->isSet = true;
 }
 
 //Activate the texture and send the information to the given shader
 const void Texture::use(Shader shader) {
-    if (!this->set)
+    if (!this->isSet)
         throw "Texture not set";
     
     glActiveTexture(this->id);

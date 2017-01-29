@@ -465,18 +465,24 @@ void Visualizer::updateBuffers() {
 
 //Loads a texture into the back of the vector of texture objects. Only works up to 32 times. Throws an error if there are already 32 textures.
 void Visualizer::loadTexture(const GLchar* texPath, const GLchar* texName) {
-    if (textures.size() <= 32)
-        textures.push_back(Texture(texPath, (GLuint)textures.size(), texName));
-    else
+    if (textures.size() <= 32) {
+        Texture tex;
+        tex.set(texPath, (GLuint)textures.size(), texName);
+        textures.push_back(tex);
+    } else {
         throw std::range_error("32 textures already loaded.");
+    }
 }
 
 //Replaces the designated spot in the vector of texture objects with a new texture. Throws an error if the desired index is out of vector range.
 void Visualizer::replaceTexture(const GLchar* texPath, GLuint texIndex, const GLchar* texName) {
-    if (texIndex < textures.size())
-        textures[texIndex] = Texture(texPath, texIndex, texName);
-    else
+    if (texIndex < textures.size()) {
+        Texture tex;
+        tex.set(texPath, (GLuint)textures.size(), texName);
+        textures[texIndex] = tex;
+    } else {
         throw std::range_error("No texture loaded in that spot.");
+    }
 }
 
 //Contains matrix transformations to be done on the board. This sets model and projection matrices. Called only once

@@ -32,10 +32,18 @@
 //Local includes
 #include "Client.hpp"
 #include "Host.hpp"
+#include "Menu.hpp"
 
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
+    
+//    //Test menu:
+//    Menu menu;
+//    
+//    while(true) {
+//        menu.render();
+//    }
     
     bool repeat = true;
     while (repeat) {

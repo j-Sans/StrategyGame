@@ -50,7 +50,7 @@ private:
     GLuint id;
     std::string name;
     
-    bool set = false;
+    bool isSet = false;
 };
 
 #endif /* Texture_hpp */
