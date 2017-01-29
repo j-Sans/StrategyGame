@@ -146,6 +146,8 @@ void Visualizer::render() {
         else if (a == 2)
             interface = this->rightInterface;
         
+        std::cout << "Mouse down: " << *this->mouseDown << std::endl;
+        
         interface->render(*this->mouseDown, *this->mouseUp, true);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions
@@ -755,8 +757,6 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     tileIndexVec.x = (int)(tileIndex / this->boardHeight); //The x index in the 2D vector
     
     tileIndexVec.y = tileIndex - (this->boardHeight * tileIndexVec.x); //The y index in the 2D vector
-    
-    std::cout << "Index: " << tileIndex << " (" << tileIndexVec.x << "," << tileIndexVec.y << ")" << std::endl;
     
     return tileIndexVec;
 }

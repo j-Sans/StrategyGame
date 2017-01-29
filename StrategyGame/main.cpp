@@ -156,6 +156,8 @@ void updateMouse() {
     if (mouseJustPressed) {
         mouseJustPressed = false;
         mouseDown = true;
+    } else {
+        mouseDown = false;
     }
 }
 
