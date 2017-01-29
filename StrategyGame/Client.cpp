@@ -218,8 +218,8 @@ void Client::updateInterfaces() {
             }
             
             if (this->interfaces[building].buttons.size() > 0) {
-                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
-                this->interfaces[building].buttons[0].action = tile.building()->action();
+//                this->interfaces[building].buttons[0].text = tile.building()->buttonText();
+//                this->interfaces[building].buttons[0].action = tile.building()->action();
             }
         }
     }

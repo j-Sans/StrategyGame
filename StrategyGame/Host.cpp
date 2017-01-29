@@ -379,7 +379,7 @@ void Host::processAction(std::string action, unsigned int playerNum) {
 
             action.erase(0, 1); //Get rid of the comma
             
-            Building newBuilding(selectedTile.x, selectedTile.y, "Make creature", "building_new_creature(" + std::to_string(selectedTile.x) + "," + std::to_string(selectedTile.y) + ")", maxHealth, playerNum);
+            Building newBuilding(selectedTile.x, selectedTile.y, maxHealth, playerNum);
             
             if (!this->board.get(selectedTile.x, selectedTile.y).occupied()) {
                 this->board.setBuilding(selectedTile.x, selectedTile.y, newBuilding);

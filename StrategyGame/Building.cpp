@@ -10,7 +10,7 @@
 
 //Constructor
 
-Building::Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int controller) : Attackable(maxHealth, x, y, controller), buildingButtonText(buttonText), buildingAction(action) {
+Building::Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int controller) : Attackable(maxHealth, x, y, controller) {
     this->healthVal = this->maxHealthVal;
 }
 
@@ -25,24 +25,12 @@ bool Building::takeDamage(unsigned int damage) {
 
 //Get functions
 
-const std::string Building::buttonText() {
-    return this->buildingButtonText;
-}
-
-const std::string Building::action() {
-    return this->buildingAction;
-}
-
 std::string Building::serialize() {
-    return "Building:" + this->buildingButtonText + "," + this->buildingAction + "," + std::to_string(this->maxHealthVal) + "," + std::to_string(this->controllerVal) + "," + std::to_string(this->xVal) + "," + std::to_string(this->yVal) + "," + std::to_string(this->healthVal) + "-Building-";
+    return "Building:" + std::to_string(this->maxHealthVal) + "," + std::to_string(this->controllerVal) + "," + std::to_string(this->xVal) + "," + std::to_string(this->yVal) + "," + std::to_string(this->healthVal) + "," + this->Attackable::serialize() + "-Building-";
 }
 
 Building Building::deserialize(std::string str) {
     str.erase(0, 9); //To erase "Building:"
-    std::string buttonText = str.substr(0, str.find_first_of(','));
-    str = str.substr(str.find_first_of(',') + 1);
-    std::string action = str.substr(0, str.find_first_of(','));
-    str = str.substr(str.find_first_of(',') + 1);
     int maxHealth = std::stoi(str.substr(0, str.find_first_of(',')));
     str = str.substr(str.find_first_of(',') + 1);
     int controller = std::stoi(str.substr(0, str.find_first_of(',')));
@@ -54,8 +42,10 @@ Building Building::deserialize(std::string str) {
     int health = std::stoi(str.substr(0, str.find_first_of(',')));
     str = str.substr(str.find_first_of(',') + 1);
     
-    Building building(x, y, buttonText, action, maxHealth, controller);
+    Building building(x, y, maxHealth, controller);
     building.takeDamage(maxHealth - health);
+    
+    building.buttonInfo = Attackable::deserializeButtons(str.substr(0, str.find_first_of("-Buttons-")));
     
     return building;
 }

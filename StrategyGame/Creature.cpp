@@ -227,7 +227,7 @@ std::string Creature::serialize() {
         throw std::invalid_argument("Error serializing creature: unknown creature direction");
     }
     
-    return str + std::to_string(offsetVal) + "," + std::to_string(xVal) + "," + std::to_string(yVal) + "-Creature-";
+    return str + std::to_string(offsetVal) + "," + std::to_string(xVal) + "," + std::to_string(yVal) + "," + this->Attackable::serialize() + "-Creature-";
     
 }
 
@@ -317,6 +317,9 @@ Creature Creature::deserialize(std::string str) {
     creature.takeDamage(maxHealth - health);
     creature.decrementEnergy(maxEnergy - energy);
     creature.setOffset(offset);
+    
+    creature.buttonInfo = Attackable::deserializeButtons(str.substr(0, str.find_first_of("-Buttons-")));
+    
     return creature;
 }
 

@@ -21,7 +21,7 @@ class Building : public Attackable {
 public:
     //Constructor
     
-    Building(unsigned int x, unsigned int y, std::string buttonText, std::string action, unsigned int maxHealth, unsigned int controller);
+    Building(unsigned int x, unsigned int y, unsigned int maxHealth, unsigned int controller);
     
     //Destructor
     
@@ -41,16 +41,6 @@ public:
     //Public get functions
     
     /*!
-     * @return The text string for the button on the building to be used on the building interface.
-     */
-    const std::string buttonText();
-    
-    /*!
-     * @return The action string for the button on the building to be used on the building interface.
-     */
-    const std::string action();
-    
-    /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
@@ -67,9 +57,6 @@ public:
     static Building deserialize(std::string str);
     
 private:
-    //Private properties
-    const std::string buildingButtonText;
-    const std::string buildingAction;
 };
 
 #endif /* Building_hpp */
