@@ -140,6 +140,10 @@ bool Button::isPressed() {
     return false;
 }
 
+bool Button::hasTexture() {
+    return this->tex.getSet();
+}
+
 //Private member functions
 
 void Button::updateMouse(bool mouseDown, bool mouseUp) {

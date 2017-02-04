@@ -37,9 +37,9 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     
     glm::ivec2 framebufferSize = this->window.framebufferSize();
     
-    this->interface = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interface_other);
+    this->interface = Interface(&this->interfaceShader, &this->textureShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interface_other);
     
-    this->interface.addButton("start", "Play");
+    this->interface.addButton("start", "Play", tex);
 }
 
 void Menu::render() {

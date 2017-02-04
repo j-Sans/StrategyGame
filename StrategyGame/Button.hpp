@@ -77,14 +77,17 @@ public:
      */
     void render(bool mouseDown, bool mouseUp, bool buttonInteraction);
     
-    //Public get functions
-    
     /*!
      * A function that returns the pressed state of the button as a boolean. If that value is true, then pressed is internally changed to false.
      *
      * @return Whether the button is pressed or not.
      */
     bool isPressed();
+    
+    /*!
+     * @return Whether the button uses a texture.
+     */
+    bool hasTexture();
     
 private:
     //Button properties
