@@ -13,7 +13,7 @@
 //Only so that Interface.hpp can have properly initialized boxes. No other purpose.
 Box::Box() {}
 
-Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type = other) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec3(Box::defaultColor, Box::defaultColor, Box::defaultColor)), text(boxText), boxType(type) {
+Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type, Texture texture) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec3(Box::defaultColor, Box::defaultColor, Box::defaultColor)), text(boxText), boxType(type), tex(texture) {
     
     this->window = window;
     this->boxShader = shader;
@@ -32,8 +32,14 @@ Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLf
     };
     
     glm::vec3 colorData[6];
-    for (int a = 0; a < 6; a++) {
-        colorData[a] = this->boxColor;
+    if (this->tex.getSet()) {
+        for (int a = 0; a < 6; a++) {
+            colorData[a] = glm::vec3(1.0, 1.0, 1.0);
+        }
+    } else {
+        for (int a = 0; a < 6; a++) {
+            colorData[a] = this->boxColor;
+        }
     }
     
     //Draw with OpenGL
@@ -120,6 +126,10 @@ void Box::render() {
     
     //Bind the VAO and draw shapes
     this->boxShader.use();
+    
+    if (this->tex.getSet()) {
+        this->tex.use(this->boxShader);
+    }
     
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

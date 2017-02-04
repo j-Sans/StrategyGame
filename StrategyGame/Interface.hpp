@@ -109,7 +109,7 @@ public:
      *
      * @param action An std::string that represents the action to occur when the button is pressed.
      * @param text An std::string that will be displayed on the button.
-     * @param Texture An optional parameter of a texture to set for the button.
+     * @param texture An optional parameter of a texture to set for the button.
      */
     void addButton(std::string action, std::string text, Texture texture = Texture());
     
@@ -117,8 +117,9 @@ public:
      * A function to add a box to the interface. This increments the layer that new properties will appear at.
      *
      * @param text An std::string that will be displayed on the button.
+     * @param texture An optional parameter of a texture to set for the box.
      */
-    void addBox(std::string text);
+    void addBox(std::string text, Texture texture = Texture());
     
     /*!
      * A function to add a button to the interface. This increments the layer that new properties will appear at.

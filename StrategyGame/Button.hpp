@@ -49,6 +49,7 @@ public:
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
      * @param buttonAction An std::string representing the action which this button can do. This string is read in Visualizer::processButtons function. This string should only be something that can be read there. 
      * @param buttonText An std::string representing the text to display on the button as its name.
+     * @param texture An optional texture parameter. If not added, then no texture will be added to the button.
      */
     Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText, Texture texture = Texture());
     

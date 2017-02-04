@@ -75,7 +75,7 @@ void Menu::terminate() {
 void Menu::processAction(std::string action) {
     if (action == "start") {
         this->interface.removePropertyLayer();
-        this->interface.addBox("Input host name");
+        this->interface.addBox("Input host name", this->buttonTexture);
         this->textbox = &this->interface.boxes.back();
         this->interface.addButton("find_host", "Find host", this->buttonTexture);
     } else if (action == "find_host") {

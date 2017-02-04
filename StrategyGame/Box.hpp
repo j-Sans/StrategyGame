@@ -27,6 +27,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Texture.hpp"
 #include "Window.hpp"
 
 enum DisplayBoxType {
@@ -62,8 +63,9 @@ public:
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
      * @param boxText An std::string representing the text to display on the box as its name.
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
+     * @param texture An optional texture parameter. If not added, then no texture will be added to the button.
      */
-    Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type);
+    Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type, Texture texture = Texture());
     
     /*!
      * A class representing a box on an interface block. This creates a box with the given button color
@@ -124,6 +126,8 @@ private:
     GLuint colorVBO;
     
     Font font;
+    
+    Texture tex;
     
     //Viewport information
     GLfloat lowerLeftX;

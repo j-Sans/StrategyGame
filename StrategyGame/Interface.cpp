@@ -190,14 +190,14 @@ void Interface::addButton(std::string action, std::string text, Texture texture)
     this->nextPropertyHeight -= 0.1;
 }
 
-void Interface::addBox(std::string text) {
-    this->boxes.push_back(Box(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, text, other));
+void Interface::addBox(std::string text, Texture texture) {
+    this->boxes.push_back(Box(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, text, other, texture));
     
     this->nextPropertyHeight -= 0.1;
 }
 
 bool Interface::removePropertyLayer() {
-    if (this->nextPropertyHeight - 0.1 > this->initialPropertyHeight) {
+    if (this->nextPropertyHeight + 0.1 < this->initialPropertyHeight) {
         this->buttons.pop_back();
         this->nextPropertyHeight += 0.1;
         return true;
