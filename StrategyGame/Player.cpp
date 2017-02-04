@@ -392,7 +392,7 @@ void Player::resolveTileAction(unsigned int x, unsigned int y) {
             Creature newCreature(x, y, Human, 100, 4, 30, Melee, 1, 1, NORTH, this->playerNum);
             
             if (this->board->get(x, y).passableByCreature(newCreature)) {
-                this->board->setCreature(x, y, newCreature);
+                this->board->setCreature(newCreature);
             }
             
             this->resetAllTiles();

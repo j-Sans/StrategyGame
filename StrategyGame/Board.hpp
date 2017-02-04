@@ -123,13 +123,11 @@ public:
     
     /*!
      * Set a creature in the designated spot on the board.
-     * Possible errors include if the coordinates are outside of the range of the board.
+     * Possible errors include if the coordinates that are part of the creature are outside of the range of the board.
      *
-     * @param x The x index of the coordinate in the board.
-     * @param y The y index of the coordinate in the board.
-     * @param creature A creature object to be set in the board at the designated spot.
+     * @param creature A creature object to be set in the board at the location based on its coordinates.
      */
-    void setCreature(unsigned int x, unsigned int y, Creature creature);
+    void setCreature(Creature creature);
     
     /*!
      * Delete the creature in the designated spot on the board.
@@ -144,13 +142,11 @@ public:
     
     /*!
      * Set a building in the designated spot on the board.
-     * Possible errors include if the coordinates are outside of the range of the board.
+     * Possible errors include if the coordinates that are part of the creature are outside of the range of the board.
      *
-     * @param x The x index of the coordinate in the board.
-     * @param y The y index of the coordinate in the board.
-     * @param creature A creature object to be set in the board at the designated spot.
+     * @param creature A creature object to be set in the board at the location based on its coordinates.
      */
-    void setBuilding(unsigned int x, unsigned int y, Building building);
+    void setBuilding(Building building);
     
     /*!
      * Delete the building in the designated spot on the board.

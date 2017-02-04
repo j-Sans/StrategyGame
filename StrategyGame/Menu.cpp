@@ -25,7 +25,7 @@ Menu::Menu(Window w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* k
     }
     
     Texture backgroundTex;
-    backgroundTex.set("Resources/background.jpg", 0, "tex");
+    backgroundTex.set("Resources/IMG_1560.jpg", 0, "tex");
     Texture interfaceTex;
     interfaceTex.set("Resources/parchment.png", 29, "tex");
     

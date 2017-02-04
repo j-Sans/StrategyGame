@@ -119,18 +119,18 @@ int main(int argc, const char * argv[]) {
                 continue;
             }
             
-            if (numPlayers >= 1 && numPlayers <= 5) {
+            if (numPlayers >= 1 && numPlayers <= 2) {
                 
                 //Run as host
                 
                 //Gameboard:
                 std::vector<std::vector<Tile> > board;
-                for (GLuint x = 0; x < BOARD_WIDTH; x++) {
+                for (GLint x = 0; x < BOARD_WIDTH; x++) {
                     std::vector<Tile> row;
-                    for (GLuint y = 0; y < BOARD_WIDTH; y++) {
-                        if (x + (2 * y) < 5)
+                    for (GLint y = 0; y < BOARD_WIDTH; y++) {
+                        if ((x == 2 && y == BOARD_WIDTH - 1 - 2) || (x == 3 && y == BOARD_WIDTH - 1 - 3) || (x == 4 && y == BOARD_WIDTH - 1 - 4) || (x == BOARD_WIDTH - 1 - 2 && y == 2) || (x == BOARD_WIDTH - 1 - 3 && y == 3) || (x == BOARD_WIDTH - 1 - 4 && y == 4))
                             row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-                        else if (x + y > 15)
+                        else if (x >= y - 1 && x <= y + 1)
                             row.push_back(Tile(FOREST_TERRAIN, x, y));
                         else
                             row.push_back(Tile(OPEN_TERRAIN, x, y));
@@ -142,13 +142,21 @@ int main(int argc, const char * argv[]) {
                 
                 //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
                 
-                for(int a = 0; a < numPlayers; a++) {
-                    H.board.setCreature(a + 2, a + 2, Creature(a + 2, a + 2, Human, 300, 3, 40, Melee, 1, 1, NORTH, a));
-                }
+                H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
+                H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
+                H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
                 
-                H.board.setBuilding(3, 5, Building(3, 5, 300, 0));
+                H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
+                H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
+                H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
                 
-                H.board.setBuilding(5, 3, Building(5, 3, 300, 1));
+                Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
+                player0Home.deathAction = "player_lose_0";
+                Building player1Home(BOARD_WIDTH - 1, 0, 10, 1);
+                player1Home.deathAction = "player_lose_1";
+                
+                H.board.setBuilding(player0Home);
+                H.board.setBuilding(player1Home);
                 
                 while (true)
                     H.update();

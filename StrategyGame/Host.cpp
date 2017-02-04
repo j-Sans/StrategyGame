@@ -298,7 +298,7 @@ void Host::processAction(std::string action, int playerNum) {
             Creature newCreature(selectedTile.x, selectedTile.y, race, values[0], values[1], values[2], attackStyle, values[3], values[4], direction, playerNum);
 
             if (this->board.get(selectedTile.x, selectedTile.y).passableByCreature(newCreature)) {
-                this->board.setCreature(selectedTile.x, selectedTile.y, newCreature);
+                this->board.setCreature(newCreature);
 
                 this->players[playerNum].resetAllTiles();
                 
@@ -393,7 +393,7 @@ void Host::processAction(std::string action, int playerNum) {
             Building newBuilding(selectedTile.x, selectedTile.y, maxHealth, playerNum);
             
             if (!this->board.get(selectedTile.x, selectedTile.y).occupied()) {
-                this->board.setBuilding(selectedTile.x, selectedTile.y, newBuilding);
+                this->board.setBuilding(newBuilding);
                 
                 //Reset all tiles to be unselected now that the creature has been added
                 this->players[playerNum].resetAllTiles();

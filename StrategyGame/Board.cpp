@@ -563,7 +563,9 @@ void Board::resetEnergy(unsigned int player) {
     }
 }
 
-void Board::setCreature(unsigned int x, unsigned int y, Creature creature) {
+void Board::setCreature(Creature creature) {
+    unsigned int x = creature.x();
+    unsigned int y = creature.y();
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
     }
@@ -613,7 +615,9 @@ std::string Board::deleteCreature(unsigned int x, unsigned int y) {
     //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
 }
 
-void Board::setBuilding(unsigned int x, unsigned int y, Building building) {
+void Board::setBuilding(Building building) {
+    unsigned int x = building.x();
+    unsigned int y = building.y();
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
     }
@@ -1112,7 +1116,7 @@ Board Board::deserialize(std::string str) {
     str = str.substr(str.find_first_of(',') + 1);
     for (int a = 0; a < numCreatures; a++) {
         Creature c = Creature::deserialize(str.substr(0, str.find("-Creature-")));
-        board.setCreature(c.x(), c.y(), c);
+        board.setCreature(c);
         str = str.substr(str.find("-Creature-") + 10);
     }
     
@@ -1122,7 +1126,7 @@ Board Board::deserialize(std::string str) {
     str = str.substr(str.find_first_of(',') + 1);
     for (int a = 0; a < numBuildings; a++) {
         Building b = Building::deserialize(str.substr(0, str.find("-Building")));
-        board.setBuilding(b.x(), b.y(), b);
+        board.setBuilding(b);
         str = str.substr(str.find("-Building-") + 10);
     }
     
