@@ -91,7 +91,7 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
             if (*text == "Input host name") {
                 *text = "";
             }
-            *text += GLFW_KEY_0 - 48;
+            *text += key;
             this->keysJustPressed[key] = true;
         } else if (!this->keys[key]) {
             this->keysJustPressed[key] = false;

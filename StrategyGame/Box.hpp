@@ -78,11 +78,11 @@ public:
      * @param interfaceY A GLfloat representing the lower left y coordinate of the current interface, in screen coordinates.
      * @param interfaceWidth A GLfloat representing the width of the current interface, in screen coordinates.
      * @param interfaceHeight A GLfloat representing the height of the current interface, in screen coordinates.
-     * @param color An optional glm::vec4 representing the color to set as the box color.
+     * @param color An optional glm::vec3 representing the color to set as the box color.
      * @param boxText An std::string representing the text to display on the box as its name.
      * @param type A box type indicating what kind of box this should be updated as. Use the type other for no updating. Otherwise, see Box.hpp.
      */
-    Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, DisplayBoxType type);
+    Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec3 color, std::string boxText, DisplayBoxType type);
     
     //Static properties
     constexpr static float defaultColor = 0.33; //Set in constructor
@@ -108,12 +108,12 @@ public:
     /*!
      * @return The color of the box.
      */
-    glm::vec4 color();
+    glm::vec3 color();
     
 private:
     //Box properties
     DisplayBoxType boxType; //A displayBoxType to represent the type of the box, so that its can be updated
-    glm::vec4 boxColor;
+    glm::vec3 boxColor;
     
     //OpenGL and GLFW properties
     Window* window;

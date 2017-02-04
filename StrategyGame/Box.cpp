@@ -13,7 +13,7 @@
 //Only so that Interface.hpp can have properly initialized boxes. No other purpose.
 Box::Box() {}
 
-Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type = other) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec4(Box::defaultColor, Box::defaultColor, Box::defaultColor, 1.0)), text(boxText), boxType(type) {
+Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type = other) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec3(Box::defaultColor, Box::defaultColor, Box::defaultColor)), text(boxText), boxType(type) {
     
     this->window = window;
     this->boxShader = shader;
@@ -31,7 +31,7 @@ Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLf
         this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
     };
     
-    glm::vec4 colorData[6];
+    glm::vec3 colorData[6];
     for (int a = 0; a < 6; a++) {
         colorData[a] = this->boxColor;
     }
@@ -64,7 +64,7 @@ Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLf
     glBindVertexArray(0);
 }
 
-Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec4 color, std::string boxText, DisplayBoxType type = other) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(color), text(boxText), boxType(type) {
+Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec3 color, std::string boxText, DisplayBoxType type = other) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(color), text(boxText), boxType(type) {
     
     this->window = window;
     this->boxShader = shader;
@@ -82,7 +82,7 @@ Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLf
         this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
     };
     
-    glm::vec4 colorData[6];
+    glm::vec3 colorData[6];
     for (int a = 0; a < 6; a++) {
         colorData[a] = this->boxColor;
     }
@@ -172,6 +172,6 @@ DisplayBoxType Box::type() {
     return this->boxType;
 }
 
-glm::vec4 Box::color() {
+glm::vec3 Box::color() {
     return this->boxColor;
 }
