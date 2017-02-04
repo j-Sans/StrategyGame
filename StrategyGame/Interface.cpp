@@ -17,6 +17,8 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     this->buttonShader = shaderForButtons;
     this->displayBarShader = shaderForDisplayBars;
     
+    this->propertyTex.set("Resources/button_tex.jpg", 30, "tex");
+    
     //Set viewport specifics
     this->lowerLeftX = x;
     this->lowerLeftY = y;
@@ -35,16 +37,16 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     
     switch (type) {
         case default_left: {
-            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings", this->propertyTex));
             
             this->nextPropertyHeight -= 0.1;
             
             //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
-            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee", this->propertyTex));
             
             this->nextPropertyHeight -= 0.1;
             
-            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged", this->propertyTex));
             
             this->nextPropertyHeight -= 0.1;
             
@@ -52,7 +54,7 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
         } case default_bottom: {
             
-            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_building,300,1", "New Building"));
+            this->buttons.push_back(Button(*this->buttonShader, this->window, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_building,300,1", "New Building", this->propertyTex));
             
             break;
         
@@ -75,13 +77,13 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             this->nextPropertyHeight -= 0.1;
             
             //Create the box for attack info that will be added to the map
-            Box attackBox(*this->buttonShader, this->window, 0.05, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack);
+            Box attackBox(*this->buttonShader, this->window, 0.05, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack, this->propertyTex);
             
             //Insert the box into with the key creature_
             this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_attack, attackBox));
             
             //Create the box for range info that will be added to the map
-            Box rangeBox(*this->buttonShader, this->window, 0.525, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range);
+            Box rangeBox(*this->buttonShader, this->window, 0.525, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range, this->propertyTex);
             
             //Insert the box into with the key creature_range
             this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_range, rangeBox));
@@ -89,13 +91,13 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             this->nextPropertyHeight -= 0.1;
             
             //Create the box for vision info that will be added to the map
-            Box visionBox(*this->buttonShader, this->window, 0.05, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
+            Box visionBox(*this->buttonShader, this->window, 0.05, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision, this->propertyTex);
             
             //Insert the box into with the key creature_vision
             this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_vision, visionBox));
             
             //Create the box for race info that will be added to the map
-            Box raceBox(*this->buttonShader, this->window, 0.525, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
+            Box raceBox(*this->buttonShader, this->window, 0.525, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race, this->propertyTex);
             
             //Insert the box into with the key creature_race
             this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_race, raceBox));
@@ -122,8 +124,6 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     }
     
     this->initialPropertyHeight = this->nextPropertyHeight;
-    
-    this->propertyTex.set("Resources/button_tex.jpg", 30, "tex");
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
