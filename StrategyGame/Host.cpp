@@ -65,6 +65,13 @@ void Host::update() {
         }
     }
     
+    //Upkeep (Energy is incremented by 1 every 5 seconds);
+    if (currentFrame.count() - timeOfLastUpkeep > timeBetweenUpkeep) {
+        this->board.upkeep();
+        timeOfLastUpkeep = currentFrame.count();
+        std::cout << "\n\nupkeep counter reset\n\n";
+    }
+    
     for (int a = 0; a < this->players.size(); a++) {
         this->players[a].updateCreatures(this->deltaTime);
     }

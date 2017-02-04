@@ -121,6 +121,13 @@ float Board::getTerrainVisionCost (Tile origin, Tile destination) {
     else return 1;
    }
 
+void Board::upkeep() {
+    for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+        listIter->decrementEnergy(-1);
+        std::cout << "called upkeep " << listIter->energy();
+    }
+}
+
 //Public member functions
 bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
     
@@ -735,8 +742,8 @@ bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     
     if (creature == nullptr) {
         throw std::invalid_argument("No creature at currentLoc");
-    } else if (this->get(destination.x, destination.y).creature() == nullptr) {
-        throw std::invalid_argument("No cerature at attack location");
+    } else if (this->get(destination.x, destination.y).creature() == nullptr && this->get(destination.x, destination.y).building() == nullptr) {
+        throw std::invalid_argument("No creature or building at attack location");
     }
     
     std::vector<Tile> tiles = this->getAttackableTiles(this->get(currentLoc.x, currentLoc.y));

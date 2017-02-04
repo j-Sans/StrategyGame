@@ -32,11 +32,13 @@ bool Creature::takeDamage(unsigned int damage) {
     return false; //The creature is still alive
 }
 
-void Creature::decrementEnergy(unsigned int energy) {
-    if (energy < this->energyVal)
-        this->energyVal -= energy;
-    else
+
+void Creature::decrementEnergy(int energy) {
+    if (energy > this->energyVal){
         this->energyVal = 0;
+    else if (this->energyVal - energy > this->maxEnergyVal)
+        this->energyVal = this->maxEnergyVal;
+    else this->energyVal -= energy;
 }
 
 void Creature::useAllEnergy() {

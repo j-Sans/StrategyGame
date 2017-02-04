@@ -65,6 +65,7 @@ int main(int argc, const char * argv[]) {
     srand((int)std::time(NULL));
     
     //Test menu:
+<<<<<<< HEAD
     Window window;
     window.init(800, 600, "Game", false, true);
     Menu menu(window, &mouseDown, &mouseUp, keys);

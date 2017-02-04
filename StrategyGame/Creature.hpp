@@ -82,12 +82,12 @@ public:
      */
     bool takeDamage(unsigned int damage);
     
-    /*!
+    /*
      * Reduces the creature's energy by the movement argument.
      *
-     * @param energy An unsigned int representing movement this creature does. Equal to the energy loss.
+     * @param energy An int representing actions, including any movement or attacking that this creature does. 
      */
-    void decrementEnergy(unsigned int energy);
+    void decrementEnergy(int energy);
     
     /*!
      * Reduces the creature's energy to 0. To be used after combat or other abilities are used.
