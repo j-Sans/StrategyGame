@@ -26,7 +26,7 @@
 class Menu {
 public:
     //Constructor
-    Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys);
+    Menu(Window w, ClientSocket *sock, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Public properties
     
@@ -44,10 +44,8 @@ public:
     
     /*!
      * Renders the menu screen. Should be called every frame.
-     *
-     * @param socketPtr A pointer to a socket, given from main, that will be updated if this menu has connected.
      */
-    void render(ClientSocket* socketPtr);
+    void render();
     
     /*!
      * @return A boolean indicating if the window should close.
@@ -56,7 +54,7 @@ public:
     
 private:
     Window window;
-    ClientSocket socket;
+    ClientSocket *socket;
     Interface interface;
     
     //Mouse info

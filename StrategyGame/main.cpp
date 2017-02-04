@@ -78,11 +78,11 @@ int main(int argc, const char * argv[]) {
             window.setKeyCallback(keyCallback);
             window.setMouseButtonCallback(mouseButtonCallback);
             ClientSocket socket;
-            Menu M(window, &mouseDown, &mouseUp, keys);
+            Menu M(window, &socket, &mouseDown, &mouseUp, keys);
             
             while (!M.getShouldWindowClose()) {
                 updateMouse();
-                M.render(&socket);
+                M.render();
                 if (socket.getSet()) {
                     break;
                 }

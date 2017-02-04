@@ -8,11 +8,12 @@
 
 #include "Menu.hpp"
 
-Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
+Menu::Menu(Window w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* keys) {
     //Make a window object. May throw an error, which will be thrown through this function
 //    this->window.init(this->windowWidth, this->windowHeight, "Game", false, true);
     
     this->window = w;
+    this->socket = sock;
     
     this->mouseDown = mouseDown;
     this->mouseUp = mouseUp;
@@ -42,7 +43,7 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     this->interface.addButton("start", "Play", this->buttonTexture);
 }
 
-void Menu::render(ClientSocket* socketPtr) {
+void Menu::render() {
     glm::ivec2 framebufferSize = this->window.framebufferSize();
     this->window.setViewport(0, 0, framebufferSize.x, framebufferSize.y);
     
@@ -63,7 +64,6 @@ void Menu::render(ClientSocket* socketPtr) {
     
     if (this->connected) {
         this->connecting = false;
-        *socketPtr = this->socket;
     }
     
     if (this->failedToConnect) {
@@ -91,7 +91,7 @@ void Menu::processAction(std::string action) {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
-        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, &this->socket);
+        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket);
         this->connecting = true;
         this->interface.removePropertyLayer();
         this->interface.addBox("Looking for host", this->buttonTexture);
@@ -148,6 +148,7 @@ void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket) {
             continue; //Keep trying to connect, for 10 seconds
         }
         *done = true; //If it connected without throwing an error
+        break;
     }
     *failed = true;
 }
