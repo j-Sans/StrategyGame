@@ -98,7 +98,7 @@ void Menu::processAction(std::string action) {
 
 void Menu::updateTextbox(std::string textboxDefaultStr) {
     std::string* text = &this->textbox->text;
-    if (text->size() > 32) {
+    if (text->size() < 32) {
         for (int key = GLFW_KEY_0; key < GLFW_KEY_9; key++) {
             if (this->keys[key] && !this->keysJustPressed[key]) {
                 if (*text == "Input host name") {
