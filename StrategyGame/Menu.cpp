@@ -82,7 +82,7 @@ void Menu::processAction(std::string action) {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
-        //Socket stuff
+        this->thread = std::thread(this->threadFuntion);
     }
 }
 
@@ -122,4 +122,8 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     }
 
     
+}
+
+void Menu::threadFuntion() {
+    std::cout << "In a thread!" << std::endl;
 }

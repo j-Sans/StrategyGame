@@ -11,6 +11,9 @@
 
 #include "Macros.h"
 
+//Standard library includes
+#include <thread>
+
 //Local includes
 #include "ClientSocket.hpp"
 #include "Texture.hpp"
@@ -65,6 +68,8 @@ private:
     bool keysJustPressed[1024];
     Box* textbox = nullptr;
     
+    std::thread thread;
+    
     //Shaders
     Shader interfaceShader;
     Shader textureShader;
@@ -88,6 +93,11 @@ private:
      * @param textboxDefaultStr The default string that should be displayed if there is no writing.
      */
     void updateTextbox(std::string textboxDefaultStr);
+    
+    /*!
+     * A function to be run by the thread.
+     */
+    static void threadFuntion();
 };
 
 #endif /* Menu_hpp */
