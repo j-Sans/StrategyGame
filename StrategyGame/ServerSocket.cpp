@@ -244,6 +244,10 @@ unsigned int ServerSocket::numberOfClients() {
     return this->connectedClients;
 }
 
+bool ServerSocket::getSet() {
+    return this->setUp;
+}
+
 ServerSocket::~ServerSocket() {
     if (this->setUp) {
         //Properly terminate the sockets

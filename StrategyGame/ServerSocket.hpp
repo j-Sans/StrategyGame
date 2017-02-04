@@ -85,6 +85,11 @@ public:
      */
     unsigned int numberOfClients();
     
+    /*!
+     * @return If this object is set.
+     */
+    bool getSet();
+    
 private:
     //Private properties
     unsigned int connectedClients = 0;

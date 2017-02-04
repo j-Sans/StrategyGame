@@ -142,8 +142,6 @@ void Visualizer::render() {
         else if (a == 2)
             interface = this->rightInterface;
         
-        std::cout << "Mouse down: " << *this->mouseDown << std::endl;
-        
         interface->render(*this->mouseDown, *this->mouseUp, true);
         
         //Go through the buttons and check if they are pressed, and do any consequential actions

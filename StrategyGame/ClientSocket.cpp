@@ -180,6 +180,10 @@ std::string ClientSocket::receive() {
     return message;
 }
 
+bool ClientSocket::getSet() {
+    return this->setUp;
+}
+
 ClientSocket::~ClientSocket() {
     if (this->setUp)
         //Properly terminate the sockets

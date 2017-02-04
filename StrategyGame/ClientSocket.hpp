@@ -58,6 +58,11 @@ public:
      */
     std::string receive();
     
+    /*!
+     * @return If this object is set.
+     */
+    bool getSet();
+    
 private:
     //Private properties
     

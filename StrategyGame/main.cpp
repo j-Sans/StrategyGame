@@ -73,32 +73,33 @@ int main(int argc, const char * argv[]) {
         if (input == "N" || input == "n") {
             
             //Test menu:
-            Window window1;
-            window1.init(800, 600, "Game", false, true);
-            window1.setKeyCallback(keyCallback);
-            window1.setMouseButtonCallback(mouseButtonCallback);
-            Menu M(window1, &mouseDown, &mouseUp, keys);
-            
-            while (!M.getShouldWindowClose()) {
-                updateMouse();
-                M.render();
-            }
-            
-            M.terminate();
-            
-            //Run as client
-            
             Window window;
             window.init(800, 600, "Game", false, true);
             window.setKeyCallback(keyCallback);
             window.setMouseButtonCallback(mouseButtonCallback);
+            ClientSocket socket;
+            Menu M(window, &mouseDown, &mouseUp, keys);
             
-            Client C(window, "localhost", 3000, &mouseDown, &mouseUp, keys);
+            while (!M.getShouldWindowClose()) {
+                updateMouse();
+                M.render(&socket);
+                if (socket.getSet()) {
+                    break;
+                }
+            }
+            
+            //Run as client
+            
+//            Window window;
+//            window.init(800, 600, "Game", false, true);
+//            window.setKeyCallback(keyCallback);
+//            window.setMouseButtonCallback(mouseButtonCallback);
+            
+            Client C(window, &socket, &mouseDown, &mouseUp, keys);
         
             while (!C.getShouldWindowClose()) {
-                startFrame();
+                updateMouse();
                 C.render();
-                endFrame();
             }
             
             C.terminate();

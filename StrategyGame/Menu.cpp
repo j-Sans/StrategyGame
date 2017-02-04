@@ -42,7 +42,7 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     this->interface.addButton("start", "Play", this->buttonTexture);
 }
 
-void Menu::render() {
+void Menu::render(ClientSocket* socketPtr) {
     glm::ivec2 framebufferSize = this->window.framebufferSize();
     this->window.setViewport(0, 0, framebufferSize.x, framebufferSize.y);
     
@@ -61,15 +61,15 @@ void Menu::render() {
         this->updateTextbox("Input host name");
     }
     
+    if (this->connected) {
+        *socketPtr = this->socket;
+    }
+    
     this->window.updateScreen();
 }
 
 bool Menu::getShouldWindowClose() {
     return this->window.shouldClose();
-}
-
-void Menu::terminate() {
-    this->window.close();
 }
 
 void Menu::processAction(std::string action) {
@@ -82,17 +82,7 @@ void Menu::processAction(std::string action) {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
-        bool done = false;
-        this->thread = std::thread(this->threadFuntion, &done, &this->socket);
-        while (true) {
-            if (done) {
-                std::cout << "Done" << std::endl;
-                this->thread.join();
-                break;
-            } else {
-                std::cout << "Not done" << std::endl;
-            }
-        }
+        this->thread = std::thread(this->threadFuntion, &this->connected, &this->socket);
     }
 }
 

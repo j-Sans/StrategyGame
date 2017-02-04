@@ -8,12 +8,12 @@
 
 #include "Client.hpp"
 
-Client::Client(Window w, std::string hostName, int portNum, bool* mouseDown, bool* mouseUp, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
+Client::Client(Window w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
     
-    this->socket.setSocket(hostName, portNum);
+    this->socket = socket;
     
-    std::string initialInfo = this->socket.receive();
-    this->socket.send("initialDataReceived");
+    std::string initialInfo = this->socket->receive();
+    this->socket->send("initialDataReceived");
     
     this->playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));
     initialInfo = initialInfo.substr(initialInfo.find_first_of(',') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
@@ -42,7 +42,7 @@ Client::Client(Window w, std::string hostName, int portNum, bool* mouseDown, boo
 void Client::render() {
 //    this->visualizer.startFrame();
 //    
-    this->board = Board::deserialize(this->socket.receive());
+    this->board = Board::deserialize(this->socket->receive());
     
     std::string clientInfo = "";
     
@@ -51,7 +51,7 @@ void Client::render() {
         a = this->actionsForClientInfo.erase(a);
     }
     
-    this->socket.send(clientInfo);
+    this->socket->send(clientInfo);
     
     this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     

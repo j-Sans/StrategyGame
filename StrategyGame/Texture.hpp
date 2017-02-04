@@ -44,7 +44,7 @@ public:
     const void use(Shader shader);
     
     /*!
-     * @return If this texture is set.
+     * @return If this object is set.
      */
     bool getSet();
     

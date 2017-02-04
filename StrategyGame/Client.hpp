@@ -53,7 +53,7 @@ class Client {
 public:
     
     //Constructor
-    Client(Window w, std::string hostName, int portNum, bool* mouseDown, bool* mouseUp, bool* keys);
+    Client(Window w, ClientSocket* socket, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Public member functions
     
@@ -80,7 +80,7 @@ private:
     
     std::vector<std::vector<std::queue<std::string> > > tileActions; //For each tile, contains a queue of action strings, the first to be done when the tile is clicked if it is reachable
     
-    ClientSocket socket;
+    ClientSocket* socket;
     
     //Visualizer, to render the window
     Visualizer visualizer;

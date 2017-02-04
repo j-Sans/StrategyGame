@@ -42,18 +42,15 @@ public:
     
     /*!
      * Renders the menu screen. Should be called every frame.
+     *
+     * @param socketPtr A pointer to a socket, given from main, that will be updated if this menu has connected.
      */
-    void render();
+    void render(ClientSocket* socketPtr);
     
     /*!
      * @return A boolean indicating if the window should close.
      */
     bool getShouldWindowClose();
-    
-    /*!
-     * A function to call to free memory of the window.
-     */
-    void terminate();
     
 private:
     Window window;
@@ -68,7 +65,9 @@ private:
     bool keysJustPressed[1024];
     Box* textbox = nullptr;
     
+    //Thread
     std::thread thread;
+    bool connected = false;
     
     //Shaders
     Shader interfaceShader;
