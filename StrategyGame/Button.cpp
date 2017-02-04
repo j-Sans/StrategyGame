@@ -77,6 +77,10 @@ void Button::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     //Bind the VAO and draw shapes
     this->buttonShader.use();
     
+    if (this->tex.getSet()) {
+        this->tex.use(this->buttonShader);
+    }
+    
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);

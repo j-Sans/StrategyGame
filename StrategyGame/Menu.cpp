@@ -26,7 +26,7 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     Texture tex;
     tex.set("Resources/background.jpg", 0, "tex");
     
-    this->buttonTexture.set("Resources/texture.jpg", 30, "tex");
+    this->buttonTexture.set("Resources/button_tex.jpg", 30, "tex");
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     this->textureShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
@@ -39,7 +39,7 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     
     this->interface = Interface(&this->interfaceShader, &this->textureShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interface_other);
     
-    this->interface.addButton("start", "Play", tex);
+    this->interface.addButton("start", "Play", this->buttonTexture);
 }
 
 void Menu::render() {
@@ -77,7 +77,7 @@ void Menu::processAction(std::string action) {
         this->interface.removePropertyLayer();
         this->interface.addBox("Input host name");
         this->textbox = &this->interface.boxes.back();
-        this->interface.addButton("find_host", "Find host");
+        this->interface.addButton("find_host", "Find host", this->buttonTexture);
     } else if (action == "find_host") {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
