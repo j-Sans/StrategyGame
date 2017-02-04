@@ -33,6 +33,12 @@ Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat widt
         color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
     }
     
+    if (this->tex.getSet()) {
+        for (int a = 0; a < 6; a++) {
+            color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
+        }
+    }
+    
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->buttonVBO);
@@ -54,7 +60,7 @@ Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat widt
     glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -177,7 +183,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
