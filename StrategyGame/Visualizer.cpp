@@ -26,10 +26,6 @@ Visualizer::Visualizer(Window w, std::string vertexPath, std::string geometryPat
     this->mouseUp = mouseUp;
     this->keys = keys;
     
-    //Allow for transparency
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
     //Load textures
     //Exception only thrown if there are 32 textures already present
     try {

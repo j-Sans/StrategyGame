@@ -27,14 +27,19 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     
     this->background = TextureBox(this->buttonShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", tex);
     
-    glm::ivec2 screenSize = this->window.windowSize();
+    glm::ivec2 framebufferSize = this->window.framebufferSize();
     
-    this->interface = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, screenSize.x * 0.4, screenSize.y * 0.25, screenSize.x * 0.2, screenSize.y * 0.5, interface_other);
+    this->interface = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interface_other);
     
     this->interface.addButton("start", "Play");
 }
 
 void Menu::render() {
+    glfwPollEvents();
+    
+    glm::ivec2 framebufferSize = this->window.framebufferSize();
+    this->window.setViewport(0, 0, framebufferSize.x, framebufferSize.y);
+    
     this->background.render();
     this->interface.render(*this->mouseDown, *this->mouseUp, true);
     
@@ -56,6 +61,7 @@ void Menu::processAction(std::string action) {
     if (action == "start") {
         this->interface.removePropertyLayer();
         this->interface.addBox("Input host name");
+        this->textbox = &this->interface.boxes.back();
         this->interface.addButton("find_host", "Find host");
     } else if (action == "find_host") {
         if (this->textbox == nullptr) {

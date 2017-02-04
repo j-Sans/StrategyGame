@@ -34,7 +34,7 @@ bool Creature::takeDamage(unsigned int damage) {
 
 
 void Creature::decrementEnergy(int energy) {
-    if (energy > this->energyVal){
+    if (energy > this->energyVal)
         this->energyVal = 0;
     else if (this->energyVal - energy > this->maxEnergyVal)
         this->energyVal = this->maxEnergyVal;

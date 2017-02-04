@@ -59,6 +59,10 @@ void Window::init(int width, int height, std::string name, bool resizable, bool 
     glViewport(0.0, 0.0, viewportWidth, viewportHeight);
     
     this->viewportDimensions = glm::vec2(viewportWidth, viewportHeight);
+    
+    //Allow for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 //Public methods

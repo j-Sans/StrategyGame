@@ -137,7 +137,7 @@ private:
     
     //Private properties
     
-    //Player Ddya
+    //Player data
     unsigned int playerNum;
     
     //Board data
