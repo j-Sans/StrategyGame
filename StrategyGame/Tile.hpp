@@ -191,7 +191,7 @@ private:
     int tileTerrain;
     
     //The damage to be shown on the creature at this tile.
-    unsigned int tileDamage;
+    unsigned int tileDamage = 0;
     
     //The time the damage was first shown, so that after a given number of seconds (Tile::DamageScreenTime) the damage will no longer be displayed.
     float damageHitTime = 0;
