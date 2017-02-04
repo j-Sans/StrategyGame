@@ -89,7 +89,7 @@ void Menu::processAction(std::string action) {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
-        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket);
+        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket, this->textbox->text);
         this->connecting = true;
         this->interface.removePropertyLayer();
         this->interface.addBox("Looking for host");
@@ -137,14 +137,14 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     
 }
 
-void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket) {
+void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket, std::string hostName) {
     std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
     while (true) {
         std::chrono::duration<double> timeElapsed = std::chrono::steady_clock::now() - start;
         if (timeElapsed.count() > MAX_CONNECTION_TIME) break;
         
         try {
-            socket->setSocket("localhost", 3000);
+            socket->setSocket(hostName, 3000);
         } catch (std::runtime_error) {
             continue; //Keep trying to connect, for 10 seconds
         }
