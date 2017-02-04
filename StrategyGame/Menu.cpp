@@ -70,6 +70,7 @@ void Menu::render(ClientSocket* socketPtr) {
         this->connecting = false;
         this->interface.removePropertyLayer();
         this->interface.addButton("find_host", "Find host", this->buttonTexture);
+        this->thread.join();
         this->failedToConnect = false;
     }
     
@@ -137,7 +138,10 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
 
 void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket) {
     std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
-    while ((std::chrono::steady_clock::now() - start).count() > MAX_CONNECTION_TIME) {
+    while (true) {
+        std::chrono::duration<double> timeElapsed = std::chrono::steady_clock::now() - start;
+        if (timeElapsed.count() > MAX_CONNECTION_TIME) break;
+        
         try {
             socket->setSocket("localhost", 3000);
         } catch (std::runtime_error) {
