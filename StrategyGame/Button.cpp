@@ -19,13 +19,14 @@ Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat widt
     
     GLfloat data[] = {
         //Rectangle is drawn by two triangles
-        this->lowerLeftX, this->lowerLeftY,
-        this->lowerLeftX + this->buttonWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->buttonHeight,
+        //Vertices                                                              //Texture coordinates
+        this->lowerLeftX, this->lowerLeftY,                                             0.0, 0.0,
+        this->lowerLeftX + this->buttonWidth, this->lowerLeftY,                         1.0, 0.0,
+        this->lowerLeftX, this->lowerLeftY + this->buttonHeight,                        0.0, 1.0,
         
-        this->lowerLeftX + this->buttonWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->buttonHeight,
-        this->lowerLeftX + this->buttonWidth, this->lowerLeftY + this->buttonHeight,
+        this->lowerLeftX + this->buttonWidth, this->lowerLeftY,                         1.0, 0.0,
+        this->lowerLeftX, this->lowerLeftY + this->buttonHeight,                        0.0, 1.0,
+        this->lowerLeftX + this->buttonWidth, this->lowerLeftY + this->buttonHeight,    1.0, 1.0,
     };
     
     glm::vec3 color[6];
@@ -53,16 +54,20 @@ Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat widt
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+    
+    //Next we tell OpenGL how to interpret the array
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
     
     //Color VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->colorVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the array
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -202,8 +207,8 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(2);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -263,8 +268,8 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(2);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

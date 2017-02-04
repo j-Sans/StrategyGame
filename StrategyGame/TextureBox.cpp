@@ -21,14 +21,14 @@ TextureBox::TextureBox(Shader shader, Window* window, GLfloat x, GLfloat y, GLfl
     this->font = Font(FONT_PATH);
     
     GLfloat data[] = {
-        //Rectangle is drawn by two triangles                                   //Color data, signifying no modifiers on the texture hue
-        this->lowerLeftX, this->lowerLeftY,                                     1.0, 1.0, 1.0,
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY,                    1.0, 1.0, 1.0,
-        this->lowerLeftX, this->lowerLeftY + this->boxHeight,                   1.0, 1.0, 1.0,
+        //Rectangle is drawn by two triangles                                   //Texture   //Color data, signifying no modifiers on the texture hue
+        this->lowerLeftX, this->lowerLeftY,                                     0.0, 0.0,   1.0, 1.0, 1.0,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,                    1.0, 0.0,   1.0, 1.0, 1.0,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,                   0.0, 1.0,   1.0, 1.0, 1.0,
         
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY,                    1.0, 1.0, 1.0,
-        this->lowerLeftX, this->lowerLeftY + this->boxHeight,                   1.0, 1.0, 1.0,
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,  1.0, 1.0, 1.0,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,                    1.0, 0.0,   1.0, 1.0, 1.0,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,                   0.0, 1.0,   1.0, 1.0, 1.0,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,  1.0, 1.0,   1.0, 1.0, 1.0,
     };
     
     //Draw with OpenGL
@@ -43,12 +43,16 @@ TextureBox::TextureBox(Shader shader, Window* window, GLfloat x, GLfloat y, GLfl
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     
     //Next we tell OpenGL how to interpret the data
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     
     //Next we tell OpenGL how to interpret the color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
+    
+    //Next we tell OpenGL how to interpret the color
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (GLvoid*)(4 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
