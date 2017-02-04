@@ -97,7 +97,7 @@ private:
     /*!
      * A function to be run by the thread.
      */
-    static void threadFuntion();
+    static void threadFuntion(bool *done, ClientSocket *socket);
 };
 
 #endif /* Menu_hpp */

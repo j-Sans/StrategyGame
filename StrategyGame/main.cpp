@@ -58,27 +58,11 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 
 //Functions
-void startFrame();
-void endFrame();
+void updateMouse();
 
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
-    
-    //Test menu:
-    Window window;
-    window.init(800, 600, "Game", false, true);
-    window.setKeyCallback(keyCallback);
-    window.setMouseButtonCallback(mouseButtonCallback);
-    Menu M(window, &mouseDown, &mouseUp, keys);
-    
-    while (!M.getShouldWindowClose()) {
-        startFrame();
-        M.render();
-        endFrame();
-    }
-    
-    M.terminate();
     
     bool repeat = true;
     while (repeat) {
@@ -87,6 +71,20 @@ int main(int argc, const char * argv[]) {
         std::string input;
         std::cin >> input; 
         if (input == "N" || input == "n") {
+            
+            //Test menu:
+            Window window1;
+            window1.init(800, 600, "Game", false, true);
+            window1.setKeyCallback(keyCallback);
+            window1.setMouseButtonCallback(mouseButtonCallback);
+            Menu M(window1, &mouseDown, &mouseUp, keys);
+            
+            while (!M.getShouldWindowClose()) {
+                updateMouse();
+                M.render();
+            }
+            
+            M.terminate();
             
             //Run as client
             
@@ -162,15 +160,11 @@ int main(int argc, const char * argv[]) {
 }
 
 
-void startFrame() {
+void updateMouse() {
     if (mouseJustPressed) {
         mouseJustPressed = false;
         mouseDown = true;
-    }
-}
-
-void endFrame() {
-    if (!mouseJustPressed) {
+    } else {
         mouseDown = false;
     }
 }
