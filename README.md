@@ -19,10 +19,11 @@ Each unit has multiple attributes, including:
 
 ## Upcoming Additions
 
+* Make a max camera distance so the middle of the screen is always on the game.
 * Adding vision to map.
-* Adding menu, opening interface.
 * Adding a winning mechanism: Add a single building that when it is killed, that player loses.
 * Have each player start with a number of creatures.
+* Polish menu.
 
 ## Authors
 

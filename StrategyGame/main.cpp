@@ -88,6 +88,11 @@ int main(int argc, const char * argv[]) {
                 }
             }
             
+            if (window.shouldClose()) {
+                window.terminate();
+                break;
+            }
+            
             //Run as client
             
 //            Window window;
@@ -122,7 +127,7 @@ int main(int argc, const char * argv[]) {
                 std::vector<std::vector<Tile> > board;
                 for (GLuint x = 0; x < BOARD_WIDTH; x++) {
                     std::vector<Tile> row;
-                    for (GLuint y = 0; y < BOARD_WIDTH * 2; y++) {
+                    for (GLuint y = 0; y < BOARD_WIDTH; y++) {
                         if (x + (2 * y) < 5)
                             row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
                         else if (x + y > 15)

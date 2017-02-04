@@ -51,7 +51,7 @@ public:
     float getTerrainVisionCost (Tile origin, Tile destination);
     
     //Upkeep: Triggers every 10 seconds. Restores 1 energy to all creatures.
-    void upkeep();
+//    void upkeep();
     
     /*!
      * Move a creature from the designated spot in the designated direction.

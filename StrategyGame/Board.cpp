@@ -121,12 +121,11 @@ float Board::getTerrainVisionCost (Tile origin, Tile destination) {
     else return 1;
    }
 
-void Board::upkeep() {
-    for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
-        listIter->decrementEnergy(-1);
-        std::cout << "called upkeep " << listIter->energy();
-    }
-}
+//void Board::upkeep() {
+//    for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
+//        listIter->decrementEnergy(-1);
+//    }
+//}
 
 //Public member functions
 bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int direction) {
