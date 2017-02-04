@@ -185,3 +185,7 @@ DisplayBoxType Box::type() {
 glm::vec3 Box::color() {
     return this->boxColor;
 }
+
+GLfloat Box::getHeight() {
+    return (this->lowerLeftY + 1.0) / 2.0;
+}

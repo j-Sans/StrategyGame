@@ -172,12 +172,12 @@ void Client::updateInterfaces() {
             //Set the right interface to be the creature if there is a creature at the selected tile
             this->visualizer.rightInterface = &this->interfaces[creature];
             
-            //Update the boxes to display creature stats
-            if (this->interfaces[creature].boxes.size() > 0) {
-                this->interfaces[creature].boxes[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
-                this->interfaces[creature].boxes[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
-                this->interfaces[creature].boxes[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
-                this->interfaces[creature].boxes[creature_race].text = tile.creature()->raceString();
+            //Update the boxMap to display creature stats
+            if (this->interfaces[creature].boxMap.size() > 0) {
+                this->interfaces[creature].boxMap[creature_attack].text = "Attack: " + std::to_string(tile.creature()->attack());
+                this->interfaces[creature].boxMap[creature_range].text = "Range: " + std::to_string(tile.creature()->range());
+                this->interfaces[creature].boxMap[creature_vision].text = "Vision: " + std::to_string(tile.creature()->vision());
+                this->interfaces[creature].boxMap[creature_race].text = tile.creature()->raceString();
             }
             
             //Update the display bars to display the creature quantities, like health and energy, which change

@@ -148,6 +148,10 @@ bool Button::hasTexture() {
     return this->tex.getSet();
 }
 
+GLfloat Button::getHeight() {
+    return (this->lowerLeftY + 1.0) / 2.0;
+}
+
 //Private member functions
 
 void Button::updateMouse(bool mouseDown, bool mouseUp) {

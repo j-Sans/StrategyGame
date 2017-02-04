@@ -21,6 +21,8 @@
 #include "TextureBox.hpp"
 #include "Interface.hpp"
 
+#define MAX_CONNECTION_TIME 5.0
+
 class Menu {
 public:
     //Constructor

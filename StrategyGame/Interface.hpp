@@ -12,7 +12,7 @@
 #include "Macros.h"
 
 //Standard library includes
-#include <vector>
+#include <list>
 #include <map>
 
 //GLEW: Locates memory location of OpenGL functions
@@ -69,14 +69,14 @@ public:
     //Public properties
     
     /*!
-     * An std::vector of the boxes contained in this interface.
+     * An std::list of the boxes contained in this interface.
      */
-    std::vector<Box> boxes; //So that the boxes can be altered.
+    std::list<Box> boxes; //So that the boxes can be altered.
     
     /*!
-     * An std::vector of the buttons contained in this interface.
+     * An std::list of the buttons contained in this interface.
      */
-    std::vector<Button> buttons; //So that the buttons can be accessed by the game.
+    std::list<Button> buttons; //So that the buttons can be accessed by the game.
     
     /*!
      * An std::map of the boses contained in this interface, with key values of type displayBoxType (see Box.hpp)
@@ -136,9 +136,9 @@ public:
     void addBox(Box box);
     
     /*!
-     * A function to remove the previous layer of properties. Nothing will happen if there are properties on the previous layer.
+     * A function to remove the previous layer of properties. Nothing will happen if there are no properties on the previous layer or if the previous layer contains properties with which the interface was constructed. That means that if the constructor explicitly adds properties, those will not be removed. If those are the next layer, false will be returned.
      *
-     * @return True if the layer was removed. False otherwise.
+     * @return True if a layer, or anything at all, was removed. False otherwise.
      */
     bool removePropertyLayer();
     

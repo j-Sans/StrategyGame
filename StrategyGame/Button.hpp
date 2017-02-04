@@ -90,6 +90,11 @@ public:
      */
     bool hasTexture();
     
+    /*!
+     * @return The button height, from 0 to 1.
+     */
+    GLfloat getHeight();
+    
 private:
     //Button properties
     bool pressed = false;

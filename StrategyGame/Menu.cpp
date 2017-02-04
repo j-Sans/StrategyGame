@@ -137,7 +137,7 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
 
 void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket) {
     std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
-    while (true) {//(std::chrono::steady_clock::now() - start).count() < 10.0) {
+    while ((std::chrono::steady_clock::now() - start).count() > MAX_CONNECTION_TIME) {
         try {
             socket->setSocket("localhost", 3000);
         } catch (std::runtime_error) {

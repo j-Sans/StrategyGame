@@ -112,6 +112,11 @@ public:
      */
     glm::vec3 color();
     
+    /*!
+     * @return The box height, from 0 to 1.
+     */
+    GLfloat getHeight();
+    
 private:
     //Box properties
     DisplayBoxType boxType; //A displayBoxType to represent the type of the box, so that its can be updated

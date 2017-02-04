@@ -197,13 +197,25 @@ void Interface::addBox(std::string text, Texture texture) {
 }
 
 bool Interface::removePropertyLayer() {
-    if (this->nextPropertyHeight + 0.1 < this->initialPropertyHeight) {
-        this->buttons.pop_back();
-        this->nextPropertyHeight += 0.1;
-        return true;
-    } else {
-        return false;
+    this->nextPropertyHeight += 0.1;
+    if (this->nextPropertyHeight > this->initialPropertyHeight) return false;
+    
+    bool anythingRemoved = false;
+    
+    for (auto button = this->buttons.begin(); button != this->buttons.end(); button++) {
+        if (button->getHeight() <= this->nextPropertyHeight) {
+            button = this->buttons.erase(button);
+            anythingRemoved = true;
+        }
     }
+    
+    for (auto box = this->boxes.begin(); box != this->boxes.end(); box++) {
+        if (box->getHeight() < this->nextPropertyHeight) {
+            box = this->boxes.erase(box);
+            anythingRemoved = true;
+        }
+    }
+    return anythingRemoved;
 }
 
 //void Interface::updateViewport() {
