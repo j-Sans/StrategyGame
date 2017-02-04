@@ -10,7 +10,7 @@
 
 //Public member functions
 
-Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText) {
+Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText, Texture texture) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText), tex(texture) {
     
     this->window = window;
     this->buttonShader = shader;
@@ -28,14 +28,15 @@ Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat widt
         this->lowerLeftX + this->buttonWidth, this->lowerLeftY + this->buttonHeight,
     };
     
-    glm::vec4 color[6];
-    for (int a = 0; a < 6; a++) {
-        color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
-    }
+    glm::vec3 color[6];
     
     if (this->tex.getSet()) {
+        for (GLuint a = 0; a < 6; a++) {
+            color[a] = glm::vec3(1.0, 1.0, 1.0);
+        }
+    } else {
         for (int a = 0; a < 6; a++) {
-            color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
+            color[a] = glm::vec3(0.33, 0.33, 0.33);
         }
     }
     
@@ -167,15 +168,21 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
     actualButtonX += this->interfaceBoxLowerLeftX;
     actualButtonY += this->interfaceBoxLowerLeftY;
     
-    glm::vec4 color[6];
+    glm::vec3 color[6];
     
     //Make the button darker if it is pressed.
     if (this->pressed) {
         //First we bind the VAO
         glBindVertexArray(this->VAO);
         
-        for (GLuint a = 0; a < 6; a++) {
-            color[a] = glm::vec4(0.17, 0.17, 0.17, 1.0);
+        if (this->tex.getSet()) {
+            for (GLuint a = 0; a < 6; a++) {
+                color[a] = glm::vec3(0.5, 0.5, 0.5);
+            }
+        } else {
+            for (GLuint a = 0; a < 6; a++) {
+                color[a] = glm::vec3(0.17, 0.17, 0.17);
+            }
         }
         
         //Color VBO
@@ -197,21 +204,39 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
             if (mouseDown) {
                 this->pressed = true;
             }
-        
-            for (GLuint a = 0; a < 6; a++) {
-                color[a] = glm::vec4(0.67, 0.67, 0.67, 1.0);
+            
+            
+            if (this->tex.getSet()) {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = glm::vec3(1.5, 1.5, 1.5);
+                }
+            } else {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = glm::vec3(0.67, 0.67, 0.67);
+                }
             }
         } else {
-            
-            for (GLuint a = 0; a < 6; a++) {
-                color[a] = glm::vec4(0.33, 0.33, 0.33, 1.0);
+            if (this->tex.getSet()) {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = glm::vec3(1.0, 1.0, 1.0);
+                }
+            } else {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = glm::vec3(0.33, 0.33, 0.33);
+                }
             }
         }
         
         //Make the color darker if the button has been pressed recently. This has also been done if this->pressed is true
         if (this->hasBeenPressed) {
-            for (GLuint a = 0; a < 6; a++) {
-                color[a] = glm::vec4(0.17, 0.17, 0.17, 1.0);
+            if (this->tex.getSet()) {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = glm::vec3(0.5, 0.5, 0.5);
+                }
+            } else {
+                for (GLuint a = 0; a < 6; a++) {
+                    color[a] = glm::vec3(0.17, 0.17, 0.17);
+                }
             }
             
             if (mouseUp)
@@ -226,7 +251,7 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_STATIC_DRAW);
         
         //Next we tell OpenGL how to interpret the array
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);

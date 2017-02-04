@@ -184,8 +184,8 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     }
 }
 
-void Interface::addButton(std::string action, std::string text) {
-    this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, action, text));
+void Interface::addButton(std::string action, std::string text, Texture texture) {
+    this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, action, text, texture));
     
     this->nextPropertyHeight -= 0.1;
 }

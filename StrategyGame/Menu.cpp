@@ -24,7 +24,9 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     }
     
     Texture tex;
-    tex.set("Resources/background.jpg", 30, "tex");
+    tex.set("Resources/background.jpg", 0, "tex");
+    
+    this->buttonTexture.set("Resources/texture.jpg", 30, "tex");
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     this->textureShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
