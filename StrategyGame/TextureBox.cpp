@@ -21,14 +21,14 @@ TextureBox::TextureBox(Shader shader, Window* window, GLfloat x, GLfloat y, GLfl
     this->font = Font(FONT_PATH);
     
     GLfloat data[] = {
-        //Rectangle is drawn by two triangles
-        this->lowerLeftX, this->lowerLeftY,
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
+        //Rectangle is drawn by two triangles                                   //Color data, signifying no modifiers on the texture hue
+        this->lowerLeftX, this->lowerLeftY,                                     1.0, 1.0, 1.0,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,                    1.0, 1.0, 1.0,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,                   1.0, 1.0, 1.0,
         
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY,
-        this->lowerLeftX, this->lowerLeftY + this->boxHeight,
-        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY,                    1.0, 1.0, 1.0,
+        this->lowerLeftX, this->lowerLeftY + this->boxHeight,                   1.0, 1.0, 1.0,
+        this->lowerLeftX + this->boxWidth, this->lowerLeftY + this->boxHeight,  1.0, 1.0, 1.0,
     };
     
     //Draw with OpenGL
@@ -42,9 +42,13 @@ TextureBox::TextureBox(Shader shader, Window* window, GLfloat x, GLfloat y, GLfl
     glBindBuffer(GL_ARRAY_BUFFER, this->boxVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     
-    //Next we tell OpenGL how to interpret the array
+    //Next we tell OpenGL how to interpret the data
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+    
+    //Next we tell OpenGL how to interpret the color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

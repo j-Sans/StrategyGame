@@ -59,3 +59,7 @@ const void Texture::use(Shader shader) {
     glBindTexture(GL_TEXTURE_2D, this->tex);
     shader.uniformTex(this->name.c_str(), this->texNum);
 }
+
+bool Texture::getSet() {
+    return this->isSet;
+}

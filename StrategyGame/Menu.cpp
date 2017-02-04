@@ -18,6 +18,11 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     this->mouseUp = mouseUp;
     this->keys = keys;
     
+    //So it starts off thinking all keys have just been pressed
+    for (int a = 0; a < 1024; a++) {
+        this->keysJustPressed[a] = false;
+    }
+    
     Texture tex;
     tex.set("Resources/background.jpg", 30, "tex");
     
@@ -82,26 +87,37 @@ void Menu::processAction(std::string action) {
 void Menu::updateTextbox(std::string textboxDefaultStr) {
     std::string* text = &this->textbox->text;
     for (int key = GLFW_KEY_0; key < GLFW_KEY_9; key++) {
-        if (keys[key]) {
-            if (text->size() == 0) {
+        if (this->keys[key] && !this->keysJustPressed[key]) {
+            if (*text == "Input host name") {
                 *text = "";
             }
             *text += GLFW_KEY_0 - 48;
+            this->keysJustPressed[key] = true;
+        } else if (!this->keys[key]) {
+            this->keysJustPressed[key] = false;
         }
     }
     for (int key = GLFW_KEY_A; key < GLFW_KEY_Z; key++) {
-        if (keys[key]) {
-            if (text->size() == 0) {
+        if (this->keys[key] && !this->keysJustPressed[key]) {
+            if (*text == "Input host name") {
                 *text = "";
             }
             *text += key;
+            this->keysJustPressed[key] = true;
+        } else if (!this->keys[key]) {
+            this->keysJustPressed[key] = false;
         }
+
     }
-    if (keys[GLFW_KEY_BACKSPACE] && this->textbox->text.size() > 0) {
+    if (this->keys[GLFW_KEY_BACKSPACE] && this->textbox->text.size() > 0 && !this->keysJustPressed[GLFW_KEY_BACKSPACE] & *text != "Input host name") {
         *text = text->substr(0, text->size() - 1);
         if (text->size() == 0) {
             *text = textboxDefaultStr;
         }
+        this->keysJustPressed[GLFW_KEY_BACKSPACE] = true;
+    } else if (!this->keys[GLFW_KEY_BACKSPACE]) {
+        this->keysJustPressed[GLFW_KEY_BACKSPACE] = false;
     }
+
     
 }

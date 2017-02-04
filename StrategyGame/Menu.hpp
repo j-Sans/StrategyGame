@@ -62,6 +62,7 @@ private:
     bool* mouseDown;
     
     bool* keys;
+    bool keysJustPressed[1024];
     Box* textbox = nullptr;
     
     //Shaders

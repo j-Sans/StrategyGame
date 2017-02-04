@@ -27,6 +27,7 @@
 //Local includes
 #include "Shader.hpp"
 #include "Font.hpp"
+#include "Texture.hpp"
 #include "Window.hpp"
 
 class Button {
@@ -99,6 +100,8 @@ private:
     GLuint colorVBO;
     
     Font font;
+    
+    Texture tex;
     
     //Viewport information
     const GLfloat lowerLeftX;

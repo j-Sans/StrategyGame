@@ -36,12 +36,17 @@ public:
     
     //Public member functions
     
-    /*
+    /*!
      * Activate the texture and send the information to the given shader. This should be called right after a shader was used.
      *
      * @param shader The shader that was is currently being used when the texture is activated. The texture will be sent to this shader.
      */
     const void use(Shader shader);
+    
+    /*!
+     * @return If this texture is set.
+     */
+    bool getSet();
     
 private:
     //Private properties
