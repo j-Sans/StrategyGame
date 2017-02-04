@@ -67,7 +67,9 @@ private:
     
     //Thread
     std::thread thread;
+    bool connecting = false;
     bool connected = false;
+    bool failedToConnect = false;
     
     //Shaders
     Shader interfaceShader;
@@ -96,7 +98,7 @@ private:
     /*!
      * A function to be run by the thread.
      */
-    static void threadFuntion(bool *done, ClientSocket *socket);
+    static void threadFuntion(bool* done, bool* failed, ClientSocket *socket);
 };
 
 #endif /* Menu_hpp */

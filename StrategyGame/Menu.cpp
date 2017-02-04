@@ -57,12 +57,20 @@ void Menu::render(ClientSocket* socketPtr) {
         }
     }
     
-    if (this->textbox != nullptr) {
+    if (this->textbox != nullptr && this->connecting == false) {
         this->updateTextbox("Input host name");
     }
     
     if (this->connected) {
+        this->connecting = false;
         *socketPtr = this->socket;
+    }
+    
+    if (this->failedToConnect) {
+        this->connecting = false;
+        this->interface.removePropertyLayer();
+        this->interface.addButton("find_host", "Find host", this->buttonTexture);
+        this->failedToConnect = false;
     }
     
     this->window.updateScreen();
@@ -82,7 +90,10 @@ void Menu::processAction(std::string action) {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
-        this->thread = std::thread(this->threadFuntion, &this->connected, &this->socket);
+        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, &this->socket);
+        this->connecting = true;
+        this->interface.removePropertyLayer();
+        this->interface.addBox("Looking for host", this->buttonTexture);
     }
 }
 
@@ -124,7 +135,15 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     
 }
 
-void Menu::threadFuntion(bool *done, ClientSocket *socket) {
-    socket->setSocket("localhost", 3000);
-    *done = true;
+void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket) {
+    std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+    while (true) {//(std::chrono::steady_clock::now() - start).count() < 10.0) {
+        try {
+            socket->setSocket("localhost", 3000);
+        } catch (std::runtime_error) {
+            continue; //Keep trying to connect, for 10 seconds
+        }
+        *done = true; //If it connected without throwing an error
+    }
+    *failed = true;
 }
