@@ -52,6 +52,7 @@ private:
     bool* mouseDown;
     
     bool* keys;
+    Box* textbox = nullptr;
     
     //Shaders
     Shader interfaceShader;
@@ -59,7 +60,21 @@ private:
     Shader displayBarShader;
     
     //Background image
-    TextureBox box;
+    TextureBox background;
+    
+    //Private member functions
+    
+    /*!
+     * A function to take std::strings representing actions to be done. The strings should be the actions from selected buttons.
+     */
+    void processAction(std::string action);
+    
+    /*!
+     * A function to update the textbox. Should only be called if there is a text box.
+     *
+     * @param textboxDefaultStr The default string that should be displayed if there is no writing.
+     */
+    void updateTextbox(std::string textboxDefaultStr);
 };
 
 #endif /* Menu_hpp */

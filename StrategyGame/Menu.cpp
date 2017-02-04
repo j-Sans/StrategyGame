@@ -25,15 +25,63 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     this->buttonShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
-    this->box = TextureBox(this->buttonShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", tex);
+    this->background = TextureBox(this->buttonShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", tex);
     
     glm::ivec2 screenSize = this->window.windowSize();
     
-    this->interface = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, screenSize.x * 0.4, screenSize.y * 0.25, screenSize.x * 0.2, screenSize.y * 0.5, menu);
+    this->interface = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, screenSize.x * 0.4, screenSize.y * 0.25, screenSize.x * 0.2, screenSize.y * 0.5, interface_other);
+    
+    this->interface.addButton("start", "Play");
 }
 
 void Menu::render() {
-    this->box.render();
+    this->background.render();
     this->interface.render(*this->mouseDown, *this->mouseUp, true);
+    
+    //Go through the buttons and check if they are pressed, and do any consequential actions
+    for (auto button = this->interface.buttons.begin(); button != this->interface.buttons.end(); button++) {
+        if (button->isPressed()) {
+            this->processAction(button->action);
+        }
+    }
+    
+    if (this->textbox != nullptr) {
+        this->updateTextbox("Input host name");
+    }
+    
     this->window.updateScreen();
+}
+
+void Menu::processAction(std::string action) {
+    if (action == "start") {
+        this->interface.removePropertyLayer();
+        this->interface.addBox("Input host name");
+        this->interface.addButton("find_host", "Find host");
+    } else if (action == "find_host") {
+        if (this->textbox == nullptr) {
+            throw std::logic_error("No host submitted: Textbox is nullptr.");
+        }
+        //Socket stuff
+    }
+}
+
+void Menu::updateTextbox(std::string textboxDefaultStr) {
+    std::string* text = &this->textbox->text;
+    for (int key = GLFW_KEY_0; key < GLFW_KEY_9; key++) {
+        if (keys[key]) {
+            *text += keys[key];
+        }
+    }
+    for (int key = GLFW_KEY_A; key < GLFW_KEY_Z; key++) {
+        if (keys[key]) {
+            *text += keys[key];
+        }
+    }
+    if (keys[GLFW_KEY_BACKSPACE] && this->textbox->text.size() > 0) {
+        *text = text->substr(0, text->size() - 1);
+        if (text->size() == 0) {
+            *text = textboxDefaultStr;
+        }
+    }
+    
 }

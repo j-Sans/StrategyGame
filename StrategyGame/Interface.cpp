@@ -11,7 +11,7 @@
 //Only so that Visualizer.hpp can have properly initialized interfaces. No other purpose.
 Interface::Interface() {}
 
-Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type) {
+Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type = interface_other) {
     this->window = window;
     this->interfaceShader = shader;
     this->buttonShader = shaderForButtons;
@@ -48,8 +48,6 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             this->nextPropertyHeight -= 0.1;
             
-            this->initialPropertyHeight = this->nextPropertyHeight;
-            
             break;
             
         } case default_bottom: {
@@ -80,13 +78,13 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             Box attackBox(*this->buttonShader, this->window, 0.05, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Attack: ", creature_attack);
             
             //Insert the box into with the key creature_
-            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_attack, attackBox));
+            this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_attack, attackBox));
             
             //Create the box for range info that will be added to the map
             Box rangeBox(*this->buttonShader, this->window, 0.525, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Range: ", creature_range);
             
             //Insert the box into with the key creature_range
-            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_range, rangeBox));
+            this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_range, rangeBox));
             
             this->nextPropertyHeight -= 0.1;
             
@@ -94,17 +92,15 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             Box visionBox(*this->buttonShader, this->window, 0.05, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Vision: ", creature_vision);
             
             //Insert the box into with the key creature_vision
-            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_vision, visionBox));
+            this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_vision, visionBox));
             
             //Create the box for race info that will be added to the map
             Box raceBox(*this->buttonShader, this->window, 0.525, this->nextPropertyHeight, 0.425, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "Race: ", creature_race);
             
             //Insert the box into with the key creature_race
-            this->boxes.insert(std::pair<DisplayBoxType, Box>(creature_race, raceBox));
+            this->boxMap.insert(std::pair<DisplayBoxType, Box>(creature_race, raceBox));
             
             this->nextPropertyHeight -= 0.1;
-            
-            this->initialPropertyHeight = this->nextPropertyHeight;
             
             break;
             
@@ -118,14 +114,14 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
             
             this->nextPropertyHeight -= 0.1;
             
-            this->initialPropertyHeight = this->nextPropertyHeight;
-            
             break;
             
         } default: //For now includes the default_right and settings interfaces
             
             break;
     }
+    
+    this->initialPropertyHeight = this->nextPropertyHeight;
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
@@ -162,7 +158,7 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         
-        for (auto box = this->boxes.begin(); box != this->boxes.end(); box++) {
+        for (auto box = this->boxMap.begin(); box != this->boxMap.end(); box++) {
             box->second.render();
         }
         
@@ -184,6 +180,12 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
 
 void Interface::addButton(std::string action, std::string text) {
     this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, action, text));
+    
+    this->nextPropertyHeight -= 0.1;
+}
+
+void Interface::addBox(std::string text) {
+    this->boxes.push_back(Box(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, text, other));
     
     this->nextPropertyHeight -= 0.1;
 }

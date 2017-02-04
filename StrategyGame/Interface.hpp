@@ -42,7 +42,7 @@ enum interfaceType {
     
     settings, //The settings popup menu
     
-    menu, //The opening menu display
+    interface_other, //Anything else
 };
 
 class Interface {
@@ -69,19 +69,24 @@ public:
     //Public properties
     
     /*!
-     * An std::map of the boses contained in this interface, with key values of type displayBoxType (see Box.hpp)
+     * An std::vector of the boxes contained in this interface.
      */
-    std::map<DisplayBoxType, Box> boxes; //So that the boxes can be accessed by the game
+    std::vector<Box> boxes; //So that the boxes can be altered.
     
     /*!
      * An std::vector of the buttons contained in this interface.
      */
-    std::vector<Button> buttons; //So that the buttons can be accessed by the game
+    std::vector<Button> buttons; //So that the buttons can be accessed by the game.
+    
+    /*!
+     * An std::map of the boses contained in this interface, with key values of type displayBoxType (see Box.hpp)
+     */
+    std::map<DisplayBoxType, Box> boxMap; //So that the boxes can be accessed by the game. For specific types of boxes to be updated during the game.
     
     /*!
      * An std::map of the display bars contained in this interface, with key values of type displayBarType (see DisplayBar.hpp)
      */
-    std::map<DisplayBarType, DisplayBar> displayBars; //So that the display bars can be accessed by the game
+    std::map<DisplayBarType, DisplayBar> displayBars; //So that the display bars can be accessed by the game.
     
     /*!
      * A boolean representing if this interface should be active or not. It won't render if this is false.
@@ -106,6 +111,13 @@ public:
      * @param text An std::string that will be displayed on the button.
      */
     void addButton(std::string action, std::string text);
+    
+    /*!
+     * A function to add a box to the interface. This increments the layer that new properties will appear at.
+     *
+     * @param text An std::string that will be displayed on the button.
+     */
+    void addBox(std::string text);
     
     /*!
      * A function to remove the previous layer of properties. Nothing will happen if there are properties on the previous layer.

@@ -64,19 +64,21 @@ int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
     
-//    //Test menu:
-//    Menu menu;
-//    
-//    while(true) {
-//        menu.render();
-//    }
+    //Test menu:
+    Window window;
+    window.init(800, 600, "Game", false, true);
+    Menu menu(window, &mouseDown, &mouseUp, keys);
+    
+    while (true) {
+        menu.render();
+    }
     
     bool repeat = true;
     while (repeat) {
         repeat = false;
         std::cout << "Run as host? For yes, type a number between 1 and 5 to be the number of clients. Otherwise, type \"N\" or \"n\" for no" << std::endl;
         std::string input;
-        std::cin >> input;
+        std::cin >> input; 
         if (input == "N" || input == "n") {
             
             //Run as client
