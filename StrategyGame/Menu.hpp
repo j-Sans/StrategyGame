@@ -78,8 +78,7 @@ private:
     Shader displayBarShader;
     
     //Textures
-    TextureBox background;
-    Texture buttonTexture;
+    Box background;
     
     //Private member functions
     

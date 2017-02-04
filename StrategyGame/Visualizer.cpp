@@ -300,7 +300,7 @@ void Visualizer::setInterfaces() {
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     
-    this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
+    this->buttonShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
     
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
 }

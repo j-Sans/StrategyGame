@@ -123,6 +123,8 @@ Interface::Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderFor
     
     this->initialPropertyHeight = this->nextPropertyHeight;
     
+    this->propertyTex.set("Resources/button_tex.jpg", 30, "tex");
+    
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->VBO);
@@ -184,14 +186,14 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
     }
 }
 
-void Interface::addButton(std::string action, std::string text, Texture texture) {
-    this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, action, text, texture));
+void Interface::addButton(std::string action, std::string text) {
+    this->buttons.push_back(Button(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, action, text, this->propertyTex));
     
     this->nextPropertyHeight -= 0.1;
 }
 
-void Interface::addBox(std::string text, Texture texture) {
-    this->boxes.push_back(Box(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, text, other, texture));
+void Interface::addBox(std::string text) {
+    this->boxes.push_back(Box(*this->buttonShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, text, other, this->propertyTex));
     
     this->nextPropertyHeight -= 0.1;
 }

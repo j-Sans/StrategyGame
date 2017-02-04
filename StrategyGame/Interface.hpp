@@ -109,31 +109,15 @@ public:
      *
      * @param action An std::string that represents the action to occur when the button is pressed.
      * @param text An std::string that will be displayed on the button.
-     * @param texture An optional parameter of a texture to set for the button.
      */
-    void addButton(std::string action, std::string text, Texture texture = Texture());
+    void addButton(std::string action, std::string text);
     
     /*!
      * A function to add a box to the interface. This increments the layer that new properties will appear at.
      *
      * @param text An std::string that will be displayed on the button.
-     * @param texture An optional parameter of a texture to set for the box.
      */
-    void addBox(std::string text, Texture texture = Texture());
-    
-    /*!
-     * A function to add a button to the interface. This increments the layer that new properties will appear at.
-     *
-     * @param button A button object to be used as the model for the new button.
-     */
-    void addButton(Button button);
-    
-    /*!
-     * A function to add a box to the interface. This increments the layer that new properties will appear at.
-     *
-     * @param box A box object to be used as the model for the new box.
-     */
-    void addBox(Box box);
+    void addBox(std::string text);
     
     /*!
      * A function to remove the previous layer of properties. Nothing will happen if there are no properties on the previous layer or if the previous layer contains properties with which the interface was constructed. That means that if the constructor explicitly adds properties, those will not be removed. If those are the next layer, false will be returned.
@@ -151,6 +135,8 @@ private:
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
+    
+    Texture propertyTex;
     
     //Property information
     float nextPropertyHeight = 0.9; //The height at which the next button or box will be added.
