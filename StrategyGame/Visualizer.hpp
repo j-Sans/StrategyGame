@@ -261,8 +261,7 @@ private:
     std::list<std::string> actionsForClientInfo;
     
     //Interfaces
-    Shader interfaceShader;
-    Shader buttonShader;
+    Shader textureShader;
     Shader displayBarShader;
     
     interfaceStat leftInterfaceStats;

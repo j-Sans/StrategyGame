@@ -55,16 +55,17 @@ public:
     /*!
      * A class representing an interface box.
      *
-     * @param shader A pointer to a compiled shader for the interface box to use for rendering.
-     * @param shaderForButtons A pointer to another compiled shader that will be used for rendering the buttons on this interface.
+     * @param shader A pointer to a compiled shader for the interface box and other textured objects to use for rendering.
      * @param window A pointer to the current window object.
      * @param x The lower left corner's x coordinate, for setting the interface box. Should be in terms of GLFW screen coordinates, where (0,0) is the lower left corner of the screen.
      * @param y The lower left corner's y coordinate, for setting the interface box. Similar settings and configurations as with x.
      * @param width The width of the interface box, in GLFW screen coordinates.
      * @param height The height of the interface box, in GLFW screen coordinates.
+     * @param texture The texture to use with the interface.
      * @param type What type of interface should be created, using an interfaceType enum. (See Interface.hpp)
      */
-    Interface(Shader* shader, Shader* shaderForButtons, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, interfaceType type);
+    Interface(Shader* shader, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, Texture texture, interfaceType type = interface_other
+              );
     
     //Public properties
     
@@ -129,18 +130,18 @@ public:
 private:
     //OpenGL and GLFW properties
     Window* window;
-    Shader *interfaceShader; //Compiled shader
-    Shader *buttonShader; //Shader for the buttons
+    Shader *textureShader; //Compiled shader
     Shader *displayBarShader; //Shader for the display bars
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
     
     Texture propertyTex;
+    Texture interfaceTex;
     
     //Property information
-    float nextPropertyHeight = 0.9; //The height at which the next button or box will be added.
-    float initialPropertyHeight = 0.9;
+    float nextPropertyHeight = 0.85; //The height at which the next button or box will be added.
+    float initialPropertyHeight = 0.85;
     
     //Viewport information
     GLuint lowerLeftX;

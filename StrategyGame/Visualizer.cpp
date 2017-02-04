@@ -255,20 +255,23 @@ const GLfloat Visualizer::timeSinceLastFrame() {
 std::map<interfaceType, Interface> Visualizer::getInterfaces() {
     std::map<interfaceType, Interface> interfaces;
     
+    Texture tex;
+    tex.set("Resources/background.jpg", 29, "tex");
+    
     //Left-Side Game UI
-    interfaces[default_left] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, default_left);
+    interfaces[default_left] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, tex, default_left);
     
     //Bottom Game UI
-    interfaces[default_bottom] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, default_bottom);
+    interfaces[default_bottom] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, tex, default_bottom);
     
     //Right-Side Game UI
-    interfaces[default_right] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, default_right);
+    interfaces[default_right] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, default_right);
     
     //Interface for selected creatures
-    interfaces[creature] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, creature);
+    interfaces[creature] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, creature);
     
     //Interface for selected buildings
-    interfaces[building] = Interface(&this->interfaceShader, &this->buttonShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, building);
+    interfaces[building] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, building);
     
     return interfaces;
 }
@@ -298,9 +301,7 @@ void Visualizer::setInterfaces() {
     this->bottomInterfaceStats = interfaceStat(framebufferSize.x * 1.0 / 6.0, 0.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.y / 4.0);
     this->rightInterfaceStats = interfaceStat(framebufferSize.x * 5.0 / 6.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
     
-    this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
-    
-    this->buttonShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
+    this->textureShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
     
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
 }

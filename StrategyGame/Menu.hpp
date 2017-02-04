@@ -72,9 +72,7 @@ private:
     bool failedToConnect = false;
     
     //Shaders
-    Shader interfaceShader;
     Shader textureShader;
-    Shader buttonShader;
     Shader displayBarShader;
     
     //Textures

@@ -24,19 +24,19 @@ Menu::Menu(Window w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* k
         this->keysJustPressed[a] = false;
     }
     
-    Texture tex;
-    tex.set("Resources/background.jpg", 0, "tex");
+    Texture backgroundTex;
+    backgroundTex.set("Resources/background.jpg", 0, "tex");
+    Texture interfaceTex;
+    interfaceTex.set("Resources/parchment.png", 29, "tex");
     
-    this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
     this->textureShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
-    this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
-    this->background = Box(this->textureShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", other, tex);
+    this->background = Box(this->textureShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", other, backgroundTex);
     
     glm::ivec2 framebufferSize = this->window.framebufferSize();
     
-    this->interface = Interface(&this->interfaceShader, &this->textureShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interface_other);
+    this->interface = Interface(&this->textureShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interfaceTex);
     
     this->interface.addButton("start", "Play");
 }
@@ -98,28 +98,31 @@ void Menu::processAction(std::string action) {
 
 void Menu::updateTextbox(std::string textboxDefaultStr) {
     std::string* text = &this->textbox->text;
-    for (int key = GLFW_KEY_0; key < GLFW_KEY_9; key++) {
-        if (this->keys[key] && !this->keysJustPressed[key]) {
-            if (*text == "Input host name") {
-                *text = "";
+    if (text->size() > 32) {
+        for (int key = GLFW_KEY_0; key < GLFW_KEY_9; key++) {
+            if (this->keys[key] && !this->keysJustPressed[key]) {
+                if (*text == "Input host name") {
+                    *text = "";
+                }
+                *text += key;
+                this->keysJustPressed[key] = true;
+            } else if (!this->keys[key]) {
+                this->keysJustPressed[key] = false;
             }
-            *text += key;
-            this->keysJustPressed[key] = true;
-        } else if (!this->keys[key]) {
-            this->keysJustPressed[key] = false;
         }
-    }
-    for (int key = GLFW_KEY_A; key < GLFW_KEY_Z; key++) {
-        if (this->keys[key] && !this->keysJustPressed[key]) {
-            if (*text == "Input host name") {
-                *text = "";
+        for (int key = GLFW_KEY_A; key < GLFW_KEY_Z; key++) {
+            bool upperCase = keys[GLFW_KEY_LEFT_SHIFT] || keys[GLFW_KEY_RIGHT_SHIFT] || keys[GLFW_KEY_CAPS_LOCK];
+            if (this->keys[key] && !this->keysJustPressed[key]) {
+                if (*text == "Input host name") {
+                    *text = "";
+                }
+                *text += upperCase ? key : key + 32;
+                this->keysJustPressed[key] = true;
+            } else if (!this->keys[key]) {
+                this->keysJustPressed[key] = false;
             }
-            *text += key;
-            this->keysJustPressed[key] = true;
-        } else if (!this->keys[key]) {
-            this->keysJustPressed[key] = false;
-        }
 
+        }
     }
     if (this->keys[GLFW_KEY_BACKSPACE] && this->textbox->text.size() > 0 && !this->keysJustPressed[GLFW_KEY_BACKSPACE] & *text != "Input host name") {
         *text = text->substr(0, text->size() - 1);
