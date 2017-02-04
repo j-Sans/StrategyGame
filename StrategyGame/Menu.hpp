@@ -42,6 +42,16 @@ public:
      */
     void render();
     
+    /*!
+     * @return A boolean indicating if the window should close.
+     */
+    bool getShouldWindowClose();
+    
+    /*!
+     * A function to call to free memory of the window.
+     */
+    void terminate();
+    
 private:
     Window window;
     ClientSocket socket;
@@ -56,6 +66,7 @@ private:
     
     //Shaders
     Shader interfaceShader;
+    Shader textureShader;
     Shader buttonShader;
     Shader displayBarShader;
     

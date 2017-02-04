@@ -158,6 +158,12 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         
+        
+        
+        for (auto box = this->boxes.begin(); box != this->boxes.end(); box++) {
+            box->render();
+        }
+        
         for (auto box = this->boxMap.begin(); box != this->boxMap.end(); box++) {
             box->second.render();
         }

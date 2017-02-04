@@ -22,10 +22,11 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
     tex.set("Resources/background.jpg", 30, "tex");
     
     this->interfaceShader = Shader("Shaders/interface/interface.vert", "Shaders/interface/interface.frag");
-    this->buttonShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
+    this->textureShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
+    this->buttonShader = Shader("Shaders/button/button.vert", "Shaders/button/button.frag");
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
-    this->background = TextureBox(this->buttonShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", tex);
+    this->background = TextureBox(this->textureShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", tex);
     
     glm::ivec2 framebufferSize = this->window.framebufferSize();
     
@@ -35,8 +36,6 @@ Menu::Menu(Window w, bool* mouseDown, bool* mouseUp, bool* keys) {
 }
 
 void Menu::render() {
-    glfwPollEvents();
-    
     glm::ivec2 framebufferSize = this->window.framebufferSize();
     this->window.setViewport(0, 0, framebufferSize.x, framebufferSize.y);
     
@@ -47,6 +46,7 @@ void Menu::render() {
     for (auto button = this->interface.buttons.begin(); button != this->interface.buttons.end(); button++) {
         if (button->isPressed()) {
             this->processAction(button->action);
+            break;
         }
     }
     
@@ -55,6 +55,14 @@ void Menu::render() {
     }
     
     this->window.updateScreen();
+}
+
+bool Menu::getShouldWindowClose() {
+    return this->window.shouldClose();
+}
+
+void Menu::terminate() {
+    this->window.close();
 }
 
 void Menu::processAction(std::string action) {
@@ -75,12 +83,18 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     std::string* text = &this->textbox->text;
     for (int key = GLFW_KEY_0; key < GLFW_KEY_9; key++) {
         if (keys[key]) {
-            *text += keys[key];
+            if (text->size() == 0) {
+                *text = "";
+            }
+            *text += GLFW_KEY_0 - 48;
         }
     }
     for (int key = GLFW_KEY_A; key < GLFW_KEY_Z; key++) {
         if (keys[key]) {
-            *text += keys[key];
+            if (text->size() == 0) {
+                *text = "";
+            }
+            *text += key;
         }
     }
     if (keys[GLFW_KEY_BACKSPACE] && this->textbox->text.size() > 0) {

@@ -58,7 +58,8 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 
 //Functions
-void updateMouse();
+void startFrame();
+void endFrame();
 
 int main(int argc, const char * argv[]) {
 //Set up:
@@ -67,11 +68,17 @@ int main(int argc, const char * argv[]) {
     //Test menu:
     Window window;
     window.init(800, 600, "Game", false, true);
-    Menu menu(window, &mouseDown, &mouseUp, keys);
+    window.setKeyCallback(keyCallback);
+    window.setMouseButtonCallback(mouseButtonCallback);
+    Menu M(window, &mouseDown, &mouseUp, keys);
     
-    while (true) {
-        menu.render();
+    while (!M.getShouldWindowClose()) {
+        startFrame();
+        M.render();
+        endFrame();
     }
+    
+    M.terminate();
     
     bool repeat = true;
     while (repeat) {
@@ -91,8 +98,9 @@ int main(int argc, const char * argv[]) {
             Client C(window, "localhost", 3000, &mouseDown, &mouseUp, keys);
         
             while (!C.getShouldWindowClose()) {
-                updateMouse();
+                startFrame();
                 C.render();
+                endFrame();
             }
             
             C.terminate();
@@ -154,11 +162,15 @@ int main(int argc, const char * argv[]) {
 }
 
 
-void updateMouse() {
+void startFrame() {
     if (mouseJustPressed) {
         mouseJustPressed = false;
         mouseDown = true;
-    } else {
+    }
+}
+
+void endFrame() {
+    if (!mouseJustPressed) {
         mouseDown = false;
     }
 }
@@ -183,9 +195,6 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 
 //A function GLFW can call when a key event occurs
 void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-    double xPos, yPos;
-    glfwGetCursorPos(window, &xPos, &yPos);
-    
     mouseJustPressed = false;
     mouseUp = false;
     
