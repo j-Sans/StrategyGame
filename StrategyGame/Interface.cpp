@@ -14,7 +14,7 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
     this->textureShader = shader;
     this->displayBarShader = shaderForDisplayBars;
     
-    this->propertyTex.set("Resources/button_tex.jpg", 30, "tex");
+    this->propertyTex.set("Resources/button.jpg", 30, "tex");
     this->interfaceTex = texture;
     
     //Set viewport specifics

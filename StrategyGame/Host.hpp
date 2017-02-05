@@ -70,6 +70,7 @@ private:
     
     //Game
     std::vector<Player> players;
+    std::vector<bool> alivePlayers;
     
     //Private member functions
     
@@ -94,9 +95,16 @@ private:
     void getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<std::vector<float> >* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData);
     
     /*!
+     * Remove a player from the game. An error may be thrown if the playerNum is not a valid player.
+     *
+     * @param The player number of the player to remove.
+     */
+    void losePlayer(int playerNum);
+    
+    /*!
      * Changes the active player to the next one in the turn cycle.
      */
-    void incrementActivePlayer();
+//    void incrementActivePlayer();
     
 };
 

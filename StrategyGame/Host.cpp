@@ -12,6 +12,7 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     this->socket.setSocket(portNum);
     for (int a = 0; a < numberOfPlayers; a++) {
         this->socket.addClient();
+        this->alivePlayers[a] = true;
     }
     
     //Send to each player that player's number and the board
@@ -250,6 +251,29 @@ void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatu
                 (*buildingData).push_back(this->board.get(x, y).building()->controller());
             else
                 (*buildingData).push_back(0);
+        }
+    }
+}
+
+void Host::losePlayer(int playerNum) {
+    if (playerNum < 0 || playerNum >= this->players.size()) {
+        throw std::range_error("playerNum (" + std::to_string(playerNum) + ") not a valid player. Max player index: " + std::to_string(this->players.size()));
+    } else if (this->alivePlayers[playerNum] == false) {
+        throw std::logic_error("Player " + std::to_string(playerNum) + " already dead");
+    }
+    
+    this->alivePlayers[playerNum] = false;
+    
+    for (int x = 0; x < this->board.width(); x++) {
+        for (int y = 0; y < this->board.height(x); y++) {
+            Creature* creature = this->board.get(x, y).creature();
+            if (creature != nullptr) {
+                this->processAction(this->board.deleteCreature(x, y), -1);
+            }
+            Building* building = this->board.get(x, y).building();
+            if (building != nullptr) {
+                this->processAction(this->board.deleteBuilding(x, y), -1);
+            }
         }
     }
 }
