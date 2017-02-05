@@ -97,9 +97,9 @@ public:
      * @param attackDamage An int to store the damage dealt by the attacker. Use nullptr if no int is needed to store this.
      * @param defendDamage An int to store the damage dealt by the defender. Use nullptr if no int is needed to store this.
      *
-     * @return A std::vector of actions that should be done upon death of any of the creatures or buildings.
+     * @return A std::vector of std::pairs of std::strings and ints, representing the action strings and the respective controller, that should be done upon death of any of the creatures or buildings.
      */
-    std::vector<std::string> initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
+    std::vector<std::pair<std::string, int> > initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
     
     /*!
      * Get the distance (in taxicab geometry) from one tile to another.

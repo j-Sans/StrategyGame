@@ -199,18 +199,19 @@ void Host::processAction(std::string action, int playerNum) {
                 
                 int attackDamage = 0, defendDamage = 0;
                 
-                std::vector<std::string> actions = this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
+                std::vector<std::pair<std::string, int> > actions = this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
                 this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
                 this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
                 
                 for (int a = 0; a < actions.size(); a++) {
-                     this->processAction(actions[a], -1); //playerNum doesn't matter
+                    this->processAction(actions[a].first, actions[a].second); //playerNum doesn't matter
                 }
             }
         }
-    } else if (action.find("player_lose_")) {
+    } else if (action.find("player_lose_") != std::string::npos) {
         action.erase(0, 12); //Erases "player_lose_"
         int playerToLose = std::stoi(action);
+        this->losePlayer(playerToLose);
     }
 }
 
@@ -268,11 +269,11 @@ void Host::losePlayer(int playerNum) {
         for (int y = 0; y < this->board.height(x); y++) {
             Creature* creature = this->board.get(x, y).creature();
             if (creature != nullptr) {
-                this->processAction(this->board.deleteCreature(x, y), -1);
+                this->processAction(this->board.deleteCreature(x, y), creature->controller());
             }
             Building* building = this->board.get(x, y).building();
             if (building != nullptr) {
-                this->processAction(this->board.deleteBuilding(x, y), -1);
+                this->processAction(this->board.deleteBuilding(x, y), building->controller());
             }
         }
     }

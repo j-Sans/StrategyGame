@@ -386,7 +386,7 @@ float Board::calculateTerrainModifier(Tile defender) {
 };
 
 
-std::vector<std::string> Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
+std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
     if (attackerX >= this->gameBoard.size()) {
         throw std::range_error("Attacker x out of range");
     }
@@ -400,7 +400,7 @@ std::vector<std::string> Board::initiateCombat(unsigned int attackerX, unsigned 
         throw std::range_error("Defender y out of range");
     }
     
-    std::vector<std::string> actions;
+    std::vector<std::pair<std::string, int> > actions;
     
     //Using pointers to get tiles by reference
     Tile* attacker = &this->gameBoard[attackerX][attackerY];
@@ -474,14 +474,14 @@ std::vector<std::string> Board::initiateCombat(unsigned int attackerX, unsigned 
                         *defendDamage = damageDealtByDefender;
                     
                     if (attackerDied) {
-                        actions.push_back(this->deleteCreature(attacker->x(), attacker->y())); //Remove the dead creature, records its death action
+                        actions.push_back({this->deleteCreature(attacker->x(), attacker->y()), attacker->creature()->controller()}); //Remove the dead creature, records its death action
                     }
                     
                     if (defenderDied) {
-                        actions.push_back(this->deleteCreature(defender->x(), defender->y())); //Remove the dead creature, records its death action
+                        actions.push_back({this->deleteCreature(defender->x(), defender->y()), defender->creature()->controller()}); //Remove the dead creature, records its death action
                     }
                 } else if (defenderDied) {
-                    actions.push_back(this->deleteCreature(defender->x(), defender->y())); //Remove the dead creature, records its death action
+                    actions.push_back({this->deleteCreature(defender->x(), defender->y()), defender->creature()->controller()}); //Remove the dead creature, records its death action
                 }
                 
                 //Combat occurs
@@ -508,7 +508,7 @@ std::vector<std::string> Board::initiateCombat(unsigned int attackerX, unsigned 
                     *attackDamage = damageDealtByAttacker;
                 
                 if (defenderDied) {
-                    actions.push_back(this->deleteBuilding(defender->x(), defender->y())); //Remove the dead building, records its death action
+                    actions.push_back({this->deleteBuilding(defender->x(), defender->y()), defender->building()->controller()}); //Remove the dead building, records its death action
                 }//Combat occurs
             }
             
@@ -522,7 +522,7 @@ std::vector<std::string> Board::initiateCombat(unsigned int attackerX, unsigned 
                 *attackDamage = damageDealtByAttacker;
             
             if (defenderDied) {
-                actions.push_back(this->deleteBuilding(defender->x(), defender->y())); //Remove the dead building, records its death action
+                actions.push_back({this->deleteBuilding(defender->x(), defender->y()), defender->building()->controller()}); //Remove the dead building, records its death action
             }
         }
     }

@@ -102,6 +102,14 @@ private:
     void losePlayer(int playerNum);
     
     /*!
+     * A function to see if all remaining alive players sent the given string.
+     *
+     * @param str The std::string to compare to.
+     *
+     * @return True if each the string was received from all active players. False otherwise.
+     */
+    
+    /*!
      * Changes the active player to the next one in the turn cycle.
      */
 //    void incrementActivePlayer();
