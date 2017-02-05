@@ -46,6 +46,9 @@ void Client::render() {
 //    
     this->board = Board::deserialize(this->socket->receive());
     
+    //If the window will be closing notify the Host
+    if (this->visualizer.window->shouldClose()) this->actionsForClientInfo.push_back("leaving_game_player_" + std::to_string(this->playerNum));
+    
     std::string clientInfo = "";
     
     for (auto a = this->visualizer.actions.begin(); a != this->visualizer.actions.end(); a++) {
@@ -281,6 +284,7 @@ glm::vec3 Client::tileColor(unsigned int x, unsigned int y) {
 void Client::processAction(std::string action) {
     if (action == "return_to_menu") {
         *this->returnToMenu = true;
+        this->actionsForClientInfo.push_back("leaving_game_player_" + std::to_string(this->playerNum));
     } else {
         this->actionsForClientInfo.push_back(action);
     }

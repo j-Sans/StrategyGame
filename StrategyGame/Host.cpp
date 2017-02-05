@@ -12,14 +12,14 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     this->socket.setSocket(portNum);
     for (int a = 0; a < numberOfPlayers; a++) {
         this->socket.addClient();
-        this->alivePlayers.push_back(true);
+        this->alivePlayers.push_back({true, true});
     }
     
     //Send to each player that player's number and the board
     for (int a = 0; a < numberOfPlayers; a++) {
         this->socket.send(std::to_string(a) + "," + this->board.serialize(), a);
     }
-    if (!this->socket.allReceived("initialDataReceived"))
+    if (!this->receivedFromAll("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
     
     //Initialize each player with the board and that player's number
@@ -77,7 +77,7 @@ void Host::update() {
         this->players[a].updateCreatures(this->deltaTime);
     }
     
-    this->socket.broadcast(this->board.serialize());
+    this->broadcast(this->board.serialize());
 
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
         std::string clientInfo = this->socket.receive(a);
@@ -148,6 +148,8 @@ std::string Host::serialize() {
 //Private member functions
 
 void Host::processAction(std::string action, int playerNum) {
+    if (!this->alivePlayers[playerNum].first) return; //If the player is dead, ignore any remaining actions.
+    
     if (action.find("move_creature_at_") != std::string::npos) {
         //Parse the destination tile from the string
         glm::ivec2 destination;
@@ -212,6 +214,11 @@ void Host::processAction(std::string action, int playerNum) {
         action.erase(0, 12); //Erases "player_lose_"
         int playerToLose = std::stoi(action);
         this->losePlayer(playerToLose);
+    } else if (action.find("leaving_game_player_") != std::string::npos) {
+        action.erase(0, 20); //Erases "leaving_game_player_"
+        int leavingPlayer = std::stoi(action);
+        this->losePlayer(leavingPlayer);
+        this->alivePlayers[leavingPlayer].second = false; //Set the player to disconnected.
     }
 }
 
@@ -259,11 +266,11 @@ void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatu
 void Host::losePlayer(int playerNum) {
     if (playerNum < 0 || playerNum >= this->players.size()) {
         throw std::range_error("playerNum (" + std::to_string(playerNum) + ") not a valid player. Max player index: " + std::to_string(this->players.size()));
-    } else if (this->alivePlayers[playerNum] == false) {
+    } else if (this->alivePlayers[playerNum].first == false) {
         throw std::logic_error("Player " + std::to_string(playerNum) + " already dead");
     }
     
-    this->alivePlayers[playerNum] = false;
+    this->alivePlayers[playerNum].first = false;
     
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
@@ -279,9 +286,29 @@ void Host::losePlayer(int playerNum) {
     }
 }
 
+void Host::broadcast(std::string message) {
+    for (int player = 0; player < this->players.size(); player++) {
+        if (!this->alivePlayers[player].second) continue; //Skip if the player disconnected;
+        else if (!this->alivePlayers[player].first) { //Test if the dead player is still connected
+            try {
+                this->socket.send(message, player);
+            } catch (std::runtime_error) {
+                this->alivePlayers[player].second = false; //If the player didn't receive it, set that player to disconnected.
+            }
+        } else {
+            try {
+                this->socket.send(message, player);
+            } catch (std::runtime_error) {
+                this->losePlayer(player); //If the player didn't receive it, that player disconnected. Remove that player.
+                this->alivePlayers[player].second = false;
+            }
+        }
+    }
+}
+
 bool Host::receivedFromAll(std::string str) {
     for (int player = 0; player < this->players.size(); player++) {
-        if (!this->alivePlayers[player]) continue; //Skip if the player is dead
+        if (!this->alivePlayers[player].first) continue; //Skip if the player is dead
         if (this->socket.receive(player) != str) return false;
     }
     return true;

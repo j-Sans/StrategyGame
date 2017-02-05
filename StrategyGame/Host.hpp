@@ -70,7 +70,7 @@ private:
     
     //Game
     std::vector<Player> players;
-    std::vector<bool> alivePlayers;
+    std::vector<std::pair<bool, bool> > alivePlayers; // { alive, connected}
     
     //Private member functions
     
@@ -100,6 +100,13 @@ private:
      * @param The player number of the player to remove.
      */
     void losePlayer(int playerNum);
+    
+    /*!
+     * Broadcasts a given message to all remaining alive players.
+     *
+     * @param message The std::string to send.
+     */
+    void broadcast(std::string message);
     
     /*!
      * A function to see if all remaining alive players sent the given string.
