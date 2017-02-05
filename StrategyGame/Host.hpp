@@ -108,6 +108,7 @@ private:
      *
      * @return True if each the string was received from all active players. False otherwise.
      */
+    bool receivedFromAll(std::string str);
     
     /*!
      * Changes the active player to the next one in the turn cycle.

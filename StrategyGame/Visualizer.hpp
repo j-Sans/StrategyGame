@@ -127,6 +127,9 @@ public:
     
     Window* window;
     
+    //Information for host
+    std::list<std::string> actions;
+    
     //Array data to be sent to respective VBO's
     std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
     std::vector<GLint> terrainData; //[NUMBER_OF_TILES];
@@ -252,9 +255,6 @@ private:
     
     //Font
     Font font;
-    
-    //Information for host
-    std::list<std::string> actionsForClientInfo;
     
     //Interfaces
     Shader textureShader;

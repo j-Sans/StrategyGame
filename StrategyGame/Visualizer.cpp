@@ -147,7 +147,8 @@ void Visualizer::render() {
         //Go through the buttons and check if they are pressed, and do any consequential actions
         for (auto button = interface->buttons.begin(); button != interface->buttons.end(); button++) {
             if (button->isPressed()) {
-                this->processButton(button->action);
+//                this->processButton(button->action);
+                this->actions.push_back(button->action);
             }
         }
     }
@@ -156,31 +157,31 @@ void Visualizer::render() {
     this->window->updateScreen();
 }
 
-std::string Visualizer::getClientInfo() {
-    glm::dvec2 mousePos = this->window->cursorPos();
-    glm::ivec2 windowSize = this->window->windowSize();
-    
-    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
-    
-    for (GLuint index = 0; index < this->numberOfTiles; index++) {
-        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
-        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
-    }
-    
-    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
-    
-    std::string clientInfo = std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (*this->mouseDown ? '1' : '0');
-    
-    clientInfo += ";"; //Separate the previous mouse information from the actions with a semicolon
-    
-    //Add the button actions
-    for (auto str = this->actionsForClientInfo.begin(); str != this->actionsForClientInfo.end(); str++) {
-        clientInfo += *str + ";"; //Add the action string separated by a semicolon
-        str = this->actionsForClientInfo.erase(str);
-    }
-    
-    return clientInfo;
-}
+//std::string Visualizer::getClientInfo() {
+//    glm::dvec2 mousePos = this->window->cursorPos();
+//    glm::ivec2 windowSize = this->window->windowSize();
+//    
+//    std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
+//    
+//    for (GLuint index = 0; index < this->numberOfTiles; index++) {
+//        //Set the vector as the transformed point, using the location data from vertexData. VertexData is twice the length, so we access it by multiplying the index by 2 (and sometimes adding 1)
+//        tileCenters.push_back(this->projection * this->view * this->model * glm::vec4(this->vertexData[2 * index], this->vertexData[(2 * index) + 1], 0.0f, 1.0f));
+//    }
+//    
+//    glm::ivec2 mouseTile = this->mouseTile(mousePos, windowSize, tileCenters);
+//    
+//    std::string clientInfo = std::to_string(mouseTile.x) + ',' + std::to_string(mouseTile.y) + ',' + (*this->mouseDown ? '1' : '0');
+//    
+//    clientInfo += ";"; //Separate the previous mouse information from the actions with a semicolon
+//    
+//    //Add the button actions
+//    for (auto str = this->actions.begin(); str != this->actions.end(); str++) {
+//        clientInfo += *str + ";"; //Add the action string separated by a semicolon
+//        str = this->actions.erase(str);
+//    }
+//    
+//    return clientInfo;
+//}
 
 glm::ivec2 Visualizer::getMouseTile() {
     glm::dvec2 mousePos = this->window->cursorPos();
@@ -604,15 +605,15 @@ void Visualizer::moveCamera() {
 //        this->cameraCenter.y = -this->camMaxDisplacement.y;
 }
 
-void Visualizer::processButton(std::string action) {
-    if (action == "settings") {
-        
-//        this->showSettings = true;
-        
-    } else {
-        this->actionsForClientInfo.push_back(action);
-    }
-}
+//void Visualizer::processButton(std::string action) {
+//    if (action == "return_to_menu") {
+//        
+////        this->showSettings = true;
+//        
+//    } else {
+//        this->actions.push_back(action);
+//    }
+//}
 
 glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters) {
     GLint tileIndex = -1; //The tile index where the mouse was clicked. Initialized as -1 to mean no index found

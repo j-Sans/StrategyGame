@@ -53,7 +53,7 @@ class Client {
 public:
     
     //Constructor
-    Client(Window* w, ClientSocket* socket, bool* mouseDown, bool* mouseUp, bool* keys);
+    Client(Window* w, ClientSocket* socket, bool* mouseDown, bool* mouseUp, bool* returnToMenu, bool* keys);
     
     //Public member functions
     
@@ -63,6 +63,8 @@ public:
     
 private:
     //Private properties
+    
+    bool* returnToMenu;
     
     //Board info
     Board board;
@@ -125,6 +127,13 @@ private:
      * @return The color of the tile at the specified location, with colors being in RGB from 0 to 1 as floats.
      */
     glm::vec3 tileColor(unsigned int x, unsigned int y);
+    
+    /*!
+     * A function to process the an action. This may include button actions. Any action to be performed on the host will be added to actionsForClientInfo.
+     *
+     * @param An std::string representing the action to be done.
+     */
+    void processAction(std::string action);
     
     void resolveTileAction(int x, int y);
 };

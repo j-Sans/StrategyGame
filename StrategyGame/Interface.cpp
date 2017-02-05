@@ -34,18 +34,12 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
          1.0,  1.0, 1.0, 1.0,   1.0, 1.0, 1.0,
     };
     
+    this->initialPropertyHeight = this->nextPropertyHeight;
+    
     switch (type) {
         case default_left: {
-            this->buttons.push_back(Button(*this->textureShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "settings", "Settings", this->propertyTex));
             
-            this->nextPropertyHeight -= 0.1;
-            
-            //Reminder: x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, cost, startDirection, controller
-            this->buttons.push_back(Button(*this->textureShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,100,4,30,1,1,1,NORTH", "New Melee", this->propertyTex));
-            
-            this->nextPropertyHeight -= 0.1;
-            
-            this->buttons.push_back(Button(*this->textureShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_creature,Human,70,3,30,1,3,1,NORTH", "New 3-Ranged", this->propertyTex));
+            this->buttons.push_back(Button(*this->textureShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "return_to_menu", "Leave game", this->propertyTex));
             
             this->nextPropertyHeight -= 0.1;
             
@@ -121,8 +115,6 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
             
             break;
     }
-    
-    this->initialPropertyHeight = this->nextPropertyHeight;
     
     //Draw with OpenGL
     glGenVertexArrays(1, &this->VAO);

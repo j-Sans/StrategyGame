@@ -12,7 +12,7 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     this->socket.setSocket(portNum);
     for (int a = 0; a < numberOfPlayers; a++) {
         this->socket.addClient();
-        this->alivePlayers[a] = true;
+        this->alivePlayers.push_back(true);
     }
     
     //Send to each player that player's number and the board
@@ -277,4 +277,12 @@ void Host::losePlayer(int playerNum) {
             }
         }
     }
+}
+
+bool Host::receivedFromAll(std::string str) {
+    for (int player = 0; player < this->players.size(); player++) {
+        if (!this->alivePlayers[player]) continue; //Skip if the player is dead
+        if (this->socket.receive(player) != str) return false;
+    }
+    return true;
 }

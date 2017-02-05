@@ -8,7 +8,9 @@
 
 #include "Client.hpp"
 
-Client::Client(Window* w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
+Client::Client(Window* w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, bool* returnToMenu, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
+    
+    this->returnToMenu = returnToMenu;
     
     this->socket = socket;
     
@@ -45,6 +47,11 @@ void Client::render() {
     this->board = Board::deserialize(this->socket->receive());
     
     std::string clientInfo = "";
+    
+    for (auto a = this->visualizer.actions.begin(); a != this->visualizer.actions.end(); a++) {
+        this->processAction(*a);
+        a = this->visualizer.actions.erase(a);
+    }
     
     for (auto a = this->actionsForClientInfo.begin(); a != this->actionsForClientInfo.end(); a++) {
         clientInfo += *a + ";";
@@ -269,6 +276,14 @@ glm::vec3 Client::tileColor(unsigned int x, unsigned int y) {
     
     //Something went wrong. Return White to have an unaltered color
     return WHITE;
+}
+
+void Client::processAction(std::string action) {
+    if (action == "return_to_menu") {
+        *this->returnToMenu = true;
+    } else {
+        this->actionsForClientInfo.push_back(action);
+    }
 }
 
 void Client::resolveTileAction(int x, int y) {

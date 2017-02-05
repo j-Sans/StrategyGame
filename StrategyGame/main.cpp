@@ -67,7 +67,7 @@ int main(int argc, const char * argv[]) {
     bool repeat = true;
     while (repeat) {
         repeat = false;
-        std::cout << "Run as host? For yes, type a number between 1 and 5 to be the number of clients. Otherwise, type \"N\" or \"n\" for no" << std::endl;
+        std::cout << "Run as host? For yes, type a number between 1 and 2 to be the number of clients. Otherwise, type \"N\" or \"n\" for no" << std::endl;
         std::string input;
         std::cin >> input; 
         if (input == "N" || input == "n") {
@@ -96,9 +96,11 @@ int main(int argc, const char * argv[]) {
 //                    break;
                 }
                 
-                Client C(&window, &socket, &mouseDown, &mouseUp, keys);
+                bool returnToMenu = false;
                 
-                while (!C.getShouldWindowClose()) {
+                Client C(&window, &socket, &mouseDown, &mouseUp, &returnToMenu, keys);
+                
+                while (!C.getShouldWindowClose() && !returnToMenu) {
                     updateMouse();
                     C.render();
                 }
