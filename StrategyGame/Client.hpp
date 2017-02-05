@@ -53,7 +53,7 @@ class Client {
 public:
     
     //Constructor
-    Client(Window w, ClientSocket* socket, bool* mouseDown, bool* mouseUp, bool* keys);
+    Client(Window* w, ClientSocket* socket, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Public member functions
     

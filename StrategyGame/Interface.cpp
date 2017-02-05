@@ -229,6 +229,19 @@ bool Interface::removePropertyLayer() {
     return anythingRemoved;
 }
 
+Interface::~Interface() {
+    try {
+        glDeleteVertexArrays(1, &this->VAO);
+    } catch(...) {
+        std::cout << "~Interface(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->VBO);
+    } catch(...) {
+        std::cout << "~Interface(): Unable to properly delete VBO. Error thrown with call of glDeleteBuffers(1, &this->VBO)." << std::endl;
+    }
+}
+
 //void Interface::updateViewport() {
 //    GLuint oldViewportWidth = this->viewportWidth;
 //    GLuint oldViewportHeight = this->viewportHeight;

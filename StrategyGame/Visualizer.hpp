@@ -84,7 +84,7 @@ public:
     /*!
      * A class that sets up and renders the screen, abstracting from the GLFW and OpenGL details.
      *
-     * @param w The current window object.
+     * @param w A pointer to the current window object.
      * @param vertexPath A string which is the path to the text file that contains vertex shader GLSL code.
      * @param geometryPath A string which is the path to the text file that contains geometry shader GLSL code.
      * @param fragmentPath A string which is the path to the text file that contains fragment shader GLSL code.
@@ -92,9 +92,10 @@ public:
      * @param mouseUp A pointer to the boolean that represents whether the mouse was released. The boolean itself should be the one being edited by the callback function.
      * @param keys A poiunter to the array of booleans that represent for each key if it is pressed. The array itself should be the one being edited by the callback function.
      */
-    Visualizer(Window w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys);
+    Visualizer(Window* w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Destructor
+    ~Visualizer();
     
     //Public properties
     
@@ -124,7 +125,7 @@ public:
     unsigned int playerNum;
     unsigned int activePlayer;
     
-    Window window;
+    Window* window;
     
     //Array data to be sent to respective VBO's
     std::vector<GLfloat> vertexData; //[NUMBER_OF_TILES * INDICES_PER_TILES];
@@ -190,11 +191,6 @@ public:
      * A function that closes the window. Should be called within game loop to exit the loop.
      */
     void closeWindow();
-    
-    /*!
-     * A function that helps to terminates the program and deallocates various resources. Should be called after closeWindow(), after leaving the game loop.
-     */
-    void terminate();
     
     /*!
      * Set the clear color of the screen.

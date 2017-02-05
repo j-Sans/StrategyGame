@@ -191,3 +191,11 @@ glm::vec2 Window::viewportSize() {
     
     return this->viewportDimensions;
 }
+
+Window::~Window() {
+    try {
+        glfwTerminate();
+    } catch (...) {
+        std::cout << "Unable to properly terminate glfwTerminate. Error thrown with call of glfwTerminate()." << std::endl;
+    }
+}

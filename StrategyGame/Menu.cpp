@@ -8,7 +8,7 @@
 
 #include "Menu.hpp"
 
-Menu::Menu(Window w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* keys) {
+Menu::Menu(Window* w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* keys) {
     //Make a window object. May throw an error, which will be thrown through this function
 //    this->window.init(this->windowWidth, this->windowHeight, "Game", false, true);
     
@@ -32,18 +32,18 @@ Menu::Menu(Window w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* k
     this->textureShader = Shader("Shaders/texture/texture.vert", "Shaders/texture/texture.frag");
     this->displayBarShader = Shader("Shaders/displayBar/displayBar.vert", "Shaders/displayBar/displayBar.geom", "Shaders/displayBar/displayBar.frag");
     
-    this->background = Box(this->textureShader, &this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", other, backgroundTex);
+    this->background = Box(this->textureShader, this->window, 0, 0, 1, 1, 0, 0, 1, 1, "", other, backgroundTex);
     
-    glm::ivec2 framebufferSize = this->window.framebufferSize();
+    glm::ivec2 framebufferSize = this->window->framebufferSize();
     
-    this->interface = Interface(&this->textureShader, &this->displayBarShader, &this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interfaceTex);
+    this->interface = Interface(&this->textureShader, &this->displayBarShader, this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interfaceTex);
     
     this->interface.addButton("start", "Play");
 }
 
 void Menu::render() {
-    glm::ivec2 framebufferSize = this->window.framebufferSize();
-    this->window.setViewport(0, 0, framebufferSize.x, framebufferSize.y);
+    glm::ivec2 framebufferSize = this->window->framebufferSize();
+    this->window->setViewport(0, 0, framebufferSize.x, framebufferSize.y);
     
     this->background.render();
     this->interface.render(*this->mouseDown, *this->mouseUp, true);
@@ -72,11 +72,11 @@ void Menu::render() {
         this->failedToConnect = false;
     }
     
-    this->window.updateScreen();
+    this->window->updateScreen();
 }
 
 bool Menu::getShouldWindowClose() {
-    return this->window.shouldClose();
+    return this->window->shouldClose();
 }
 
 void Menu::processAction(std::string action) {

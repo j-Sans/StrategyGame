@@ -8,7 +8,7 @@
 
 #include "Client.hpp"
 
-Client::Client(Window w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
+Client::Client(Window* w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, bool* keys) : visualizer(Visualizer(w, "Shaders/board/board.vert", "Shaders/board/board.geom", "Shaders/board/board.frag", mouseDown, mouseUp, keys)), board(Board(std::vector<std::vector<Tile> >(0))) {
     
     this->socket = socket;
     

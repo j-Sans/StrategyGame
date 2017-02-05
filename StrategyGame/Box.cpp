@@ -199,3 +199,21 @@ glm::vec3 Box::color() {
 GLfloat Box::getHeight() {
     return (this->lowerLeftY + 1.0) / 2.0;
 }
+
+Box::~Box() {
+    try {
+        glDeleteVertexArrays(1, &this->VAO);
+    } catch(...) {
+        std::cout << "~Box(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->boxVBO);
+    } catch(...) {
+        std::cout << "~Box(): Unable to properly delete boxVBO. Error thrown with call of glDeleteBuffers(1, &this->boxVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->colorVBO);
+    } catch(...) {
+        std::cout << "~Box(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO." << std::endl;
+    }
+}

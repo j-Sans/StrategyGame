@@ -13,6 +13,7 @@
 
 //Standard library includes
 #include <string>
+#include <iostream>
 #include <exception>
 
 //GLEW: Locates memory location of OpenGL functions
@@ -29,6 +30,9 @@ class Window {
 public:
     //Constructor
     Window();
+    
+    //Destructor
+    ~Window();
     
     //Public methods
     

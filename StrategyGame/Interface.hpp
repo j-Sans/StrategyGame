@@ -67,6 +67,8 @@ public:
     Interface(Shader* shader, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, Texture texture, interfaceType type = interface_other
               );
     
+    ~Interface();
+    
     //Public properties
     
     /*!

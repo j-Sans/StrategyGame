@@ -53,6 +53,9 @@ public:
      */
     Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText, Texture texture = Texture());
     
+    //Destructor
+    ~Button();
+    
     //Public properties
     
     const GLfloat buttonDownTime = 0.25f;

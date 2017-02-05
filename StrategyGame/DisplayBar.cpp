@@ -180,3 +180,21 @@ GLfloat DisplayBar::maxValue() {
 DisplayBarType DisplayBar::type() {
     return this->barType;
 }
+
+DisplayBar::~DisplayBar() {
+    try {
+        glDeleteVertexArrays(1, &this->VAO);
+    } catch(...) {
+        std::cout << "~DisplayBar(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->locationVBO);
+    } catch(...) {
+        std::cout << "~DisplayBar(): Unable to properly delete locationVBO. Error thrown with call of glDeleteBuffers(1, &this->locationVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->filledVBO);
+    } catch(...) {
+        std::cout << "~DisplayBar(): Unable to properly delete filledVBO. Error thrown with call of glDeleteBuffers(1, &this->filledVBO." << std::endl;
+    }
+}

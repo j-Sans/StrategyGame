@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
             window.setKeyCallback(keyCallback);
             window.setMouseButtonCallback(mouseButtonCallback);
             ClientSocket socket;
-            Menu M(window, &socket, &mouseDown, &mouseUp, keys);
+            Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
             
             while (!M.getShouldWindowClose()) {
                 updateMouse();
@@ -100,7 +100,7 @@ int main(int argc, const char * argv[]) {
 //            window.setKeyCallback(keyCallback);
 //            window.setMouseButtonCallback(mouseButtonCallback);
             
-            Client C(window, &socket, &mouseDown, &mouseUp, keys);
+            Client C(&window, &socket, &mouseDown, &mouseUp, keys);
         
             while (!C.getShouldWindowClose()) {
                 updateMouse();

@@ -62,6 +62,9 @@ public:
      */
     DisplayBar(Shader* shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor);
     
+    //Destructor
+    ~DisplayBar();
+    
     //Public properties
     
     std::string text;

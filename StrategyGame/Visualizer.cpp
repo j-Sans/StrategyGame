@@ -9,14 +9,15 @@
 #include "Visualizer.hpp"
 
 //Constructor
-Visualizer::Visualizer(Window w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys) {
+Visualizer::Visualizer(Window* w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys) {
 //    this->initWindow(); //Create the GLFW window and set the window property
     
-    this->window = w;
+    this->window
+    = w;
     
     this->setInterfaces();
     
-    this->window.setClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z);
+    this->window->setClearColor(this->clearColor.x, this->clearColor.y, this->clearColor.z);
     
     this->gameShader = Shader(vertexPath.c_str(), geometryPath.c_str(), fragmentPath.c_str());
     
@@ -107,8 +108,8 @@ void Visualizer::render() {
         tex->use(this->gameShader);
     }
     
-    glm::ivec2 framebufferSize = this->window.framebufferSize();
-    this->window.setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height);
+    glm::ivec2 framebufferSize = this->window->framebufferSize();
+    this->window->setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height);
     
     this->moveCamera();
     
@@ -153,12 +154,12 @@ void Visualizer::render() {
     }
     
     //Swap buffers so as to properly render without flickering
-    this->window.updateScreen();
+    this->window->updateScreen();
 }
 
 std::string Visualizer::getClientInfo() {
-    glm::dvec2 mousePos = this->window.cursorPos();
-    glm::ivec2 windowSize = this->window.windowSize();
+    glm::dvec2 mousePos = this->window->cursorPos();
+    glm::ivec2 windowSize = this->window->windowSize();
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
@@ -183,8 +184,8 @@ std::string Visualizer::getClientInfo() {
 }
 
 glm::ivec2 Visualizer::getMouseTile() {
-    glm::dvec2 mousePos = this->window.cursorPos();
-    glm::ivec2 windowSize = this->window.windowSize();
+    glm::dvec2 mousePos = this->window->cursorPos();
+    glm::ivec2 windowSize = this->window->windowSize();
     
     std::vector<glm::vec4> tileCenters; //Representing the center point of all of the map squares
     
@@ -218,21 +219,7 @@ glm::ivec2 Visualizer::getMouseTile() {
 
 //Close the window
 void Visualizer::closeWindow() {
-    this->window.close();
-}
-
-//Terminate the window
-void Visualizer::terminate() {
-    glDeleteVertexArrays(1, &this->VAO);
-    glDeleteBuffers(1, &this->vertexVBO);
-    glDeleteBuffers(1, &this->terrainVBO);
-    glDeleteBuffers(1, &this->creatureVBO);
-    glDeleteBuffers(1, &this->colorVBO);
-    glDeleteBuffers(1, &this->damageVBO);
-    glDeleteBuffers(1, &this->offsetVBO);
-    glDeleteBuffers(1, &this->buildingVBO);
-    
-    glfwTerminate();
+    this->window->close();
 }
 
 //Set the clear color of the screen.
@@ -259,19 +246,19 @@ std::map<interfaceType, Interface> Visualizer::getInterfaces() {
     tex.set("Resources/background.jpg", 29, "tex");
     
     //Left-Side Game UI
-    interfaces[default_left] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, tex, default_left);
+    interfaces[default_left] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, tex, default_left);
     
     //Bottom Game UI
-    interfaces[default_bottom] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, tex, default_bottom);
+    interfaces[default_bottom] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, tex, default_bottom);
     
     //Right-Side Game UI
-    interfaces[default_right] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, default_right);
+    interfaces[default_right] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, default_right);
     
     //Interface for selected creatures
-    interfaces[creature] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, creature);
+    interfaces[creature] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, creature);
     
     //Interface for selected buildings
-    interfaces[building] = Interface(&this->textureShader, &this->displayBarShader, &this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, building);
+    interfaces[building] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, building);
     
     return interfaces;
 }
@@ -281,11 +268,11 @@ std::map<interfaceType, Interface> Visualizer::getInterfaces() {
 //Initialize GLFW, GLEW, the key callback function, and the window itself.
 void Visualizer::initWindow() {
     //Make a window object. May throw an error, which will be thrown through this function
-    this->window.init(this->windowWidth, this->windowHeight, "Game", false, true);
+    this->window->init(this->windowWidth, this->windowHeight, "Game", false, true);
     
     //Tell OpenGL window information
-    glm::vec2 framebufferSize = this->window.framebufferSize();
-    this->window.setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
+    glm::vec2 framebufferSize = this->window->framebufferSize();
+    this->window->setViewport(this->leftInterfaceStats.width, this->bottomInterfaceStats.height, framebufferSize.x - this->leftInterfaceStats.width - this->rightInterfaceStats.width, framebufferSize.y - this->bottomInterfaceStats.height); //So that there is a 6th of the screen on both sides, and the bottom quarter of the screen left for interfacecs
     
     //Set key callback function
 //    this->window.setKeyCallback(this->keyCallback);
@@ -295,7 +282,7 @@ void Visualizer::initWindow() {
 }
 
 void Visualizer::setInterfaces() {
-    glm::ivec2 framebufferSize = this->window.framebufferSize();
+    glm::ivec2 framebufferSize = this->window->framebufferSize();
     
     this->leftInterfaceStats = interfaceStat(0.0, 0.0, framebufferSize.x / 6.0, framebufferSize.y);
     this->bottomInterfaceStats = interfaceStat(framebufferSize.x * 1.0 / 6.0, 0.0, framebufferSize.x * 2.0 / 3.0, framebufferSize.y / 4.0);
@@ -524,7 +511,7 @@ void Visualizer::renderDamageText() {
             
             glm::vec2 fontSize = this->font.getSize(std::to_string(this->damageData[tile]), 1.0);
             
-            glm::vec2 viewportSize = this->window.viewportSize();
+            glm::vec2 viewportSize = this->window->viewportSize();
             
             this->font.render(std::to_string(this->damageData[tile]), damageTileCoords.x * viewportSize.x - (fontSize.x / 2), damageTileCoords.y * viewportSize.y - (fontSize.y / 2), 1.0, glm::vec3(1.0, 1.0, 1.0), viewportSize.x, viewportSize.y);
         }
@@ -754,4 +741,47 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
     tileIndexVec.y = tileIndex - (this->boardHeight * tileIndexVec.x); //The y index in the 2D vector
     
     return tileIndexVec;
+}
+
+Visualizer::~Visualizer() {
+    try {
+        glDeleteVertexArrays(1, &this->VAO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->vertexVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete vertexVBO. Error thrown with call of glDeleteBuffers(1, &this->vertexVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->terrainVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete terrainVBO. Error thrown with call of glDeleteBuffers(1, &this->terrainVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->creatureVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete creauterVBO. Error thrown with call of glDeleteBuffers(1, &this->creatureVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->colorVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->damageVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete damageVBO. Error thrown with call of glDeleteBuffers(1, &this->damageVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->offsetVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete offsetVBO. Error thrown with call of glDeleteBuffers(1, &this->offsetVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->buildingVBO);
+    } catch(...) {
+        std::cout << "~Visualizer(): Unable to properly delete buildingVBO. Error thrown with call of glDeleteBuffers(1, &this->buildingVBO)." << std::endl;
+    }
 }

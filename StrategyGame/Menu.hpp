@@ -18,7 +18,6 @@
 #include "ClientSocket.hpp"
 #include "Texture.hpp"
 #include "Window.hpp"
-#include "TextureBox.hpp"
 #include "Interface.hpp"
 
 #define MAX_CONNECTION_TIME 5.0
@@ -26,7 +25,7 @@
 class Menu {
 public:
     //Constructor
-    Menu(Window w, ClientSocket *sock, bool* mouseDown, bool* mouseUp, bool* keys);
+    Menu(Window* w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* keys);
     
     //Public properties
     
@@ -53,7 +52,7 @@ public:
     bool getShouldWindowClose();
     
 private:
-    Window window;
+    Window* window;
     ClientSocket *socket;
     Interface interface;
     

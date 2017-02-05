@@ -275,3 +275,21 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         glBindVertexArray(0);
     }
 }
+
+Button::~Button() {
+    try {
+        glDeleteVertexArrays(1, &this->VAO);
+    } catch(...) {
+        std::cout << "~Button(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->buttonVBO);
+    } catch(...) {
+        std::cout << "~Button(): Unable to properly delete buttonVBO. Error thrown with call of glDeleteBuffers(1, &this->buttonVBO)." << std::endl;
+    }
+    try {
+        glDeleteBuffers(1, &this->colorVBO);
+    } catch(...) {
+        std::cout << "~Button(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO." << std::endl;
+    }
+}
