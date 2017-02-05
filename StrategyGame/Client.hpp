@@ -58,7 +58,6 @@ public:
     //Public member functions
     
     void render();
-    void terminate();
     
     bool getShouldWindowClose();
     

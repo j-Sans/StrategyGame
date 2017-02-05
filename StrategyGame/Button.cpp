@@ -12,6 +12,8 @@
 
 Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText, Texture texture) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), buttonWidth(2.0 * width), buttonHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), action(buttonAction), text(buttonText), tex(texture) {
     
+    this->isSet = true;
+    
     this->window = window;
     this->buttonShader = shader;
     
@@ -19,7 +21,7 @@ Button::Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat widt
     
     GLfloat data[] = {
         //Rectangle is drawn by two triangles
-        //Vertices                                                              //Texture coordinates
+        //Vertices                                                                      //Texture coordinates
         this->lowerLeftX, this->lowerLeftY,                                             0.0, 0.0,
         this->lowerLeftX + this->buttonWidth, this->lowerLeftY,                         1.0, 0.0,
         this->lowerLeftX, this->lowerLeftY + this->buttonHeight,                        0.0, 1.0,
@@ -157,6 +159,26 @@ GLfloat Button::getHeight() {
     return (this->lowerLeftY + 1.0) / 2.0;
 }
 
+void Button::terminate() {
+    if (this->isSet) { 
+        try {
+            glDeleteVertexArrays(1, &this->VAO);
+        } catch(...) {
+            std::cout << "~Button(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->buttonVBO);
+        } catch(...) {
+            std::cout << "~Button(): Unable to properly delete buttonVBO. Error thrown with call of glDeleteBuffers(1, &this->buttonVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->colorVBO);
+        } catch(...) {
+            std::cout << "~Button(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO." << std::endl;
+        }
+    }
+}
+
 //Private member functions
 
 void Button::updateMouse(bool mouseDown, bool mouseUp) {
@@ -273,23 +295,5 @@ void Button::updateMouse(bool mouseDown, bool mouseUp) {
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-    }
-}
-
-Button::~Button() {
-    try {
-        glDeleteVertexArrays(1, &this->VAO);
-    } catch(...) {
-        std::cout << "~Button(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->buttonVBO);
-    } catch(...) {
-        std::cout << "~Button(): Unable to properly delete buttonVBO. Error thrown with call of glDeleteBuffers(1, &this->buttonVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->colorVBO);
-    } catch(...) {
-        std::cout << "~Button(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO." << std::endl;
     }
 }

@@ -15,6 +15,8 @@ Box::Box() {}
 
 Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string boxText, DisplayBoxType type, Texture texture) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(glm::vec3(Box::defaultColor, Box::defaultColor, Box::defaultColor)), text(boxText), boxType(type), tex(texture) {
     
+    this->isSet = true;
+    
     this->window = window;
     this->boxShader = shader;
     
@@ -76,6 +78,8 @@ Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLf
 }
 
 Box::Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec3 color, std::string boxText, DisplayBoxType type = other) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), boxWidth(2.0 * width), boxHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), boxColor(color), text(boxText), boxType(type) {
+    
+    this->isSet = true;
     
     this->window = window;
     this->boxShader = shader;
@@ -200,20 +204,22 @@ GLfloat Box::getHeight() {
     return (this->lowerLeftY + 1.0) / 2.0;
 }
 
-Box::~Box() {
-    try {
-        glDeleteVertexArrays(1, &this->VAO);
-    } catch(...) {
-        std::cout << "~Box(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->boxVBO);
-    } catch(...) {
-        std::cout << "~Box(): Unable to properly delete boxVBO. Error thrown with call of glDeleteBuffers(1, &this->boxVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->colorVBO);
-    } catch(...) {
-        std::cout << "~Box(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO." << std::endl;
+void Box::terminate() {
+    if (this->isSet) {
+        try {
+            glDeleteVertexArrays(1, &this->VAO);
+        } catch(...) {
+            std::cout << "~Box(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->boxVBO);
+        } catch(...) {
+            std::cout << "~Box(): Unable to properly delete boxVBO. Error thrown with call of glDeleteBuffers(1, &this->boxVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->colorVBO);
+        } catch(...) {
+            std::cout << "~Box(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO." << std::endl;
+        }
     }
 }

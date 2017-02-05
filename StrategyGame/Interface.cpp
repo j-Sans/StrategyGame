@@ -8,10 +8,8 @@
 
 #include "Interface.hpp"
 
-//Only so that Visualizer.hpp can have properly initialized interfaces. No other purpose.
-Interface::Interface() {}
-
-Interface::Interface(Shader* shader, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, Texture texture, interfaceType type) {
+void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, Texture texture, interfaceType type) {
+    this->isSet = true;
     this->window = window;
     this->textureShader = shader;
     this->displayBarShader = shaderForDisplayBars;
@@ -153,6 +151,9 @@ Interface::Interface(Shader* shader, Shader* shaderForDisplayBars, Window* windo
 }
 
 void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
+    if (!this->isSet)
+        throw std::logic_error("Interface not set");
+    
     if (active) {
         //Get updated information about the viewport
 //        this->updateViewport();
@@ -196,18 +197,27 @@ void Interface::render(bool mouseDown, bool mouseUp, bool buttonInteraction) {
 }
 
 void Interface::addButton(std::string action, std::string text) {
+    if (!this->isSet)
+        throw std::logic_error("Interface not set");
+    
     this->buttons.push_back(Button(*this->textureShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, action, text, this->propertyTex));
     
     this->nextPropertyHeight -= 0.1;
 }
 
 void Interface::addBox(std::string text) {
+    if (!this->isSet)
+        throw std::logic_error("Interface not set");
+    
     this->boxes.push_back(Box(*this->textureShader, this->window, 0.25, this->nextPropertyHeight, 0.5, 0.067, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, text, other, this->propertyTex));
     
     this->nextPropertyHeight -= 0.1;
 }
 
 bool Interface::removePropertyLayer() {
+    if (!this->isSet)
+        throw std::logic_error("Interface not set");
+    
     this->nextPropertyHeight += 0.1;
     if (this->nextPropertyHeight > this->initialPropertyHeight) return false;
     
@@ -230,15 +240,45 @@ bool Interface::removePropertyLayer() {
 }
 
 Interface::~Interface() {
-    try {
-        glDeleteVertexArrays(1, &this->VAO);
-    } catch(...) {
-        std::cout << "~Interface(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->VBO);
-    } catch(...) {
-        std::cout << "~Interface(): Unable to properly delete VBO. Error thrown with call of glDeleteBuffers(1, &this->VBO)." << std::endl;
+    if (this->isSet) {
+        try {
+            glDeleteVertexArrays(1, &this->VAO);
+        } catch(...) {
+            std::cout << "~Interface(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->VBO);
+        } catch(...) {
+            std::cout << "~Interface(): Unable to properly delete VBO. Error thrown with call of glDeleteBuffers(1, &this->VBO)." << std::endl;
+        }
+        for (auto button = this->buttons.begin(); button != this->buttons.end(); button++) {
+            try {
+                button->terminate();
+            } catch(...) {
+                std::cout << "~Interface(): Unable to properly delete button from std::list<box>: " << &button << ". Error thrown with call of button->terminate()." << std::endl;
+            }
+        }
+        for (auto box = this->boxes.begin(); box != this->boxes.end(); box++) {
+            try {
+                box->terminate();
+            } catch(...) {
+                std::cout << "~Interface(): Unable to properly delete box from std::list<box>: " << &box << ". Error thrown with call of box->terminate()." << std::endl;
+            }
+        }
+        for (auto bar = this->displayBars.begin(); bar != this->displayBars.end(); bar++) {
+            try {
+                bar->second.terminate();
+            } catch(...) {
+                std::cout << "~Interface(): Unable to properly delete displayBar from std::map<displayBarType, displayBar>: " << &bar << ". Error thrown with call of bar->terminate()." << std::endl;
+            }
+        }
+        for (auto box = this->boxMap.begin(); box != this->boxMap.end(); box++) {
+            try {
+                box->second.terminate();
+            } catch(...) {
+                std::cout << "~Interface(): Unable to properly delete box from std::map<boxType, Box>: " << &box << ". Error thrown with call of box->second.terminate()." << std::endl;
+            }
+        }
     }
 }
 

@@ -64,12 +64,8 @@ void Client::render() {
 //    this->visualizer.endFrame();
 }
 
-void Client::terminate() {
-    this->visualizer.terminate();
-}
-
 bool Client::getShouldWindowClose() {
-    return this->visualizer.window.shouldClose();
+    return this->visualizer.window->shouldClose();
 }
 
 void Client::resetAllTiles() {

@@ -36,7 +36,7 @@ Menu::Menu(Window* w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* 
     
     glm::ivec2 framebufferSize = this->window->framebufferSize();
     
-    this->interface = Interface(&this->textureShader, &this->displayBarShader, this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interfaceTex);
+    this->interface.set(&this->textureShader, &this->displayBarShader, this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interfaceTex);
     
     this->interface.addButton("start", "Play");
 }

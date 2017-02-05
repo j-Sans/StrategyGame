@@ -12,7 +12,6 @@
 //Standard library includes
 #include <chrono>
 #include <vector>
-#include <list>
 #include <exception>
 
 //Local includes

@@ -53,12 +53,9 @@ public:
      */
     Button(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, std::string buttonAction, std::string buttonText, Texture texture = Texture());
     
-    //Destructor
-    ~Button();
-    
     //Public properties
     
-    const GLfloat buttonDownTime = 0.25f;
+    constexpr const static GLfloat buttonDownTime = 0.25f;
     
     /*!
      * A string to represent the actions that this button does.
@@ -98,7 +95,14 @@ public:
      */
     GLfloat getHeight();
     
+    /*!
+     * Frees OpenGL buffer data.
+     */
+    void terminate();
+    
 private:
+    bool isSet = false;
+    
     //Button properties
     bool pressed = false;
     bool hasBeenPressed = false; //Set to true after, keeps the button the darker 'pressed' color for longer
@@ -116,15 +120,15 @@ private:
     Texture tex;
     
     //Viewport information
-    const GLfloat lowerLeftX;
-    const GLfloat lowerLeftY;
-    const GLfloat buttonWidth;
-    const GLfloat buttonHeight;
+    GLfloat lowerLeftX;
+    GLfloat lowerLeftY;
+    GLfloat buttonWidth;
+    GLfloat buttonHeight;
     
-    const GLfloat interfaceBoxLowerLeftX;
-    const GLfloat interfaceBoxLowerLeftY;
-    const GLfloat interfaceBoxWidth;
-    const GLfloat interfaceBoxHeight;
+    GLfloat interfaceBoxLowerLeftX;
+    GLfloat interfaceBoxLowerLeftY;
+    GLfloat interfaceBoxWidth;
+    GLfloat interfaceBoxHeight;
     
     //Private member functions
     

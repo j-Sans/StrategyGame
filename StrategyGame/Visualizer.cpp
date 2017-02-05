@@ -12,8 +12,9 @@
 Visualizer::Visualizer(Window* w, std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool* mouseDown, bool* mouseUp, bool* keys) {
 //    this->initWindow(); //Create the GLFW window and set the window property
     
-    this->window
-    = w;
+    this->isSet = true;
+    
+    this->window = w;
     
     this->setInterfaces();
     
@@ -93,8 +94,6 @@ void Visualizer::set(unsigned int width, unsigned int height) {
     
     this->camMaxDisplacement = glm::vec2(this->boardWidth * .1, this->boardHeight * .1);
     this->cameraCenter = glm::vec3(0.0f, 0.0f, 0.0f);
-    
-    this->isSet = true;
 }
 
 //A function that sets the view matrix based on camera position and renders everything on the screen. Should be called once per frame.
@@ -246,19 +245,19 @@ std::map<interfaceType, Interface> Visualizer::getInterfaces() {
     tex.set("Resources/background.jpg", 29, "tex");
     
     //Left-Side Game UI
-    interfaces[default_left] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, tex, default_left);
+    interfaces[default_left].set(&this->textureShader, &this->displayBarShader, this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, tex, default_left);
     
     //Bottom Game UI
-    interfaces[default_bottom] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, tex, default_bottom);
+    interfaces[default_bottom].set(&this->textureShader, &this->displayBarShader, this->window, this->bottomInterfaceStats.x, this->bottomInterfaceStats.y, this->bottomInterfaceStats.width, this->bottomInterfaceStats.height, tex, default_bottom);
     
     //Right-Side Game UI
-    interfaces[default_right] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, default_right);
+    interfaces[default_right].set(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, default_right);
     
     //Interface for selected creatures
-    interfaces[creature] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, creature);
+    interfaces[creature].set(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, creature);
     
     //Interface for selected buildings
-    interfaces[building] = Interface(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, building);
+    interfaces[building].set(&this->textureShader, &this->displayBarShader, this->window, this->rightInterfaceStats.x, this->rightInterfaceStats.y, this->rightInterfaceStats.width, this->rightInterfaceStats.height, tex, building);
     
     return interfaces;
 }
@@ -744,44 +743,46 @@ glm::ivec2 Visualizer::mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std:
 }
 
 Visualizer::~Visualizer() {
-    try {
-        glDeleteVertexArrays(1, &this->VAO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->vertexVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete vertexVBO. Error thrown with call of glDeleteBuffers(1, &this->vertexVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->terrainVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete terrainVBO. Error thrown with call of glDeleteBuffers(1, &this->terrainVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->creatureVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete creauterVBO. Error thrown with call of glDeleteBuffers(1, &this->creatureVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->colorVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->damageVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete damageVBO. Error thrown with call of glDeleteBuffers(1, &this->damageVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->offsetVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete offsetVBO. Error thrown with call of glDeleteBuffers(1, &this->offsetVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->buildingVBO);
-    } catch(...) {
-        std::cout << "~Visualizer(): Unable to properly delete buildingVBO. Error thrown with call of glDeleteBuffers(1, &this->buildingVBO)." << std::endl;
+    if (this->isSet) {
+        try {
+            glDeleteVertexArrays(1, &this->VAO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->vertexVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete vertexVBO. Error thrown with call of glDeleteBuffers(1, &this->vertexVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->terrainVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete terrainVBO. Error thrown with call of glDeleteBuffers(1, &this->terrainVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->creatureVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete creauterVBO. Error thrown with call of glDeleteBuffers(1, &this->creatureVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->colorVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete colorVBO. Error thrown with call of glDeleteBuffers(1, &this->colorVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->damageVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete damageVBO. Error thrown with call of glDeleteBuffers(1, &this->damageVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->offsetVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete offsetVBO. Error thrown with call of glDeleteBuffers(1, &this->offsetVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->buildingVBO);
+        } catch(...) {
+            std::cout << "~Visualizer(): Unable to properly delete buildingVBO. Error thrown with call of glDeleteBuffers(1, &this->buildingVBO)." << std::endl;
+        }
     }
 }

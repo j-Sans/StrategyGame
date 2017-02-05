@@ -13,6 +13,8 @@ DisplayBar::DisplayBar() {}
 
 DisplayBar::DisplayBar(Shader* shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, GLfloat maxVal, std::string barText, DisplayBarType type, glm::vec3 remainingColor, glm::vec3 lostColor, glm::vec3 backgroundColor) : lowerLeftX((2.0 * x) - 1.0), lowerLeftY((2.0 * y) - 1.0), barWidth(2.0 * width), barHeight(2.0 * height), interfaceBoxLowerLeftX(interfaceX), interfaceBoxLowerLeftY(interfaceY), interfaceBoxWidth(interfaceWidth), interfaceBoxHeight(interfaceHeight), currentMaxValue(maxVal), text(barText), barType(type), remainingValueColor(remainingColor), lostValueColor(lostColor), outsideColor(backgroundColor) {
     
+    this->isSet = true;
+    
     this->currentValue = this->currentMaxValue;
     
     this->window = window;
@@ -181,20 +183,22 @@ DisplayBarType DisplayBar::type() {
     return this->barType;
 }
 
-DisplayBar::~DisplayBar() {
-    try {
-        glDeleteVertexArrays(1, &this->VAO);
-    } catch(...) {
-        std::cout << "~DisplayBar(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->locationVBO);
-    } catch(...) {
-        std::cout << "~DisplayBar(): Unable to properly delete locationVBO. Error thrown with call of glDeleteBuffers(1, &this->locationVBO)." << std::endl;
-    }
-    try {
-        glDeleteBuffers(1, &this->filledVBO);
-    } catch(...) {
-        std::cout << "~DisplayBar(): Unable to properly delete filledVBO. Error thrown with call of glDeleteBuffers(1, &this->filledVBO." << std::endl;
+void DisplayBar::terminate() {
+    if (this->isSet) {
+        try {
+            glDeleteVertexArrays(1, &this->VAO);
+        } catch(...) {
+            std::cout << "~DisplayBar(): Unable to properly delete VAO. Error thrown with call of glDeleteVertexArrays(1, &this->VAO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->locationVBO);
+        } catch(...) {
+            std::cout << "~DisplayBar(): Unable to properly delete locationVBO. Error thrown with call of glDeleteBuffers(1, &this->locationVBO)." << std::endl;
+        }
+        try {
+            glDeleteBuffers(1, &this->filledVBO);
+        } catch(...) {
+            std::cout << "~DisplayBar(): Unable to properly delete filledVBO. Error thrown with call of glDeleteBuffers(1, &this->filledVBO." << std::endl;
+        }
     }
 }

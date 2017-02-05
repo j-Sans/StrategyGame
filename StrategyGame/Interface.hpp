@@ -47,10 +47,9 @@ enum interfaceType {
 
 class Interface {
 public:
-    //Constructors
     
-    //Default constructor. Don't use this, it is only to allow interface objects to be declared without causing an error with memory.cpp
-    Interface();
+    //Destructor
+    ~Interface();
     
     /*!
      * A class representing an interface box.
@@ -64,10 +63,8 @@ public:
      * @param texture The texture to use with the interface.
      * @param type What type of interface should be created, using an interfaceType enum. (See Interface.hpp)
      */
-    Interface(Shader* shader, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, Texture texture, interfaceType type = interface_other
+    void set(Shader* shader, Shader* shaderForDisplayBars, Window* window, GLuint x, GLuint y, GLuint width, GLuint height, Texture texture, interfaceType type = interface_other
               );
-    
-    ~Interface();
     
     //Public properties
     
@@ -137,6 +134,8 @@ private:
     GLuint VAO; //VAO (Vertex Array Object) stores objects that can be drawn, including VBO data with the linked shader
     //VBO (Vertex Buffer Object) stores vertex data in the GPU graphics card. Will be stored in VAO
     GLuint VBO;
+    
+    bool isSet = false;
     
     Texture propertyTex;
     Texture interfaceTex;

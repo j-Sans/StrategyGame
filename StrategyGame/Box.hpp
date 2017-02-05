@@ -86,9 +86,6 @@ public:
      */
     Box(Shader shader, Window* window, GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLuint interfaceX, GLuint interfaceY, GLfloat interfaceWidth, GLfloat interfaceHeight, glm::vec3 color, std::string boxText, DisplayBoxType type);
     
-    //Destructor
-    ~Box();
-    
     //Static properties
     constexpr static float defaultColor = 0.33; //Set in constructor
     
@@ -120,7 +117,14 @@ public:
      */
     GLfloat getHeight();
     
+    /*!
+     * Frees OpenGL buffer data.
+     */
+    void terminate();
+    
 private:
+    bool isSet = false;
+    
     //Box properties
     DisplayBoxType boxType; //A displayBoxType to represent the type of the box, so that its can be updated
     glm::vec3 boxColor;

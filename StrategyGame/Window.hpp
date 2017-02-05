@@ -31,9 +31,6 @@ public:
     //Constructor
     Window();
     
-    //Destructor
-    ~Window();
-    
     //Public methods
     
     void init(int width, int height, std::string name, bool resizable, bool fillScreen);

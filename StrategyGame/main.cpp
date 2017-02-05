@@ -77,38 +77,39 @@ int main(int argc, const char * argv[]) {
             window.init(800, 600, "Game", false, true);
             window.setKeyCallback(keyCallback);
             window.setMouseButtonCallback(mouseButtonCallback);
-            ClientSocket socket;
-            Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
             
-            while (!M.getShouldWindowClose()) {
-                updateMouse();
-                M.render();
-                if (socket.getSet()) {
-                    break;
+            while (true) {
+                ClientSocket socket;
+                Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
+            
+                while (!M.getShouldWindowClose()) {
+                    updateMouse();
+                    M.render();
+                    if (socket.getSet()) {
+                        break;
+                    }
                 }
+                
+                if (window.shouldClose()) {
+                    window.terminate();
+                    return 0;
+//                    break;
+                }
+                
+                Client C(&window, &socket, &mouseDown, &mouseUp, keys);
+                
+                while (!C.getShouldWindowClose()) {
+                    updateMouse();
+                    C.render();
+                }
+                
+                if (window.shouldClose()) {
+                    window.terminate();
+                    return 0;
+//                    break;
+                }
+                //send message to other clients that the player has left the game.
             }
-            
-            if (window.shouldClose()) {
-                window.terminate();
-                break;
-            }
-            
-            //Run as client
-            
-//            Window window;
-//            window.init(800, 600, "Game", false, true);
-//            window.setKeyCallback(keyCallback);
-//            window.setMouseButtonCallback(mouseButtonCallback);
-            
-            Client C(&window, &socket, &mouseDown, &mouseUp, keys);
-        
-            while (!C.getShouldWindowClose()) {
-                updateMouse();
-                C.render();
-            }
-            
-            C.terminate();
-            //send message to other clients that the player has left the game.
         } else {
             int numPlayers;
             try {
