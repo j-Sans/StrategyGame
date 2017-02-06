@@ -145,7 +145,7 @@ int main(int argc, const char * argv[]) {
                 
                 //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
                 
-                H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
+                H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 30, NORTH, 0));
                 H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
                 H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
                 
@@ -155,7 +155,7 @@ int main(int argc, const char * argv[]) {
                 
                 Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
                 player0Home.deathAction = "player_lose_0";
-                Building player1Home(BOARD_WIDTH - 1, 0, 10, 1);
+                Building player1Home(BOARD_WIDTH - 1, 0, 1, 1);
                 player1Home.deathAction = "player_lose_1";
                 
                 H.board.setBuilding(player0Home);

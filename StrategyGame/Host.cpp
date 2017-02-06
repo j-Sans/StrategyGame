@@ -83,8 +83,7 @@ void Host::update() {
         std::string clientInfo = this->socket.receive(a);
         while (clientInfo.size() > 0) {
             this->processAction(clientInfo.substr(0, clientInfo.find_first_of(';')), a); //Process the action
-    
-            clientInfo = clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+            clientInfo = clientInfo.find_first_of(';') == std::string::npos ? "" : clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
         }
     }
 
@@ -288,12 +287,14 @@ void Host::losePlayer(int playerNum) {
 
 void Host::broadcast(std::string message) {
     for (int player = 0; player < this->players.size(); player++) {
-        if (!this->alivePlayers[player].second) continue; //Skip if the player disconnected;
-        else if (!this->alivePlayers[player].first) { //Test if the dead player is still connected
+        if (!this->alivePlayers[player].second) {
+            continue; //Skip if the player disconnected;
+        } else if (!this->alivePlayers[player].first) { //Test if the dead player is still connected
             try {
                 this->socket.send(message, player);
             } catch (std::runtime_error) {
                 this->alivePlayers[player].second = false; //If the player didn't receive it, set that player to disconnected.
+                std::cout << "Player " << player << " (dead) didn't receive " << message << std::endl;
             }
         } else {
             try {
@@ -301,6 +302,7 @@ void Host::broadcast(std::string message) {
             } catch (std::runtime_error) {
                 this->losePlayer(player); //If the player didn't receive it, that player disconnected. Remove that player.
                 this->alivePlayers[player].second = false;
+                std::cout << "Player " << player << " (alive) didn't receive " << message << std::endl;
             }
         }
     }

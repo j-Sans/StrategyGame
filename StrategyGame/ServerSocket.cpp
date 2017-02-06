@@ -85,7 +85,7 @@ void ServerSocket::setSocket(int portNum) {
 
 void ServerSocket::addClient() {
     if (this->connectedClients >= MAX_NUMBER_OF_CONNECTIONS)
-        throw std::range_error("Cannot connect more than five socekts");
+        throw std::range_error("Cannot connect more than " + std::to_string(MAX_NUMBER_OF_CONNECTIONS) + " socekts");
     
     //this->connectedClients represents the number of connected clients, and also the next open index of sockets
     
