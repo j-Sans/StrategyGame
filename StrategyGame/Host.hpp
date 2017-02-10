@@ -59,8 +59,10 @@ private:
     //Time
     std::chrono::time_point<std::chrono::steady_clock> programStartTime;
     std::chrono::duration<float> lastFrame;
+    std::chrono::duration<float> lastUpkeep;
     
-//    constexpr static const float timeBetweenUpkeep = 5.0f;
+    constexpr static const float timeBetweenUpkeep = 5.0f;
+    
 //    float timeOfLastUpkeep = 0;
     
     float deltaTime = 0.0f;
@@ -70,7 +72,7 @@ private:
     
     //Game
     std::vector<Player> players;
-    std::vector<std::pair<bool, bool> > alivePlayers; // { alive, connected}
+    std::vector<std::pair<bool, bool> > alivePlayers; // { alive, connected }
     
     //Private member functions
     

@@ -69,7 +69,7 @@ private:
     //Board info
     Board board;
     
-    //Info unique to clinet
+    //Info unique to client
     unsigned int playerNum;
     glm::ivec2 selectedTile = glm::ivec2(-1, -1);
     

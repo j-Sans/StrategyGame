@@ -83,7 +83,14 @@ public:
     bool takeDamage(unsigned int damage);
     
     /*
-     * Reduces the creature's energy by the movement argument.
+     * Increases the creature's energy by the movement argument. Set to max if it would be greater.
+     *
+     * @param energy An int representing actions, including any movement or attacking that this creature does.
+     */
+    void incrementEnergy(int energy);
+    
+    /*
+     * Reduces the creature's energy by the movement argument. Set to 0 if it would be set to less.
      *
      * @param energy An int representing actions, including any movement or attacking that this creature does. 
      */
