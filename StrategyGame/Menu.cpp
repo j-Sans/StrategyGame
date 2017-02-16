@@ -132,6 +132,30 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
         this->keysJustPressed[GLFW_KEY_BACKSPACE] = true;
     } else if (!this->keys[GLFW_KEY_BACKSPACE]) {
         this->keysJustPressed[GLFW_KEY_BACKSPACE] = false;
+    } else if (this->keys[GLFW_KEY_APOSTROPHE] && !this->keysJustPressed[GLFW_KEY_APOSTROPHE]) {
+        if (*text == "Input host name") {
+            *text = "";
+        }
+        *text += '\'';
+        this->keysJustPressed[GLFW_KEY_APOSTROPHE] = true;
+    } else if (!this->keys[GLFW_KEY_APOSTROPHE]) {
+        this->keysJustPressed[GLFW_KEY_APOSTROPHE] = false;
+    } else if (this->keys[GLFW_KEY_SPACE] && !this->keysJustPressed[GLFW_KEY_SPACE]) {
+        if (*text == "Input host name") {
+            *text = "";
+        }
+        *text += ' ';
+        this->keysJustPressed[GLFW_KEY_SPACE] = true;
+    } else if (!this->keys[GLFW_KEY_SPACE]) {
+        this->keysJustPressed[GLFW_KEY_SPACE] = false;
+    } else if (this->keys[GLFW_KEY_MINUS] && !this->keysJustPressed[GLFW_KEY_MINUS]) {
+        if (*text == "Input host name") {
+            *text = "";
+        }
+        *text += keys[GLFW_KEY_LEFT_SHIFT] || keys[GLFW_KEY_RIGHT_SHIFT] ? '_' : '-';
+        this->keysJustPressed[GLFW_KEY_MINUS] = true;
+    } else if (!this->keys[GLFW_KEY_MINUS]) {
+        this->keysJustPressed[GLFW_KEY_MINUS] = false;
     }
 
     
