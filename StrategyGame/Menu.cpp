@@ -178,6 +178,15 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     } else if (!this->keys[GLFW_KEY_COMMA]) {
         this->keysJustPressed[GLFW_KEY_COMMA] = false;
     }
+    if (this->keys[GLFW_KEY_SEMICOLON] && !this->keysJustPressed[GLFW_KEY_SEMICOLON]) {
+        if (*text == "Input host name") {
+            *text = "";
+        }
+        *text += keys[GLFW_KEY_LEFT_SHIFT] || keys[GLFW_KEY_RIGHT_SHIFT] ? ':' : ';';
+        this->keysJustPressed[GLFW_KEY_SEMICOLON] = true;
+    } else if (!this->keys[GLFW_KEY_SEMICOLON]) {
+        this->keysJustPressed[GLFW_KEY_SEMICOLON] = false;
+    }
 
     
 }

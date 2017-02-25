@@ -6,7 +6,7 @@
 //  Copyright © 2016 Jake Sanders. All rights reserved.
 //
 
-#include "ClientSocketNew.hpp"
+#include "ClientSocket.hpp"
 
 ClientSocket::ClientSocket() {}
 
