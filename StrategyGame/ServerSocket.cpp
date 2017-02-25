@@ -10,7 +10,49 @@
 
 ServerSocket::ServerSocket() {}
 
+//Static functions
+
+std::string ServerSocket::getHostName() {
+    char name[1024];
+    if (gethostname(name, 1024) < 0) {
+        throw std::runtime_error(std::string("ERROR getting host name: ") + strerror(errno));
+    }
+    return std::string(name);
+}
+
+//Public member functions
+
 void ServerSocket::setSocket(int portNum) {
+    int returnVal;
+    
+    addrinfo hints; //A struct containing information on the address. Will be passed to getaddrinfo() to give hints about the connection to be made
+    addrinfo* serverAddressList; //A pointer to an addrinfo struct that will be filled with the server address by getaddrinfo()
+    
+    memset(&hints, 0, sizeof(hints)); //Initializes hints with all 0's
+    hints.ai_family = AF_UNSPEC; //Can be either IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM; //TCP Socket
+    hints.ai_flags = AI_PASSIVE; //Make the socket use localhost
+    
+    /* getaddrinfo
+     The getaddrinfo() fills a given addrinfo struct with the relevant information. The return value is nonzero when there is an error.
+     
+     The first argument is the name of the host to connect with.
+     
+     The second argument is a string representation of the port number.
+     
+     The third argument is a pointer to an addrinfo struct which contains hints about the type of connection to be made.
+     
+     The fourth argument is a pointer which will be filled with a linked list of hosts returned. If just one host is being looked for, the first result can just be used.
+     */
+    returnVal = getaddrinfo(NULL, std::to_string(portNum).c_str(), &hints, &serverAddressList);
+    
+    if (returnVal != 0) {
+        throw std::runtime_error(std::string("ERROR getting local address: ") + std::string(gai_strerror(returnVal))); //gai_strerror() returns a c string representation of the error
+    }
+    
+    //Set the first host in the list to the desired host
+    this->serverAddress = *serverAddressList;
+    
     /* socket()
      The socket() function returns a new socket, with three parameters.
      
@@ -26,37 +68,22 @@ void ServerSocket::setSocket(int portNum) {
      
      The function returns an integer than can be used like a reference to the socket. Failure results in returning -1.
      */
-    this->hostSocket = socket(AF_INET, SOCK_STREAM, 0);
+    //In this case, the values are taken from getaddrinfo(), from the first returned addrinfo struct in the linked list.
+    this->hostSocket = socket(this->serverAddress.ai_family, this->serverAddress.ai_socktype, this->serverAddress.ai_protocol);
     
-    //If socket() returns an error, -1.
-    if (this->hostSocket < 0)
-        throw std::runtime_error("Error opening socket");
+    //Checks for errors initializing socket
+    if (socket < 0)
+        throw std::runtime_error(std::string("ERROR opening socket") + std::string(strerror(errno)));
     
-    /* bzero()
-     The bzero() function sets all values in a buffer to zero, with two parameters.
-     
-     The first argument is a pointer to the buffer.
-     
-     The second argument is the size of the buffer.
-     
-     This line essentially "initializes" serverAddress with zeros.
-     */
-    bzero((char *) &this->serverAddress, sizeof(this->serverAddress));
-    
-    this->portNumber = portNum;
-    
-    //The first property of the struct sockaddr_in should always be set to the symbolic constant AF_INET
-    this->serverAddress.sin_family = AF_INET;
-    
-    //The second property contains the port numver, but it has to be converted to a network byte order
-    this->serverAddress.sin_port = htons(this->portNumber);
-    
-    //The third property is a struct with one property, an unsigned long, and it contains the host IP address. Server side, this will always be the current IP address of the machine. The symbolic constant INADDR_ANY gets this address.
-    this->serverAddress.sin_addr.s_addr = INADDR_ANY;
+    int enable = 1;
+    //This code tells the kernel that the port can be reused as long as there isn't an active socket listening there. This means that after the socket is closed the port can immediately be reused without giving an error
+    if (setsockopt(this->hostSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) == -1) {
+        throw std::runtime_error(std::string("ERROR setting port to reusable") + std::string(strerror(errno)));
+    }
     
     /* bind()
-     The bind() function connects a socket to an address, with three parameters.
-     Here it will connect the socket to the host at the proper port number.
+     The bind() function connects a socket to a local address, with three parameters.
+     Here it will connect the socket to the (local) host at the proper port number.
      
      The first argument is the socket, by its simple integer reference.
      
@@ -66,30 +93,40 @@ void ServerSocket::setSocket(int portNum) {
      
      This function can fail for multiple reasons. The most likely one is if the port is already in use.
      */
-    if (bind(this->hostSocket, (struct sockaddr *) &this->serverAddress, sizeof(this->serverAddress)) < 0)
-        throw std::runtime_error("ERROR binding socket to host");
+    if (bind(this->hostSocket, this->serverAddress.ai_addr, this->serverAddress.ai_addrlen) < 0)
+        throw std::runtime_error(std::string("ERROR binding socket to host: ") + std::string(strerror(errno)));
     
     /* listen()
      The listen() function listens for connections on the socket, with two arguments.
      
-     The first argument is the socket, by its simple integer reference.
+     The first argument is the socket, by its simple integer reference.=
      
-     The second argument is the size of the "backlog queue", or the number of connections that can be waiting as another connection is handled.
+     The second argument is the size of the "backlog queue", or the number of connections that can be waiting as another connection is handled. It basically is the number of connections that can wait before being accepted.
      
      This function cannot fail, as long as the socket is valid, so there is no error code.
      */
-    listen(this->hostSocket, MAX_NUMBER_OF_CONNECTIONS);
+    if (listen(this->hostSocket, MAX_NUMBER_OF_CONNECTIONS) < 0) {
+        throw std::runtime_error(std::string("ERROR listening for incoming connections") + std::string(strerror(errno)));
+    }
     
+    //Initialize activeConnections[] as false
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        this->activeConnections[a] = false;
+    }
+    
+    freeaddrinfo(serverAddressList); //Free the linked list now that we have the local host information
     this->setUp = true;
 }
 
 void ServerSocket::addClient() {
-    if (this->connectedClients >= MAX_NUMBER_OF_CONNECTIONS)
-        throw std::range_error("Cannot connect more than " + std::to_string(MAX_NUMBER_OF_CONNECTIONS) + " socekts");
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
     
-    //this->connectedClients represents the number of connected clients, and also the next open index of sockets
+    int nextIndex = this->getNextAvailableIndex();
     
-    this->clientAddressSizes[this->connectedClients] = sizeof(this->clientAddresses[this->connectedClients]);
+    if (nextIndex == -1) {
+        throw std::range_error("Cannot connect more than " + std::to_string(MAX_NUMBER_OF_CONNECTIONS) + " sockets");
+    }
     
     /* accept()
      The accept() function makes the process block until a connection is formed between the client and the server, with three arguments. It then wakes when the connection is successfully established.
@@ -102,96 +139,72 @@ void ServerSocket::addClient() {
      
      The return value is a socket, passed by a small integer reference.
      */
-    this->clientSockets[this->connectedClients] = accept(this->hostSocket, (struct sockaddr *) &this->clientAddresses[this->connectedClients], &this->clientAddressSizes[this->connectedClients]);
+    this->clientSockets[nextIndex] = accept(this->hostSocket, (struct sockaddr *)&this->clientAddresses[nextIndex], &this->clientAddressSizes[nextIndex]);
     
     //Checks for error with accepting
-    if (this->clientSockets[this->connectedClients] < 0)
-        throw std::runtime_error("ERROR accepting client");
+    if (this->clientSockets[nextIndex] < 0)
+        throw std::runtime_error(std::string("ERROR accepting client") + std::string(strerror(errno)));
     
-    this->connectedClients++;
+    this->activeConnections[nextIndex] = true;
 }
 
-void ServerSocket::send(std::string message, unsigned int clientIndex) {
+void ServerSocket::closeConnection(unsigned int clientIndex) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    if (clientIndex >= connectedClients)
+    if (clientIndex >= MAX_NUMBER_OF_CONNECTIONS || !this->activeConnections[clientIndex])
         throw std::range_error("Socket index uninitialized");
     
-    char buffer[message.length() + 1]; //This program will read characters from the connection into this buffer
+    close(this->clientSockets[clientIndex]);
     
-    //Initialize the buffer where received info is stored
-    bzero(buffer, message.length() + 1);
+    this->clientAddresses[clientIndex] = sockaddr_storage();
+    this->clientAddressSizes[clientIndex] = 0;
     
-    for (int stringIndex = 0; stringIndex < message.length(); stringIndex++) {
-        buffer[stringIndex] = message[stringIndex];
-    }
-    
-    //Add a terminating character
-    buffer[message.length()] = (char)4;
-    
-    long messageSize; //Stores the return value from the calls to read() and write() by holding the number of characters either read or written
-    
-    /* write()
-     The write() function will write a message to the client socket, with three arguments.
-     
-     The first argument is the reference for the client's socket.
-     
-     The second argument is the message.
-     
-     The third argument is the length of the message.
-     */
-    messageSize = write(this->clientSockets[clientIndex], buffer, strlen(buffer));
-    
-    //Check for errors writing the message
-    if (messageSize < 0)
-        throw std::runtime_error("ERROR writing to socket");
-    
-#ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host sent: \"" << message << "\"" << std::endl << std::endl;
-#endif
+    this->activeConnections[clientIndex] = false;
 }
 
-void ServerSocket::broadcast(std::string message) {
+void ServerSocket::send(const char* message, unsigned int clientIndex, bool throwErrorIfNotFullySent) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    char buffer[message.length() + 1]; //This program will read characters from the connection into this buffer
+    if (std::string(message) == "")
+        throw std::logic_error("No message to send");
     
-    //Initialize the buffer where received info is stored
-    bzero(buffer, message.length() + 1);
+    if (clientIndex >= MAX_NUMBER_OF_CONNECTIONS || !this->activeConnections[clientIndex])
+        throw std::range_error("Socket index uninitialized");
     
-    for (int stringIndex = 0; stringIndex < message.length(); stringIndex++) {
-        buffer[stringIndex] = message[stringIndex];
+    unsigned long messageLength = strlen(message);
+    
+    long messageSize = write(this->clientSockets[clientIndex], message, messageLength);
+    
+    if (messageSize < 0) {
+        throw std::runtime_error(std::string("ERROR sending message: ") + std::string(strerror(errno)));
+    } else if (messageSize < messageLength) {
+        if (throwErrorIfNotFullySent) { //Error sent only if optional parameter is manually set to true: if the message was too long to send all of it
+            throw std::runtime_error(std::string("ERROR message too long: only sent ") + std::to_string(messageSize) + std::string(" of ") + std::to_string(messageLength));
+        } else {
+            std::cout << "ERROR message too long: only sent " << messageSize << " of " << messageLength << std::endl;
+        }
     }
-    
-    //Add a terminating character
-    buffer[message.length()] = (char)4;
-    
-    /* write()
-     The write() function will write a message to the client socket, with three arguments.
-     
-     The first argument is the reference for the client's socket.
-     
-     The second argument is the message.
-     
-     The third argument is the length of the message.
-     */
-    for (int socket = 0; socket < this->connectedClients; socket++) {
-        
-        //Checks the return value from the calls to read() and write() by holding the number of characters either read or written. If less than 0, it was an error
-        if (write(this->clientSockets[socket], buffer, strlen(buffer)) < 0)
-            throw std::runtime_error("ERROR writing to socket number " + std::to_string(socket));
-    }
-    
-#ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host sent: \"" << message << "\"" << std::endl << std::endl;
-#endif
 }
 
-std::string ServerSocket::receive(unsigned int clientIndex) {
+void ServerSocket::broadcast(const char* message, bool throwErrorIfNotFullySent) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
+    
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        if (this->activeConnections[a]) {
+            this->send(message, a, throwErrorIfNotFullySent);
+        }
+    }
+}
+
+std::string ServerSocket::receive(unsigned int clientIndex, bool* socketClosed) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
+    if (clientIndex >= MAX_NUMBER_OF_CONNECTIONS || !this->activeConnections[clientIndex])
+        throw std::range_error("Socket index uninitialized");
         
     char buffer[MAXIMUM_SOCKET_MESSAGE_SIZE]; //This program will read characters from the connection into this buffer
     
@@ -209,50 +222,64 @@ std::string ServerSocket::receive(unsigned int clientIndex) {
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = read(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE - 1);
+    messageSize = read(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE);
     
     //Checks for errors reading from the socket
     if (messageSize < 0)
-        throw std::runtime_error("ERROR reading from socket");
+        throw std::runtime_error(std::string("ERROR reading from socket: ") + std::string(strerror(errno)));
     
-    std::string message;
-    
-    for (int iterator = 0; iterator < MAXIMUM_SOCKET_MESSAGE_SIZE; iterator++) {
-        if (buffer[iterator] == (char)4)
-            break;
-        else
-            message.push_back(buffer[iterator]);
+    if (socketClosed != nullptr && messageSize == 0) {
+        *socketClosed = true;
     }
     
-#ifdef SOCKET_CONSOLE_OUTPUT
-    std::cout << "Host received: \"" << message << "\"" << std::endl << std::endl;
-#endif
-    
-    //Return the received message to the console
-    return message;
+    return std::string(buffer, messageSize);
 }
 
-bool ServerSocket::allReceived(std::string messageToCompare) {
-    for (int a = 0; a < this->connectedClients; a++) {
-        if (this->receive(a) != messageToCompare)
-            return false;
+bool ServerSocket::allReceived(const char* messageToCompare) {
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        bool connectionClosed = false;
+        if (this->activeConnections[a] && this->receive(a, &connectionClosed) != messageToCompare)
+            if (connectionClosed) {
+                this->closeConnection(a);
+                return false;
+            }
     }
     return true;
 }
 
 unsigned int ServerSocket::numberOfClients() {
-    return this->connectedClients;
+    int connections = 0;
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        if (this->activeConnections[a]) {
+            connections++;
+        }
+    }
+    return connections;
 }
 
 bool ServerSocket::getSet() {
     return this->setUp;
 }
 
+//Private member functions
+
+int ServerSocket::getNextAvailableIndex() {
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        if (!this->activeConnections[a]) return a;
+    }
+    return -1;
+}
+
+//Destructor
+
 ServerSocket::~ServerSocket() {
     if (this->setUp) {
         //Properly terminate the sockets
-        for (int clientIndex = 0; clientIndex < this->connectedClients; clientIndex++)
-            close(this->clientSockets[clientIndex]);
+        for (int clientIndex = 0; clientIndex < MAX_NUMBER_OF_CONNECTIONS; clientIndex++) {
+            if (this->activeConnections[clientIndex]) {
+                close(this->clientSockets[clientIndex]);
+            }
+        }
         close(this->hostSocket);
     }
 }

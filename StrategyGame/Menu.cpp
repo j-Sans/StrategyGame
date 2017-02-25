@@ -137,7 +137,7 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
         if (*text == "Input host name") {
             *text = "";
         }
-        *text += '\'';
+        *text += keys[GLFW_KEY_LEFT_SHIFT] || keys[GLFW_KEY_RIGHT_SHIFT] ? '\"' : '\'';
         this->keysJustPressed[GLFW_KEY_APOSTROPHE] = true;
     } else if (!this->keys[GLFW_KEY_APOSTROPHE]) {
         this->keysJustPressed[GLFW_KEY_APOSTROPHE] = false;
@@ -160,6 +160,24 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     } else if (!this->keys[GLFW_KEY_MINUS]) {
         this->keysJustPressed[GLFW_KEY_MINUS] = false;
     }
+    if (this->keys[GLFW_KEY_PERIOD] && !this->keysJustPressed[GLFW_KEY_PERIOD]) {
+        if (*text == "Input host name") {
+            *text = "";
+        }
+        *text += keys[GLFW_KEY_LEFT_SHIFT] || keys[GLFW_KEY_RIGHT_SHIFT] ? '>' : '.';
+        this->keysJustPressed[GLFW_KEY_PERIOD] = true;
+    } else if (!this->keys[GLFW_KEY_PERIOD]) {
+        this->keysJustPressed[GLFW_KEY_PERIOD] = false;
+    }
+    if (this->keys[GLFW_KEY_COMMA] && !this->keysJustPressed[GLFW_KEY_COMMA]) {
+        if (*text == "Input host name") {
+            *text = "";
+        }
+        *text += keys[GLFW_KEY_LEFT_SHIFT] || keys[GLFW_KEY_RIGHT_SHIFT] ? '<' : ',';
+        this->keysJustPressed[GLFW_KEY_COMMA] = true;
+    } else if (!this->keys[GLFW_KEY_COMMA]) {
+        this->keysJustPressed[GLFW_KEY_COMMA] = false;
+    }
 
     
 }
@@ -171,7 +189,7 @@ void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket, std::st
         if (timeElapsed.count() > MAX_CONNECTION_TIME) break;
         
         try {
-            socket->setSocket(hostName, 3000);
+            socket->setSocket(hostName.c_str(), 3000);
         } catch (std::runtime_error) {
             continue; //Keep trying to connect, for 10 seconds
         }

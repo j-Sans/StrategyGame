@@ -10,6 +10,9 @@
 
 Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(gameBoard), socket(ServerSocket()) {
     this->socket.setSocket(portNum);
+    
+    std::cout << "Host name: " << this->socket.getHostName() << std::endl;
+    
     for (int a = 0; a < numberOfPlayers; a++) {
         this->socket.addClient();
         this->alivePlayers.push_back({true, true});
@@ -17,7 +20,7 @@ Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(g
     
     //Send to each player that player's number and the board
     for (int a = 0; a < numberOfPlayers; a++) {
-        this->socket.send(std::to_string(a) + "," + this->board.serialize(), a);
+        this->socket.send((std::to_string(a) + "," + this->board.serialize()).c_str(), a);
     }
     if (!this->receivedFromAll("initialDataReceived"))
         throw std::runtime_error("Initial data not received");
@@ -70,6 +73,7 @@ void Host::update() {
     if (currentFrame.count() - this->lastUpkeep.count() > Host::timeBetweenUpkeep) {
         this->board.regenerateEnergy();
         this->lastUpkeep = currentFrame;
+        
     }
     
     for (int a = 0; a < this->players.size(); a++) {
@@ -148,7 +152,9 @@ std::string Host::serialize() {
 void Host::processAction(std::string action, int playerNum) {
     if (!this->alivePlayers[playerNum].first) return; //If the player is dead, ignore any remaining actions.
     
-    if (action.find("move_creature_at_") != std::string::npos) {
+    if (action.find("no_updates") != std::string::npos) {
+        return;
+    } else if (action.find("move_creature_at_") != std::string::npos) {
         //Parse the destination tile from the string
         glm::ivec2 destination;
         destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
@@ -290,14 +296,14 @@ void Host::broadcast(std::string message) {
             continue; //Skip if the player disconnected;
         } else if (!this->alivePlayers[player].first) { //Test if the dead player is still connected
             try {
-                this->socket.send(message, player);
+                this->socket.send(message.c_str(), player);
             } catch (std::runtime_error) {
                 this->alivePlayers[player].second = false; //If the player didn't receive it, set that player to disconnected.
                 std::cout << "Player " << player << " (dead) didn't receive " << message << std::endl;
             }
         } else {
             try {
-                this->socket.send(message, player);
+                this->socket.send(message.c_str(), player);
             } catch (std::runtime_error) {
                 this->losePlayer(player); //If the player didn't receive it, that player disconnected. Remove that player.
                 this->alivePlayers[player].second = false;

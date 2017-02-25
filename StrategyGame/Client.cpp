@@ -61,7 +61,11 @@ void Client::render() {
         a = this->actionsForClientInfo.erase(a);
     }
     
-    this->socket->send(clientInfo);
+    if (clientInfo == "") {
+        clientInfo = "no_updates";
+    }
+    
+    this->socket->send(clientInfo.c_str());
     
     this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
     
