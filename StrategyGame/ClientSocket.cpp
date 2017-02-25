@@ -48,7 +48,7 @@ void ClientSocket::setSocket(std::string hostName, int portNum) {
     
     //Check for errors finding host
     if (this->server == NULL) {
-        std::runtime_error("ERROR, no such host");
+        throw std::runtime_error("ERROR, no such host");
     }
     
     /* bzero()
