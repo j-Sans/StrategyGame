@@ -22,6 +22,11 @@
 
 #define MAX_CONNECTION_TIME 5.0
 
+#define WAITING_FOR_INPUT 0
+#define PLAY_AS_CLIENT 1
+#define PLAY_AS_HOST 2
+#define HOST_GAME 3
+
 class Menu {
 public:
     //Constructor
@@ -51,10 +56,17 @@ public:
      */
     bool getShouldWindowClose();
     
+    /*!
+     * @return An int macro representing the status of the menu. Used to indicate to main() when to move on.
+     */
+    int getStatus();
+    
 private:
     Window* window;
     ClientSocket *socket;
     Interface interface;
+    
+    int status = WAITING_FOR_INPUT;
     
     //Mouse info
     bool* mouseUp;
@@ -90,6 +102,13 @@ private:
      * @param textboxDefaultStr The default string that should be displayed if there is no writing.
      */
     void updateTextbox(std::string textboxDefaultStr);
+    
+    /*!
+     * A function to connect to a host with a given name.
+     *
+     * @param hostName The name of the host, as a std::string.
+     */
+    void connectToHost(std::string hostName);
     
     /*!
      * A function to be run by an std::thread that will attempt to connect to a host.

@@ -38,7 +38,9 @@ Menu::Menu(Window* w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* 
     
     this->interface.set(&this->textureShader, &this->displayBarShader, this->window, framebufferSize.x * 0.4, framebufferSize.y * 0.2, framebufferSize.x * 0.2, framebufferSize.y * 0.6, interfaceTex);
     
-    this->interface.addButton("start", "Play");
+    this->interface.addButton("run_client", "Play as client");
+    
+    this->interface.addButton("run_both", "Play as host");
 }
 
 void Menu::render() {
@@ -62,6 +64,7 @@ void Menu::render() {
     
     if (this->connected) {
         this->connecting = false;
+        this->status = PLAY_AS_CLIENT;
     }
     
     if (this->failedToConnect) {
@@ -72,6 +75,10 @@ void Menu::render() {
         this->failedToConnect = false;
     }
     
+    if (this->status == PLAY_AS_HOST && !this->connecting) {
+        this->connectToHost("localhost");
+    }
+    
     this->window->updateScreen();
 }
 
@@ -79,20 +86,31 @@ bool Menu::getShouldWindowClose() {
     return this->window->shouldClose();
 }
 
+int Menu::getStatus() {
+    return this->status;
+}
+
 void Menu::processAction(std::string action) {
-    if (action == "start") {
-        this->interface.removePropertyLayer();
+    if (action == "run_client") {
+        this->interface.removePropertyLayer(); //Remove "Play as client"
+        this->interface.removePropertyLayer(); //Remove "Play as host"
         this->interface.addBox("Input host name");
         this->textbox = &this->interface.boxes.back();
         this->interface.addButton("find_host", "Find host");
+    } else if (action == "run_both") {
+        this->status = PLAY_AS_HOST;
+        // main() will start a host thread, and then render() will connect to it
     } else if (action == "find_host") {
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
-        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket, this->textbox->text);
-        this->connecting = true;
+        this->connectToHost(this->textbox->text);
         this->interface.removePropertyLayer();
         this->interface.addBox("Looking for host");
+    } else if (action.find("connect_to_host:") != std::string::npos) {
+        std::string hostName = action.substr(16); //The string after "connect_to_host:"
+        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket, hostName);
+        this->connecting = true;
     }
 }
 
@@ -187,8 +205,10 @@ void Menu::updateTextbox(std::string textboxDefaultStr) {
     } else if (!this->keys[GLFW_KEY_SEMICOLON]) {
         this->keysJustPressed[GLFW_KEY_SEMICOLON] = false;
     }
+}
 
-    
+void Menu::connectToHost(std::string hostName) {
+    this->processAction("connect_to_host:" + hostName);
 }
 
 void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket, std::string hostName) {

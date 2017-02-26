@@ -59,10 +59,14 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 //Functions
 void updateMouse();
+void host(int numPlayers);
+
 
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
+    
+    std::thread hostThread;
     
     bool repeat = true;
     while (repeat) {
@@ -81,12 +85,17 @@ int main(int argc, const char * argv[]) {
             while (true) {
                 ClientSocket socket;
                 Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
-            
+                
+                bool runningHost = false;
                 while (!M.getShouldWindowClose()) {
                     updateMouse();
                     M.render();
-                    if (socket.getSet()) {
+                    int action = M.getStatus();
+                    if (action == PLAY_AS_CLIENT) {
                         break;
+                    } else if (action == PLAY_AS_HOST && !runningHost) {
+                        hostThread = std::thread(host, 1);
+                        runningHost = true;
                     }
                 }
                 
@@ -172,7 +181,9 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-
+    
+    hostThread.join();
+    
     return 0;
 }
 
@@ -184,6 +195,46 @@ void updateMouse() {
     } else {
         mouseDown = false;
     }
+}
+
+void host(int numPlayers) {
+    //Gameboard:
+    std::vector<std::vector<Tile> > board;
+    for (GLint x = 0; x < BOARD_WIDTH; x++) {
+        std::vector<Tile> row;
+        for (GLint y = 0; y < BOARD_WIDTH; y++) {
+            if ((x == 2 && y == BOARD_WIDTH - 1 - 2) || (x == 3 && y == BOARD_WIDTH - 1 - 3) || (x == 4 && y == BOARD_WIDTH - 1 - 4) || (x == BOARD_WIDTH - 1 - 2 && y == 2) || (x == BOARD_WIDTH - 1 - 3 && y == 3) || (x == BOARD_WIDTH - 1 - 4 && y == 4))
+                row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
+            else if (x >= y - 1 && x <= y + 1)
+                row.push_back(Tile(FOREST_TERRAIN, x, y));
+            else
+                row.push_back(Tile(OPEN_TERRAIN, x, y));
+        }
+        board.push_back(row);
+    }
+    
+    Host H(numPlayers, 3000, Board(board));
+    
+    //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
+    
+    H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 30, NORTH, 0));
+    H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
+    H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
+    
+    H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
+    
+    Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
+    player0Home.deathAction = "player_lose_0";
+    Building player1Home(BOARD_WIDTH - 1, 0, 1, 1);
+    player1Home.deathAction = "player_lose_1";
+    
+    H.board.setBuilding(player0Home);
+    H.board.setBuilding(player1Home);
+    
+    while (true)
+        H.update();
 }
 
 

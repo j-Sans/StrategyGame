@@ -35,11 +35,11 @@ public:
     //Static functions
     
     /*!
-     * throws an error if the gethostname() from the standard C library fails
+     * Returns the name of the host computer. Throws an error if the gethostname() from the standard C library fails.
      *
      * @return The name of the host.
      */
-    std::string getHostName();
+    static std::string getHostName();
     
     //Public member functions
     
