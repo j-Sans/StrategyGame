@@ -23,9 +23,10 @@
 #define MAX_CONNECTION_TIME 5.0
 
 #define WAITING_FOR_INPUT 0
-#define PLAY_AS_CLIENT 1
+#define READY_TO_PLAY 1
 #define PLAY_AS_HOST 2
 #define HOST_GAME 3
+#define ADD_PLAYER
 
 class Menu {
 public:
@@ -35,14 +36,9 @@ public:
     //Public properties
     
     /*!
-     * The set width of the window. Due to high screen resolution, the final window may not actually be this many pixels wide.
+     * An int holding the number of clients connected. It is only used when the client is also hosting. It is updated by main().
      */
-//    const GLuint windowWidth = 800;
-    
-    /*!
-     * The set height of the window. Due to high screen resolution, the final window may not actually be this many pixels high.
-     */
-//    const GLuint windowHeight = 600;
+    unsigned int numberOfConnections = 0;
     
     //Public member functions
     
@@ -57,6 +53,8 @@ public:
     bool getShouldWindowClose();
     
     /*!
+     * Gets the status. Also ... ***ADD_PLAYER SHOULD BE CHANGED WHEN READ***
+     *
      * @return An int macro representing the status of the menu. Used to indicate to main() when to move on.
      */
     int getStatus();
@@ -67,6 +65,8 @@ private:
     Interface interface;
     
     int status = WAITING_FOR_INPUT;
+    
+    bool runningHost = false;
     
     //Mouse info
     bool* mouseUp;

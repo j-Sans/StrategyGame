@@ -67,6 +67,7 @@ int main(int argc, const char * argv[]) {
     srand((int)std::time(NULL));
     
     std::thread hostThread;
+    Host* hostPointer = nullptr;
     
     bool repeat = true;
     while (repeat) {
@@ -91,11 +92,19 @@ int main(int argc, const char * argv[]) {
                     updateMouse();
                     M.render();
                     int action = M.getStatus();
-                    if (action == PLAY_AS_CLIENT) {
+                    if (action == READY_TO_PLAY) {
+                        if (runningHost) {
+                            hostPointer->begin();
+                        }
                         break;
-                    } else if (action == PLAY_AS_HOST && !runningHost) {
-                        hostThread = std::thread(host, 1);
-                        runningHost = true;
+                    } else if (action == PLAY_AS_HOST) {
+                        if (!runningHost) {
+                            hostThread = std::thread(host, 1, hostPointer);
+                            runningHost = true;
+                        }
+                        if (hostPointer != nullptr) {
+                            M.numberOfConnections = hostPointer->getNumberPlayers();
+                        }
                     }
                 }
                 
@@ -197,7 +206,7 @@ void updateMouse() {
     }
 }
 
-void host(int numPlayers) {
+void host(int numPlayers, Host* hostPointer) {
     //Gameboard:
     std::vector<std::vector<Tile> > board;
     for (GLint x = 0; x < BOARD_WIDTH; x++) {
@@ -214,6 +223,8 @@ void host(int numPlayers) {
     }
     
     Host H(numPlayers, 3000, Board(board));
+    
+    hostPointer = &H;
     
     //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
     

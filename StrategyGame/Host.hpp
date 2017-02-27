@@ -26,11 +26,11 @@ public:
     /*!
      * The host of the game, containing the players and the board.
      *
-     * @param numberOfPlayers The number of players with which to initialize the game.
      * @param portNum The port on this system (the server side) where to start taking connections. Succeeding ports may also be used, depending on implementation and number of players.
      * @param gameBoard A board to be used as the game board. Passed by value, so the game board will actually be stored within the host class.
+     * @param numberOfPlayers An optional parameter indicating the number of players with which to initialize the game. If unset it is set as 0. Otherwise (if numberOfPlayers != 0) then Host will automatically begin.
      */
-    Host(unsigned int numberOfPlayers, int portNum, Board gameBoard);
+    Host(int portNum, Board gameBoard, unsigned int numberOfPlayers = 0);
     
     //Public properties
     Board board;
@@ -42,9 +42,24 @@ public:
     static std::string storeVectorOfFloats(std::vector<float> vec);
     
     /*!
+     * Adds a player to the game and initializes the connection socket with that player.
+     */
+    void addPlayer();
+    
+    /*!
+     * Begin the clock for the game. Automatically called by constructor if numberOfPlayers != 0.
+     */
+    void begin();
+    
+    /*!
      * Updates the players and the game based on input from clients. This should be called every frame.
      */
     void update();
+    
+    /*!
+     * @return The number of players currently connected.
+     */
+    unsigned int getNumberPlayers();
     
     /*!
      * Serialize this object as a string that can be sent through sockets.

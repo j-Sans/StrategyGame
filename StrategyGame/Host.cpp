@@ -8,52 +8,58 @@
 
 #include "Host.hpp"
 
-Host::Host(unsigned int numberOfPlayers, int portNum, Board gameBoard) : board(gameBoard), socket(ServerSocket()) {
+Host::Host(int portNum, Board gameBoard, unsigned int numberOfPlayers) : board(gameBoard), socket(ServerSocket()) {
     this->socket.setSocket(portNum);
-    
     std::cout << "Host name: " << this->socket.getHostName() << std::endl;
     
     for (int a = 0; a < numberOfPlayers; a++) {
-        this->socket.addClient();
-        this->alivePlayers.push_back({true, true});
+        this->addPlayer();
     }
     
-    //Send to each player that player's number and the board
-    for (int a = 0; a < numberOfPlayers; a++) {
-        this->socket.send((std::to_string(a) + "," + this->board.serialize()).c_str(), a);
+    if (numberOfPlayers > 0) {
+        this->begin();
     }
-    if (!this->receivedFromAll("initialDataReceived"))
+}
+
+std::string Host::storeVectorOfInts(std::vector<int> vec) {
+    std::string str;
+    
+    for (int a = 0; a < vec.size(); a++) {
+        str += std::to_string(vec[a]) + ',';
+    }
+    
+    return str;
+}
+
+std::string Host::storeVectorOfFloats(std::vector<float> vec) {
+    std::string str;
+    
+    for (int a = 0; a < vec.size(); a++) {
+        str += std::to_string(vec[a]) + ',';
+    }
+    
+    return str;
+}
+
+void Host::addPlayer() {
+    this->socket.addClient();
+    this->alivePlayers.push_back({true, true});
+    
+    int playerNum = (int)alivePlayers.size() - 1;
+    
+    this->socket.send((std::to_string(playerNum) + "," + this->board.serialize()).c_str(), playerNum);
+    
+    if (this->socket.receive(playerNum) != "initialDataReceived") {
         throw std::runtime_error("Initial data not received");
-    
-    //Initialize each player with the board and that player's number
-    int playerNum = 0;
-    while (this->players.size() < numberOfPlayers) {
-        this->players.push_back(Player(&board, playerNum++));
     }
     
+    this->players.push_back(Player(&this->board, playerNum));
+}
+
+void Host::begin() {
     //Initialize time
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
-}
-
-std::string Host::Host::storeVectorOfInts(std::vector<int> vec) {
-    std::string str;
-    
-    for (int a = 0; a < vec.size(); a++) {
-        str += std::to_string(vec[a]) + ',';
-    }
-    
-    return str;
-}
-
-std::string Host::Host::storeVectorOfFloats(std::vector<float> vec) {
-    std::string str;
-    
-    for (int a = 0; a < vec.size(); a++) {
-        str += std::to_string(vec[a]) + ',';
-    }
-    
-    return str;
 }
 
 void Host::update() {
@@ -137,6 +143,10 @@ void Host::update() {
     
     //Set the tiem of the previous frame to currentTime
     this->lastFrame = currentFrame;
+}
+
+unsigned int Host::getNumberPlayers() {
+    return this->players.size();
 }
 
 std::string Host::serialize() {

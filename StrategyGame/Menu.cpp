@@ -64,7 +64,9 @@ void Menu::render() {
     
     if (this->connected) {
         this->connecting = false;
-        this->status = PLAY_AS_CLIENT;
+        if (!runningHost) {
+            this->status = READY_TO_PLAY;
+        }
     }
     
     if (this->failedToConnect) {
@@ -91,23 +93,30 @@ int Menu::getStatus() {
 }
 
 void Menu::processAction(std::string action) {
-    if (action == "run_client") {
+    if (action == "run_client") { //Run as just a client
         this->interface.removePropertyLayer(); //Remove "Play as client"
         this->interface.removePropertyLayer(); //Remove "Play as host"
         this->interface.addBox("Input host name");
         this->textbox = &this->interface.boxes.back();
         this->interface.addButton("find_host", "Find host");
-    } else if (action == "run_both") {
+        
+    } else if (action == "run_both") { //Run as both a host and a client
+        this->runningHost = true;
         this->status = PLAY_AS_HOST;
-        // main() will start a host thread, and then render() will connect to it
-    } else if (action == "find_host") {
+        // main() will start a host thread, and then Menu::render() will connect to it
+        
+        this->interface.removePropertyLayer(); //Remove "Play as client"
+        this->interface.removePropertyLayer(); //Remove "Play as host"
+        
+    } else if (action == "find_host") { //Look for a host based on information from the textbox
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
         }
         this->connectToHost(this->textbox->text);
         this->interface.removePropertyLayer();
         this->interface.addBox("Looking for host");
-    } else if (action.find("connect_to_host:") != std::string::npos) {
+        
+    } else if (action.find("connect_to_host:") != std::string::npos) { //Connect to a host
         std::string hostName = action.substr(16); //The string after "connect_to_host:"
         this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket, hostName);
         this->connecting = true;
