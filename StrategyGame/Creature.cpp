@@ -131,11 +131,11 @@ void Creature::setLocation(unsigned int x, unsigned int y) {
     this->yVal = y;
 }
 
-const Race Creature::race() {
+Race Creature::race() const {
     return this->raceVal;
 }
 
-const std::string Creature::raceString() {
+std::string Creature::raceString() const {
     if (this->raceVal == Human)
         return "Human";
     else if (this->raceVal == Elf)
@@ -154,43 +154,43 @@ const std::string Creature::raceString() {
         return "Other";
 }
 
-const unsigned int Creature::maxEnergy() {
+unsigned int Creature::maxEnergy() const {
     return this->maxEnergyVal;
 }
 
-const unsigned int Creature::attack() {
+unsigned int Creature::attack() const {
     return this->attackVal;
 }
 
-const AttackStyle Creature::attackStyle() {
+AttackStyle Creature::attackStyle() const {
     return this->attackStyleVal;
 }
 
-const unsigned int Creature::vision() {
+unsigned int Creature::vision() const {
     return this->visionVal;
 }
 
-const unsigned int Creature::range() {
+unsigned int Creature::range() const {
     return this->rangeVal;
 }
 
-const bool Creature::melee() {
+bool Creature::melee() const {
     return this->rangeVal > 1 ? false : true;
 }
 
-const float Creature::energy() {
+float Creature::energy() const {
     return this->energyVal;
 }
 
-const int Creature::direction() {
+int Creature::direction() const {
     return this->directionVal;
 }
 
-const float Creature::offset() {
+float Creature::offset() const {
     return this->offsetVal;
 }
 
-const std::string Creature::serialize() {
+std::string Creature::serialize() const {
     std::string str = "Creature:" + std::to_string(this->controllerVal) + ",";
     if (this->raceVal == Human) {
         str += "Human,";

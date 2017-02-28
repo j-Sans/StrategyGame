@@ -346,7 +346,7 @@ void Board::resetEnergy(unsigned int player) {
     }
 }
 
-void Board::setCreature(Creature creature) {
+void Board::setCreature(const Creature& creature) {
     unsigned int x = creature.x();
     unsigned int y = creature.y();
     if (x >= this->gameBoard.size()) {
@@ -398,7 +398,7 @@ std::string Board::deleteCreature(unsigned int x, unsigned int y) {
     //If no creature is deleted in the loop, then there was no creature at that point, which is also fine.
 }
 
-void Board::setBuilding(Building building) {
+void Board::setBuilding(const Building& building) {
     unsigned int x = building.x();
     unsigned int y = building.y();
     if (x >= this->gameBoard.size()) {
@@ -479,7 +479,7 @@ void Board::setDamage(unsigned int x, unsigned int y, unsigned int damage, float
     this->gameBoard[x][y].setDamage(damage, time);
 }
 
-const unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
+unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) const {
     if (x1 >= this->gameBoard.size()) {
         throw std::range_error("X1 out of range");
     }
@@ -504,7 +504,7 @@ const unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsign
     return xDisplacement + yDisplacement;
 }
 
-const float Board::getTerrainMovementCost(const Tile& origin, const Tile& destination) {
+float Board::getTerrainMovementCost(const Tile& origin, const Tile& destination) const {
     
     /*if (origin.creature().characteristics().find(TerrainIgnoring) != std::string::npos) {
      return 1;
@@ -585,7 +585,7 @@ const float Board::getTerrainMovementCost(const Tile& origin, const Tile& destin
 
 
 //The cost is in range, it deducts cost from range.
-const float Board::getTerrainAttackCost (const Tile& origin, const Tile& destination) {
+float Board::getTerrainAttackCost (const Tile& origin, const Tile& destination) const {
     
     if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
         return 1;
@@ -600,7 +600,7 @@ const float Board::getTerrainAttackCost (const Tile& origin, const Tile& destina
 }
 
 //The cost is in range, it deducts cost from range.
-const float Board::getTerrainVisionCost (const Tile& origin, const Tile& destination) {
+float Board::getTerrainVisionCost (const Tile& origin, const Tile& destination) const {
     if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
         return 1;
     }
@@ -649,7 +649,7 @@ const float Board::getTerrainVisionCost (const Tile& origin, const Tile& destina
 //There needs to be a combat calculator that shows you the attack (after modifiers) and health of attacker and defender when you mouse over the tile of a specific attack.
 
 //Calculate missing HP debuff for combat
-const float Board::calculateWeaknessDebuff(const Tile& combatTile) {
+float Board::calculateWeaknessDebuff(const Tile& combatTile) const {
     float debuff = -0.5 * (1.0 - (((float)(combatTile.creature()->health())) / (float)(combatTile.creature()->maxHealth())));
 #ifdef COMBAT_CONSOLE_OUTPUT
     std::cout << "Injury debuff: " << debuff << '\n';
@@ -658,7 +658,7 @@ const float Board::calculateWeaknessDebuff(const Tile& combatTile) {
 };
 
 //Calculate flanking bonus for melee combat
-const float Board::calculateFlankingBonus(const Tile& attacker, const Tile& defender) {
+float Board::calculateFlankingBonus(const Tile& attacker, const Tile& defender) const {
     //    int adjacentEnemies = 0;
     
     //North
@@ -672,7 +672,7 @@ const float Board::calculateFlankingBonus(const Tile& attacker, const Tile& defe
 };
 
 //Calculate terrain modifier for combat
-const float Board::calculateTerrainModifier(const Tile^ defender) {
+float Board::calculateTerrainModifier(const Tile& defender) const {
     if (defender.terrain() ==  OPEN_TERRAIN) {
         return 0.00;
     }
@@ -697,7 +697,7 @@ const float Board::calculateTerrainModifier(const Tile^ defender) {
     return 0.00;
 };
 
-const Tile Board::get(unsigned int x, unsigned int y) {
+Tile Board::get(unsigned int x, unsigned int y) const {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
     }
@@ -708,7 +708,7 @@ const Tile Board::get(unsigned int x, unsigned int y) {
     return this->gameBoard[x][y];
 }
 
-const bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) const {
     if (!this->validTile(destination)) {
         throw std::range_error("Invalid destination");
     } else if (!this->validTile(currentLoc)) {
@@ -735,7 +735,7 @@ const bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentL
     return false;
 }
 
-const bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) const {
     if (!this->validTile(destination)) {
         throw std::range_error("Invalid destination");
     } else if (!this->validTile(currentLoc)) {
@@ -762,7 +762,7 @@ const bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     return false;
 }
 
-const std::vector<Tile> Board::getReachableTiles(const Tile& creatureTile) {
+std::vector<Tile> Board::getReachableTiles(const Tile& creatureTile) const {
     //Set the selected tile as the one inputted
     //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
     
@@ -839,7 +839,7 @@ const std::vector<Tile> Board::getReachableTiles(const Tile& creatureTile) {
 
 
 //This function needs to be reworked for longer ranges. Perhaps, for each tile, check if there is a blocking obstacle in the way. Draw a line from origin to attack point, if it intersects with the boundaries of an obstacle the attack is not possible. Currently, projectiles can navigate around obstacles.
-const std::vector<Tile> Board::getAttackableTiles(const Tile& creatureTile) {
+std::vector<Tile> Board::getAttackableTiles(const Tile& creatureTile) const {
     if (creatureTile.creature() == nullptr) {
         std::vector<Tile> emptyTileVector;
         return emptyTileVector;
@@ -983,7 +983,7 @@ const std::vector<Tile> Board::getAttackableTiles(const Tile& creatureTile) {
      */
 }
 
-const std::vector<Tile> Board::getVisibleTiles(const Tile& creatureTile) {
+std::vector<Tile> Board::getVisibleTiles(const Tile& creatureTile) const {
     if (creatureTile.creature() == nullptr) {
         std::vector<Tile> emptyTileVector;
         return emptyTileVector;
@@ -1062,22 +1062,22 @@ const std::vector<Tile> Board::getVisibleTiles(const Tile& creatureTile) {
  
  }*/
 
-const bool Board::validTile(glm::ivec2 tilePos) {
+bool Board::validTile(glm::ivec2 tilePos) const {
     if (tilePos.x >= 0 && tilePos.x < this->width() && tilePos.y >= 0 && tilePos.y < this->height(tilePos.x))
         return true;
     else
         return false;
 }
 
-const unsigned int Board::width() {
+unsigned int Board::width() const {
     return (unsigned int)this->gameBoard.size();
 }
 
-const unsigned int Board::height(unsigned int x) {
+unsigned int Board::height(unsigned int x) const {
     return (unsigned int)this->gameBoard[x].size();
 }
 
-const std::string Board::serialize() {
+std::string Board::serialize() const {
     std::string str = "Board:" + std::to_string(this->gameBoard.size()) + ",";
     for (int x = 0; x < this->gameBoard.size(); x++) {
         str += std::to_string(this->gameBoard[x].size()) + ",";

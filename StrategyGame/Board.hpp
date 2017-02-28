@@ -166,25 +166,25 @@ public:
      *
      * @return The distance (in taxicab geometry) from one tile to another.
      */
-    const unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
+    unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) const;
     
     //Terrain Costs of Movement
-    const float getTerrainMovementCost(const Tile& origin, const Tile& destination);
+    float getTerrainMovementCost(const Tile& origin, const Tile& destination) const;
     
     //Terrain Costs of Attack
-    const float getTerrainAttackCost (const Tile& origin, const Tile& destination);
+    float getTerrainAttackCost (const Tile& origin, const Tile& destination) const;
     
     //Terrain Costs of Vision
-    const float getTerrainVisionCost (const Tile& origin, const Tile& destination);
+    float getTerrainVisionCost (const Tile& origin, const Tile& destination) const;
     
     //Calculate missing HP debuff for combat
-    const float calculateWeaknessDebuff(const Tile& combatTile);
+    float calculateWeaknessDebuff(const Tile& combatTile) const;
     
     //Calculate flanking bonus for combat
-    const float calculateFlankingBonus(const Tile& attacker, const Tile& defender);
+    float calculateFlankingBonus(const Tile& attacker, const Tile& defender) const;
     
     //Calculate terrain modifier for combat
-    const float calculateTerrainModifier(const Tile& defender);
+    float calculateTerrainModifier(const Tile& defender) const;
     
     /*!
      * Get the tile at the spot (x,y) from the board.
@@ -195,7 +195,7 @@ public:
      *
      * @return The tile object at this location in the board.
      */
-    const Tile get(unsigned int x, unsigned int y);
+    Tile get(unsigned int x, unsigned int y) const;
     
     /*!
      * A function to check the validity of tile coordinates.
@@ -204,19 +204,19 @@ public:
      *
      * @return True if the given location exists on the board, false otherwise.
      */
-    const bool validTile(glm::ivec2 tilePos);
+    bool validTile(glm::ivec2 tilePos) const;
     
     /*!
      * @return The x-side width of the board.
      */
-    const unsigned int width();
+    unsigned int width() const;
     
     /*!
      * @param x The column x coordinate from which to get the size.
      *
      * @return The y-side height of the board.
      */
-    const unsigned int height(unsigned int x);
+    unsigned int height(unsigned int x) const;
     
     /*!
      * A function to check if a creature can be moved to the destination from its current location. An invalid_argument exception will be thrown if there is no creature, and a range_error if either set of coordinates is not on the board.
@@ -226,7 +226,7 @@ public:
      *
      * @return Whether the creature is able to move there.
      */
-    const bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) const;
     
     /*!
      * A function to check if a creature can attack the destination from its current location. An invalid_argument exception will be thrown if there is no creature at either destination or the current location, a range_error if either set of coordinates is not on the board, and a logic_error if the creature has no energy.
@@ -236,7 +236,7 @@ public:
      *
      * @return Whether the creature is able to attack.
      */
-    const bool attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    bool attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) const;
     
     /*!
      * A function that gets all of the tiles that a creature can reach.
@@ -245,7 +245,7 @@ public:
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be reached.
      */
-    const std::vector<Tile> getReachableTiles(const Tile& creatureTile);
+    std::vector<Tile> getReachableTiles(const Tile& creatureTile) const;
     
     /*!
      * A function that gets all of the tiles that a creature can attack.
@@ -254,7 +254,7 @@ public:
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
      */
-    const std::vector<Tile> getAttackableTiles(const Tile& creatureTile);
+    std::vector<Tile> getAttackableTiles(const Tile& creatureTile) const;
     
     /*!
      * A function that gets all of the tiles that a creature can see.
@@ -264,21 +264,21 @@ public:
      * @return An std::vector of Tile objects containing all of the tiles that can be seen.
      */
     
-    const std::vector<Tile> getVisibleTiles(const Tile& creatureTile);
+    std::vector<Tile> getVisibleTiles(const Tile& creatureTile) const;
     
     /*!
      * A function that gets all of the tiles that a player can see
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be seen.
      */
-    const std::vector<Tile> getAllVisibleTiles();
+    std::vector<Tile> getAllVisibleTiles() const;
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    const std::string serialize();
+    std::string serialize() const;
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

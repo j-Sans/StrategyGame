@@ -93,75 +93,74 @@ public:
     /*!
      * @return The x position of the tile in the board.
      */
-    const unsigned int x();
+    unsigned int x() const;
     
     /*!
      * @return The y position of the tile in the board.
      */
-    const unsigned int y();
+    unsigned int y() const;
     
     /*!
      * @return A pointer to the creature at this tile.
      */
-    const Creature* creature();
+    Creature* creature() const;
     
     /*!
      * @return A pointer to the building at this tile.
      */
-    const Building* building();
+    Building* building() const;
     
     /*!
      * @return The terrain type of this tile.
      */
-    const unsigned int terrain();
+    unsigned int terrain() const;
     
     /*!
      * @return A boolean representing if there is a creature on this tile currently.
      */
-    const bool occupied();
+    bool occupied() const;
     
     /*!
      * @return The type of the creature, indicating which texture to use to the openGL VBO. Currently returns the basic creature if there is any creature.
      */
-    const unsigned int creatureType();
+    unsigned int creatureType() const;
     
     /*!
      * @return The type of the building, indicating which texture to use to the openGL VBO. Currently returns the basic building if there is any building.
      */
-    const unsigned int buildingType();
+    unsigned int buildingType() const;
     
     /*!
      * @return A boolean representing whether the creature would be able to go through this tile.
      */
-    const bool passableByCreature(const Creature& creature);
+    bool passableByCreature(const Creature& creature) const;
     
     /*!
      * @return A boolean representing whether an attack style would be able to go through this tile. (arrows, fireballs, terrain-ignoring projectiles etc.)
      */
-    const bool passableByAttackStyle(const Creature& creature);
+    bool passableByAttackStyle(const Creature& creature) const;
     
     /*!
      * @return A boolean representing whether a creature can see through this tile.
      */
-    
-    const bool passableByVision(const Creature& creature);
+    bool passableByVision(const Creature& creature) const;
     
     /*!
      * @return The damage amount at this tile.
      */
-    const unsigned int damage();
+    unsigned int damage() const;
     
     /*!
      * @return The time the damage was added to this tile.
      */
-    const float timeOfDamage();
+    float timeOfDamage() const;
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    const std::string serialize();
+    std::string serialize() const;
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

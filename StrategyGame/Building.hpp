@@ -45,7 +45,7 @@ public:
      *
      * @return The serialized string.
      */
-    const std::string serialize();
+    std::string serialize() const;
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

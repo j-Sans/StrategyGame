@@ -152,64 +152,64 @@ public:
     /*!
      * @return The race of this creature.
      */
-    const Race race();
+    Race race() const;
     
     /*!
      * @return The race of this creature, in the form of an std::string.
      */
-    const std::string raceString();
+    std::string raceString() const;
     
     /*!
      * @return The maximum energy (which is the number of action points including movement) of this creature.
      */
-    const unsigned int maxEnergy();
+    unsigned int maxEnergy() const;
     
     /*!
      * @return The attack stat of this creature.
      */
-    const unsigned int attack();
+    unsigned int attack() const;
     
     /*!
      * @return The attack style of this creature.
      */
-    const AttackStyle attackStyle();
+    AttackStyle attackStyle() const;
 
     /*!
      * @return The vision radius of this creature.
      */
-    const unsigned int vision();
+    unsigned int vision() const;
     
     /*!
      * @return The attack range of this creature.
      */
-    const unsigned int range();
+    unsigned int range() const;
     
     /*!
      * @return The combat type (if it is melee versus ranged) of this creature.
      */
-    const bool melee();
+    bool melee() const;
     
     /*!
      * @return The remaining action points of this creature.
      */
-    const float energy();
+    float energy() const;
     
     /*!
      * @return The direction the creature is facing, as a macro (int). Includes: NORTH, EAST, SOUTH, and WEST.
      */
-    const int direction();
+    int direction() const;
     
     /*!
      * @return The offset of the creature from the center of its tile.
      */
-    const float offset();
+    float offset() const;
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    const std::string serialize();
+    std::string serialize() const;
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

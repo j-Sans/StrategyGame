@@ -38,32 +38,32 @@ void Tile::setDamage(unsigned int damage, float time) {
     this->damageHitTime = time;
 }
 
-const unsigned int Tile::x() {
+unsigned int Tile::x() const {
     return this->tileX;
 }
 
-const unsigned int Tile::y() {
+unsigned int Tile::y() const {
     return this->tileY;
 }
 
-const Creature* Tile::creature() {
+Creature* Tile::creature() const {
     return this->tileCreature;
 }
 
-const Building* Tile::building() {
+Building* Tile::building() const {
     return this->tileBuilding;
 }
 
-const unsigned int Tile::terrain() {
+unsigned int Tile::terrain() const {
     return this->tileTerrain;
 }
 
-const bool Tile::occupied() {
+bool Tile::occupied() const {
     return this->tileCreature != nullptr ? true : this->tileBuilding ? true : false;
 }
 
 //Currently this returns the basic stick figure creature whenever there is any creature.
-const unsigned int Tile::creatureType() {
+unsigned int Tile::creatureType() const {
     if (this->tileCreature == nullptr) {
         return NO_CREATURE;
     } else {
@@ -72,7 +72,7 @@ const unsigned int Tile::creatureType() {
 }
 
 //Currently this returns the basic tower building whenever there is any building.
-const unsigned int Tile::buildingType() {
+unsigned int Tile::buildingType() const {
     if (this->tileBuilding == nullptr) {
         return NO_BUILDING;
     } else {
@@ -80,7 +80,7 @@ const unsigned int Tile::buildingType() {
     }
 }
 
-const bool Tile::passableByCreature(const Creature& creature) {
+bool Tile::passableByCreature(const Creature& creature) const {
     //Mountains are not passable (except by dwarves)
     if (this->tileTerrain == MOUNTAIN_TERRAIN && creature.race() != Dwarf) {
         return false;
@@ -100,7 +100,7 @@ const bool Tile::passableByCreature(const Creature& creature) {
     return true;
 }
 
-const bool Tile::passableByAttackStyle(const Creature& creature) {
+bool Tile::passableByAttackStyle(const Creature& creature) const {
     //Mountains are not passable (except by terrain ignoring spells)
     if (this->tileTerrain == MOUNTAIN_TERRAIN) {
         if (creature.attackStyle() != TerrainIgnoring) {
@@ -129,20 +129,20 @@ const bool Tile::passableByAttackStyle(const Creature& creature) {
     return true;
 }
 
-const bool Tile::passableByVision(const Creature& creature) {
+bool Tile::passableByVision(const Creature& creature) const {
     //This function will be used for later functionality. DO NOT REMOVE.
     return true;
 }
 
-const unsigned int Tile::damage() {
+unsigned int Tile::damage() const {
     return this->tileDamage;
 }
 
-const float Tile::timeOfDamage() {
+float Tile::timeOfDamage() const {
     return this->damageHitTime;
 }
 
-const std::string Tile::serialize() {
+std::string Tile::serialize() const {
     return "Tile:" + std::to_string(this->tileX) + "," + std::to_string(this->tileY) + "," + std::to_string(this->tileTerrain) + "," + std::to_string(this->tileDamage) + "," + std::to_string(this->damageHitTime) + "-Tile-";
 }
 
