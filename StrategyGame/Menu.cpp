@@ -83,9 +83,9 @@ void Menu::render() {
     
     if (this->status == PLAY_AS_HOST && this->numberOfConnectionsBox != nullptr) {
         if (!this->connecting) {
-            this->numberOfConnectionsBox->text = "Number of players (including you): " + std::to_string(this->numberOfConnections + 1);
+            this->numberOfConnectionsBox->text = "Number of players (including you): " + std::to_string(this->numberOfConnections);
         } else {
-            this->numberOfConnectionsBox->text = "Setting up game. Number of players (including you): " + std::to_string(this->numberOfConnections + 1);
+            this->numberOfConnectionsBox->text = "Setting up game. Number of players (including you): " + std::to_string(this->numberOfConnections);
         }
     }
     
@@ -122,7 +122,7 @@ void Menu::processAction(std::string action) {
         this->interface.removePropertyLayer(); //Remove "Play as host"
         
         //Add a box to indicate the number of players connected so far
-        this->interface.addBox("Number of players (including you): " + std::to_string(this->numberOfConnections + 1));
+        this->interface.addBox("Number of players (including you): " + std::to_string(this->numberOfConnections));
         this->numberOfConnectionsBox = &this->interface.boxes.back();
         
         this->interface.addButton("begin_game_as_both", "Begin");

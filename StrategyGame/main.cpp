@@ -59,12 +59,16 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 //Functions
 void updateMouse();
-void host();
+void host(bool* done);
 
 
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
+    
+    std::thread hostThread;
+    bool runningHost; //Indicates if this is the client running a host in parallel
+    bool finishedRunning = false; //Only if running as host, to indicate when to stop running
     
     bool repeat = true;
     while (repeat) {
@@ -83,9 +87,7 @@ int main(int argc, const char * argv[]) {
             while (true) {
                 ClientSocket socket;
                 Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
-                std::thread hostThread;
                 
-                bool runningHost = false;
                 while (!M.getShouldWindowClose()) {
                     updateMouse();
                     M.render();
@@ -101,7 +103,7 @@ int main(int argc, const char * argv[]) {
                         break;
                     } else if (action == PLAY_AS_HOST) {
                         if (runningHost == false) {
-                            hostThread = std::thread(host);
+                            hostThread = std::thread(host, &finishedRunning);
                             
                             if (!socket.getSet()) {
                                 socket.setSocket("localhost", 3000);
@@ -132,7 +134,10 @@ int main(int argc, const char * argv[]) {
                 
                 if (window.shouldClose()) {
                     window.terminate();
-                    if (runningHost) hostThread.join();
+                    if (runningHost) {
+                        finishedRunning = true;
+                        hostThread.join();
+                    }
                     return 0;
 //                    break;
                 }
@@ -148,11 +153,17 @@ int main(int argc, const char * argv[]) {
                 
                 if (window.shouldClose()) {
                     window.terminate();
-                    if (runningHost) hostThread.join();
+                    if (runningHost) {
+                        finishedRunning = true;
+                        hostThread.join();
+                    }
                     return 0;
 //                    break;
                 }
-                if (runningHost) hostThread.join();
+                if (runningHost) {
+                    finishedRunning = true;
+                    hostThread.join();
+                }
                 
                 //send message to other clients that the player has left the game.
             }
@@ -217,7 +228,10 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-    
+    if (runningHost) {
+        finishedRunning = true;
+        hostThread.join();
+    }
     return 0;
 }
 
@@ -231,7 +245,7 @@ void updateMouse() {
     }
 }
 
-void host() {
+void host(bool* done) {
     //Gameboard:
     std::vector<std::vector<Tile> > board;
     for (GLint x = 0; x < BOARD_WIDTH; x++) {
@@ -268,9 +282,7 @@ void host() {
     H.board.setBuilding(player0Home);
     H.board.setBuilding(player1Home);
     
-    std::cout << "Host set up" << std::endl;
     H.addPlayer();
-    std::cout << "Communications set up" << std::endl;
     
     //Wait for syncing with client
     while (true) {
@@ -279,7 +291,6 @@ void host() {
             if (action.find("run:") != std::string::npos) {
                 action.erase(0, 4); //Erase "run:"
                 if (action == "begin()") {
-                    std::cout << "Host beginning" << std::endl;
                     H.begin();
                     break;
                 } else if (action == "addPlayer()") {
@@ -294,9 +305,7 @@ void host() {
         }
     }
     
-    std::cout << "Host running game" << std::endl;
-    
-    while (true) {
+    while (!*done) {
         H.update();
     }
 }
