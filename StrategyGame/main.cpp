@@ -96,9 +96,7 @@ int main(int argc, const char * argv[]) {
                                 socket.setSocket("localhost", 3000);
                             }
                             socket.send("run:begin()");
-                            if (socket.receive() != "message_received") {
-                                throw std::runtime_error("Error communicating with host");
-                            }
+                            //No confirmation wanted because the client will receive initial data soon anyway, so that can be like a confirmation
                         }
                         break;
                     } else if (action == PLAY_AS_HOST) {
@@ -271,7 +269,7 @@ void host() {
     H.board.setBuilding(player1Home);
     
     std::cout << "Host set up" << std::endl;
-    H.socket.addClient();
+    H.addPlayer();
     std::cout << "Communications set up" << std::endl;
     
     //Wait for syncing with client
@@ -281,8 +279,8 @@ void host() {
             if (action.find("run:") != std::string::npos) {
                 action.erase(0, 4); //Erase "run:"
                 if (action == "begin()") {
+                    std::cout << "Host beginning" << std::endl;
                     H.begin();
-                    H.socket.send("message_received", 0);
                     break;
                 } else if (action == "addPlayer()") {
                     H.addPlayer();
@@ -295,6 +293,8 @@ void host() {
             continue;
         }
     }
+    
+    std::cout << "Host running game" << std::endl;
     
     while (true) {
         H.update();

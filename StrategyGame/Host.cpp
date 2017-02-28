@@ -53,13 +53,6 @@ void Host::addPlayer() {
     this->alivePlayers.push_back({true, true});
     
     int playerNum = (int)alivePlayers.size() - 1;
-    
-    this->socket.send((std::to_string(playerNum) + "," + this->board.serialize()).c_str(), playerNum);
-    
-    if (this->socket.receive(playerNum) != "initialDataReceived") {
-        throw std::runtime_error("Initial data not received");
-    }
-    
     this->players.push_back(Player(&this->board, playerNum));
 }
 
@@ -70,6 +63,14 @@ void Host::begin() {
     //Initialize time
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
+    
+    for (int a = 0; a < this->players.size(); a++) {
+        this->socket.send((std::to_string(a) + "," + this->board.serialize()).c_str(), a); //Send each player his/her player number along with the board
+    }
+    
+    if (!this->receivedFromAll("initialDataReceived")) {
+        throw std::runtime_error("Initial data not received");
+    }
 }
 
 void Host::update() {

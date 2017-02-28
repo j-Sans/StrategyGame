@@ -57,7 +57,7 @@ public:
     void addPlayer();
     
     /*!
-     * Begin the clock for the game. Automatically called by constructor if numberOfPlayers != 0.
+     * Begin the clock for the game and send out initial information to each client. Automatically called by constructor if numberOfPlayers != 0.
      */
     void begin();
     
