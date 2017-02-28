@@ -278,9 +278,6 @@ void host() {
     while (true) {
         try {
             std::string action = H.socket.receive(0);
-            
-            std::cout << "action: " << action << std::endl;
-            
             if (action.find("run:") != std::string::npos) {
                 action.erase(0, 4); //Erase "run:"
                 if (action == "begin()") {

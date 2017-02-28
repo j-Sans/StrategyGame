@@ -136,7 +136,8 @@ void Menu::processAction(std::string action) {
         this->interface.addBox("Looking for host");
         
     } else if (action == "begin_game_as_both") { //Start the game when playing as both a host and a client
-        this->connectToHost("localhost");
+        this->status = READY_TO_PLAY; //Because main() already connected the sockets
+//        this->connectToHost("localhost");
         
     } else if (action.find("connect_to_host:") != std::string::npos) { //Connect to a host
         std::string hostName = action.substr(16); //The string after "connect_to_host:"
