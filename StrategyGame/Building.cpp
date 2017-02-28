@@ -25,7 +25,7 @@ bool Building::takeDamage(unsigned int damage) {
 
 //Get functions
 
-std::string Building::serialize() {
+const std::string Building::serialize() {
     return "Building:" + std::to_string(this->maxHealthVal) + "," + std::to_string(this->controllerVal) + "," + std::to_string(this->xVal) + "," + std::to_string(this->yVal) + "," + std::to_string(this->healthVal) + "," + this->Attackable::serialize() + "-Building-";
 }
 

@@ -152,37 +152,37 @@ public:
     /*!
      * @return The race of this creature.
      */
-    Race race();
+    const Race race();
     
     /*!
      * @return The race of this creature, in the form of an std::string.
      */
-    std::string raceString();
+    const std::string raceString();
     
     /*!
      * @return The maximum energy (which is the number of action points including movement) of this creature.
      */
-    unsigned int maxEnergy();
+    const unsigned int maxEnergy();
     
     /*!
      * @return The attack stat of this creature.
      */
-    unsigned int attack();
+    const unsigned int attack();
     
     /*!
      * @return The attack style of this creature.
      */
-    AttackStyle attackStyle();
+    const AttackStyle attackStyle();
 
     /*!
      * @return The vision radius of this creature.
      */
-    unsigned int vision();
+    const unsigned int vision();
     
     /*!
      * @return The attack range of this creature.
      */
-    unsigned int range();
+    const unsigned int range();
     
     /*!
      * @return The combat type (if it is melee versus ranged) of this creature.
@@ -192,24 +192,24 @@ public:
     /*!
      * @return The remaining action points of this creature.
      */
-    float energy();
+    const float energy();
     
     /*!
      * @return The direction the creature is facing, as a macro (int). Includes: NORTH, EAST, SOUTH, and WEST.
      */
-    int direction();
+    const int direction();
     
     /*!
      * @return The offset of the creature from the center of its tile.
      */
-    float offset();
+    const float offset();
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    std::string serialize();
+    const std::string serialize();
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

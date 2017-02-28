@@ -103,65 +103,65 @@ public:
     /*!
      * @return A pointer to the creature at this tile.
      */
-    Creature* creature();
+    const Creature* creature();
     
     /*!
      * @return A pointer to the building at this tile.
      */
-    Building* building();
+    const Building* building();
     
     /*!
      * @return The terrain type of this tile.
      */
-    unsigned int terrain();
+    const unsigned int terrain();
     
     /*!
      * @return A boolean representing if there is a creature on this tile currently.
      */
-    bool occupied();
+    const bool occupied();
     
     /*!
      * @return The type of the creature, indicating which texture to use to the openGL VBO. Currently returns the basic creature if there is any creature.
      */
-    unsigned int creatureType();
+    const unsigned int creatureType();
     
     /*!
      * @return The type of the building, indicating which texture to use to the openGL VBO. Currently returns the basic building if there is any building.
      */
-    unsigned int buildingType();
+    const unsigned int buildingType();
     
     /*!
      * @return A boolean representing whether the creature would be able to go through this tile.
      */
-    bool passableByCreature(Creature creature);
+    const bool passableByCreature(const Creature& creature);
     
     /*!
      * @return A boolean representing whether an attack style would be able to go through this tile. (arrows, fireballs, terrain-ignoring projectiles etc.)
      */
-    bool passableByAttackStyle(Creature creature);
+    const bool passableByAttackStyle(const Creature& creature);
     
     /*!
      * @return A boolean representing whether a creature can see through this tile.
      */
     
-    bool passableByVision(Creature creature);
+    const bool passableByVision(const Creature& creature);
     
     /*!
      * @return The damage amount at this tile.
      */
-    unsigned int damage();
+    const unsigned int damage();
     
     /*!
      * @return The time the damage was added to this tile.
      */
-    float timeOfDamage();
+    const float timeOfDamage();
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    std::string serialize();
+    const std::string serialize();
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

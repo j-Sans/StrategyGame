@@ -38,27 +38,27 @@ void Attackable::removeLastButton() {
     this->buttonInfo.pop_back();
 }
 
-unsigned int Attackable::maxHealth() {
+const unsigned int Attackable::maxHealth() {
     return this->maxHealthVal;
 }
 
-unsigned int Attackable::health() {
+const unsigned int Attackable::health() {
     return this->healthVal;
 }
 
-unsigned int Attackable::x() {
+const unsigned int Attackable::x() {
     return this->xVal;
 }
 
-unsigned int Attackable::y() {
+const unsigned int Attackable::y() {
     return this->yVal;
 }
 
-unsigned int Attackable::controller() {
+const unsigned int Attackable::controller() {
     return this->controllerVal;
 }
 
-std::string Attackable::serialize() {
+const std::string Attackable::serialize() {
     std::string str = "Buttons:";
     for (auto a = this->buttonInfo.begin(); a != this->buttonInfo.end(); a++) {
         str += "<" + a->first + "," + a->second + ">";

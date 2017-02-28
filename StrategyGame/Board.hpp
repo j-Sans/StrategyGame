@@ -41,17 +41,8 @@ public:
     
     //Public member functions
     
-    //Terrain Costs of Movement
-    float getTerrainMovementCost(Tile origin, Tile destination);
-    
-    //Terrain Costs of Attack
-    float getTerrainAttackCost (Tile origin, Tile destination);
-    
-    //Terrain Costs of Vision
-    float getTerrainVisionCost (Tile origin, Tile destination);
-    
     /*!
-     * A function to trigger every 5 secondsa. Restores 1 energy to all creatures.
+     * A function to trigger every 5 seconds. Restores 1 energy to all creatures.
      */
     void regenerateEnergy();
     
@@ -80,15 +71,6 @@ public:
      */
     bool moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int destinationX, unsigned int destinationY);
     
-    //Calculate missing HP debuff for combat
-    float calculateWeaknessDebuff(Tile combatTile);
-    
-    //Calculate flanking bonus for combat
-    float calculateFlankingBonus(Tile attacker, Tile defender);
-    
-    //Calculate terrain modifier for combat
-    float calculateTerrainModifier(Tile defender);
-    
     /*!
      * Have one creature attack the other creature. Possible errors include if the indices are off of the board.
      
@@ -104,19 +86,6 @@ public:
     std::vector<std::pair<std::string, int> > initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
     
     /*!
-     * Get the distance (in taxicab geometry) from one tile to another.
-     * Possible errors include if the coordinates are off of the board.
-     *
-     * @param x1 The x index of the first coordinate in the board.
-     * @param y1 The y index of the first coordinate in the board.
-     * @param x2 The x index of the second coordinate in the board.
-     * @param y2 The y index of the second coordinate in the board.
-     *
-     * @return The distance (in taxicab geometry) from one tile to another.
-     */
-    unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
-    
-    /*!
      * Resets all energy values of creatures controlled by a certain player.
      *
      * @param The number associated with the player whose creatures to update.
@@ -129,7 +98,7 @@ public:
      *
      * @param creature A creature object to be set in the board at the location based on its coordinates.
      */
-    void setCreature(Creature creature);
+    void setCreature(const Creature& creature);
     
     /*!
      * Delete the creature in the designated spot on the board.
@@ -148,7 +117,7 @@ public:
      *
      * @param creature A creature object to be set in the board at the location based on its coordinates.
      */
-    void setBuilding(Building building);
+    void setBuilding(const Building& building);
     
     /*!
      * Delete the building in the designated spot on the board.
@@ -187,6 +156,37 @@ public:
     //Public get functions
     
     /*!
+     * Get the distance (in taxicab geometry) from one tile to another.
+     * Possible errors include if the coordinates are off of the board.
+     *
+     * @param x1 The x index of the first coordinate in the board.
+     * @param y1 The y index of the first coordinate in the board.
+     * @param x2 The x index of the second coordinate in the board.
+     * @param y2 The y index of the second coordinate in the board.
+     *
+     * @return The distance (in taxicab geometry) from one tile to another.
+     */
+    const unsigned int tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
+    
+    //Terrain Costs of Movement
+    const float getTerrainMovementCost(const Tile& origin, const Tile& destination);
+    
+    //Terrain Costs of Attack
+    const float getTerrainAttackCost (const Tile& origin, const Tile& destination);
+    
+    //Terrain Costs of Vision
+    const float getTerrainVisionCost (const Tile& origin, const Tile& destination);
+    
+    //Calculate missing HP debuff for combat
+    const float calculateWeaknessDebuff(const Tile& combatTile);
+    
+    //Calculate flanking bonus for combat
+    const float calculateFlankingBonus(const Tile& attacker, const Tile& defender);
+    
+    //Calculate terrain modifier for combat
+    const float calculateTerrainModifier(const Tile& defender);
+    
+    /*!
      * Get the tile at the spot (x,y) from the board.
      * Possible errors include if the x or y coordinates are greater than or equal to the size of the respective vectors.
      *
@@ -195,7 +195,7 @@ public:
      *
      * @return The tile object at this location in the board.
      */
-    Tile get(unsigned int x, unsigned int y);
+    const Tile get(unsigned int x, unsigned int y);
     
     /*!
      * A function to check the validity of tile coordinates.
@@ -204,19 +204,19 @@ public:
      *
      * @return True if the given location exists on the board, false otherwise.
      */
-    bool validTile(glm::ivec2 tilePos);
+    const bool validTile(glm::ivec2 tilePos);
     
     /*!
      * @return The x-side width of the board.
      */
-    unsigned int width();
+    const unsigned int width();
     
     /*!
      * @param x The column x coordinate from which to get the size.
      *
      * @return The y-side height of the board.
      */
-    unsigned int height(unsigned int x);
+    const unsigned int height(unsigned int x);
     
     /*!
      * A function to check if a creature can be moved to the destination from its current location. An invalid_argument exception will be thrown if there is no creature, and a range_error if either set of coordinates is not on the board.
@@ -226,7 +226,7 @@ public:
      *
      * @return Whether the creature is able to move there.
      */
-    bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    const bool destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
     
     /*!
      * A function to check if a creature can attack the destination from its current location. An invalid_argument exception will be thrown if there is no creature at either destination or the current location, a range_error if either set of coordinates is not on the board, and a logic_error if the creature has no energy.
@@ -236,7 +236,7 @@ public:
      *
      * @return Whether the creature is able to attack.
      */
-    bool attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
+    const bool attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc);
     
     /*!
      * A function that gets all of the tiles that a creature can reach.
@@ -245,7 +245,7 @@ public:
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be reached.
      */
-    std::vector<Tile> getReachableTiles(Tile creatureTile);
+    const std::vector<Tile> getReachableTiles(const Tile& creatureTile);
     
     /*!
      * A function that gets all of the tiles that a creature can attack.
@@ -254,7 +254,7 @@ public:
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be attacked.
      */
-    std::vector<Tile> getAttackableTiles(Tile creatureTile);
+    const std::vector<Tile> getAttackableTiles(const Tile& creatureTile);
     
     /*!
      * A function that gets all of the tiles that a creature can see.
@@ -264,21 +264,21 @@ public:
      * @return An std::vector of Tile objects containing all of the tiles that can be seen.
      */
     
-    std::vector<Tile> getVisibleTiles(Tile creatureTile);
+    const std::vector<Tile> getVisibleTiles(const Tile& creatureTile);
     
     /*!
      * A function that gets all of the tiles that a player can see
      *
      * @return An std::vector of Tile objects containing all of the tiles that can be seen.
      */
-    std::vector<Tile> getAllVisibleTiles();
+    const std::vector<Tile> getAllVisibleTiles();
     
     /*!
      * Serialize this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    std::string serialize();
+    const std::string serialize();
     
     /*!
      * Create an object from a serialized string that can be sent through sockets.

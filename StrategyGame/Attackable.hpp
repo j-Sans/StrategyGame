@@ -58,34 +58,34 @@ public:
     /*!
      * @return The maximum health of this object.
      */
-    unsigned int maxHealth();
+    const unsigned int maxHealth();
     
     /*!
      * @return The current health of this object.
      */
-    unsigned int health();
+    const unsigned int health();
     
     /*!
      * @return The x location of this object on the board.
      */
-    unsigned int x();
+    const unsigned int x();
     
     /*!
      * @return The y location of this object on the board.
      */
-    unsigned int y();
+    const unsigned int y();
     
     /*!
      * @return An unsigned int representing the controller of the object.
      */
-    unsigned int controller();
+    const unsigned int controller();
     
     /*!
      * Serialize the buttons of this object as a string that can be sent through sockets.
      *
      * @return The serialized string.
      */
-    std::string serialize();
+    const std::string serialize();
     
     /*!
      * Get information about the buttons from a serialized string that can be sent through sockets.

@@ -12,115 +12,6 @@
 
 Board::Board(std::vector<std::vector<Tile> > board) : gameBoard(board) {}
 
-float Board::getTerrainMovementCost(Tile origin, Tile destination) {
-    
-    /*if (origin.creature().characteristics().find(TerrainIgnoring) != std::string::npos) {
-        return 1;
-    }*/
-    
-    if (destination.terrain() == OPEN_TERRAIN) {
-        return 1.0; //no creature currently requires more or less than one movement point
-    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        if (origin.creature()->race() != Dwarf) {
-            return 999.0;
-        } else return 2.0;
-    } else if (destination.terrain() == WATER_TERRAIN) {
-        /*if (origin.creature().find(Amphibious) != std::string::npos) {
-         return 999;
-         }
-         if (origin.creature().characteristics().find(Flying) != std::string::npos) {
-         return 999;
-         }
-         */
-        
-        //promotions and characteristics have not yet been implemented
-    } else if (destination.terrain() == FOREST_TERRAIN) {
-        if (origin.creature() != nullptr) {
-            if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
-                return 1;
-            }
-        }
-        return 2.0;
-    } else if (destination.terrain() == HILL_TERRAIN) {
-        return 2.0; //no creature currently requires more or less than two movement points
-        
-    } else if (destination.terrain() == SWAMP_TERRAIN) {
-        return 3.0; //no creature currently requires more or less than two movement points
-        
-    } else if (destination.terrain() == ROAD_TERRAIN) {
-        return 0.5;
-    }
-    
-    return 1.0;
-}
-
-
-/*
- Terrain Attack Pathing
- LIGHT RANGED:
- If on hill, can shoot into forest and jungle.
- If on plains or water, can only shoot into first layer of forest and jungle
- If on mountain, can shoot into forest and jungle with +1 range but -25% combat strength.
- If in forest and jungle, can only shoot into first layer of forest and jungle
- 
- HEAVY RANGED:
- Same as Light Ranged except can shooting through forest and jungle takes less.
- 
- LIGHT MELEE vs. GREAT MELEE
- Same.
- 
- TERRAIN IGNORING
- Ignores terrain - like telepathic spells and stuff
- 
- 
- 
- Terrain Attack Modifiers:
- 
- LIGHT RANGED and HEAVY RANGED:
- No difference in attack damage.
- 
- LIGHT MELEE vs. GREAT MELEE
- GreatMelee has combat bonus on hills
- 
- TERRAIN IGNORING
- No combat modifier
- 
- General Combat Modifiers:
- Half of missing hp % is deducted as a combat debuff.
- Flanking Bonus grants 10% combat bonus per flanking unit.
- */
-
-
-
-//The cost is in range, it deducts cost from range.
-float Board::getTerrainAttackCost (Tile origin, Tile destination) {
-    
-    if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
-        return 1;
-    }
-    else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        return INT_MAX;
-    }
-    else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
-        return 2;
-    }
-    else return 1;
-}
-
-//The cost is in range, it deducts cost from range.
-float Board::getTerrainVisionCost (Tile origin, Tile destination) {
-    if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
-        return 1;
-    }
-    else if (destination.terrain() == MOUNTAIN_TERRAIN) {
-        return INT_MAX;
-    }
-    else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
-        return 2;
-    }
-    else return 1;
-   }
-
 void Board::regenerateEnergy() {
     for (auto listIter = this->creatures.begin(); listIter != this->creatures.end(); listIter++) {
         listIter->incrementEnergy(1);
@@ -152,7 +43,7 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
     if (direction == NORTH) {
         if (y > 0 && !this->gameBoard[x][y - 1].occupied()) {
             //Add the creature to the new tile
-            this->gameBoard[x][y - 1].setCreature(this->gameBoard[x][y].creature());
+            this->gameBoard[x][y - 1].setCreature((Creature*)this->gameBoard[x][y].creature());
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
@@ -303,89 +194,6 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     return true;
 }
 
-/*
- * TO ADD:
- * MODIFIER VALUE
- 
- Combat Rules:
- Attackers deal damage. Modifiers are applied.
- Defenders deal damage to attacker if attacker is within range. Modifiers are applied.
- 
- 
- 
- Combat Modifiers
- Missing HP:
- Units deal less damage and take more damage equal to half of the percentage of missing health (but not defense)
- 
- Flanking:
- Units deal 15% more damage for each flanking creature and deal 15% less damage when being flanked for each flanking creature.
- 
- Terrain - based on the terrain of the defender that is being attacked. This is because it is assumed that attackers run into the defending square to attack.
-  0% in Open
- -20% in Swamp
- +20% in Forest
- +25% in Hill
- 0% in Road
- 0% in Water
- +50% in Mountain
- 
- Terrain modifiers of the defender are subtracted from the damage of the attacking unit. The defender does not deal extra damage. Swamp causes more damage.
- 
- Melee Units can Fortify. If they had full energy on the turn they fortified they heal and gain a +20% Combat Bonus, which becomes 40% on the next turn if the unit remains fortified.
- */
-
-//There needs to be a combat calculator that shows you the attack (after modifiers) and health of attacker and defender when you mouse over the tile of a specific attack.
-
-//Calculate missing HP debuff for combat
-float Board::calculateWeaknessDebuff(Tile combatTile) {
-    float debuff = -0.5 * (1.0 - (((float)(combatTile.creature()->health())) / (float)(combatTile.creature()->maxHealth())));
-#ifdef COMBAT_CONSOLE_OUTPUT
-    std::cout << "Injury debuff: " << debuff << '\n';
-#endif
-    return debuff;
-};
-
-//Calculate flanking bonus for melee combat
-float Board::calculateFlankingBonus(Tile attacker, Tile defender) {
-//    int adjacentEnemies = 0;
-    
-    //North
-    
-    //East
-    
-    //South
-    
-    //West
-    return 0.00;
-};
-
-//Calculate terrain modifier for combat
-float Board::calculateTerrainModifier(Tile defender) {
-    if (defender.terrain() ==  OPEN_TERRAIN) {
-        return 0.00;
-    }
-    if (defender.terrain() ==  FOREST_TERRAIN) {
-        return 0.20;
-    }
-    if (defender.terrain() ==  SWAMP_TERRAIN) {
-        return -0.20;
-    }
-    if (defender.terrain() ==  HILL_TERRAIN) {
-        return 0.25;
-    }
-    if (defender.terrain() ==  ROAD_TERRAIN) {
-        return 0.00;
-    }
-    if (defender.terrain() ==  WATER_TERRAIN) {
-        return 0.00;
-    }
-    if (defender.terrain() ==  MOUNTAIN_TERRAIN) {
-        return 0.50;
-    }
-    return 0.00;
-};
-
-
 std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
     if (attackerX >= this->gameBoard.size()) {
         throw std::range_error("Attacker x out of range");
@@ -530,31 +338,6 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
     return actions;
 }
 
-unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
-    if (x1 >= this->gameBoard.size()) {
-        throw std::range_error("X1 out of range");
-    }
-    if (y1 >= this->gameBoard[x1].size()) {
-        throw std::range_error("Y1 out of range");
-    }
-    if (x2 >= this->gameBoard.size()) {
-        throw std::range_error("X2 out of range");
-    }
-    if (y2 >= this->gameBoard[x2].size()) {
-        throw std::range_error("Y2 out of range");
-    }
-    
-    //math.h 's abs function wasn't working properly
-    
-    //Get the difference in x coordinates
-    int xDisplacement = (int)x1 - (int)x2 < 0 ? x2 - x1 : x1 - x2;
-    
-    //Get the difference in y coordinates
-    int yDisplacement = (int)y1 - (int)y2 < 0 ? y2 - y1 : y1 - y2;
-    
-    return xDisplacement + yDisplacement;
-}
-
 void Board::resetEnergy(unsigned int player) {
     for (auto creature = this->creatures.begin(); creature != this->creatures.end(); creature++) {
         if (creature->controller() == player) {
@@ -696,7 +479,225 @@ void Board::setDamage(unsigned int x, unsigned int y, unsigned int damage, float
     this->gameBoard[x][y].setDamage(damage, time);
 }
 
-Tile Board::get(unsigned int x, unsigned int y) {
+const unsigned int Board::tileDistances(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
+    if (x1 >= this->gameBoard.size()) {
+        throw std::range_error("X1 out of range");
+    }
+    if (y1 >= this->gameBoard[x1].size()) {
+        throw std::range_error("Y1 out of range");
+    }
+    if (x2 >= this->gameBoard.size()) {
+        throw std::range_error("X2 out of range");
+    }
+    if (y2 >= this->gameBoard[x2].size()) {
+        throw std::range_error("Y2 out of range");
+    }
+    
+    //math.h 's abs function wasn't working properly
+    
+    //Get the difference in x coordinates
+    int xDisplacement = (int)x1 - (int)x2 < 0 ? x2 - x1 : x1 - x2;
+    
+    //Get the difference in y coordinates
+    int yDisplacement = (int)y1 - (int)y2 < 0 ? y2 - y1 : y1 - y2;
+    
+    return xDisplacement + yDisplacement;
+}
+
+const float Board::getTerrainMovementCost(const Tile& origin, const Tile& destination) {
+    
+    /*if (origin.creature().characteristics().find(TerrainIgnoring) != std::string::npos) {
+     return 1;
+     }*/
+    
+    if (destination.terrain() == OPEN_TERRAIN) {
+        return 1.0; //no creature currently requires more or less than one movement point
+    } else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        if (origin.creature()->race() != Dwarf) {
+            return 999.0;
+        } else return 2.0;
+    } else if (destination.terrain() == WATER_TERRAIN) {
+        /*if (origin.creature().find(Amphibious) != std::string::npos) {
+         return 999;
+         }
+         if (origin.creature().characteristics().find(Flying) != std::string::npos) {
+         return 999;
+         }
+         */
+        
+        //promotions and characteristics have not yet been implemented
+    } else if (destination.terrain() == FOREST_TERRAIN) {
+        if (origin.creature() != nullptr) {
+            if (origin.creature()->race() == Elf /* || origin.creature()->characteristics contains terrain ignoring, perhaps in array of bools?*/) {
+                return 1;
+            }
+        }
+        return 2.0;
+    } else if (destination.terrain() == HILL_TERRAIN) {
+        return 2.0; //no creature currently requires more or less than two movement points
+        
+    } else if (destination.terrain() == SWAMP_TERRAIN) {
+        return 3.0; //no creature currently requires more or less than two movement points
+        
+    } else if (destination.terrain() == ROAD_TERRAIN) {
+        return 0.5;
+    }
+    
+    return 1.0;
+}
+
+
+/*
+ Terrain Attack Pathing
+ LIGHT RANGED:
+ If on hill, can shoot into forest and jungle.
+ If on plains or water, can only shoot into first layer of forest and jungle
+ If on mountain, can shoot into forest and jungle with +1 range but -25% combat strength.
+ If in forest and jungle, can only shoot into first layer of forest and jungle
+ 
+ HEAVY RANGED:
+ Same as Light Ranged except can shooting through forest and jungle takes less.
+ 
+ LIGHT MELEE vs. GREAT MELEE
+ Same.
+ 
+ TERRAIN IGNORING
+ Ignores terrain - like telepathic spells and stuff
+ 
+ 
+ 
+ Terrain Attack Modifiers:
+ 
+ LIGHT RANGED and HEAVY RANGED:
+ No difference in attack damage.
+ 
+ LIGHT MELEE vs. GREAT MELEE
+ GreatMelee has combat bonus on hills
+ 
+ TERRAIN IGNORING
+ No combat modifier
+ 
+ General Combat Modifiers:
+ Half of missing hp % is deducted as a combat debuff.
+ Flanking Bonus grants 10% combat bonus per flanking unit.
+ */
+
+
+
+//The cost is in range, it deducts cost from range.
+const float Board::getTerrainAttackCost (const Tile& origin, const Tile& destination) {
+    
+    if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
+        return 1;
+    }
+    else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        return INT_MAX;
+    }
+    else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
+        return 2;
+    }
+    else return 1;
+}
+
+//The cost is in range, it deducts cost from range.
+const float Board::getTerrainVisionCost (const Tile& origin, const Tile& destination) {
+    if (origin.terrain() == HILL_TERRAIN && destination.terrain() != MOUNTAIN_TERRAIN) {
+        return 1;
+    }
+    else if (destination.terrain() == MOUNTAIN_TERRAIN) {
+        return INT_MAX;
+    }
+    else if (destination.terrain() == FOREST_TERRAIN || destination.terrain() == HILL_TERRAIN) {
+        return 2;
+    }
+    else return 1;
+}
+
+
+
+/*
+ * TO ADD:
+ * MODIFIER VALUE
+ 
+ Combat Rules:
+ Attackers deal damage. Modifiers are applied.
+ Defenders deal damage to attacker if attacker is within range. Modifiers are applied.
+ 
+ 
+ 
+ Combat Modifiers
+ Missing HP:
+ Units deal less damage and take more damage equal to half of the percentage of missing health (but not defense)
+ 
+ Flanking:
+ Units deal 15% more damage for each flanking creature and deal 15% less damage when being flanked for each flanking creature.
+ 
+ Terrain - based on the terrain of the defender that is being attacked. This is because it is assumed that attackers run into the defending square to attack.
+ 0% in Open
+ -20% in Swamp
+ +20% in Forest
+ +25% in Hill
+ 0% in Road
+ 0% in Water
+ +50% in Mountain
+ 
+ Terrain modifiers of the defender are subtracted from the damage of the attacking unit. The defender does not deal extra damage. Swamp causes more damage.
+ 
+ Melee Units can Fortify. If they had full energy on the turn they fortified they heal and gain a +20% Combat Bonus, which becomes 40% on the next turn if the unit remains fortified.
+ */
+
+//There needs to be a combat calculator that shows you the attack (after modifiers) and health of attacker and defender when you mouse over the tile of a specific attack.
+
+//Calculate missing HP debuff for combat
+const float Board::calculateWeaknessDebuff(const Tile& combatTile) {
+    float debuff = -0.5 * (1.0 - (((float)(combatTile.creature()->health())) / (float)(combatTile.creature()->maxHealth())));
+#ifdef COMBAT_CONSOLE_OUTPUT
+    std::cout << "Injury debuff: " << debuff << '\n';
+#endif
+    return debuff;
+};
+
+//Calculate flanking bonus for melee combat
+const float Board::calculateFlankingBonus(const Tile& attacker, const Tile& defender) {
+    //    int adjacentEnemies = 0;
+    
+    //North
+    
+    //East
+    
+    //South
+    
+    //West
+    return 0.00;
+};
+
+//Calculate terrain modifier for combat
+const float Board::calculateTerrainModifier(const Tile^ defender) {
+    if (defender.terrain() ==  OPEN_TERRAIN) {
+        return 0.00;
+    }
+    if (defender.terrain() ==  FOREST_TERRAIN) {
+        return 0.20;
+    }
+    if (defender.terrain() ==  SWAMP_TERRAIN) {
+        return -0.20;
+    }
+    if (defender.terrain() ==  HILL_TERRAIN) {
+        return 0.25;
+    }
+    if (defender.terrain() ==  ROAD_TERRAIN) {
+        return 0.00;
+    }
+    if (defender.terrain() ==  WATER_TERRAIN) {
+        return 0.00;
+    }
+    if (defender.terrain() ==  MOUNTAIN_TERRAIN) {
+        return 0.50;
+    }
+    return 0.00;
+};
+
+const Tile Board::get(unsigned int x, unsigned int y) {
     if (x >= this->gameBoard.size()) {
         throw std::range_error("X out of range: " + std::to_string(x));
     }
@@ -707,7 +708,7 @@ Tile Board::get(unsigned int x, unsigned int y) {
     return this->gameBoard[x][y];
 }
 
-bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+const bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     if (!this->validTile(destination)) {
         throw std::range_error("Invalid destination");
     } else if (!this->validTile(currentLoc)) {
@@ -734,7 +735,7 @@ bool Board::destinationInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     return false;
 }
 
-bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
+const bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     if (!this->validTile(destination)) {
         throw std::range_error("Invalid destination");
     } else if (!this->validTile(currentLoc)) {
@@ -761,7 +762,7 @@ bool Board::attackInRange(glm::ivec2 destination, glm::ivec2 currentLoc) {
     return false;
 }
 
-std::vector<Tile> Board::getReachableTiles(Tile creatureTile) {
+const std::vector<Tile> Board::getReachableTiles(const Tile& creatureTile) {
     //Set the selected tile as the one inputted
     //    glm::ivec2 currentTile = glm::ivec2(creatureTile.x(), creatureTile.y());
     
@@ -769,7 +770,7 @@ std::vector<Tile> Board::getReachableTiles(Tile creatureTile) {
         std::vector<Tile> emptyTileVector;
         return emptyTileVector;
     } else {
-        Creature creature = *creatureTile.creature();
+        Creature *creature = creatureTile.creature();
         
         std::vector<std::pair<Tile, int> > reachedTiles; //This is a vector containing the tiles found so far, along with the energy the creature has at that tile
         
@@ -788,28 +789,28 @@ std::vector<Tile> Board::getReachableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->get(tile.x(), tile.y() - 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1))) {
+                    if (this->get(tile.x(), tile.y() - 1).passableByCreature(*creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1))) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->get(tile.x() - 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y()))) {
+                    if (this->get(tile.x() - 1, tile.y()).passableByCreature(*creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y()))) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //South
                 if (tile.y() < this->height(tile.x()) - 1) {
-                    if (this->get(tile.x(), tile.y() + 1).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1))) {
+                    if (this->get(tile.x(), tile.y() + 1).passableByCreature(*creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1))) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
                 
                 //West
                 if (tile.x() < this->width() - 1) {
-                    if (this->get(tile.x() + 1, tile.y()).passableByCreature(creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y()))) {
+                    if (this->get(tile.x() + 1, tile.y()).passableByCreature(*creature) && reachedTiles[tileIterator].second >= this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y()))) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainMovementCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the value of the energy the creature would have - 1.
                     }
                 }
@@ -838,14 +839,15 @@ std::vector<Tile> Board::getReachableTiles(Tile creatureTile) {
 
 
 //This function needs to be reworked for longer ranges. Perhaps, for each tile, check if there is a blocking obstacle in the way. Draw a line from origin to attack point, if it intersects with the boundaries of an obstacle the attack is not possible. Currently, projectiles can navigate around obstacles.
-std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
+const std::vector<Tile> Board::getAttackableTiles(const Tile& creatureTile) {
     if (creatureTile.creature() == nullptr) {
         std::vector<Tile> emptyTileVector;
         return emptyTileVector;
     } else {
-        Creature creature = *creatureTile.creature();
         
-        if (creature.energy() <= 0) {
+        Creature *creature = creatureTile.creature();
+        
+        if (creature->energy() <= 0) {
             std::vector<Tile> emptyTileVector;
             return emptyTileVector;
         }
@@ -864,7 +866,7 @@ std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->get(tile.x(), tile.y() - 1).passableByAttackStyle(creature)) {
+                    if (this->get(tile.x(), tile.y() - 1).passableByAttackStyle(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x(), tile.y() - 1).occupied()) {
@@ -874,7 +876,7 @@ std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->get(tile.x() - 1, tile.y()).passableByAttackStyle(creature)) {
+                    if (this->get(tile.x() - 1, tile.y()).passableByAttackStyle(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x() - 1, tile.y()).occupied()) {
@@ -884,7 +886,7 @@ std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
                 
                 //South
                 if (tile.y() < this->height(tile.x()) - 1) {
-                    if (this->get(tile.x(), tile.y() + 1).passableByAttackStyle(creature)) {
+                    if (this->get(tile.x(), tile.y() + 1).passableByAttackStyle(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x(), tile.y() + 1).occupied()) {
@@ -894,7 +896,7 @@ std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
                 
                 //West
                 if (tile.x() < this->width() - 1) {
-                    if (this->get(tile.x() + 1, tile.y()).passableByAttackStyle(creature)) {
+                    if (this->get(tile.x() + 1, tile.y()).passableByAttackStyle(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainAttackCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x() + 1, tile.y()).occupied()) {
@@ -981,12 +983,12 @@ std::vector<Tile> Board::getAttackableTiles(Tile creatureTile) {
      */
 }
 
-std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
+const std::vector<Tile> Board::getVisibleTiles(const Tile& creatureTile) {
     if (creatureTile.creature() == nullptr) {
         std::vector<Tile> emptyTileVector;
         return emptyTileVector;
     } else {
-        Creature creature = *creatureTile.creature();
+        Creature *creature = creatureTile.creature();
         
         std::vector<std::pair<Tile, int> > reachedTiles; //This is a vector containing the tiles found so far, along with the remaining range the attack has at that tile
         
@@ -1002,7 +1004,7 @@ std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
                 
                 //North
                 if (tile.y() > 0) {
-                    if (this->get(tile.x(), tile.y() - 1).passableByVision(creature)) {
+                    if (this->get(tile.x(), tile.y() - 1).passableByVision(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() - 1), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() - 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x(), tile.y() - 1).occupied()) {
@@ -1012,7 +1014,7 @@ std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
                 
                 //East
                 if (tile.x() > 0) {
-                    if (this->get(tile.x() - 1, tile.y()).passableByVision(creature)) {
+                    if (this->get(tile.x() - 1, tile.y()).passableByVision(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() - 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x() - 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x() - 1, tile.y()).occupied()) {
@@ -1022,7 +1024,7 @@ std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
                 
                 //South
                 if (tile.y() < this->height(tile.x()) - 1) {
-                    if (this->get(tile.x(), tile.y() + 1).passableByVision(creature)) {
+                    if (this->get(tile.x(), tile.y() + 1).passableByVision(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x(), tile.y() + 1), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x(), tile.y() + 1)))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x(), tile.y() + 1).occupied()) {
@@ -1032,7 +1034,7 @@ std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
                 
                 //West
                 if (tile.x() < this->width() - 1) {
-                    if (this->get(tile.x() + 1, tile.y()).passableByVision(creature)) {
+                    if (this->get(tile.x() + 1, tile.y()).passableByVision(*creature)) {
                         reachedTiles.push_back(std::pair<Tile, int>(this->get(tile.x() + 1, tile.y()), reachedTiles[tileIterator].second - this->getTerrainVisionCost(this->get(tile.x(), tile.y()), this->get(tile.x() + 1, tile.y())))); //Add the found tile to the reached tiles, along with the remaining range the creature would have - 1.
                     }
                     if (this->get(tile.x() + 1, tile.y()).occupied()) {
@@ -1060,22 +1062,22 @@ std::vector<Tile> Board::getVisibleTiles(Tile creatureTile) {
  
  }*/
 
-bool Board::validTile(glm::ivec2 tilePos) {
+const bool Board::validTile(glm::ivec2 tilePos) {
     if (tilePos.x >= 0 && tilePos.x < this->width() && tilePos.y >= 0 && tilePos.y < this->height(tilePos.x))
         return true;
     else
         return false;
 }
 
-unsigned int Board::width() {
+const unsigned int Board::width() {
     return (unsigned int)this->gameBoard.size();
 }
 
-unsigned int Board::height(unsigned int x) {
+const unsigned int Board::height(unsigned int x) {
     return (unsigned int)this->gameBoard[x].size();
 }
 
-std::string Board::serialize() {
+const std::string Board::serialize() {
     std::string str = "Board:" + std::to_string(this->gameBoard.size()) + ",";
     for (int x = 0; x < this->gameBoard.size(); x++) {
         str += std::to_string(this->gameBoard[x].size()) + ",";

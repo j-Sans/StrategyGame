@@ -46,24 +46,24 @@ const unsigned int Tile::y() {
     return this->tileY;
 }
 
-Creature* Tile::creature() {
+const Creature* Tile::creature() {
     return this->tileCreature;
 }
 
-Building* Tile::building() {
+const Building* Tile::building() {
     return this->tileBuilding;
 }
 
-unsigned int Tile::terrain() {
+const unsigned int Tile::terrain() {
     return this->tileTerrain;
 }
 
-bool Tile::occupied() {
+const bool Tile::occupied() {
     return this->tileCreature != nullptr ? true : this->tileBuilding ? true : false;
 }
 
 //Currently this returns the basic stick figure creature whenever there is any creature.
-unsigned int Tile::creatureType() {
+const unsigned int Tile::creatureType() {
     if (this->tileCreature == nullptr) {
         return NO_CREATURE;
     } else {
@@ -72,7 +72,7 @@ unsigned int Tile::creatureType() {
 }
 
 //Currently this returns the basic tower building whenever there is any building.
-unsigned int Tile::buildingType() {
+const unsigned int Tile::buildingType() {
     if (this->tileBuilding == nullptr) {
         return NO_BUILDING;
     } else {
@@ -80,7 +80,7 @@ unsigned int Tile::buildingType() {
     }
 }
 
-bool Tile::passableByCreature(Creature creature) {
+const bool Tile::passableByCreature(const Creature& creature) {
     //Mountains are not passable (except by dwarves)
     if (this->tileTerrain == MOUNTAIN_TERRAIN && creature.race() != Dwarf) {
         return false;
@@ -100,7 +100,7 @@ bool Tile::passableByCreature(Creature creature) {
     return true;
 }
 
-bool Tile::passableByAttackStyle(Creature creature) {
+const bool Tile::passableByAttackStyle(const Creature& creature) {
     //Mountains are not passable (except by terrain ignoring spells)
     if (this->tileTerrain == MOUNTAIN_TERRAIN) {
         if (creature.attackStyle() != TerrainIgnoring) {
@@ -129,20 +129,20 @@ bool Tile::passableByAttackStyle(Creature creature) {
     return true;
 }
 
-bool Tile::passableByVision(Creature creature) {
+const bool Tile::passableByVision(const Creature& creature) {
     //This function will be used for later functionality. DO NOT REMOVE.
     return true;
 }
 
-unsigned int Tile::damage() {
+const unsigned int Tile::damage() {
     return this->tileDamage;
 }
 
-float Tile::timeOfDamage() {
+const float Tile::timeOfDamage() {
     return this->damageHitTime;
 }
 
-std::string Tile::serialize() {
+const std::string Tile::serialize() {
     return "Tile:" + std::to_string(this->tileX) + "," + std::to_string(this->tileY) + "," + std::to_string(this->tileTerrain) + "," + std::to_string(this->tileDamage) + "," + std::to_string(this->damageHitTime) + "-Tile-";
 }
 
