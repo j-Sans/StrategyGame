@@ -8,18 +8,7 @@
 
 #include "Host.hpp"
 
-Host::Host(int portNum, Board gameBoard, unsigned int numberOfPlayers) : board(gameBoard), socket(ServerSocket()) {
-    this->socket.setSocket(portNum);
-    std::cout << "Host name: " << this->socket.getHostName() << std::endl;
-    
-    for (int a = 0; a < numberOfPlayers; a++) {
-        this->addPlayer();
-    }
-    
-    if (numberOfPlayers > 0) {
-        this->begin();
-    }
-}
+Host::Host(Board gameBoard) : board(gameBoard) {}
 
 std::string Host::storeVectorOfInts(std::vector<int> vec) {
     std::string str;
@@ -41,7 +30,25 @@ std::string Host::storeVectorOfFloats(std::vector<float> vec) {
     return str;
 }
 
+void Host::set(int portNum, unsigned int numberOfPlayers) {
+    this->socket.setSocket(portNum);
+    std::cout << "Host name: " << this->socket.getHostName() << std::endl;
+    
+    for (int a = 0; a < numberOfPlayers; a++) {
+        this->addPlayer();
+    }
+    
+    if (numberOfPlayers > 0) {
+        this->begin();
+    }
+    
+    this->setUp = true;
+}
+
 void Host::addPlayer() {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     this->socket.addClient();
     this->alivePlayers.push_back({true, true});
     
@@ -57,12 +64,18 @@ void Host::addPlayer() {
 }
 
 void Host::begin() {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     //Initialize time
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
 }
 
 void Host::update() {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     //Update frame information first
     std::chrono::duration<float> currentFrame = std::chrono::steady_clock::now() - this->programStartTime;
     this->deltaTime = currentFrame.count() - this->lastFrame.count();
@@ -146,6 +159,9 @@ void Host::update() {
 }
 
 unsigned int Host::getNumberPlayers() {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     return this->players.size();
 }
 
@@ -160,6 +176,9 @@ std::string Host::serialize() {
 //Private member functions
 
 void Host::processAction(std::string action, int playerNum) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     if (!this->alivePlayers[playerNum].first) return; //If the player is dead, ignore any remaining actions.
     
     if (action.find("no_updates") != std::string::npos) {
@@ -237,6 +256,8 @@ void Host::processAction(std::string action, int playerNum) {
 }
 
 void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatureData, std::vector<std::vector<float> >* colorDataVec, std::vector<int>* damageData, std::vector<float>* offsetData, std::vector<int>* buildingData) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
     
     if (colorDataVec->size() < this->socket.numberOfClients())
         throw std::invalid_argument("Argument colorDataVec too small");
@@ -278,6 +299,9 @@ void Host::getBufferData(std::vector<int>* terrainData, std::vector<int>* creatu
 }
 
 void Host::losePlayer(int playerNum) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     if (playerNum < 0 || playerNum >= this->players.size()) {
         throw std::range_error("playerNum (" + std::to_string(playerNum) + ") not a valid player. Max player index: " + std::to_string(this->players.size()));
     } else if (this->alivePlayers[playerNum].first == false) {
@@ -301,6 +325,9 @@ void Host::losePlayer(int playerNum) {
 }
 
 void Host::broadcast(std::string message) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     for (int player = 0; player < this->players.size(); player++) {
         if (!this->alivePlayers[player].second) {
             continue; //Skip if the player disconnected;
@@ -324,6 +351,9 @@ void Host::broadcast(std::string message) {
 }
 
 bool Host::receivedFromAll(std::string str) {
+    if (!this->setUp)
+        throw std::logic_error("Socket not set");
+    
     for (int player = 0; player < this->players.size(); player++) {
         if (!this->alivePlayers[player].first) continue; //Skip if the player is dead
         if (this->socket.receive(player) != str) return false;

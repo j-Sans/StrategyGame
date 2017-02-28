@@ -59,15 +59,12 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 //Functions
 void updateMouse();
-void host(int numPlayers);
+void host();
 
 
 int main(int argc, const char * argv[]) {
 //Set up:
     srand((int)std::time(NULL));
-    
-    std::thread hostThread;
-    Host* hostPointer = nullptr;
     
     bool repeat = true;
     while (repeat) {
@@ -86,6 +83,7 @@ int main(int argc, const char * argv[]) {
             while (true) {
                 ClientSocket socket;
                 Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
+                std::thread hostThread;
                 
                 bool runningHost = false;
                 while (!M.getShouldWindowClose()) {
@@ -94,22 +92,49 @@ int main(int argc, const char * argv[]) {
                     int action = M.getStatus();
                     if (action == READY_TO_PLAY) {
                         if (runningHost) {
-                            hostPointer->begin();
+                            if (!socket.getSet()) {
+                                socket.setSocket("localhost", 3000);
+                            }
+                            socket.send("run:begin()");
+                            if (socket.receive() != "message_received") {
+                                throw std::runtime_error("Error communicating with host");
+                            }
                         }
                         break;
                     } else if (action == PLAY_AS_HOST) {
-                        if (!runningHost) {
-                            hostThread = std::thread(host, 1, hostPointer);
+                        if (runningHost == false) {
+                            hostThread = std::thread(host);
+                            
+                            if (!socket.getSet()) {
+                                socket.setSocket("localhost", 3000);
+                            }
+//                            socket.send("run:addPlayer()");
+//                            if (socket.receive() != "message_received") {
+//                                throw std::runtime_error("Error communicating with host");
+//                            }
+                            
                             runningHost = true;
                         }
-                        if (hostPointer != nullptr) {
-                            M.numberOfConnections = hostPointer->getNumberPlayers();
+                        if (!socket.getSet()) {
+                            socket.setSocket("localhost", 3000);
+                        }
+                        socket.send("send_number_of_players");
+                        M.numberOfConnections = std::stoi(socket.receive());
+                        
+                    } else if (action == ADD_PLAYER) {
+                        if (!socket.getSet()) {
+                            socket.setSocket("localhost", 3000);
+                        }
+                        socket.send("run:addPlayer()");
+                        if (socket.receive() != "message_received") {
+                            throw std::runtime_error("Error communicating with host");
                         }
                     }
                 }
                 
                 if (window.shouldClose()) {
                     window.terminate();
+                    if (runningHost) hostThread.join();
                     return 0;
 //                    break;
                 }
@@ -125,9 +150,12 @@ int main(int argc, const char * argv[]) {
                 
                 if (window.shouldClose()) {
                     window.terminate();
+                    if (runningHost) hostThread.join();
                     return 0;
 //                    break;
                 }
+                if (runningHost) hostThread.join();
+                
                 //send message to other clients that the player has left the game.
             }
         } else {
@@ -159,7 +187,8 @@ int main(int argc, const char * argv[]) {
                     board.push_back(row);
                 }
                 
-                Host H(numPlayers, 3000, Board(board));
+                Host H(board);
+                H.set(3000);
                 
                 //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
                 
@@ -191,8 +220,6 @@ int main(int argc, const char * argv[]) {
         }
     }
     
-    hostThread.join();
-    
     return 0;
 }
 
@@ -206,7 +233,7 @@ void updateMouse() {
     }
 }
 
-void host(int numPlayers, Host* hostPointer) {
+void host() {
     //Gameboard:
     std::vector<std::vector<Tile> > board;
     for (GLint x = 0; x < BOARD_WIDTH; x++) {
@@ -222,9 +249,8 @@ void host(int numPlayers, Host* hostPointer) {
         board.push_back(row);
     }
     
-    Host H(numPlayers, 3000, Board(board));
-    
-    hostPointer = &H;
+    Host H(board);
+    H.set(3000);
     
     //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
     
@@ -244,8 +270,38 @@ void host(int numPlayers, Host* hostPointer) {
     H.board.setBuilding(player0Home);
     H.board.setBuilding(player1Home);
     
-    while (true)
+    std::cout << "Host set up" << std::endl;
+    H.socket.addClient();
+    std::cout << "Communications set up" << std::endl;
+    
+    //Wait for syncing with client
+    while (true) {
+        try {
+            std::string action = H.socket.receive(0);
+            
+            std::cout << "action: " << action << std::endl;
+            
+            if (action.find("run:") != std::string::npos) {
+                action.erase(0, 4); //Erase "run:"
+                if (action == "begin()") {
+                    H.begin();
+                    H.socket.send("message_received", 0);
+                    break;
+                } else if (action == "addPlayer()") {
+                    H.addPlayer();
+                    H.socket.send("message_received", 0);
+                }
+            } else if (action == "send_number_of_players") {
+                H.socket.send(std::to_string(H.getNumberPlayers()).c_str(), 0);
+            }
+        } catch (std::runtime_error) { //Keep waiting for message from client
+            continue;
+        }
+    }
+    
+    while (true) {
         H.update();
+    }
 }
 
 

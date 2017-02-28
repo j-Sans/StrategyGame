@@ -26,7 +26,7 @@
 #define READY_TO_PLAY 1
 #define PLAY_AS_HOST 2
 #define HOST_GAME 3
-#define ADD_PLAYER
+#define ADD_PLAYER 4
 
 class Menu {
 public:
@@ -53,9 +53,9 @@ public:
     bool getShouldWindowClose();
     
     /*!
-     * Gets the status. Also ... ***ADD_PLAYER SHOULD BE CHANGED WHEN READ***
+     * Gets the status. If the status is ADD_PLAYER it is also reset to PLAY_AS_HOST so that players aren't continually added to the host.
      *
-     * @return An int macro representing the status of the menu. Used to indicate to main() when to move on.
+     * @return An int macro representing the status of the menu. Used to indicate to main() when to move on and what action to take.
      */
     int getStatus();
     
@@ -66,7 +66,9 @@ private:
     
     int status = WAITING_FOR_INPUT;
     
+    //Host info
     bool runningHost = false;
+    Box* numberOfConnectionsBox = nullptr;
     
     //Mouse info
     bool* mouseUp;

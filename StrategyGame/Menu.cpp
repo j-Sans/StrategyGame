@@ -64,21 +64,29 @@ void Menu::render() {
     
     if (this->connected) {
         this->connecting = false;
-        if (!runningHost) {
+//        if (!runningHost) {
             this->status = READY_TO_PLAY;
-        }
+//        }
     }
     
     if (this->failedToConnect) {
         this->connecting = false;
         this->interface.removePropertyLayer();
-        this->interface.addButton("find_host", "Find host");
+        if (PLAY_AS_HOST) {
+            this->interface.addButton("begin_game_as_both", "An error occurred. Try again");
+        } else {
+            this->interface.addButton("find_host", "Find host");
+        }
         this->thread.join();
         this->failedToConnect = false;
     }
     
-    if (this->status == PLAY_AS_HOST && !this->connecting) {
-        this->connectToHost("localhost");
+    if (this->status == PLAY_AS_HOST && this->numberOfConnectionsBox != nullptr) {
+        if (!this->connecting) {
+            this->numberOfConnectionsBox->text = "Number of players (including you): " + std::to_string(this->numberOfConnections + 1);
+        } else {
+            this->numberOfConnectionsBox->text = "Setting up game. Number of players (including you): " + std::to_string(this->numberOfConnections + 1);
+        }
     }
     
     this->window->updateScreen();
@@ -89,7 +97,12 @@ bool Menu::getShouldWindowClose() {
 }
 
 int Menu::getStatus() {
-    return this->status;
+    if (this->status == ADD_PLAYER) {
+        this->status = PLAY_AS_HOST;
+        return ADD_PLAYER;
+    } else {
+        return this->status;
+    }
 }
 
 void Menu::processAction(std::string action) {
@@ -108,6 +121,12 @@ void Menu::processAction(std::string action) {
         this->interface.removePropertyLayer(); //Remove "Play as client"
         this->interface.removePropertyLayer(); //Remove "Play as host"
         
+        //Add a box to indicate the number of players connected so far
+        this->interface.addBox("Number of players (including you): " + std::to_string(this->numberOfConnections + 1));
+        this->numberOfConnectionsBox = &this->interface.boxes.back();
+        
+        this->interface.addButton("begin_game_as_both", "Begin");
+        
     } else if (action == "find_host") { //Look for a host based on information from the textbox
         if (this->textbox == nullptr) {
             throw std::logic_error("No host submitted: Textbox is nullptr.");
@@ -115,6 +134,9 @@ void Menu::processAction(std::string action) {
         this->connectToHost(this->textbox->text);
         this->interface.removePropertyLayer();
         this->interface.addBox("Looking for host");
+        
+    } else if (action == "begin_game_as_both") { //Start the game when playing as both a host and a client
+        this->connectToHost("localhost");
         
     } else if (action.find("connect_to_host:") != std::string::npos) { //Connect to a host
         std::string hostName = action.substr(16); //The string after "connect_to_host:"
@@ -231,8 +253,8 @@ void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket, std::st
         } catch (std::runtime_error) {
             continue; //Keep trying to connect, for 10 seconds
         }
-        *done = true; //If it connected without throwing an error
-        break;
+        *done = true; //If it connected without throwing an error, mark the connection was successful and end the function
+        return;
     }
     *failed = true;
 }

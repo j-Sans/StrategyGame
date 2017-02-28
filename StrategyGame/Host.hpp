@@ -11,6 +11,7 @@
 
 //Standard library includes
 #include <chrono>
+#include <mutex>
 #include <vector>
 #include <exception>
 
@@ -26,20 +27,29 @@ public:
     /*!
      * The host of the game, containing the players and the board.
      *
-     * @param portNum The port on this system (the server side) where to start taking connections. Succeeding ports may also be used, depending on implementation and number of players.
      * @param gameBoard A board to be used as the game board. Passed by value, so the game board will actually be stored within the host class.
-     * @param numberOfPlayers An optional parameter indicating the number of players with which to initialize the game. If unset it is set as 0. Otherwise (if numberOfPlayers != 0) then Host will automatically begin.
      */
-    Host(int portNum, Board gameBoard, unsigned int numberOfPlayers = 0);
+    Host(Board gameBoard);
     
     //Public properties
     Board board;
+    
+    //Clients
+    ServerSocket socket; //Public so that it can be accessed by main() for communicating with the first client
     
     //Public member functions
     
     static std::string storeVectorOfInts(std::vector<int> vec);
     
     static std::string storeVectorOfFloats(std::vector<float> vec);
+    
+    /*!
+     * A function that must be called before any other methods can be used. Initializes the socket of the game. If the optional parameter is nonzero, the game will automatically begin.
+     *
+     * @param portNum The port on this system (the server side) where to start taking connections. Succeeding ports may also be used, depending on implementation and number of players.
+     * @param numberOfPlayers An optional parameter indicating the number of players with which to initialize the game. If unset it is set as 0. Otherwise (if numberOfPlayers != 0) then Host will automatically begin.
+     */
+    void set(int portNum, unsigned int numberOfPlayers = 0);
     
     /*!
      * Adds a player to the game and initializes the connection socket with that player.
@@ -82,12 +92,11 @@ private:
     
     float deltaTime = 0.0f;
     
-    //Clients
-    ServerSocket socket;
-    
     //Game
     std::vector<Player> players;
     std::vector<std::pair<bool, bool> > alivePlayers; // { alive, connected }
+    
+    bool setUp = false;
     
     //Private member functions
     
