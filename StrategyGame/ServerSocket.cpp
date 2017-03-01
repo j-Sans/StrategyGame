@@ -222,7 +222,7 @@ std::string ServerSocket::receive(unsigned int clientIndex, bool* socketClosed) 
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = recv(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE, 0);
+    messageSize = read(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE);
     
     //Checks for errors reading from the socket
     if (messageSize < 0)

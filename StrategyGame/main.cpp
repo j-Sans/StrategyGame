@@ -108,10 +108,6 @@ int main(int argc, const char * argv[]) {
                             if (!socket.getSet()) {
                                 socket.setSocket("localhost", 3000);
                             }
-//                            socket.send("run:addPlayer()");
-//                            if (socket.receive() != "message_received") {
-//                                throw std::runtime_error("Error communicating with host");
-//                            }
                             
                             runningHost = true;
                         }

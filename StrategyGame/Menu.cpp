@@ -83,9 +83,9 @@ void Menu::render() {
     
     if (this->status == PLAY_AS_HOST && this->numberOfConnectionsBox != nullptr) {
         if (!this->connecting) {
-            this->numberOfConnectionsBox->text = "Number of players (including you): " + std::to_string(this->numberOfConnections);
+            this->numberOfConnectionsBox->text = std::to_string(this->numberOfConnections) + " players";
         } else {
-            this->numberOfConnectionsBox->text = "Setting up game. Number of players (including you): " + std::to_string(this->numberOfConnections);
+            this->numberOfConnectionsBox->text = std::to_string(this->numberOfConnections) + "players. Loading";
         }
     }
     
@@ -122,10 +122,11 @@ void Menu::processAction(std::string action) {
         this->interface.removePropertyLayer(); //Remove "Play as host"
         
         //Add a box to indicate the number of players connected so far
-        this->interface.addBox("Number of players (including you): " + std::to_string(this->numberOfConnections));
+        this->interface.addBox(std::to_string(this->numberOfConnections) + "players");
         this->numberOfConnectionsBox = &this->interface.boxes.back();
         
         this->interface.addButton("begin_game_as_both", "Begin");
+        this->interface.addButton("add_player", "Add player");
         
     } else if (action == "find_host") { //Look for a host based on information from the textbox
         if (this->textbox == nullptr) {
@@ -143,6 +144,8 @@ void Menu::processAction(std::string action) {
         std::string hostName = action.substr(16); //The string after "connect_to_host:"
         this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket, hostName);
         this->connecting = true;
+    } else if (action == "add_player") {
+        this->status = ADD_PLAYER;
     }
 }
 
