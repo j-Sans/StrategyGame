@@ -42,8 +42,6 @@ void Host::set(int portNum, unsigned int numberOfPlayers) {
         this->begin();
     }
     
-    this->socket.setTimeout(2);
-    
     this->setUp = true;
 }
 
@@ -114,17 +112,24 @@ void Host::update(bool* done) {
         return;
     }
     
+    this->socket.setTimeout(2);
+    
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
         std::string clientInfo;
         if (a == this->mainClientNum) {
             try {
                 clientInfo = this->socket.receive(a);
             } catch (std::runtime_error) { // If the hosting client closed, then close the program
-                this->broadcast("closing_host");
-                return;
+                if (done != nullptr && *done) {
+                    this->broadcast("closing_host");
+                    return;
+                } else {
+                    clientInfo = this->socket.receive(a);
+                }
             }
+        } else {
+            clientInfo = this->socket.receive(a);
         }
-        clientInfo = this->socket.receive(a);
         while (clientInfo.size() > 0) {
             this->processAction(clientInfo.substr(0, clientInfo.find_first_of(';')), a); //Process the action
             clientInfo = clientInfo.find_first_of(';') == std::string::npos ? "" : clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
