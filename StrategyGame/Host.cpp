@@ -64,6 +64,8 @@ void Host::begin() {
     this->programStartTime = std::chrono::steady_clock::now();
     this->lastFrame = std::chrono::steady_clock::now() - this->programStartTime;
     
+    this->socket.setTimeout(2);
+    
     for (int a = 0; a < this->players.size(); a++) {
         this->socket.send((std::to_string(a) + "," + this->board.serialize()).c_str(), a); //Send each player his/her player number along with the board
     }
@@ -111,8 +113,6 @@ void Host::update(bool* done) {
         this->broadcast("closing_host");
         return;
     }
-    
-    this->socket.setTimeout(2);
     
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
         std::string clientInfo;
