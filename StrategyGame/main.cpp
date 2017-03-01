@@ -284,6 +284,8 @@ void host(bool* done) {
     
     H.addPlayer();
     
+    H.mainClientNum = 0;
+    
     //Wait for syncing with client
     while (true) {
         try {
@@ -306,7 +308,7 @@ void host(bool* done) {
     }
     
     while (!*done) {
-        H.update();
+        H.update(done);
     }
 }
 

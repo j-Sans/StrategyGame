@@ -42,6 +42,8 @@ void Host::set(int portNum, unsigned int numberOfPlayers) {
         this->begin();
     }
     
+    this->socket.setTimeout(2);
+    
     this->setUp = true;
 }
 
@@ -73,7 +75,7 @@ void Host::begin() {
     }
 }
 
-void Host::update() {
+void Host::update(bool* done) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
@@ -100,10 +102,29 @@ void Host::update() {
         this->players[a].updateCreatures(this->deltaTime);
     }
     
+    if (done != nullptr && *done) {
+        this->broadcast("closing_host");
+        return;
+    }
+    
     this->broadcast(this->board.serialize());
 
+    if (done != nullptr && *done) {
+        this->broadcast("closing_host");
+        return;
+    }
+    
     for (int a = 0; a < this->socket.numberOfClients(); a++) {
-        std::string clientInfo = this->socket.receive(a);
+        std::string clientInfo;
+        if (a == this->mainClientNum) {
+            try {
+                clientInfo = this->socket.receive(a);
+            } catch (std::runtime_error) { // If the hosting client closed, then close the program
+                this->broadcast("closing_host");
+                return;
+            }
+        }
+        clientInfo = this->socket.receive(a);
         while (clientInfo.size() > 0) {
             this->processAction(clientInfo.substr(0, clientInfo.find_first_of(';')), a); //Process the action
             clientInfo = clientInfo.find_first_of(';') == std::string::npos ? "" : clientInfo.substr(clientInfo.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
@@ -163,7 +184,7 @@ unsigned int Host::getNumberPlayers() {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    return this->players.size();
+    return (unsigned int)this->players.size();
 }
 
 std::string Host::serialize() {

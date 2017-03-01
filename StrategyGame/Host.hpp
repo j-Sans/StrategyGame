@@ -37,6 +37,8 @@ public:
     //Clients
     ServerSocket socket; //Public so that it can be accessed by main() for communicating with the first client
     
+    int mainClientNum = -1; //Set by the thread in main.cpp to the index of the client that runs this thread in a host, if there is one
+    
     //Public member functions
     
     static std::string storeVectorOfInts(std::vector<int> vec);
@@ -63,8 +65,10 @@ public:
     
     /*!
      * Updates the players and the game based on input from clients. This should be called every frame.
+     *
+     * @param An optional pointer to a bool indicating whether the function should stop. If so, it ends before sending out or receiving data. If unset, it will be treated as false.
      */
-    void update();
+    void update(bool* done = nullptr);
     
     /*!
      * @return The number of players currently connected.

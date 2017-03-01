@@ -222,7 +222,7 @@ std::string ServerSocket::receive(unsigned int clientIndex, bool* socketClosed) 
      
      The third argument is the maximum number of characters to to be read into the buffer.
      */
-    messageSize = read(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE);
+    messageSize = recv(this->clientSockets[clientIndex], buffer, MAXIMUM_SOCKET_MESSAGE_SIZE, 0);
     
     //Checks for errors reading from the socket
     if (messageSize < 0)
@@ -245,6 +245,24 @@ bool ServerSocket::allReceived(const char* messageToCompare) {
             }
     }
     return true;
+}
+
+void ServerSocket::setTimeout(unsigned int seconds, unsigned int milliseconds) {
+#if defined(_WIN32)
+    DWORD timeout = (seconds * 1000) + milliseconds;
+    setsockopt(this->hostSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        if (this->activeConnections[a]) setsockopt(this->clientSockets[a], SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+    }
+#else
+    struct timeval time;
+    time.tv_sec = seconds;
+    time.tv_usec = (milliseconds * 1000);
+    setsockopt(this->hostSocket, SOL_SOCKET, SO_RCVTIMEO, (struct timeval*)&time, sizeof(struct timeval));
+    for (int a = 0; a < MAX_NUMBER_OF_CONNECTIONS; a++) {
+        if (this->activeConnections[a]) setsockopt(this->clientSockets[a], SOL_SOCKET, SO_RCVTIMEO, (struct timeval*)&time, sizeof(struct timeval));
+    }
+#endif
 }
 
 unsigned int ServerSocket::numberOfClients() {
