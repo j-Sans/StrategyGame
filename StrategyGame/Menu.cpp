@@ -83,9 +83,9 @@ void Menu::render() {
     
     if (this->status == PLAY_AS_HOST && this->numberOfConnectionsBox != nullptr) {
         if (!this->connecting) {
-            this->numberOfConnectionsBox->text = std::to_string(this->numberOfConnections) + " players";
+            this->numberOfConnectionsBox->text = std::to_string(this->numberOfConnections) + " player" + (this->numberOfConnections != 1 ? "s" : "");
         } else {
-            this->numberOfConnectionsBox->text = std::to_string(this->numberOfConnections) + "players. Loading";
+            this->numberOfConnectionsBox->text = std::to_string(this->numberOfConnections) + "player" + (this->numberOfConnections != 1 ? "s" : "") + ". Loading";
         }
     }
     
@@ -122,7 +122,7 @@ void Menu::processAction(std::string action) {
         this->interface.removePropertyLayer(); //Remove "Play as host"
         
         //Add a box to indicate the number of players connected so far
-        this->interface.addBox(std::to_string(this->numberOfConnections) + "players");
+        this->interface.addBox(std::to_string(this->numberOfConnections) + "player" + (this->numberOfConnections != 1 ? "s" : ""));
         this->numberOfConnectionsBox = &this->interface.boxes.back();
         
         this->interface.addButton("begin_game_as_both", "Begin");
@@ -257,8 +257,8 @@ void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket, std::st
         } catch (std::runtime_error) {
             continue; //Keep trying to connect, for 10 seconds
         }
-        *done = true; //If it connected without throwing an error, mark the connection was successful and end the function
+        if (done != nullptr) *done = true; //If it connected without throwing an error, mark the connection was successful and end the function
         return;
     }
-    *failed = true;
+    if (failed != nullptr) *failed = true;
 }

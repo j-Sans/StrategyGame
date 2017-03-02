@@ -43,8 +43,14 @@ Client::Client(Window* w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, 
 
 void Client::render() {
 //    this->visualizer.startFrame();
-//    
-    this->board = Board::deserialize(this->socket->receive());
+//
+    
+    std::string str = this->socket->receive();
+    if (str == "closing_host") {
+        *this->returnToMenu = true;
+        return;
+    }
+    this->board = Board::deserialize(str);
     
     //If the window will be closing notify the Host
     if (this->visualizer.window->shouldClose()) this->actionsForClientInfo.push_back("leaving_game_player_" + std::to_string(this->playerNum));

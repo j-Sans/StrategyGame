@@ -60,6 +60,7 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 //Functions
 void updateMouse();
 void host(bool* done);
+void threadAddPlayer(bool *done, bool *failed, Host* host);
 
 
 int main(int argc, const char * argv[]) {
@@ -282,6 +283,13 @@ void host(bool* done) {
     
     H.mainClientNum = 0;
     
+    //For adding players
+    std::thread addPlayerThread;
+    unsigned int playersToAdd = 0;
+    bool runningThread = false;
+    bool addedPlayer = false;
+    bool failedToAddPlayer = false;
+    
     //Wait for syncing with client
     while (true) {
         try {
@@ -292,7 +300,7 @@ void host(bool* done) {
                     H.begin();
                     break;
                 } else if (action == "addPlayer()") {
-                    H.addPlayer();
+                    playersToAdd++;
                     H.socket.send("message_received", 0);
                 }
             } else if (action == "send_number_of_players") {
@@ -301,6 +309,19 @@ void host(bool* done) {
         } catch (std::runtime_error) { //Keep waiting for message from client
             continue;
         }
+        
+        //If the thread finished running, end it, indicate no thread is running, and reset the two thread bools.
+        if (addedPlayer || failedToAddPlayer) {
+            addPlayerThread.join();
+            runningThread = false;
+            addedPlayer = false;
+            failedToAddPlayer = false;
+        }
+        if (playersToAdd > 0 && !runningThread) { //If no adding player thread is running and a player should be added, start the thread
+            playersToAdd--;
+            runningThread = true;
+            addPlayerThread = std::thread(threadAddPlayer, &addedPlayer, &failedToAddPlayer, &H);
+        }
     }
     
     while (!*done) {
@@ -308,6 +329,22 @@ void host(bool* done) {
     }
 }
 
+void threadAddPlayer(bool *done, bool *failed, Host* host) {
+    std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+    while (true) {
+        std::chrono::duration<double> timeElapsed = std::chrono::steady_clock::now() - start;
+        if (timeElapsed.count() > MAX_CONNECTION_TIME) break;
+        host->socket.setHostTimeout(2);
+        try {
+            host->addPlayer();
+        } catch (std::runtime_error) {
+            continue; //Keep trying to connect, for 10 seconds
+        }
+        if (done != nullptr) *done = true; //If it connected without throwing an error, mark the connection was successful and end the function
+        return;
+    }
+    if (failed != nullptr) *failed = true;
+}
 
 //A function GLFW can call when a key event occurs
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
