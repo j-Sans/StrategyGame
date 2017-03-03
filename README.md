@@ -66,4 +66,4 @@ It's still very much in progress, but the engine and underlying code is here, ev
 
 ## Authors
 
-This game was created by [Jake Sanders](https://github.com/ja-San) along with [Michael Caosun](https://github.com/theonlycaosun).
+This game was created by [Jake Sanders](https://github.com/ja-San) and [Michael Caosun](https://github.com/theonlycaosun). Consultations with [Ben Spector](https://github.com/Sydriax) were also very helpful.
