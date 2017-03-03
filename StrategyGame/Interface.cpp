@@ -44,12 +44,6 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
             this->nextPropertyHeight -= 0.1;
             
             break;
-            
-        } case default_bottom: {
-            
-            this->buttons.push_back(Button(*this->textureShader, this->window, 0.0, 0.0, 0.25, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "make_building,300,1", "New Building", this->propertyTex));
-            
-            break;
         
         } case creature: {
             

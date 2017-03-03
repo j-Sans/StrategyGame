@@ -71,160 +71,92 @@ int main(int argc, const char * argv[]) {
     bool runningHost; //Indicates if this is the client running a host in parallel
     bool finishedRunning = false; //Only if running as host, to indicate when to stop running
     
-    bool repeat = true;
-    while (repeat) {
-        repeat = false;
-        std::cout << "Run as host? For yes, type a number between 1 and 2 to be the number of clients. Otherwise, type \"N\" or \"n\" for no" << std::endl;
-        std::string input;
-        std::cin >> input; 
-        if (input == "N" || input == "n") {
-            
-            //Test menu:
-            Window window;
-            window.init(800, 600, "Game", false, true);
-            window.setKeyCallback(keyCallback);
-            window.setMouseButtonCallback(mouseButtonCallback);
-            
-            while (true) {
-                ClientSocket socket;
-                Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
-                
-                while (!M.getShouldWindowClose()) {
-                    updateMouse();
-                    M.render();
-                    int action = M.getStatus();
-                    if (action == READY_TO_PLAY) {
-                        if (runningHost) {
-                            if (!socket.getSet()) {
-                                socket.setSocket("localhost", 3000);
-                            }
-                            socket.send("run:begin()");
-                            //No confirmation wanted because the client will receive initial data soon anyway, so that can be like a confirmation
-                        }
-                        break;
-                    } else if (action == PLAY_AS_HOST) {
-                        if (runningHost == false) {
-                            hostThread = std::thread(host, &finishedRunning);
-                            
-                            if (!socket.getSet()) {
-                                socket.setSocket("localhost", 3000);
-                            }
-                            
-                            runningHost = true;
-                        }
-                        if (!socket.getSet()) {
-                            socket.setSocket("localhost", 3000);
-                        }
-                        socket.send("send_number_of_players");
-                        M.numberOfConnections = std::stoi(socket.receive());
-                        
-                    } else if (action == ADD_PLAYER) {
-                        if (!socket.getSet()) {
-                            socket.setSocket("localhost", 3000);
-                        }
-                        socket.send("run:addPlayer()");
-                        if (socket.receive() != "message_received") {
-                            throw std::runtime_error("Error communicating with host");
-                        }
-                    }
-                }
-                
-                if (window.shouldClose()) {
-                    window.terminate();
-                    if (runningHost) {
-                        finishedRunning = true;
-                        hostThread.join();
-                    }
-                    return 0;
-//                    break;
-                }
-                
-                bool returnToMenu = false;
-                
-                Client C(&window, &socket, &mouseDown, &mouseUp, &returnToMenu, keys);
-                
-                while (!C.getShouldWindowClose() && !returnToMenu) {
-                    updateMouse();
-                    C.render();
-                }
-                
-                if (window.shouldClose()) {
-                    window.terminate();
-                    if (runningHost) {
-                        finishedRunning = true;
-                        hostThread.join();
-                    }
-                    return 0;
-//                    break;
-                }
+    //Test menu:
+    Window window;
+    window.init(800, 600, "Game", false, true);
+    window.setKeyCallback(keyCallback);
+    window.setMouseButtonCallback(mouseButtonCallback);
+    
+    while (true) {
+        ClientSocket socket;
+        Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
+        
+        while (!M.getShouldWindowClose()) {
+            updateMouse();
+            M.render();
+            int action = M.getStatus();
+            if (action == READY_TO_PLAY) {
                 if (runningHost) {
-                    finishedRunning = true;
-                    hostThread.join();
-                }
-                
-                //send message to other clients that the player has left the game.
-            }
-        } else {
-            int numPlayers;
-            try {
-                numPlayers = std::stoi(input);
-            } catch (std::invalid_argument e) {
-                repeat = true;
-                std::cout << "There was an error processing your answer. Please try another input" << std::endl;
-                continue;
-            }
-            
-            if (numPlayers >= 1 && numPlayers <= 2) {
-                
-                //Run as host
-                
-                //Gameboard:
-                std::vector<std::vector<Tile> > board;
-                for (GLint x = 0; x < BOARD_WIDTH; x++) {
-                    std::vector<Tile> row;
-                    for (GLint y = 0; y < BOARD_WIDTH; y++) {
-                        if ((x == 2 && y == BOARD_WIDTH - 1 - 2) || (x == 3 && y == BOARD_WIDTH - 1 - 3) || (x == 4 && y == BOARD_WIDTH - 1 - 4) || (x == BOARD_WIDTH - 1 - 2 && y == 2) || (x == BOARD_WIDTH - 1 - 3 && y == 3) || (x == BOARD_WIDTH - 1 - 4 && y == 4))
-                            row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
-                        else if (x >= y - 1 && x <= y + 1)
-                            row.push_back(Tile(FOREST_TERRAIN, x, y));
-                        else
-                            row.push_back(Tile(OPEN_TERRAIN, x, y));
+                    if (!socket.getSet()) {
+                        socket.setSocket("localhost", 3000);
                     }
-                    board.push_back(row);
+                    socket.send("run:begin()");
+                    //No confirmation wanted because the client will receive initial data soon anyway, so that can be like a confirmation
                 }
+                break;
+            } else if (action == PLAY_AS_HOST) {
+                if (runningHost == false) {
+                    hostThread = std::thread(host, &finishedRunning);
+                    
+                    if (!socket.getSet()) {
+                        socket.setSocket("localhost", 3000);
+                    }
+                    
+                    runningHost = true;
+                }
+                if (!socket.getSet()) {
+                    socket.setSocket("localhost", 3000);
+                }
+                socket.send("send_number_of_players");
+                M.numberOfConnections = std::stoi(socket.receive());
                 
-                Host H(board);
-                H.set(3000);
-                
-                //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
-                
-                H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 30, NORTH, 0));
-                H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
-                H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
-                
-                H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
-                H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
-                H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
-                
-                Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
-                player0Home.deathAction = "player_lose_0";
-                Building player1Home(BOARD_WIDTH - 1, 0, 1, 1);
-                player1Home.deathAction = "player_lose_1";
-                
-                H.board.setBuilding(player0Home);
-                H.board.setBuilding(player1Home);
-                
-                while (true)
-                    H.update();
-                
-                return 0;
-                
-            } else {
-                repeat = true;
-                std::cout << "There was an error processing your answer. Please try another input" << std::endl;
+            } else if (action == ADD_PLAYER) {
+                if (!socket.getSet()) {
+                    socket.setSocket("localhost", 3000);
+                }
+                socket.send("run:addPlayer()");
+                if (socket.receive() != "message_received") {
+                    throw std::runtime_error("Error communicating with host");
+                }
             }
         }
+        
+        if (window.shouldClose()) {
+            window.terminate();
+            if (runningHost) {
+                finishedRunning = true;
+                hostThread.join();
+            }
+            return 0;
+//                    break;
+        }
+        
+        bool returnToMenu = false;
+        
+        Client C(&window, &socket, &mouseDown, &mouseUp, &returnToMenu, keys);
+        
+        while (!C.getShouldWindowClose() && !returnToMenu) {
+            updateMouse();
+            C.render();
+        }
+        
+        if (window.shouldClose()) {
+            window.terminate();
+            if (runningHost) {
+                finishedRunning = true;
+                hostThread.join();
+            }
+            return 0;
+//                    break;
+        }
+        if (runningHost) {
+            finishedRunning = true;
+            hostThread.join();
+        }
+        
+        //send message to other clients that the player has left the game.
     }
+    
     if (runningHost) {
         finishedRunning = true;
         hostThread.join();

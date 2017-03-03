@@ -246,7 +246,7 @@ void Menu::connectToHost(std::string hostName) {
     this->processAction("connect_to_host:" + hostName);
 }
 
-void Menu::threadFuntion(bool *done, bool *failed, ClientSocket *socket, std::string hostName) {
+void Menu::threadFunction(bool *done, bool *failed, ClientSocket *socket, std::string hostName) {
     std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
     while (true) {
         std::chrono::duration<double> timeElapsed = std::chrono::steady_clock::now() - start;

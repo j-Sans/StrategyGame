@@ -120,7 +120,7 @@ private:
      * @param socket A pointer to a ClientSocket object with the socket that should be connected to the host.
      * @param hostName A std::string representing the name of the host to connect to. Use "localhost" to connect to a host on the same device.
      */
-    static void threadFuntion(bool* done, bool* failed, ClientSocket *socket, std::string hostName);
+    static void threadFunction(bool* done, bool* failed, ClientSocket *socket, std::string hostName);
 };
 
 #endif /* Menu_hpp */
