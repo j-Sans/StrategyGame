@@ -85,6 +85,15 @@ void Window::setMouseButtonCallback(GLFWmousebuttonfun function) {
     glfwSetMouseButtonCallback(this->window, function);
 }
 
+void Window::setResizeCallback(GLFWwindowsizefun function) {
+    if (!this->set) {
+        throw std::logic_error("Window not set");
+    }
+    
+    //Set window resize callback function
+    glfwSetWindowSizeCallback(this->window, function);
+}
+
 void Window::setViewport(int x, int y, int width, int height) {
     if (!this->set) {
         throw std::logic_error("Window not set");

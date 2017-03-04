@@ -39,6 +39,8 @@ public:
     
     void setMouseButtonCallback(GLFWmousebuttonfun function);
     
+    void setResizeCallback(GLFWwindowsizefun function);
+    
     void setViewport(int x, int y, int width, int height);
     
     void setClearColor(float x, float y, float z);

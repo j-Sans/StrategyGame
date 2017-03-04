@@ -55,6 +55,7 @@ bool mouseUp = false;
 //Callback functions
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+void resizeCallback(GLFWwindow *window, int width, int height);
 
 
 //Functions
@@ -76,6 +77,7 @@ int main(int argc, const char * argv[]) {
     window.init(800, 600, "Game", true, true);
     window.setKeyCallback(keyCallback);
     window.setMouseButtonCallback(mouseButtonCallback);
+    window.setResizeCallback(resizeCallback);
     
     while (true) {
         ClientSocket socket;
@@ -290,7 +292,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
     }
 }
 
-//A function GLFW can call when a key event occurs
+//A function GLFW can call when a mouse button event occurs
 void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
     mouseJustPressed = false;
     mouseUp = false;
@@ -300,4 +302,12 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
     } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         mouseUp = true;
     }
+}
+
+//A function GLFW can call when the window is resized
+void resizeCallback(GLFWwindow *window, int width, int height) {
+    //Tell OpenGL window information
+    int viewportWidth, viewportHeight;
+    glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
+    glViewport(0.0, 0.0, viewportWidth, viewportHeight);
 }
