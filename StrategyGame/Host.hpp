@@ -132,6 +132,14 @@ private:
     void losePlayer(int playerNum);
     
     /*!
+     * Sends a given message to a player. If the player has disconnected nothing happens.
+     *
+     * @param message The std::string to send.
+     * @param player The number of the player to send.
+     */
+    void send(std::string message, unsigned int player);
+    
+    /*!
      * Broadcasts a given message to all remaining alive players.
      *
      * @param message The std::string to send.

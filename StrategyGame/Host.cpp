@@ -356,6 +356,27 @@ void Host::losePlayer(int playerNum) {
     }
 }
 
+void Host::send(std::string message, unsigned int player) {
+    if (!this->alivePlayers[player].second) {
+        return; //Skip if the player disconnected;
+    } else if (!this->alivePlayers[player].first) { //Test if the dead player is still connected
+        try {
+            this->socket.send(message.c_str(), player);
+        } catch (std::runtime_error) {
+            this->alivePlayers[player].second = false; //If the player didn't receive it, set that player to disconnected.
+            std::cout << "Player " << player << " (dead) didn't receive " << message << std::endl;
+        }
+    } else {
+        try {
+            this->socket.send(message.c_str(), player);
+        } catch (std::runtime_error) {
+            this->losePlayer(player); //If the player didn't receive it, that player disconnected. Remove that player.
+            this->alivePlayers[player].second = false;
+            std::cout << "Player " << player << " (alive) didn't receive " << message << std::endl;
+        }
+    }
+}
+
 void Host::broadcast(std::string message) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");

@@ -127,7 +127,7 @@ int main(int argc, const char * argv[]) {
             window.terminate();
             if (runningHost) {
                 finishedRunning = true;
-                hostThread.join();
+                if (hostThread.joinable()) hostThread.join();
             }
             return 0;
 //                    break;
@@ -155,6 +155,8 @@ int main(int argc, const char * argv[]) {
             finishedRunning = true;
             hostThread.join();
         }
+        
+        if (returnToMenu) runningHost = false;
         
         //send message to other clients that the player has left the game.
     }
