@@ -262,3 +262,14 @@ void Menu::threadFunction(bool *done, bool *failed, ClientSocket *socket, std::s
     }
     if (failed != nullptr) *failed = true;
 }
+
+//Destructor
+Menu::~Menu() {
+    if (this->thread.joinable()) {
+        try {
+            this->thread.join();
+        } catch (...) {
+            std::cout << "Error joining Menu::thread" << std::endl;
+        }
+    }
+}

@@ -33,6 +33,9 @@ public:
     //Constructor
     Menu(Window* w, ClientSocket* sock, bool* mouseDown, bool* mouseUp, bool* keys);
     
+    //Destructor
+    ~Menu();
+    
     //Public properties
     
     /*!
