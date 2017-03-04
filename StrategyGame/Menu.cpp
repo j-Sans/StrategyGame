@@ -64,9 +64,19 @@ void Menu::render() {
     
     if (this->connected) {
         this->connecting = false;
-//        if (!runningHost) {
-            this->status = READY_TO_PLAY;
-//        }
+        if (!this->runningHost) {
+            if (!this->gameStarting && !this->waitingForStart) {
+                this->thread.join();
+                this->thread = std::thread(this->threadListenForStart, &this->gameStarting, this->socket, &this->keepListening);
+                this->interface.removePropertyLayer();
+                this->interface.addBox("Waiting for start");
+                this->waitingForStart = true;
+            } else if (this->gameStarting) {
+                this->keepListening = false;
+                this->thread.join();
+                this->status = READY_TO_PLAY;
+            }
+        }
     }
     
     if (this->failedToConnect) {
@@ -261,6 +271,21 @@ void Menu::threadFunction(bool *done, bool *failed, ClientSocket *socket, std::s
         return;
     }
     if (failed != nullptr) *failed = true;
+}
+
+void Menu::threadListenForStart(bool *gameStarting, ClientSocket *socket, bool* keepListening) {
+    socket->setTimeout(1);
+    while(*keepListening) {
+        try {
+            if (socket->receive() == "starting") {
+                socket->send("message_received");
+                *gameStarting = true;
+                break;
+            }
+        } catch (std::runtime_error) {
+            continue;
+        }
+    }
 }
 
 //Destructor

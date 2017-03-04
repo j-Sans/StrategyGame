@@ -83,9 +83,12 @@ private:
     
     //Thread
     std::thread thread;
-    bool connecting = false;
-    bool connected = false;
-    bool failedToConnect = false;
+    bool connecting = false; //If connecting is occuring
+    bool connected = false; //If a connection has been made
+    bool failedToConnect = false; //If a connection was attempted and failed after timeout
+    bool waitingForStart = false; //If there is connection but the host has not started
+    bool gameStarting = false; //If the host is starting the game
+    bool keepListening = true; //To keep the thread listening for when the game starts
     
     //Shaders
     Shader textureShader;
@@ -124,6 +127,15 @@ private:
      * @param hostName A std::string representing the name of the host to connect to. Use "localhost" to connect to a host on the same device.
      */
     static void threadFunction(bool* done, bool* failed, ClientSocket *socket, std::string hostName);
+    
+    /*!
+     * A function to be run by an std::thread that will attempt to tell if the game is starting
+     *
+     * @param gameStarting A pointer to a bool that will be set when the game is starting.
+     * @param socket A pointer to a ClientSocket object with the socket that should be connected to the host.
+     * @param keepListening A pointer to a bool that will indicate if the function should end rather than keep trying to receive.
+     */
+    static void threadListenForStart(bool *gameStarting, ClientSocket *socket, bool* keepListening);
 };
 
 #endif /* Menu_hpp */

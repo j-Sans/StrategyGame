@@ -66,6 +66,11 @@ void Host::begin() {
     
     this->socket.setTimeout(2);
     
+    this->broadcast("starting");
+    if (!this->receivedFromAll("message_received")) {
+        throw std::runtime_error("Starting message not received");
+    }
+    
     for (int a = 0; a < this->players.size(); a++) {
         this->socket.send((std::to_string(a) + "," + this->board.serialize()).c_str(), a); //Send each player his/her player number along with the board
     }

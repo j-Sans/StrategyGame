@@ -52,7 +52,7 @@ PLease check the documentation if interested; I tried to make most of the functi
 
 * After one player moves, the creature is deselcted for that player and selected for at least one other player. That player can then make the creature move or attack.
 * Error with the mechanism by which the board is prevented from being lost from view.
-* After a client connects to a host, the window freezes until the game begins.
+* Window resizing doesn't work visually'
 
 ## Upcoming Additions
 

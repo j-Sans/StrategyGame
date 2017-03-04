@@ -15,6 +15,10 @@ Client::Client(Window* w, ClientSocket *socket, bool* mouseDown, bool* mouseUp, 
     this->socket = socket;
     
     std::string initialInfo = this->socket->receive();
+    if (initialInfo == "starting") {
+        this->socket->send("message_received");
+        initialInfo = this->socket->receive();
+    }
     this->socket->send("initialDataReceived");
     
     this->playerNum = std::stoi(initialInfo.substr(0, initialInfo.find_first_of(',')));

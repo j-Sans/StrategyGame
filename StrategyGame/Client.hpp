@@ -16,6 +16,7 @@
 #include <queue>
 #include <list>
 #include <map>
+#include <thread>
 
 //Local includes
 #include "Board.hpp"
