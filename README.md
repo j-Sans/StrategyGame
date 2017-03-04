@@ -50,7 +50,7 @@ PLease check the documentation if interested; I tried to make most of the functi
 
 ## Known Bugs
 
-* **Suddenly stops responding! Occurs because of an infinite loop in Board::getAttackableTiles(). Still needs to be investigated.** 
+* When a non-hosting client should close, the window freezes because of an issue freeing thread in Menu::~Menu().
 * After one player moves, the creature is deselcted for that player and selected for at least one other player. That player can then make the creature move or attack.
 * Error with the mechanism by which the board is prevented from being lost from view.
 
@@ -66,4 +66,18 @@ It's still very much in progress, but the engine and underlying code is here, ev
 
 ## Authors
 
-This game was created by [Jake Sanders](https://github.com/ja-San) and [Michael Caosun](https://github.com/theonlycaosun). Consultations with [Ben Spector](https://github.com/Sydriax) were also very helpful.
+[Jake Sanders](https://github.com/ja-San)
+* Underlying game engine
+* Host mechanics
+* Client side code
+* C Socket wrapper classes
+* OpenGL
+* GUI and window
+
+[Michael Caosun](https://github.com/theonlycaosun)
+* Much of initial design
+* Attack styles / combat details
+* RTS functionality (energy regeneration)
+* Bug fixes
+
+Additionaly, consultations with [Ben Spector](https://github.com/Sydriax) were also very useful

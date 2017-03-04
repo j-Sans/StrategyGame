@@ -142,7 +142,7 @@ void Menu::processAction(std::string action) {
         
     } else if (action.find("connect_to_host:") != std::string::npos) { //Connect to a host
         std::string hostName = action.substr(16); //The string after "connect_to_host:"
-        this->thread = std::thread(this->threadFuntion, &this->connected, &this->failedToConnect, this->socket, hostName);
+        this->thread = std::thread(this->threadFunction, &this->connected, &this->failedToConnect, this->socket, hostName);
         this->connecting = true;
     } else if (action == "add_player") {
         this->status = ADD_PLAYER;

@@ -68,12 +68,12 @@ int main(int argc, const char * argv[]) {
     srand((int)std::time(NULL));
     
     std::thread hostThread;
-    bool runningHost; //Indicates if this is the client running a host in parallel
+    bool runningHost = false; //Indicates if this is the client running a host in parallel
     bool finishedRunning = false; //Only if running as host, to indicate when to stop running
     
     //Test menu:
     Window window;
-    window.init(800, 600, "Game", false, true);
+    window.init(800, 600, "Game", true, true);
     window.setKeyCallback(keyCallback);
     window.setMouseButtonCallback(mouseButtonCallback);
     
@@ -156,11 +156,6 @@ int main(int argc, const char * argv[]) {
         
         //send message to other clients that the player has left the game.
     }
-    
-    if (runningHost) {
-        finishedRunning = true;
-        hostThread.join();
-    }
     return 0;
 }
 
@@ -195,13 +190,13 @@ void host(bool* done) {
     
     //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
     
-    H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 30, NORTH, 0));
-    H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
-    H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 0));
+    H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 4, 4, 3, Melee, 1, 1, NORTH, 0));
+    H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 4, 4, 1, Melee, 1, 3, NORTH, 0));
+    H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 4, 4, 3, Melee, 1, 1, NORTH, 0));
     
-    H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
-    H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
-    H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 3, 3, 2, Melee, 1, 1, NORTH, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 4, 4, 3, Melee, 1, 1, NORTH, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 4, 4, 1, Melee, 1, 3, NORTH, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 4, 4, 3, Melee, 1, 1, NORTH, 1));
     
     Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
     player0Home.deathAction = "player_lose_0";
