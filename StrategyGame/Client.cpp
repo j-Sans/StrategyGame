@@ -77,7 +77,7 @@ void Client::render() {
     
     this->socket->send(clientInfo.c_str());
     
-    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getMouseTile(), glfwGetTime());
+    this->updateSelected(this->visualizer.mousePressed(), this->visualizer.getTile(), glfwGetTime());
     
     this->updateInterfaces();
     

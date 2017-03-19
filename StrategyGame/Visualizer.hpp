@@ -173,10 +173,16 @@ public:
      */
     std::string getClientInfo();
     
+    
     /*!
+     * A function to get the position of the mouse in terms of tile coordinates. If the optional parameter is specified, it will instead calculate the tile at those coordinates.
+     *
+     * @param pos A glm::dvec2 representing the screen coordinate location to find in tile coordinates. If unspecified, the current mouse position is used.
+     *
      * @return The coordinates of the tile where the mouse is located.
      */
-    glm::ivec2 getMouseTile();
+    glm::ivec2 getTile();
+    glm::ivec2 getTile(glm::dvec2 pos);
     
 //    /*!
 //     * A function that should be called at the beginning of each frame from the larger class, in this case client.
