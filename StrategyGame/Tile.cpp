@@ -66,6 +66,8 @@ bool Tile::occupied() const {
 unsigned int Tile::creatureType() const {
     if (this->tileCreature == nullptr) {
         return NO_CREATURE;
+    } else if (!this->creature()->melee()) {
+        return ARCHER_CREATURE;
     } else {
         return STICK_FIGURE_CREATURE;
     }

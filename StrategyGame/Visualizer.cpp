@@ -51,12 +51,7 @@ Visualizer::Visualizer(Window* w, std::string vertexPath, std::string geometryPa
         std::cout << "Error loading stick figure texture: " << e.what() << std::endl;
     }
     try {
-        this->loadTexture("Resources/ScoutPlaceholder.png", "scoutPTex");
-    } catch (std::exception e) {
-        std::cout << "Error loading scout placeholder texture: " << e.what() << std::endl;
-    }
-    try {
-        this->loadTexture("Resources/ArcherPlaceholder.png", "archerPTex");
+        this->loadTexture("Resources/archer.png", "archerTex");
     } catch (std::exception e) {
         std::cout << "Error loading archer placeholder texture: " << e.what() << std::endl;
     }

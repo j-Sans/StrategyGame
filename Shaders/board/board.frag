@@ -8,6 +8,12 @@
 #define CIRCLE 3
 #define BUILDING 4
 
+//Direction
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
 //Controller color
 #define PLAYER_0_COLOR vec4(0.6f, 0.3f, 0.0f, 1.0f) //Player 0 has an orange highlight
 #define PLAYER_1_COLOR vec4(0.0f, 0.3f, 0.9f, 1.0f) //Player 1 has a blue highlight
@@ -28,8 +34,7 @@
 //Creature
 #define NO_CREATURE 0
 #define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
-#define SCOUT_PLACEHOLDER 2 //Simple test creature type using an easily identifiable box texture
-#define ARCHER_PLACEHOLDER 3 //Simple test creature type using an easily identifiable box texture
+#define ARCHER_CREATURE 2 //Simple test creature type using an archer image
 
 //Building
 #define NO_BUILDING 0
@@ -37,6 +42,7 @@
 
 in vec2 TexCoords;
 in vec4 TileColor;
+flat in int Direction;
 flat in ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
 out vec4 color;
@@ -45,8 +51,7 @@ uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
 uniform sampler2D forestTex;
 uniform sampler2D stickFigureTex;
-uniform sampler2D scoutPTex;
-uniform sampler2D archerPTex;
+uniform sampler2D archerTex;
 uniform sampler2D towerTex;
 uniform sampler2D circleTex;
 
@@ -64,15 +69,16 @@ void main() {
         }
         
     } else if (TexType.x == CREATURE) {
+        vec2 newTexCoords = TexCoords;
+        if (Direction == WEST || Direction == NORTH) {
+            newTexCoords.x = 1.0 - newTexCoords.x; //Flip the x's to set the direction to the opposite, if the creature should be facing that direction
+        }
+        
         //Draw the creature
         if (TexType.y == STICK_FIGURE_CREATURE) {
-            color = texture(stickFigureTex, TexCoords);
-        }
-        else if (TexType.y == SCOUT_PLACEHOLDER) {
-            color = texture(scoutPTex, TexCoords);
-        }
-        else if (TexType.y == ARCHER_PLACEHOLDER) {
-            color = texture(archerPTex, TexCoords);
+            color = texture(stickFigureTex, newTexCoords);
+        } else if (TexType.y == ARCHER_CREATURE) {
+            color = texture(archerTex, newTexCoords);
         }
         
     } else if (TexType.x == BUILDING) {

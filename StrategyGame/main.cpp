@@ -194,13 +194,13 @@ void host(bool* done) {
     
     //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
     
-    H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 4, 4, 3, Melee, 1, 1, NORTH, 0));
-    H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 4, 4, 1, Melee, 1, 3, NORTH, 0));
-    H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 4, 4, 3, Melee, 1, 1, NORTH, 0));
+    H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 4, 4, 3, Melee, 1, 1, WEST, 0));
+    H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 4, 4, 1, Melee, 1, 3, WEST, 0));
+    H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 4, 4, 3, Melee, 1, 1, WEST, 0));
     
-    H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 4, 4, 3, Melee, 1, 1, NORTH, 1));
-    H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 4, 4, 1, Melee, 1, 3, NORTH, 1));
-    H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 4, 4, 3, Melee, 1, 1, NORTH, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 4, 4, 3, Melee, 1, 1, EAST, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 4, 4, 1, Melee, 1, 3, EAST, 1));
+    H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 4, 4, 3, Melee, 1, 1, EAST, 1));
     
     Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
     player0Home.deathAction = "player_lose_0";

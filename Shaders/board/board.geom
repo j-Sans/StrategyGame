@@ -57,6 +57,7 @@ in int buildingController[];
 
 out vec2 TexCoords;
 out vec4 TileColor;
+flat out int Direction;
 flat out ivec2 TexType; //First number represents if it is a texture or terrain, and second number represents the respective type
 
 uniform mat4 rectRotation;
@@ -277,6 +278,7 @@ void drawCreature(vec4 position, int creatureTypeToDraw, vec4 rect[4]) {
         
         
         //Draw the creature after
+        Direction = creatureDirection[0];
         
         gl_Position = ortho * view * model * (position + (0.4f * rect[0])); //Top right
         TexCoords = vec2(0.0f, 0.0f);
