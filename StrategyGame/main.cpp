@@ -80,6 +80,9 @@ int main(int argc, const char * argv[]) {
     window.setResizeCallback(resizeCallback);
     
     while (true) {
+        runningHost = false;
+        finishedRunning = false;
+        
         ClientSocket socket;
         Menu M(&window, &socket, &mouseDown, &mouseUp, keys);
         
@@ -154,9 +157,11 @@ int main(int argc, const char * argv[]) {
         if (runningHost) {
             finishedRunning = true;
             hostThread.join();
+            
+            if (returnToMenu) {
+                runningHost = false;
+            }
         }
-        
-        if (returnToMenu) runningHost = false;
         
         //send message to other clients that the player has left the game.
     }

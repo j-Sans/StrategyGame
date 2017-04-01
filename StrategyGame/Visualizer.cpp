@@ -518,17 +518,44 @@ void Visualizer::renderDamageText() {
 void Visualizer::moveCamera() {
     GLfloat displacement = this->deltaTime * this->camSpeed;
     
+    //Calculate the center, in screen coordinates, of the viewport
+    glm::dvec2 screenCenter = glm::dvec2(this->window->windowSize()) / 2.0; //Gets screen size
+//    screenCenter.x = (screenCenter.x * 2.0 / 3.0) + (screenCenter.x / 6.0); //Set the x coordinate to ignore the side interfaces
+//    screenCenter.y = (screenCenter.y * 3.0 / 4.0); //Set the y coordinate to ignore theb ottom interfaces
+    
+    std::cout << std::endl;
+    std::cout << "displacement: " << displacement << std::endl;
+    std::cout << "cursorPos: (" << window->cursorPos().x << ", " << window->cursorPos().y << ")" << std::endl;
+    std::cout << "screenCenter: (" << screenCenter.x << ", " << screenCenter.y << ")" << std::endl;
+    std::cout << "mouseTile: (" << this->getTile((glm::dvec2)this->cameraCenter + screenCenter).x << ", " << this->getTile((glm::dvec2)this->cameraCenter + screenCenter).y << ")" << std::endl;
+    
+    glm::vec3 newCamCenter = this->cameraCenter;
     if (keys[GLFW_KEY_DOWN]) {
-        this->cameraCenter.y += displacement;
+        newCamCenter.y += displacement;
+        if (this->validTile(this->getTile(newCamCenter + glm::vec3(screenCenter, 0.0)))) {
+            this->cameraCenter = newCamCenter;
+        }
     }
+    newCamCenter = this->cameraCenter;
     if (keys[GLFW_KEY_UP]) {
-        this->cameraCenter.y -= displacement;
+        newCamCenter.y -= displacement;
+        if (this->validTile(this->getTile(newCamCenter + glm::vec3(screenCenter, 0.0)))) {
+            this->cameraCenter = newCamCenter;
+        }
     }
+    newCamCenter = this->cameraCenter;
     if (keys[GLFW_KEY_LEFT]) {
-        this->cameraCenter.x += displacement;
+        newCamCenter.x += displacement;
+        if (this->validTile(this->getTile(newCamCenter   + glm::vec3(screenCenter, 0.0)))) {
+            this->cameraCenter = newCamCenter;
+        }
     }
+    newCamCenter = this->cameraCenter;
     if (keys[GLFW_KEY_RIGHT]) {
-        this->cameraCenter.x -= displacement;
+        newCamCenter.x -= displacement;
+        if (this->validTile(this->getTile(newCamCenter + glm::vec3(screenCenter, 0.0)))) {
+            this->cameraCenter = newCamCenter;
+        }
     }
     
     /*
@@ -782,4 +809,11 @@ Visualizer::~Visualizer() {
             std::cout << "~Visualizer(): Unable to properly delete buildingVBO. Error thrown with call of glDeleteBuffers(1, &this->buildingVBO)." << std::endl;
         }
     }
+}
+            
+bool Visualizer::validTile(glm::ivec2 tilePos) const {
+    if (tilePos.x >= 0 && tilePos.x < this->boardWidth && tilePos.y >= 0 && tilePos.y < this->boardHeight)
+        return true;
+    else
+        return false;
 }

@@ -369,6 +369,15 @@ private:
      */
     glm::ivec2 mouseTile(glm::vec2 mousePos, glm::ivec2 windowSize, std::vector<glm::vec4> tileCenters);
     
+    /*!
+     * A function to check the validity of tile coordinates.
+     *
+     * @param tilePos The coordinates of the tile to check.
+     *
+     * @return True if the given location exists on the board, false otherwise.
+     */
+    bool validTile(glm::ivec2 tilePos) const;
+    
 //    /*!
 //     * A function GLFW can call when a key event occurs.
 //     *

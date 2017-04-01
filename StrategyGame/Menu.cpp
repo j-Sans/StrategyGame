@@ -66,14 +66,14 @@ void Menu::render() {
         this->connecting = false;
         if (!this->runningHost) {
             if (!this->gameStarting && !this->waitingForStart) {
-                this->thread.join();
+                if (this->thread.joinable()) this->thread.join();
                 this->thread = std::thread(this->threadListenForStart, &this->gameStarting, this->socket, &this->keepListening);
                 this->interface.removePropertyLayer();
                 this->interface.addBox("Waiting for start");
                 this->waitingForStart = true;
             } else if (this->gameStarting) {
                 this->keepListening = false;
-                this->thread.join();
+                if (this->thread.joinable()) this->thread.join();
                 this->status = READY_TO_PLAY;
             }
         }
@@ -87,7 +87,7 @@ void Menu::render() {
         } else {
             this->interface.addButton("find_host", "Find host");
         }
-        this->thread.join();
+        if (this->thread.joinable()) this->thread.join();
         this->failedToConnect = false;
     }
     
@@ -117,8 +117,11 @@ int Menu::getStatus() {
 
 void Menu::processAction(std::string action) {
     if (action == "run_client") { //Run as just a client
+        
+        this->interface.removePropertyLayer(); //Remove "Back"
         this->interface.removePropertyLayer(); //Remove "Play as client"
         this->interface.removePropertyLayer(); //Remove "Play as host"
+        this->interface.addButton("return_to_start_menu", "Back");
         this->interface.addBox("Input host name");
         this->textbox = &this->interface.boxes.back();
         this->interface.addButton("find_host", "Find host");
@@ -128,8 +131,11 @@ void Menu::processAction(std::string action) {
         this->status = PLAY_AS_HOST;
         // main() will start a host thread, and then Menu::render() will connect to it
         
+        this->interface.removePropertyLayer(); //Remove "Back"
         this->interface.removePropertyLayer(); //Remove "Play as client"
         this->interface.removePropertyLayer(); //Remove "Play as host"
+        
+        this->interface.addButton("return_to_start_menu", "Back");
         
         //Add a box to indicate the number of players connected so far
         this->interface.addBox(std::to_string(this->numberOfConnections) + "player" + (this->numberOfConnections != 1 ? "s" : ""));
@@ -156,6 +162,16 @@ void Menu::processAction(std::string action) {
         this->connecting = true;
     } else if (action == "add_player") {
         this->status = ADD_PLAYER;
+        
+    } else if (action == "return_to_start_menu") {
+        this->numberOfConnectionsBox = nullptr;
+        this->textbox = nullptr;
+        if (this->thread.joinable()) this->thread.join();
+        
+        while(this->interface.removePropertyLayer()) ; //Keep removing property layers until everything is cleared
+        
+        this->interface.addButton("run_client", "Play as client");
+        this->interface.addButton("run_both", "Play as host");
     }
 }
 
@@ -292,7 +308,7 @@ void Menu::threadListenForStart(bool *gameStarting, ClientSocket *socket, bool* 
 Menu::~Menu() {
     if (this->thread.joinable()) {
         try {
-            this->thread.join();
+            if (this->thread.joinable()) this->thread.join();
         } catch (...) {
             std::cout << "Error joining Menu::thread" << std::endl;
         }

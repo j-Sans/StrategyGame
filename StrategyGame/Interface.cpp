@@ -199,7 +199,10 @@ bool Interface::removePropertyLayer() {
         throw std::logic_error("Interface not set");
     
     this->nextPropertyHeight += 0.1;
-    if (this->nextPropertyHeight > this->initialPropertyHeight) return false;
+    if (this->nextPropertyHeight > this->initialPropertyHeight) {
+        this->nextPropertyHeight -= 0.1;
+        return false;
+    }
     
     bool anythingRemoved = false;
     
@@ -211,7 +214,7 @@ bool Interface::removePropertyLayer() {
     }
     
     for (auto box = this->boxes.begin(); box != this->boxes.end(); box++) {
-        if (box->getHeight() < this->nextPropertyHeight) {
+        if (box->getHeight() <= this->nextPropertyHeight) {
             box = this->boxes.erase(box);
             anythingRemoved = true;
         }
