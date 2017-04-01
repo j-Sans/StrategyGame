@@ -184,7 +184,7 @@ void host(bool* done) {
     for (GLint x = 0; x < BOARD_WIDTH; x++) {
         std::vector<Tile> row;
         for (GLint y = 0; y < BOARD_WIDTH; y++) {
-            if ((x == 2 && y == BOARD_WIDTH - 1 - 2) || (x == 3 && y == BOARD_WIDTH - 1 - 3) || (x == 4 && y == BOARD_WIDTH - 1 - 4) || (x == BOARD_WIDTH - 1 - 2 && y == 2) || (x == BOARD_WIDTH - 1 - 3 && y == 3) || (x == BOARD_WIDTH - 1 - 4 && y == 4))
+            if ((x == 3 && y == BOARD_WIDTH - 1 - 3) || (x == 4 && y == BOARD_WIDTH - 1 - 4) || (x == BOARD_WIDTH - 1 - 3 && y == 3) || (x == BOARD_WIDTH - 1 - 4 && y == 4))
                 row.push_back(Tile(MOUNTAIN_TERRAIN, x, y));
             else if (x >= y - 1 && x <= y + 1)
                 row.push_back(Tile(FOREST_TERRAIN, x, y));
@@ -199,13 +199,47 @@ void host(bool* done) {
     
     //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
     
-    H.board.setCreature(Creature(0, BOARD_WIDTH - 2, Human, 4, 4, 3, Melee, 1, 1, WEST, 0));
-    H.board.setCreature(Creature(1, BOARD_WIDTH - 2, Human, 4, 4, 1, Melee, 1, 3, WEST, 0));
-    H.board.setCreature(Creature(1, BOARD_WIDTH - 1, Human, 4, 4, 3, Melee, 1, 1, WEST, 0));
+    int boardBack = BOARD_WIDTH - 1; //Represents the opposite index of the board.
     
-    H.board.setCreature(Creature(BOARD_WIDTH - 1, 1, Human, 4, 4, 3, Melee, 1, 1, EAST, 1));
-    H.board.setCreature(Creature(BOARD_WIDTH - 2, 1, Human, 4, 4, 1, Melee, 1, 3, EAST, 1));
-    H.board.setCreature(Creature(BOARD_WIDTH - 2, 0, Human, 4, 4, 3, Melee, 1, 1, EAST, 1));
+    //Player 1
+    
+    H.board.setCreature(Creature(0, boardBack - 2, Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(1, boardBack - 2, Human, 4, 4, 1, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(2, boardBack - 2, Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(2, boardBack - 1, Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(2, boardBack,     Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
+    
+    H.board.setCreature(Creature(0, boardBack - 1, Human, 2, 4, 2, Ranged, 1, 3, WEST, 0));
+    H.board.setCreature(Creature(1, boardBack,     Human, 2, 4, 2, Ranged, 1, 3, WEST, 0));
+    
+    H.board.setCreature(Creature(1, boardBack - 1, Human, 3, 2, 1, Magic,  1, 1, WEST, 0));
+    H.board.get(1, boardBack - 1).creature()->addButton("mage_attack_from_", "Fireball");
+    
+    //Player 2
+    
+    H.board.setCreature(Creature(boardBack - 2, 0, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 2, 1, Human, 4, 4, 1, Melee,  1, 1, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 2, 2, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 1, 2, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
+    H.board.setCreature(Creature(boardBack,     2, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
+    
+    H.board.setCreature(Creature(boardBack - 1, 0, Human, 2, 4, 2, Ranged, 1, 3, EAST, 1));
+    H.board.setCreature(Creature(boardBack,     1, Human, 2, 4, 2, Ranged, 1, 3, EAST, 1));
+    
+    H.board.setCreature(Creature(boardBack - 1, 1, Human, 3, 2, 1, Magic,  1, 1, EAST, 1));
+    H.board.get(boardBack - 1, 1).creature()->addButton("mage_attack_from_", "Fireball");
+    
+    /*
+    H.board.setCreature(Creature(0, boardBack - 1, Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(1, boardBack - 1, Human, 4, 4, 1, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(1, boardBack,     Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
+    H.board.setCreature(Creature(1, boardBack - 1, Human, 4, 4, 1, Ranged, 1, 3, WEST, 0));
+    
+    H.board.setCreature(Creature(boardBack,     1, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 1, 1, Human, 4, 4, 1, Melee,  1, 3, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 1, 0, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 1, 1, Human, 4, 4, 1, Ranged, 1, 3, EAST, 1));
+    */
     
     Building player0Home(0, BOARD_WIDTH - 1, 10, 0);
     player0Home.deathAction = "player_lose_0";

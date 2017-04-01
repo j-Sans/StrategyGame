@@ -213,8 +213,8 @@ std::string Creature::serialize() const {
         str += "Melee,";
     } else if (this->attackStyleVal == Ranged) {
         str += "Ranged,";
-    } else if (this->attackStyleVal == TerrainIgnoring) {
-        str += "TerrainIgnoring,";
+    } else if (this->attackStyleVal == Magic) {
+        str += "Magic,";
     } else {
         throw std::invalid_argument("Error serializing creature: unknown creature attack style");
     }
@@ -273,8 +273,8 @@ Creature Creature::deserialize(std::string str) {
         attackStyle = Melee;
     } else if (str.substr(0, str.find_first_of(',')) == "Ranged") {
         attackStyle = Ranged;
-    } else if (str.substr(0, str.find_first_of(',')) == "TerrainIgnoring") {
-        attackStyle = TerrainIgnoring;
+    } else if (str.substr(0, str.find_first_of(',')) == "Magic") {
+        attackStyle = Magic;
     } else {
         throw std::invalid_argument("Error deserializing creature: unreadable creature race");
     }

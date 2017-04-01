@@ -237,11 +237,11 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
 #endif
                 
                 //Flanking:        (Only occurs on melee)
-                if (attacker->creature()->attackStyle() == Melee) {
-                    attackerCombatModifier += calculateFlankingBonus(*attacker, *defender);
-                }
-                //Terrain:
-                attackerCombatModifier -= calculateTerrainModifier(*defender);
+//                if (attacker->creature()->attackStyle() == Melee) {
+//                    attackerCombatModifier += calculateFlankingBonus(*attacker, *defender);
+//                }
+//                //Terrain:
+//                attackerCombatModifier -= calculateTerrainModifier(*defender);
 #ifdef COMBAT_CONSOLE_OUTPUT
                 std::cout << "Attacker Modifier: " << attackerCombatModifier << '\n';
 #endif
@@ -266,10 +266,10 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
 #endif
                     
                     //Flanking:        (Only occurs on melee)
-                    if (defender->creature()->attackStyle() == Melee) {
-                        defenderCombatModifier += calculateFlankingBonus(*defender, *attacker);
-                        //defenderCombatModifier += defender->creature().getFortificationBonus();
-                    }
+//                    if (defender->creature()->attackStyle() == Melee) {
+//                        defenderCombatModifier += calculateFlankingBonus(*defender, *attacker);
+//                        //defenderCombatModifier += defender->creature().getFortificationBonus();
+//                    }
 
 #ifdef COMBAT_CONSOLE_OUTPUT
                     std::cout << "Defender Modifier: " << defenderCombatModifier << '\n';

@@ -46,14 +46,19 @@ Visualizer::Visualizer(Window* w, std::string vertexPath, std::string geometryPa
         std::cout << "Error loading forest texture: " << e.what() << std::endl;
     }
     try {
-        this->loadTexture("Resources/stick_figure.png", "stickFigureTex");
+        this->loadTexture("Resources/melee.png", "meleeTex");
     } catch (std::exception e) {
-        std::cout << "Error loading stick figure texture: " << e.what() << std::endl;
+        std::cout << "Error loading melee texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/archer.png", "archerTex");
     } catch (std::exception e) {
         std::cout << "Error loading archer placeholder texture: " << e.what() << std::endl;
+    }
+    try {
+        this->loadTexture("Resources/mage.png", "mageTex");
+    } catch (std::exception e) {
+        std::cout << "Error loading mage placeholder texture: " << e.what() << std::endl;
     }
     try {
         this->loadTexture("Resources/tower.png", "towerTex");

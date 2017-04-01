@@ -36,7 +36,7 @@ enum Race {
 enum AttackStyle {
     Melee,
     Ranged,
-    TerrainIgnoring, //ignores terrain (perhaps telepathic abilities)
+    Magic, //ignores terrain
 };
 
 

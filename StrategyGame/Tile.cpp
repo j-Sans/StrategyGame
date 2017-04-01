@@ -66,10 +66,12 @@ bool Tile::occupied() const {
 unsigned int Tile::creatureType() const {
     if (this->tileCreature == nullptr) {
         return NO_CREATURE;
-    } else if (!this->creature()->melee()) {
+    } else if (this->creature()->attackStyle() == Magic) {
+        return MAGE_CREATURE;
+    } else if (this->creature()->attackStyle() == Ranged) {
         return ARCHER_CREATURE;
     } else {
-        return STICK_FIGURE_CREATURE;
+        return MELEE_CREATURE;
     }
 }
 
@@ -105,7 +107,7 @@ bool Tile::passableByCreature(const Creature& creature) const {
 bool Tile::passableByAttackStyle(const Creature& creature) const {
     //Mountains are not passable (except by terrain ignoring spells)
     if (this->tileTerrain == MOUNTAIN_TERRAIN) {
-        if (creature.attackStyle() != TerrainIgnoring) {
+        if (creature.attackStyle() != Magic) {
             return false;
         }
     }

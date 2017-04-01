@@ -34,8 +34,9 @@
 //#define CARROT_TREE_TERRAIN 7 //When Truell someday looks through the codebase, he will find this edit, and he will be satisfied.
 
 #define NO_CREATURE 0
-#define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
+#define MELEE_CREATURE 1 //Simple test creature type using a melee image
 #define ARCHER_CREATURE 2 //Simple test creature type using an archer image
+#define MAGE_CREATURE 3 //Simple test creature type using a mage image
 
 #define NO_BUILDING 0
 #define TOWER_BUILDING 1 //Simple test building type using a tower image

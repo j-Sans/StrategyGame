@@ -354,7 +354,7 @@ private:
      *
      * @param action An std::string representing the button action to do.
      */
-    void processButton(std::string action);
+//    void processButton(std::string action);
     
     /*!
      * A function to calculate the tile closest to the mouse location at any given point in time.

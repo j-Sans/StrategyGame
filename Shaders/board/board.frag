@@ -33,8 +33,9 @@
 
 //Creature
 #define NO_CREATURE 0
-#define STICK_FIGURE_CREATURE 1 //Simple test creature type using a stick-figure image
+#define MELEE_CREATURE 1 //Simple test creature type using a melee image
 #define ARCHER_CREATURE 2 //Simple test creature type using an archer image
+#define MAGE_CREATURE 3 //Simple test creature type using a mage image
 
 //Building
 #define NO_BUILDING 0
@@ -50,8 +51,9 @@ out vec4 color;
 uniform sampler2D grassTex;
 uniform sampler2D mountainTex;
 uniform sampler2D forestTex;
-uniform sampler2D stickFigureTex;
+uniform sampler2D meleeTex;
 uniform sampler2D archerTex;
+uniform sampler2D mageTex;
 uniform sampler2D towerTex;
 uniform sampler2D circleTex;
 
@@ -75,10 +77,12 @@ void main() {
         }
         
         //Draw the creature
-        if (TexType.y == STICK_FIGURE_CREATURE) {
-            color = texture(stickFigureTex, newTexCoords);
+        if (TexType.y == MELEE_CREATURE) {
+            color = texture(meleeTex, newTexCoords);
         } else if (TexType.y == ARCHER_CREATURE) {
             color = texture(archerTex, newTexCoords);
+        } else if (TexType.y == MAGE_CREATURE) {
+            color = texture(mageTex, newTexCoords);
         }
         
     } else if (TexType.x == BUILDING) {

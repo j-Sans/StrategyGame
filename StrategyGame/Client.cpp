@@ -210,6 +210,11 @@ void Client::updateInterfaces() {
                 this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
                 this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
                 this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+                
+                this->interfaces[creature].buttons.clear();
+                for (auto buttonInfo = tile.creature()->buttonInfo.begin(); buttonInfo != tile.creature()->buttonInfo.end(); buttonInfo++) {
+                    this->interfaces[creature].addButton(buttonInfo->first + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y), buttonInfo->second);
+                }
             }
         } else if (tile.building() != nullptr) {
             //Do the same for buildings

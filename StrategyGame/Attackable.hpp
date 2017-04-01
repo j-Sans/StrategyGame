@@ -19,7 +19,11 @@ public:
     Attackable(unsigned int maxHealth, unsigned int x, unsigned int y, unsigned int controller);
     
     //Public properties
+    
     std::string deathAction = ""; //Initially nothing, can be modified
+    
+    //Contains information on the buttons that will be offered when this object is selected
+    std::list<std::pair<std::string, std::string> >buttonInfo; //list of <action, text>
     
     //Public member functions
     
@@ -107,9 +111,6 @@ protected:
     unsigned int yVal;
     
     unsigned int healthVal;
-    
-    //Contains information on the buttons that will be offered when this object is selected
-    std::list<std::pair<std::string, std::string> >buttonInfo; //list of <action, text>
 };
 
 #endif /* Attackable_hpp */
