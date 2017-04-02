@@ -10,8 +10,8 @@
 
 //Public member functions
 void Texture::set(const GLchar* imagePath, GLuint texNumber, const GLchar* uniformName) {
-    if (texNumber >= 31) {
-        texNumber = 30; //Stops bad access from accessing greater than element 30 in the because OpenGL might only be able to use 32 textures, and the last is reserved for fonts
+    if (texNumber >= 28) {
+        texNumber = 27; //Stops bad access from accessing greater than element 30 in the because OpenGL might only be able to use 32 textures, and the last are reserved. See textures.txt for more details
     }
     
     this->id = GL_TEXTURE0 + texNumber;

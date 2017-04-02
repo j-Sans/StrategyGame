@@ -211,7 +211,8 @@ void Host::processAction(std::string action, int playerNum) {
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    if (!this->alivePlayers[playerNum].first) return; //If the player is dead, ignore any remaining actions.
+    if (playerNum < this->alivePlayers.size() && !this->alivePlayers[playerNum].first) return; //If the player is dead, ignore any remaining actions.
+    //Without checking if playerNum was in bounds, for some reason during runtime, if it was out of bounds, the expression would simply evaluate as false instead
     
     if (action.find("no_updates") != std::string::npos) {
         return;
@@ -275,7 +276,7 @@ void Host::processAction(std::string action, int playerNum) {
                 }
             }
         }
-    } else if (action.find("mage_strike_from_")) {
+    } else if (action.find("mage_strike_from_") != std::string::npos) {
         //Parse the destination tile from the string
         glm::ivec2 destination;
         destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
@@ -359,7 +360,7 @@ void Host::losePlayer(int playerNum) {
         throw std::logic_error("Socket not set");
     
     if (playerNum < 0 || playerNum >= this->players.size()) {
-        throw std::range_error("playerNum (" + std::to_string(playerNum) + ") not a valid player. Max player index: " + std::to_string(this->players.size()));
+        throw std::range_error("playerNum (" + std::to_string(playerNum) + ") not a valid player. Max player index: " + std::to_string(this->players.size() - 1));
     } else if (this->alivePlayers[playerNum].first == false) {
         throw std::logic_error("Player " + std::to_string(playerNum) + " already dead");
     }
@@ -369,11 +370,11 @@ void Host::losePlayer(int playerNum) {
     for (int x = 0; x < this->board.width(); x++) {
         for (int y = 0; y < this->board.height(x); y++) {
             Creature* creature = this->board.get(x, y).creature();
-            if (creature != nullptr) {
+            if (creature != nullptr && creature->controller() == playerNum) {
                 this->processAction(this->board.deleteCreature(x, y), creature->controller());
             }
             Building* building = this->board.get(x, y).building();
-            if (building != nullptr) {
+            if (building != nullptr && building->controller() == playerNum) {
                 this->processAction(this->board.deleteBuilding(x, y), building->controller());
             }
         }

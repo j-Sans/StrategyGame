@@ -244,7 +244,7 @@ std::map<interfaceType, Interface> Visualizer::getInterfaces() {
     std::map<interfaceType, Interface> interfaces;
     
     Texture tex;
-    tex.set("Resources/background.jpg", 29, "tex");
+    tex.set("Resources/background.jpg", 28, "tex");
     
     //Left-Side Game UI
     interfaces[default_left].set(&this->textureShader, &this->displayBarShader, this->window, this->leftInterfaceStats.x, this->leftInterfaceStats.y, this->leftInterfaceStats.width, this->leftInterfaceStats.height, tex, default_left);

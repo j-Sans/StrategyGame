@@ -45,6 +45,10 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
             
             break;
         
+        } case default_bottom: {
+            
+            this->buttons.push_back(Button(<#Shader shader#>, <#Window *window#>, <#GLfloat x#>, <#GLfloat y#>, <#GLfloat width#>, <#GLfloat height#>, <#GLuint interfaceX#>, <#GLuint interfaceY#>, <#GLfloat interfaceWidth#>, <#GLfloat interfaceHeight#>, <#std::string buttonAction#>, <#std::string buttonText#>))
+            
         } case creature: {
             
             //Create the displayBar for health that will be added to the map

@@ -1,0 +1,9 @@
+Reserved GL texture numbers
+
+0: Menu background image. This is overridden when the game starts
+
+0-27: Game elements
+28: Grey game interface background
+29: Parchment interface texture
+30: Button texture
+31: Fonts
