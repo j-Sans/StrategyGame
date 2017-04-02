@@ -72,9 +72,6 @@ bool Creature::incrementOffset(float deltaTime) {
         //At 0.4, it has reached the next tile
         if (this->offsetVal > 0.4) {
             this->offsetVal = 0.0;
-#ifdef MOVEMENT_CONSOLE_OUTPUT
-            std::cout << "Visual: arrived at next tile after moving either North or East\n";
-#endif
             
             return true;
         }
@@ -88,9 +85,6 @@ bool Creature::incrementOffset(float deltaTime) {
             
             if (this->offsetVal > 0.0) {
                 this->offsetVal = 0.0;
-#ifdef MOVEMENT_CONSOLE_OUTPUT
-                std::cout << "Visual: arrived at next tile after moving either South or West\n";
-#endif
                 
                 return true;
                 
@@ -324,7 +318,9 @@ Creature Creature::deserialize(std::string str) {
     creature.decrementEnergy(maxEnergy - energy);
     creature.setOffset(offset);
     
-    creature.buttonInfo = Attackable::deserializeButtons(str.substr(0, str.find_first_of("-Buttons-")));
+    creature.buttonInfo = Attackable::deserializeButtons(str.substr(0, str.find("-Buttons-")));
+    
+    
     
     return creature;
 }

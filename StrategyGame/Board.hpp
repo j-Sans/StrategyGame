@@ -20,6 +20,10 @@
 #include "Building.hpp"
 #include "Tile.hpp"
 
+//FLAGS FOR COMBAT
+#define NO_STRIKE_BACKS 1
+#define IGNORE_RANGE 2
+
 //How creatures are stored:
 //Creatures will be put into a std::list and then tiles will have pointers to the list elements. Each creature will have a unique position on the board, so the x and y coordinates are a unique combination for each creature, and can be used as a identifier for finding and deleting that creature.
 
@@ -80,10 +84,16 @@ public:
      * @param defenderY The y index of the ∂efender in the board.
      * @param attackDamage An int to store the damage dealt by the attacker. Use nullptr if no int is needed to store this.
      * @param defendDamage An int to store the damage dealt by the defender. Use nullptr if no int is needed to store this.
+     * @param flags An optional parameter that can take in flags.
+     *
+     * The possible flags are:
+     *
+     * NO STRIKE BACKS says that regardless of the ranges, the defender will deal no retaliation damage. It is automatically set to off.
+     * IGNORE_RANGE says that regardless of ranges, combat will occur. It is automatically set to off, so the function checks the attacker's range before dealing damage.
      *
      * @return A std::vector of std::pairs of std::strings and ints, representing the action strings and the respective controller, that should be done upon death of any of the creatures or buildings.
      */
-    std::vector<std::pair<std::string, int> > initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage);
+    std::vector<std::pair<std::string, int> > initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage, unsigned char flags = 0);
     
     /*!
      * Resets all energy values of creatures controlled by a certain player.

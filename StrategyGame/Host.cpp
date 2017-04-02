@@ -275,7 +275,7 @@ void Host::processAction(std::string action, int playerNum) {
                 }
             }
         }
-    } else if (action.find("mage_attack_from_")) {
+    } else if (action.find("mage_strike_from_")) {
         //Parse the destination tile from the string
         glm::ivec2 destination;
         destination.x = std::stoi(action.substr(0, action.find_first_of(',')));
@@ -283,7 +283,7 @@ void Host::processAction(std::string action, int playerNum) {
         destination.y = std::stoi(action.substr(0, action.find_first_of(',')));
         action = action.substr(action.find_first_of(',') + 1);
         
-        //Erase the "mage_attack_from_"
+        //Erase the "mage_strike_from_"
         action.erase(0, 17);
         
         //Parse the original tile from the string
@@ -292,22 +292,12 @@ void Host::processAction(std::string action, int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile) && this->board.get(currentTile.x, currentTile.y).creature()->controller() == playerNum && this->board.get(destination.x, destination.y).creature()->controller() != playerNum) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.get(currentTile.x, currentTile.y).creature()->controller() == playerNum && this->board.get(destination.x, destination.y).creature() != nullptr) {
             glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
             glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
-            
-            if (this->board.tileDistances(attacker.x, attacker.y, defender.x, defender.y) <= this->board.get(attacker.x, attacker.y).creature()->range()) {
-                
-                int attackDamage = 0, defendDamage = 0;
-                
-                std::vector<std::pair<std::string, int> > actions = this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, &defendDamage);
-                this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
-                this->board.setDamage(attacker.x, attacker.y, defendDamage, this->lastFrame.count()); //For attacker and defender
-                
-                for (int a = 0; a < actions.size(); a++) {
-                    this->processAction(actions[a].first, actions[a].second); //playerNum doesn't matter
-                }
-            }
+            int attackDamage = 0;
+            std::vector<std::pair<std::string, int> > actions = this->board.initiateCombat(attacker.x, attacker.y, defender.x, defender.y, &attackDamage, nullptr, NO_STRIKE_BACKS | IGNORE_RANGE);
+            this->board.setDamage(defender.x, defender.y, attackDamage, this->lastFrame.count()); //Make the damage visible
         }
     } else if (action.find("player_lose_") != std::string::npos) {
         action.erase(0, 12); //Erases "player_lose_"

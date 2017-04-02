@@ -117,7 +117,7 @@ public:
      * @param mousePos A glm::ivec2 representing the tile the mouse is currently at. This should be calculated on the client side and sent to the server.
      * @param currentTime An unsigned int representing the time of the current grame.
      */
-    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime);
+//    void updateSelected(bool mouseDown, glm::ivec2 mousePos, unsigned int currentTime);
     
     //Public get functions
     

@@ -48,10 +48,6 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
             
-#ifdef MOVEMENT_CONSOLE_OUTPUT
-            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated North to " << x << ", " << y - 1 << '\n';
-#endif
-            
             //Decrement the creature's energy by the terrain cost
             this->gameBoard[x][y - 1].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x][y - 1]));
             
@@ -73,9 +69,6 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-#ifdef MOVEMENT_CONSOLE_OUTPUT
-            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated East to " << x - 1 << ", " << y << '\n';
-#endif
             
             //Decrement the creature's energy by the terrain cost
             this->gameBoard[x - 1][y].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x - 1][y]));
@@ -98,9 +91,6 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-#ifdef MOVEMENT_CONSOLE_OUTPUT
-            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated South to " << x << ", " << y + 1 << '\n';
-#endif
             
             //Decrement the creature's energy by the terrain cost
             this->gameBoard[x][y + 1].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x][y + 1]));
@@ -123,9 +113,6 @@ bool Board::moveCreatureByDirection(unsigned int x, unsigned int y, unsigned int
             
             //Remove the creature from the old tile
             this->gameBoard[x][y].setCreature(nullptr);
-#ifdef MOVEMENT_CONSOLE_OUTPUT
-            std::cout << "Internal: " << x << ", " << y << ' ' << "relocated West to " << x + 1 << ", " << y << '\n';
-#endif
             
             //Decrement the creature's energy by the terrain cost
             this->gameBoard[x + 1][y].creature()->decrementEnergy(getTerrainMovementCost(this->gameBoard[x][y], this->gameBoard[x + 1][y]));
@@ -194,7 +181,7 @@ bool Board::moveCreatureByLocation(unsigned int x, unsigned int y, unsigned int 
     return true;
 }
 
-std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage) {
+std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int attackerX, unsigned int attackerY, unsigned int defenderX, unsigned int defenderY, int* attackDamage, int* defendDamage, unsigned char flags) {
     if (attackerX >= this->gameBoard.size()) {
         throw std::range_error("Attacker x out of range");
     }
@@ -224,8 +211,9 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
             unsigned int distanceBetweenTiles;
             distanceBetweenTiles = tileDistances(attackerX, attackerY, defenderX, defenderY); //An error is only thrown if arguments are out of range, but that is checked above
             
-            if (distanceBetweenTiles > this->gameBoard[attackerX][attackerY].creature()->range()) {
+            if (distanceBetweenTiles > this->gameBoard[attackerX][attackerY].creature()->range() && !(flags & IGNORE_RANGE)) {
                 //No combat occurs
+                std::cout << "No combat, defender out of range" << std::endl;
             } else { //if its not melee its ranged. or terrain ignoring.
                 
                 //Calculate Attacker Modifiers
@@ -255,7 +243,7 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
                     *attackDamage = damageDealtByAttacker;
                 
                 //If the defender is a melee fighter and survived, it can strike back
-                if (!defenderDied && defender->creature()->range() >= distanceBetweenTiles) {
+                if (!defenderDied && defender->creature()->range() >= distanceBetweenTiles && !(flags & NO_STRIKE_BACKS)) {
                     
                     //Calculate Defender Modifiers
                     //Missing HP:
@@ -780,10 +768,6 @@ std::vector<Tile> Board::getReachableTiles(const Tile& creatureTile) const {
         //Gets the tiles that are reachable by the creature
         reachedTiles.push_back(std::pair<Tile, int>(creatureTile, creatureTile.creature()->energy()));
         
-#ifdef PATHFINDING_CONSOLE_OUTPUT
-        std::cout << "pathfind" << std::endl;
-#endif
-        
         //Keep pushing the vector back with new tiles, that the for loop will eventually go through
         for (int tileIterator = 0; tileIterator < reachedTiles.size(); tileIterator++) {
             if (reachedTiles[tileIterator].second > 0) { //If a creature at this spot would be able to continue to move further, expand in the four directions from that tile.
@@ -827,9 +811,6 @@ std::vector<Tile> Board::getReachableTiles(const Tile& creatureTile) const {
             reachedTileReturnVector.push_back(reachedTiles[tileIterator].first);
         }
         
-#ifdef PATHFINDING_CONSOLE_OUTPUT
-        std::cout << "return success" << std::endl;
-#endif
         return reachedTileReturnVector;
     }
 }

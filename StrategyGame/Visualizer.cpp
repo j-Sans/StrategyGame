@@ -529,10 +529,12 @@ void Visualizer::moveCamera() {
 //    screenCenter.y = (screenCenter.y * 3.0 / 4.0); //Set the y coordinate to ignore theb ottom interfaces
     
     std::cout << std::endl;
+#ifdef SCREEN_POSITION_CONSOLE_OUTPUT
     std::cout << "displacement: " << displacement << std::endl;
     std::cout << "cursorPos: (" << window->cursorPos().x << ", " << window->cursorPos().y << ")" << std::endl;
     std::cout << "screenCenter: (" << screenCenter.x << ", " << screenCenter.y << ")" << std::endl;
     std::cout << "mouseTile: (" << this->getTile((glm::dvec2)this->cameraCenter + screenCenter).x << ", " << this->getTile((glm::dvec2)this->cameraCenter + screenCenter).y << ")" << std::endl;
+#endif
     
     glm::vec3 newCamCenter = this->cameraCenter;
     if (keys[GLFW_KEY_DOWN]) {

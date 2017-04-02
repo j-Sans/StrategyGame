@@ -213,7 +213,7 @@ void host(bool* done) {
     H.board.setCreature(Creature(1, boardBack,     Human, 2, 4, 2, Ranged, 1, 3, WEST, 0));
     
     H.board.setCreature(Creature(1, boardBack - 1, Human, 3, 2, 1, Magic,  1, 1, WEST, 0));
-    H.board.get(1, boardBack - 1).creature()->addButton("mage_attack_from_", "Fireball");
+    H.board.get(1, boardBack - 1).creature()->addButton("mage_strike_from_", "Fireball");
     
     //Player 2
     
@@ -227,7 +227,7 @@ void host(bool* done) {
     H.board.setCreature(Creature(boardBack,     1, Human, 2, 4, 2, Ranged, 1, 3, EAST, 1));
     
     H.board.setCreature(Creature(boardBack - 1, 1, Human, 3, 2, 1, Magic,  1, 1, EAST, 1));
-    H.board.get(boardBack - 1, 1).creature()->addButton("mage_attack_from_", "Fireball");
+    H.board.get(boardBack - 1, 1).creature()->addButton("mage_strike_from_", "Fireball");
     
     /*
     H.board.setCreature(Creature(0, boardBack - 1, Human, 4, 4, 3, Melee,  1, 1, WEST, 0));

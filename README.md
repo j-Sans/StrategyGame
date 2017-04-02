@@ -50,13 +50,18 @@ PLease check the documentation if interested; I tried to make most of the functi
 
 ## Known Bugs
 
-* After one player moves, the creature is deselcted for that player and selected for at least one other player. That player can then make the creature move or attack.
-* Error with the mechanism by which the board is prevented from being lost from view.
+* Max camera distance gets stuck after going too far, such that no more movement is possible
 * Window resizing doesn't work visually
+* Sometimes crashes when one client is closed, or when returning to menu.
+* Back button in menu doesn't cancel connections, so clients stay connected. If a client clicks back, the host can still start the client in the game. 
+
+## Currently In Progress
+
+* Adding abilities for creatures, which arer displayed in the interface as a button
+* Max camera distance
 
 ## Upcoming Additions
 
-* Max camera distance so the middle of the screen is always on the game
 * Vision 
 * More polished menu
 * Better/prettier textures
@@ -67,6 +72,7 @@ It's still very much in progress, but the engine and underlying code is here, ev
 ## Authors
 
 [Jake Sanders](https://github.com/ja-San)
+* Inital planning
 * Underlying game engine
 * Host mechanics
 * Client side code
@@ -75,7 +81,7 @@ It's still very much in progress, but the engine and underlying code is here, ev
 * GUI and window
 
 [Michael Caosun](https://github.com/theonlycaosun)
-* Much of initial design
+* Initial planning
 * Attack styles / combat details
 * RTS functionality (energy regeneration)
 * Bug fixes

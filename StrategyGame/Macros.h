@@ -24,11 +24,9 @@
 
     //Various console outputs
 
-//#define MOVEMENT_CONSOLE_OUTPUT
-//#define TURN_CONSOLE_OUTPUT
-//#define PATHFINDING_CONSOLE_OUTPUT
 //#define COMBAT_CONSOLE_OUTPUT
 //#define SOCKET_CONSOLE_OUTPUT
+//#define SCREEN_POSITION_CONSOLE_OUTPUT
 
     //Other
 #define FONT_PATH "Resources/Palatino.ttc"

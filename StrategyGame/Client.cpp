@@ -210,8 +210,12 @@ void Client::updateInterfaces() {
                 this->interfaces[creature].displayBars[EnergyBar].setValue(tile.creature()->energy());
                 this->interfaces[creature].displayBars[EnergyBar].setMaxValue(tile.creature()->maxEnergy());
                 this->interfaces[creature].displayBars[EnergyBar].text = "Energy: " + std::to_string((int)tile.creature()->energy()) + "/" + std::to_string((int)tile.creature()->maxEnergy());
+
+                for (int a = 0; a < this->interfaces[creature].buttons.size(); a++) {
+                    this->interfaces[creature].removePropertyLayer();
+                }
                 
-                this->interfaces[creature].buttons.clear();
+                while(this->interfaces[creature].removePropertyLayer()) ; //Keep removing property layers until everything is cleared
                 for (auto buttonInfo = tile.creature()->buttonInfo.begin(); buttonInfo != tile.creature()->buttonInfo.end(); buttonInfo++) {
                     this->interfaces[creature].addButton(buttonInfo->first + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y), buttonInfo->second);
                 }
@@ -304,6 +308,15 @@ void Client::processAction(std::string action) {
     if (action == "return_to_menu") {
         *this->returnToMenu = true;
         this->actionsForClientInfo.push_back("leaving_game_player_" + std::to_string(this->playerNum));
+    } else if (action.find("set_mage_strike")) {
+        for (int x = 0; x < this->board.width(); x++) {
+            for (int y = 0; y < this->board.height(x); y++) {
+                if (this->board.get(x, y).creature() != nullptr && this->board.get(x, y).creature()->controller() != this->playerNum) {
+                    this->boardInfo[x][y][TILE_STYLE] = ATTACKABLE;
+                    this->tileActions[x][y].push("mage_strike_from_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y));
+                }
+            }
+        }
     } else {
         this->actionsForClientInfo.push_back(action);
     }

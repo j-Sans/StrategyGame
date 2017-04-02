@@ -219,6 +219,9 @@ bool Interface::removePropertyLayer() {
             anythingRemoved = true;
         }
     }
+    
+    if (!anythingRemoved) this->nextPropertyHeight -= 0.1;
+    
     return anythingRemoved;
 }
 
