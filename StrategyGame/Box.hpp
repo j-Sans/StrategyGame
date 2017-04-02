@@ -37,6 +37,9 @@ enum DisplayBoxType {
     creature_vision,
     creature_race,
     
+    //Info box
+    announcement,
+    
     //Other
     other,
 };

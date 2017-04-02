@@ -184,6 +184,12 @@ void Client::updateInterfaces() {
     this->visualizer.bottomInterface = &this->interfaces[default_bottom];
     this->visualizer.rightInterface = &this->interfaces[default_right];
     
+    for (auto box = this->visualizer.bottomInterface->boxes.begin(); box != this->visualizer.bottomInterface->boxes.end(); box++) {
+        if (box->type() == announcement) {
+            box->text = this->announcementStr;
+        }
+    }
+    
     //If the selected tile is on the board
     if (this->board.validTile(this->selectedTile)) {
         Tile tile = this->board.get(this->selectedTile.x, this->selectedTile.y);

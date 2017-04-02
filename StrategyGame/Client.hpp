@@ -89,6 +89,7 @@ private:
     
     //Interfaces
     std::map<interfaceType, Interface> interfaces;
+    std::string announcementStr = "Defeat the enemy tower!";
     
     //Information for host
     std::list<std::string> actionsForClientInfo;

@@ -16,6 +16,7 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
     
     this->propertyTex.set("Resources/button.jpg", 30, "tex");
     this->interfaceTex = texture;
+    this->parchmentTex.set("Resources/parchment.png", 29, "tex");
     
     //Set viewport specifics
     this->lowerLeftX = x;
@@ -47,7 +48,9 @@ void Interface::set(Shader* shader, Shader* shaderForDisplayBars, Window* window
         
         } case default_bottom: {
             
-            this->buttons.push_back(Button(<#Shader shader#>, <#Window *window#>, <#GLfloat x#>, <#GLfloat y#>, <#GLfloat width#>, <#GLfloat height#>, <#GLuint interfaceX#>, <#GLuint interfaceY#>, <#GLfloat interfaceWidth#>, <#GLfloat interfaceHeight#>, <#std::string buttonAction#>, <#std::string buttonText#>))
+            this->boxes.push_back(Box(*this->textureShader, this->window, 0.0, 0.0, 1.0, 1.0, this->lowerLeftX, this->lowerLeftY, this->boxWidth, this->boxHeight, "", announcement, this->parchmentTex));
+            
+            break;
             
         } case creature: {
             

@@ -139,6 +139,7 @@ private:
     
     Texture propertyTex;
     Texture interfaceTex;
+    Texture parchmentTex;
     
     //Property information
     float nextPropertyHeight = 0.85; //The height at which the next button or box will be added.
