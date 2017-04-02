@@ -258,7 +258,7 @@ void Host::processAction(std::string action, int playerNum) {
         action = action.substr(action.find_first_of('_') + 1);
         currentTile.y = std::stoi(action);
         
-        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile) && this->board.get(currentTile.x, currentTile.y).creature()->controller() == playerNum && this->board.get(destination.x, destination.y).creature()->controller() != playerNum) {
+        if (this->board.get(currentTile.x, currentTile.y).creature() != nullptr && this->board.attackInRange(destination, currentTile) && this->board.get(currentTile.x, currentTile.y).creature()->controller() == playerNum && ((this->board.get(destination.x, destination.y).creature() != nullptr && this->board.get(destination.x, destination.y).creature()->controller() != playerNum) || (this->board.get(destination.x, destination.y).building() != nullptr && this->board.get(destination.x, destination.y).building()->controller() != playerNum))) {
             glm::ivec2 attacker = glm::ivec2(currentTile.x, currentTile.y);
             glm::ivec2 defender = glm::ivec2(destination.x, destination.y);
             

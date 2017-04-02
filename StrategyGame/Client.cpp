@@ -309,11 +309,14 @@ void Client::processAction(std::string action) {
         *this->returnToMenu = true;
         this->actionsForClientInfo.push_back("leaving_game_player_" + std::to_string(this->playerNum));
     } else if (action.find("set_mage_strike")) {
-        for (int x = 0; x < this->board.width(); x++) {
-            for (int y = 0; y < this->board.height(x); y++) {
-                if (this->board.get(x, y).creature() != nullptr && this->board.get(x, y).creature()->controller() != this->playerNum) {
-                    this->boardInfo[x][y][TILE_STYLE] = ATTACKABLE;
-                    this->tileActions[x][y].push("mage_strike_from_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y));
+        Creature* creature = this->board.get(this->selectedTile.x, this->selectedTile.y).creature();
+        if (creature != nullptr && creature->controller() == this->playerNum && creature->energy() == creature->maxEnergy()) {
+            for (int x = 0; x < this->board.width(); x++) {
+                for (int y = 0; y < this->board.height(x); y++) {
+                    if (this->board.get(x, y).creature() != nullptr && this->board.get(x, y).creature()->controller() != this->playerNum) {
+                        this->boardInfo[x][y][TILE_STYLE] = ATTACKABLE;
+                        this->tileActions[x][y].push("mage_strike_from_" + std::to_string(this->selectedTile.x) + "_" + std::to_string(this->selectedTile.y));
+                    }
                 }
             }
         }

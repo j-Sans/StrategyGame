@@ -307,7 +307,9 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
                     *attackDamage = damageDealtByAttacker;
                 
                 if (defenderDied) {
-                    actions.push_back({this->deleteBuilding(defender->x(), defender->y()), defender->building()->controller()}); //Remove the dead building, records its death action
+                    unsigned int controller = defender->building()->controller();
+                    actions.push_back({this->deleteBuilding(defender->x(), defender->y()), controller
+                    }); //Remove the dead building, records its death action
                 }//Combat occurs
             }
             
@@ -321,7 +323,8 @@ std::vector<std::pair<std::string, int> > Board::initiateCombat(unsigned int att
                 *attackDamage = damageDealtByAttacker;
             
             if (defenderDied) {
-                actions.push_back({this->deleteBuilding(defender->x(), defender->y()), defender->building()->controller()}); //Remove the dead building, records its death action
+                unsigned int controller = defender->building()->controller();
+                actions.push_back({this->deleteBuilding(defender->x(), defender->y()), controller}); //Remove the dead building, records its death action
             }
         }
     }
