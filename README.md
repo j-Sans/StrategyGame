@@ -52,8 +52,8 @@ PLease check the documentation if interested; I tried to make most of the functi
 
 * Max camera distance gets stuck after going too far, such that no more movement is possible
 * Window resizing doesn't work visually
-* Sometimes crashes when one client is closed, or when returning to menu.
-* Back button in menu doesn't cancel connections, so clients stay connected. If a client clicks back, the host can still start the client in the game. 
+* Sometimes crashes when one client is closed
+* May crash after clicking the back button from connecting as a host to connecting as a client
 
 ## Currently In Progress
 

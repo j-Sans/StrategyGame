@@ -82,7 +82,7 @@ void Menu::render() {
     if (this->failedToConnect) {
         this->connecting = false;
         this->interface.removePropertyLayer();
-        if (PLAY_AS_HOST) {
+        if (this->status == PLAY_AS_HOST) {
             this->interface.addButton("begin_game_as_both", "An error occurred. Try again");
             this->interface.addButton("return_to_start_menu", "Back");
         } else {
@@ -163,8 +163,6 @@ void Menu::processAction(std::string action) {
 //        this->connectToHost("localhost");
         
     } else if (action.find("connect_to_host:") != std::string::npos) { //Connect to a host
-        this->interface.removePropertyLayer(); //Remove "Back"
-        
         std::string hostName = action.substr(16); //The string after "connect_to_host:"
         this->thread = std::thread(this->threadFunction, &this->connected, &this->failedToConnect, this->socket, hostName);
         this->connecting = true;
@@ -172,6 +170,8 @@ void Menu::processAction(std::string action) {
         this->status = ADD_PLAYER;
         
     } else if (action == "return_to_start_menu") {
+        this->status = WAITING_FOR_INPUT;
+        
         this->numberOfConnectionsBox = nullptr;
         this->textbox = nullptr;
         if (this->thread.joinable()) this->thread.join();
