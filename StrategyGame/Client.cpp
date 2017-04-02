@@ -50,9 +50,17 @@ void Client::render() {
 //
     
     std::string str = this->socket->receive();
-    if (str == "closing_host") {
-        *this->returnToMenu = true;
-        return;
+    while (str.size() > 0) {
+        if (str == "closing_host") {
+            *this->returnToMenu = true;
+            return;
+        }
+        this->processFromHost(str.substr(0, str.find_first_of(';'))); //Process the action
+        str = str.find_first_of(';') == std::string::npos ? "" : str.substr(str.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
+        if (str.find("Board:") == 0) {
+            this->board = Board::deserialize(str);
+            break;
+        }
     }
     this->board = Board::deserialize(str);
     
@@ -328,6 +336,13 @@ void Client::processAction(std::string action) {
         }
     } else {
         this->actionsForClientInfo.push_back(action);
+    }
+}
+
+void Client::processFromHost(std::string action) {
+    if (action.find("announcement:") != std::string::npos) {
+        action.erase(0, 13); //Erase "announcement:"
+        this->announcementStr = action;
     }
 }
 

@@ -528,8 +528,8 @@ void Visualizer::moveCamera() {
 //    screenCenter.x = (screenCenter.x * 2.0 / 3.0) + (screenCenter.x / 6.0); //Set the x coordinate to ignore the side interfaces
 //    screenCenter.y = (screenCenter.y * 3.0 / 4.0); //Set the y coordinate to ignore theb ottom interfaces
     
-    std::cout << std::endl;
 #ifdef SCREEN_POSITION_CONSOLE_OUTPUT
+    std::cout << std::endl;
     std::cout << "displacement: " << displacement << std::endl;
     std::cout << "cursorPos: (" << window->cursorPos().x << ", " << window->cursorPos().y << ")" << std::endl;
     std::cout << "screenCenter: (" << screenCenter.x << ", " << screenCenter.y << ")" << std::endl;

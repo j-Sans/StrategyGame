@@ -112,7 +112,12 @@ void Host::update(bool* done) {
         return;
     }
     
-    this->broadcast(this->board.serialize());
+    std::string hostInfo = this->board.serialize();
+    if (this->announcementStr.size() > 0) {
+        hostInfo = this->announcementStr + ";" + hostInfo;
+        this->announcementStr = "";
+    }
+    this->broadcast(hostInfo);
 
     if (done != nullptr && *done) {
         this->broadcast("closing_host");
@@ -379,6 +384,7 @@ void Host::losePlayer(int playerNum) {
             }
         }
     }
+    this->announcementStr = "Player " + std::to_string(playerNum + 1) + " lost the game";
 }
 
 void Host::send(std::string message, unsigned int player) {

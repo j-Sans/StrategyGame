@@ -100,6 +100,8 @@ private:
     std::vector<Player> players;
     std::vector<std::pair<bool, bool> > alivePlayers; // { alive, connected }
     
+    std::string announcementStr = ""; //A string to be displayed by each client.
+    
     bool setUp = false;
     
     //Private member functions

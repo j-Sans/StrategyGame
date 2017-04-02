@@ -131,11 +131,18 @@ private:
     glm::vec3 tileColor(unsigned int x, unsigned int y);
     
     /*!
-     * A function to process the an action. This may include button actions. Any action to be performed on the host will be added to actionsForClientInfo.
+     * A function to process a local action. This may include button actions. Any action to be performed on the host will be added to actionsForClientInfo.
      *
      * @param An std::string representing the action to be done.
      */
     void processAction(std::string action);
+    
+    /*!
+     * A function to process an action received from the host. This likely will be an announcement.
+     *
+     * @param An std::string representing the action to be done.
+     */
+    void processFromHost(std::string action);
     
     void resolveTileAction(int x, int y);
 };
