@@ -62,7 +62,6 @@ void Client::render() {
             break;
         }
     }
-    this->board = Board::deserialize(str);
     
     //If the window will be closing notify the Host
     if (this->visualizer.window->shouldClose()) this->actionsForClientInfo.push_back("leaving_game_player_" + std::to_string(this->playerNum));
