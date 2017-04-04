@@ -138,11 +138,13 @@ private:
     void processAction(std::string action);
     
     /*!
-     * A function to process an action received from the host. This likely will be an announcement.
+     * A function to process an action received from the host. This likely will be an announcement or the board.
      *
      * @param An std::string representing the action to be done.
+     *
+     * @return Whether the board was deserialized. If false, that means another action was processed.
      */
-    void processFromHost(std::string action);
+    bool processFromHost(std::string action);
     
     void resolveTileAction(int x, int y);
 };

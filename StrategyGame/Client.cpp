@@ -53,14 +53,11 @@ void Client::render() {
     while (str.size() > 0) {
         if (str == "closing_host") {
             *this->returnToMenu = true;
+            std::cout << "Closing" << std::endl;
             return;
         }
-        this->processFromHost(str.substr(0, str.find_first_of(';'))); //Process the action
+        if (this->processFromHost(str.substr(0, str.find_first_of(';')))) break; //Process the action. If the board was deserialized, break from the loop
         str = str.find_first_of(';') == std::string::npos ? "" : str.substr(str.find_first_of(';') + 1, std::string::npos); //Set the string equal to the rest of the string after the ','
-        if (str.find("Board:") == 0) {
-            this->board = Board::deserialize(str);
-            break;
-        }
     }
     
     //If the window will be closing notify the Host
@@ -338,11 +335,17 @@ void Client::processAction(std::string action) {
     }
 }
 
-void Client::processFromHost(std::string action) {
-    if (action.find("announcement:") != std::string::npos) {
+bool Client::processFromHost(std::string action) {
+    if (action.find("Board:") == 0) {
+        this->board = Board::deserialize(action);
+        
+        return true; //Only returns true when the board was deserialized
+    } else if (action.find("announcement:") != std::string::npos) {
         action.erase(0, 13); //Erase "announcement:"
         this->announcementStr = action;
     }
+    
+    return false;
 }
 
 void Client::resolveTileAction(int x, int y) {
