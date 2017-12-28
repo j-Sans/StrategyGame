@@ -4,7 +4,7 @@ This game will be a turn-based strategy game, where each player will have to suc
 
 Currently, each player starts with a number of creatures and a tower unit. To win, the player must destroy the opponent's tower. This is just a preliminary and far overly simple version of the game.
 
-This game is still very much in progress, but here is much of what has been worked on so far : )
+This game is still being worked on.
 
 ## Units
 
@@ -29,7 +29,9 @@ Buildings are like creatures, but they cannot move nor attack. Buildings can hav
 
 The game can either be run as a hosting client or just as a client. One player must host, and other clients can join if they are on the same local network. To connect the host's name must be entered. Currently it is displayed on the console of the hosting player. When ready, the host can begin.
 
-In the game, there are three main interface panels of the GUI, the left and right sides and the bottom. Currently, the bottom has no function, but may later be used to give messages and game updates. The left will have general settings and buttons, but currently only has a "Leave Game" option that returns to the menu. The right menu is empty initially, but is updated to show information of the selected tile. If that is a creature or building, its health, energy, and stats will be displayed.
+The project has been written such that the host and client are completely separatable. For that reason, a server could run the host and connect over the internet to individual clients.
+
+In the game, there are three main interface panels of the GUI, the left and right sides and the bottom. The bottom is used to give messages and game updates. The left will have general settings and buttons, but currently only has a "Leave Game" option that returns to the menu. The right menu is empty initially, but is updated to show information of the selected tile. If that is a creature or building, its health, energy, and stats will be displayed.
 
 ## Program information
 
