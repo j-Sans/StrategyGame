@@ -31,6 +31,8 @@ std::string Host::storeVectorOfFloats(std::vector<float> vec) {
 }
 
 void Host::set(int portNum, unsigned int numberOfPlayers) {
+    this->setUp = true;
+    
     this->socket.setSocket(portNum);
     std::cout << "Host name: " << this->socket.getHostName() << std::endl;
     
@@ -41,8 +43,6 @@ void Host::set(int portNum, unsigned int numberOfPlayers) {
     if (numberOfPlayers > 0) {
         this->begin();
     }
-    
-    this->setUp = true;
 }
 
 void Host::addPlayer() {

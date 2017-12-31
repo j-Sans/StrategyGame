@@ -72,7 +72,7 @@ void ServerSocket::setSocket(int portNum) {
     this->hostSocket = socket(this->serverAddress.ai_family, this->serverAddress.ai_socktype, this->serverAddress.ai_protocol);
     
     //Checks for errors initializing socket
-    if (socket < 0)
+    if (this->hostSocket < 0)
         throw std::runtime_error(std::string("ERROR opening socket") + std::string(strerror(errno)));
     
     int enable = 1;
@@ -167,23 +167,25 @@ void ServerSocket::send(const char* message, unsigned int clientIndex, bool thro
     if (!this->setUp)
         throw std::logic_error("Socket not set");
     
-    if (std::string(message) == "")
-        throw std::logic_error("No message to send");
-    
     if (clientIndex >= MAX_NUMBER_OF_CONNECTIONS || !this->activeConnections[clientIndex])
         throw std::range_error("Socket index uninitialized");
     
-    unsigned long messageLength = strlen(message);
+    long messageLength = strlen(message);
     
-    long messageSize = write(this->clientSockets[clientIndex], message, messageLength);
+    std::string str = std::string(message);
+    
+    if (str == "" || messageLength < 1)
+        throw std::logic_error("No message to send");
+    
+    long messageSize = write(this->clientSockets[clientIndex], message, strlen(message));
     
     if (messageSize < 0) {
         throw std::runtime_error(std::string("ERROR sending message: ") + std::string(strerror(errno)));
     } else if (messageSize < messageLength) {
         if (throwErrorIfNotFullySent) { //Error sent only if optional parameter is manually set to true: if the message was too long to send all of it
-            throw std::runtime_error(std::string("ERROR message too long: only sent ") + std::to_string(messageSize) + std::string(" of ") + std::to_string(messageLength));
+            throw std::runtime_error(std::string("ERROR message too long: only sent ") + std::to_string(messageSize) + std::string(" of ") + std::to_string(messageLength) + std::string(" characters"));
         } else {
-            std::cout << "ERROR message too long: only sent " << messageSize << " of " << messageLength << std::endl;
+            std::cout << "ERROR message too long: only sent " << messageSize << " of " << messageLength << " characters" << std::endl;
         }
     }
 }
@@ -232,7 +234,26 @@ std::string ServerSocket::receive(unsigned int clientIndex, bool* socketClosed) 
         *socketClosed = true;
     }
     
-    return std::string(buffer, messageSize);
+    std::string str = std::string(buffer, messageSize);
+    
+    //Check if there is more data waiting to be read, and if so, read it
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(this->hostSocket, &readfds);
+    int n = this->hostSocket + 1;
+    
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 20000;
+    
+    int returnValue = select(n, &readfds, NULL, NULL, &timeout);
+    if (returnValue < 0) {
+        throw std::runtime_error(std::string("ERROR finding information about socket: ") + std::string(strerror(errno)));
+    } else if (returnValue > 0) {
+        str += this->receive(clientIndex);
+    }
+    
+    return str;
 }
 
 bool ServerSocket::allReceived(const char* messageToCompare) {

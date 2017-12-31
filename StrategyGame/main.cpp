@@ -36,6 +36,8 @@
 
 #include "Window.hpp"
 
+#define PORT 3000
+
 //An array of booleans representing if, for each key, if that key is pressed
 //Declared here so it can work with static function keyCallback. That function needs to be static
 bool keys[1024];
@@ -93,7 +95,7 @@ int main(int argc, const char * argv[]) {
             if (action == READY_TO_PLAY) {
                 if (runningHost) {
                     if (!socket.getSet()) {
-                        socket.setSocket("localhost", 3000);
+                        socket.setSocket("localhost", PORT);
                     }
                     socket.send("run:begin()");
                     //No confirmation wanted because the client will receive initial data soon anyway, so that can be like a confirmation
@@ -104,20 +106,21 @@ int main(int argc, const char * argv[]) {
                     hostThread = std::thread(host, &finishedRunning);
                     
                     if (!socket.getSet()) {
-                        socket.setSocket("localhost", 3000);
+                        socket.setSocket("localhost", PORT);
                     }
                     
                     runningHost = true;
                 }
                 if (!socket.getSet()) {
-                    socket.setSocket("localhost", 3000);
+                    socket.setSocket("localhost", PORT);
                 }
                 socket.send("send_number_of_players");
+                
                 M.numberOfConnections = std::stoi(socket.receive());
                 
             } else if (action == ADD_PLAYER) {
                 if (!socket.getSet()) {
-                    socket.setSocket("localhost", 3000);
+                    socket.setSocket("localhost", PORT);
                 }
                 socket.send("run:addPlayer()");
                 if (socket.receive() != "message_received") {
@@ -179,6 +182,7 @@ void updateMouse() {
 }
 
 void host(bool* done) {
+    
     //Gameboard:
     std::vector<std::vector<Tile> > board;
     for (GLint x = 0; x < BOARD_WIDTH; x++) {
@@ -195,7 +199,7 @@ void host(bool* done) {
     }
     
     Host H(board);
-    H.set(3000);
+    H.set(PORT);
     
     //Reminder: Creature(x, y, Race, maxHealth, maxEnergy, attack, attackStyle, vision, range, startDirection, controller)
     
@@ -209,8 +213,8 @@ void host(bool* done) {
     H.board.setCreature(Creature(2, boardBack - 1, Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
     H.board.setCreature(Creature(2, boardBack,     Human, 4, 4, 3, Melee,  1, 1, WEST, 0));
     
-    H.board.setCreature(Creature(0, boardBack - 1, Human, 2, 4, 2, Ranged, 1, 20, WEST, 0));
-    H.board.setCreature(Creature(1, boardBack,     Human, 2, 4, 2, Ranged, 1, 20, WEST, 0));
+    H.board.setCreature(Creature(0, boardBack - 1, Human, 2, 4, 2, Ranged, 1, 4, WEST, 0));
+    H.board.setCreature(Creature(1, boardBack,     Human, 2, 4, 2, Ranged, 1, 4, WEST, 0));
     
     H.board.setCreature(Creature(1, boardBack - 1, Human, 3, 2, 1, Magic,  1, 1, WEST, 0));
     H.board.get(1, boardBack - 1).creature()->addButton("mage_strike_from_", "Fireball");
@@ -223,8 +227,8 @@ void host(bool* done) {
     H.board.setCreature(Creature(boardBack - 1, 2, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
     H.board.setCreature(Creature(boardBack,     2, Human, 4, 4, 3, Melee,  1, 1, EAST, 1));
     
-    H.board.setCreature(Creature(boardBack - 1, 0, Human, 2, 4, 2, Ranged, 1, 3, EAST, 1));
-    H.board.setCreature(Creature(boardBack,     1, Human, 2, 4, 2, Ranged, 1, 3, EAST, 1));
+    H.board.setCreature(Creature(boardBack - 1, 0, Human, 2, 4, 2, Ranged, 1, 4, EAST, 1));
+    H.board.setCreature(Creature(boardBack,     1, Human, 2, 4, 2, Ranged, 1, 4, EAST, 1));
     
     H.board.setCreature(Creature(boardBack - 1, 1, Human, 3, 2, 1, Magic,  1, 1, EAST, 1));
     H.board.get(boardBack - 1, 1).creature()->addButton("mage_strike_from_", "Fireball");

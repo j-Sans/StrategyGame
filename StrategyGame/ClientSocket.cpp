@@ -62,7 +62,7 @@ void ClientSocket::setSocket(const char* hostName, int portNum) {
     this->connectionSocket = socket(serverAddress.ai_family, serverAddress.ai_socktype, serverAddress.ai_protocol);
     
     //Checks for errors initializing socket
-    if (socket < 0)
+    if (this->connectionSocket < 0)
         throw std::runtime_error(std::string("ERROR opening socket: ") + std::string(strerror(errno)));
     
     //No need to call bind() (see server side) because the local port number doesn't matter; the kernel will find an open port.
@@ -93,7 +93,7 @@ void ClientSocket::send(const char* message, bool throwErrorIfNotFullySent) {
     if (std::string(message) == "")
         throw std::logic_error("No message to send");
     
-    unsigned long messageLength = strlen(message);
+    long messageLength = strlen(message);
     
     long messageSize = write(this->connectionSocket, message, messageLength);
     
@@ -138,7 +138,26 @@ std::string ClientSocket::receive(bool* socketClosed) {
         *socketClosed = true;
     }
     
-    return std::string(buffer, messageSize);
+    std::string str = std::string(buffer, messageSize);
+    
+    //Check if there is more data waiting to be read, and if so, read it
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(this->connectionSocket, &readfds);
+    int n = this->connectionSocket + 1;
+    
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 20000;
+    
+    int returnValue = select(n, &readfds, NULL, NULL, &timeout);
+    if (returnValue < 0) {
+        throw std::runtime_error(std::string("ERROR finding information about socket: ") + std::string(strerror(errno)));
+    } else if (returnValue > 0) {
+        str += this->receive();
+    }
+    
+    return str;
 }
 
 void ClientSocket::setTimeout(unsigned int seconds, unsigned int milliseconds) {
